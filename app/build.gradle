@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'hello.kwfriends'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "hello.kwfriends"
         minSdk 26
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -38,7 +38,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+        kotlinCompilerExtensionVersion '1.2.0'
     }
     packagingOptions {
         resources {
@@ -58,7 +58,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation platform('com.google.firebase:firebase-bom:31.3.0')
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.firebase:firebase-auth-ktx:21.2.0'
