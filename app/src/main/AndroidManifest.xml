@@ -13,6 +13,21 @@
         android:theme="@style/Theme.KWFriends"
         tools:targetApi="31">
         <activity
+            android:name=".AuthViewModel"
+            android:exported="false"
+            android:label="@string/title_activity_auth_view_model"
+            android:theme="@style/Theme.KWFriends" />
+        <activity
+            android:name=".AuthUiState"
+            android:exported="false"
+            android:label="@string/title_activity_auth_ui_state"
+            android:theme="@style/Theme.KWFriends" />
+        <activity
+            android:name=".AuthScreen"
+            android:exported="false"
+            android:label="@string/title_activity_auth_screen"
+            android:theme="@style/Theme.KWFriends" />
+        <activity
             android:name=".auth.AuthMainActivity"
             android:exported="true"
             android:label="@string/title_activity_auth_main"

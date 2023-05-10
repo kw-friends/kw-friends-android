@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">KW Friends</string>
     <string name="title_activity_auth_main">AuthMainActivity</string>
+    <string name="title_activity_auth_screen">AuthScreen</string>
+    <string name="title_activity_auth_ui_state">AuthUiState</string>
+    <string name="title_activity_auth_view_model">AuthViewModel</string>
 </resources>
