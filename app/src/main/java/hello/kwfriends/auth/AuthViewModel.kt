@@ -9,4 +9,8 @@ class AuthViewModel: ViewModel(){
 
     var uiState by mutableStateOf<AuthUiState>(AuthUiState.Menu)
 
+// Loading test //
+//    var uiState by mutableStateOf<AuthUiState>(AuthUiState.Loading)
+
+
 }
