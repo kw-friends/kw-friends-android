@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KWFriends"
         tools:targetApi="31">
+        <!--TODO activity 에러 해결-->
         <activity
             android:name=".AuthViewModel"
             android:exported="false"
