@@ -16,12 +16,16 @@ class AuthViewModel: ViewModel(){
 
     var inputEmail by mutableStateOf<String?>("")
     var inputPassword by mutableStateOf<String?>("")
+    var inputPasswordConfirm by mutableStateOf<String?>("")
 
     fun setInputEmailText(text: String){
         inputEmail = text
     }
     fun setInputPasswordText(text: String){
         inputPassword = text
+    }
+    fun setInputPasswordConfirmText(text: String){
+        inputPasswordConfirm = text
     }
 
     fun changeLoginView(){
@@ -36,13 +40,20 @@ class AuthViewModel: ViewModel(){
         uiState = AuthUiState.Register
     }
 
-
     fun tryRegister(){
-        if(inputEmail == null || inputPassword == null){ //이메일, 비밀번호 null 체크
+        if(inputEmail == null || inputPassword == null || inputPasswordConfirm == null){ //이메일, 비밀번호 null 체크
+            Log.w("Lim", "이메일 또는 비밀번호가 null입니다.")
+            return
+        }
+        if(inputEmail == "" || inputPassword == "" || inputPasswordConfirm == ""){ //이메일, 비밀번호 null 체크
             Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
             return
         }
-        if (passwordSafetyCheck(inputPassword!!) == false) {
+        if(inputPassword != inputPasswordConfirm){ // 비밀번호 확인 일치 검사
+            Log.w("Lim", "비밀번호 확인 불일치")
+            return
+        }
+        if (passwordSafetyCheck(inputPassword!!) == false) { // 안전성 검사
             Log.w("Lim", "비밀번호 안전성 검사 불통과")
             return
         }
@@ -62,55 +73,55 @@ class AuthViewModel: ViewModel(){
     }
 
     /*
-        [ 비밀번호 규칙 참고자료 ]
-        자바스크립트를 사용하여 비밀번호 기반 계정으로 Firebase에 인증하기 - https://firebase.google.com/docs/auth/web/password-auth?hl=ko
-        IBM Security Identity Manager(비밀번호 보안 수준 규칙) - https://www.ibm.com/docs/ko/sim/7.0.1.13?topic=rules-password-strength
-        한국보건산업진흥원 비밀번호 생성규칙 안내 - https://www.khidi.or.kr/includes/password.jsp
-        한국인터넷진흥원 패스워드 선택 및 이용 안내서 - https://www.kisa.or.kr/2060305/form?postSeq=14&lang_type=KO#fnPostAttachDownload
-        microsoft Create and use strong passwords - https://support.microsoft.com/en-us/windows/create-and-use-strong-passwords-c5cebb49-8c53-4f5e-2bc4-fe357ca048eb
-        Password Strength Checker - https://www.security.org/how-secure-is-my-password/
-         */
+    [ 비밀번호 규칙 참고자료 ]
+    자바스크립트를 사용하여 비밀번호 기반 계정으로 Firebase에 인증하기 - https://firebase.google.com/docs/auth/web/password-auth?hl=ko
+    IBM Security Identity Manager(비밀번호 보안 수준 규칙) - https://www.ibm.com/docs/ko/sim/7.0.1.13?topic=rules-password-strength
+    한국보건산업진흥원 비밀번호 생성규칙 안내 - https://www.khidi.or.kr/includes/password.jsp
+    한국인터넷진흥원 패스워드 선택 및 이용 안내서 - https://www.kisa.or.kr/2060305/form?postSeq=14&lang_type=KO#fnPostAttachDownload
+    microsoft Create and use strong passwords - https://support.microsoft.com/en-us/windows/create-and-use-strong-passwords-c5cebb49-8c53-4f5e-2bc4-fe357ca048eb
+    Password Strength Checker - https://www.security.org/how-secure-is-my-password/
+     */
     fun passwordSafetyCheck(password: String): Boolean{
         if(inputPassword?.length ?: 0 < 8){ // 최대길이
             Log.w("Lim", "비밀번호는 8자리 이상이여야 합니다.")
             return false
         }
-        else if(inputPassword?.length ?: 0 > 16){ // 최대길이
+        if(inputPassword?.length ?: 0 > 16){ // 최대길이
             Log.w("Lim", "비밀번호는 16자리 이하여야 합니다.")
             return false
         }
-        else {
-            val special_char_list =  listOf( 33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126 ) //사용 가능한 특수문자 리스트
-            val include_special_char = mutableListOf<Char>() // 특수문자 카운트 변수
-            var include_number = mutableListOf<Char>() // 숫자 카운트 변수
-            var include_char = mutableListOf<Char>() // 문자 카운트 변수
-            for(i in inputPassword!!){
-                if(i.code in 48..57){ // 0~9까지의 숫자인지 확인
+        val special_char_list =  listOf( 33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126 ) //사용 가능한 특수문자 리스트
+        val include_special_char = mutableListOf<Char>() // 특수문자 카운트 변수
+        var include_number = mutableListOf<Char>() // 숫자 카운트 변수
+        var include_char = mutableListOf<Char>() // 문자 카운트 변수
+        for(i in inputPassword!!){
+            when (i.code) {
+                in 48..57 -> { // 0~9까지의 숫자인지 확인
                     include_number.add(i)
                 }
-                else if(i.code in 65..90 || i.code in 97..122){ // 대문자 또는 소문자 영어인지 확인
+                in 65..90, in 97..122 -> { // 대문자 또는 소문자 영어인지 확인
                     include_char.add(i)
                 }
-                else if(i.code in special_char_list){ // 사용가능한 특수문자인지 확인
+                in special_char_list -> { // 사용가능한 특수문자인지 확인
                     include_special_char.add(i)
                 }
-                else {
+                else -> {
                     Log.w("Lim", "사용 불가능한 특수문자 ${i.toChar()}가 사용되었습니다.")
                     return false
                 }
             }
-            if(include_char.size == 0){
-                Log.w("Lim", "문자가 포함되어야 합니다.")
-                return false
-            }
-            else if(include_number.size == 0){
-                Log.w("Lim", "숫자가 포함되어야 합니다.")
-                return false
-            }
-            else if(include_special_char.size == 0){
-                Log.w("Lim", "특수문자가 포함되어야 합니다.")
-                return false
-            }
+        }
+        if(include_char.size == 0){
+            Log.w("Lim", "문자가 포함되어야 합니다.")
+            return false
+        }
+        if(include_number.size == 0){
+            Log.w("Lim", "숫자가 포함되어야 합니다.")
+            return false
+        }
+        if(include_special_char.size == 0){
+            Log.w("Lim", "특수문자가 포함되어야 합니다.")
+            return false
         }
         return true
     }

@@ -61,7 +61,8 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     modifier = Modifier.fillMaxWidth(),
                     value = viewModel?.inputEmail ?: "",
                     onValueChange = { viewModel.setInputEmailText(it) },
-                    singleLine = true
+                    singleLine = true,
+                    placeholder = { Text(text = "광운대학교 웹메일") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 TextField(
@@ -70,7 +71,8 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     onValueChange = { viewModel.setInputPasswordText(it) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    placeholder = { Text(text = "비밀번호") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.trySignIn() }) {
@@ -91,7 +93,8 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     modifier = Modifier.fillMaxWidth(),
                     value = viewModel?.inputEmail ?: "",
                     onValueChange = { viewModel.setInputEmailText(it) },
-                    singleLine = true
+                    singleLine = true,
+                    placeholder = { Text("광운대학교 웹메일") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 TextField(
@@ -100,7 +103,18 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     onValueChange = { viewModel.setInputPasswordText(it) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    placeholder = { Text("비밀번호") }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel?.inputPasswordConfirm ?: "",
+                    onValueChange = { viewModel.setInputPasswordConfirmText(it) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    placeholder = { Text("비밀번호 확인") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
