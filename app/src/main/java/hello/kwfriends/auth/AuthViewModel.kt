@@ -26,15 +26,17 @@ class AuthViewModel: ViewModel(){
     var inputPassword by mutableStateOf<String?>("")
     var inputPasswordConfirm by mutableStateOf<String?>("")
 
-    fun setInputEmailText(text: String){
-        inputEmail = text
-    }
-    fun setInputPasswordText(text: String){
-        inputPassword = text
-    }
-    fun setInputPasswordConfirmText(text: String){
-        inputPasswordConfirm = text
-    }
+    var inputName by mutableStateOf<String?>("")
+    var inputStdNum by mutableStateOf<String?>("")
+    var inputMbti by mutableStateOf<String?>("")
+
+    fun setInputEmailText(text: String) { inputEmail = text }
+    fun setInputPasswordText(text: String) { inputPassword = text }
+    fun setInputPasswordConfirmText(text: String) { inputPasswordConfirm = text }
+
+    fun setInputNameText(text: String) { inputName = text }
+    fun setInputStdNumText(text: String) { inputStdNum = text }
+    fun setInputMbtiText(text: String) { inputMbti = text }
 
     fun changeLoginView(){
         inputEmail = ""

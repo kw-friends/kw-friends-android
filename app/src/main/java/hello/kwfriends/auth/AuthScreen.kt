@@ -184,17 +184,37 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 }
             }
         }
-        else -> {
-
+        is AuthUiState.InputUserInfo -> {
+            Column(modifier = modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.padding(5.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel?.inputStdNum ?: "",
+                    onValueChange = { viewModel.setInputStdNumText(it) },
+                    singleLine = true,
+                    placeholder = { Text("학번") }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel?.inputName ?: "",
+                    onValueChange = { viewModel.setInputNameText(it) },
+                    singleLine = true,
+                    placeholder = { Text("이름") }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel?.inputMbti ?: "",
+                    onValueChange = { viewModel.setInputMbtiText(it) },
+                    singleLine = true,
+                    placeholder = { Text("MBTI") }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
+                    Text(text = "입력 완료")
+                }
+            }
         }
-    }
-}
-@Composable
-fun MyButton() {
-    val context = LocalContext.current
-    val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/")) }
-
-    Button(onClick = { context.startActivity(intent) }) {
-        Text(text = "Navigate to Google!")
     }
 }
