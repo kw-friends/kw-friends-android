@@ -1,5 +1,7 @@
 package hello.kwfriends.auth
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -7,10 +9,12 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -134,6 +138,8 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 modifier = modifier.padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val context = LocalContext.current
+                val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
                 Spacer(modifier = Modifier.padding(10.dp))
                 Text(text = "사용자 정보:")
                 Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
@@ -142,6 +148,10 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 Button(modifier = Modifier.fillMaxWidth(),
                     onClick = { viewModel.confirmVerify() }) {
                     Text(text = "인증 완료")
+                }
+                Button(modifier = Modifier.fillMaxWidth(),
+                    onClick = { context.startActivity(intent) }) {
+                    Text(text = "광운대학교 웹메일 확인하러 가기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
                     onClick = { viewModel.tryEmailVerify() }) {
@@ -177,5 +187,14 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
         else -> {
 
         }
+    }
+}
+@Composable
+fun MyButton() {
+    val context = LocalContext.current
+    val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/")) }
+
+    Button(onClick = { context.startActivity(intent) }) {
+        Text(text = "Navigate to Google!")
     }
 }
