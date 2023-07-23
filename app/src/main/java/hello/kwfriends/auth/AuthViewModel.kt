@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.FilterQuality.Companion.Low
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -11,6 +12,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class AuthViewModel: ViewModel(){
+
+    private val special_char_list =  listOf( 33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126 ) //사용 가능한 특수문자 리스트
 
     var uiState by mutableStateOf<AuthUiState>(AuthUiState.Menu)
 
@@ -37,27 +40,29 @@ class AuthViewModel: ViewModel(){
     fun changeRegisterView(){
         inputEmail = ""
         inputPassword = ""
+        inputPasswordConfirm = ""
         uiState = AuthUiState.Register
     }
 
     fun tryRegister(){
-        if(inputEmail == null || inputPassword == null || inputPasswordConfirm == null){ //이메일, 비밀번호 null 체크
-            Log.w("Lim", "이메일 또는 비밀번호가 null입니다.")
+        if(inputEmail == "" || inputPassword == ""){ //이메일, 비밀번호 입력 확인
+            Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
             return
         }
-        if(inputEmail == "" || inputPassword == "" || inputPasswordConfirm == ""){ //이메일, 비밀번호 null 체크
-            Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
+        if(!emailRuleCheck(inputEmail!!)){
+            Log.w("Lim", "이메일 형식 검사 불통과")
+            return
+        }
+        if (!passwordSafetyCheck(inputPassword!!)) { // 안전성 검사
+            Log.w("Lim", "비밀번호 안전성 검사 불통과")
             return
         }
         if(inputPassword != inputPasswordConfirm){ // 비밀번호 확인 일치 검사
             Log.w("Lim", "비밀번호 확인 불일치")
             return
         }
-        if (passwordSafetyCheck(inputPassword!!) == false) { // 안전성 검사
-            Log.w("Lim", "비밀번호 안전성 검사 불통과")
-            return
-        }
-        Log.w("Lim", "비밀번호 안전성 검사 통과")
+        Log.w("Lim", "비밀번호 확인 일치")
+        Log.w("Lim", "이메일 등록 시도")
         uiState = AuthUiState.Loading
         Firebase.auth.createUserWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
             .addOnCompleteListener { task ->
@@ -71,7 +76,15 @@ class AuthViewModel: ViewModel(){
                     }
                 }
     }
-
+    fun emailRuleCheck(email: String): Boolean{ //광운대학교 웹메일 주소 형식인지 확인
+        val email_start_point = email.indexOf('@')
+        if(email_start_point != -1 && email.slice(IntRange(email_start_point, email.length-1)).lowercase() == "@kw.ac.kr"){
+            Log.w("Lim", "이메일 형식 검사 통과")
+            return true
+        }
+        Log.w("Lim", "이메일이 광운대학교 웹메일 형식에 어긋납니다.")
+        return false
+    }
     /*
     [ 비밀번호 규칙 참고자료 ]
     자바스크립트를 사용하여 비밀번호 기반 계정으로 Firebase에 인증하기 - https://firebase.google.com/docs/auth/web/password-auth?hl=ko
@@ -90,8 +103,7 @@ class AuthViewModel: ViewModel(){
             Log.w("Lim", "비밀번호는 16자리 이하여야 합니다.")
             return false
         }
-        val special_char_list =  listOf( 33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126 ) //사용 가능한 특수문자 리스트
-        val include_special_char = mutableListOf<Char>() // 특수문자 카운트 변수
+        var include_special_char = mutableListOf<Char>() // 특수문자 카운트 변수
         var include_number = mutableListOf<Char>() // 숫자 카운트 변수
         var include_char = mutableListOf<Char>() // 문자 카운트 변수
         for(i in inputPassword!!){
@@ -123,9 +135,9 @@ class AuthViewModel: ViewModel(){
             Log.w("Lim", "특수문자가 포함되어야 합니다.")
             return false
         }
+        Log.w("Lim", "비밀번호 안전성 검사 통과")
         return true
     }
-
     fun trySignIn(){
         Firebase.auth.signInWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
             .addOnCompleteListener { task ->
