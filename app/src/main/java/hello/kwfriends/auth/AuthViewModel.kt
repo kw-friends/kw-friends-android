@@ -1,5 +1,6 @@
 package hello.kwfriends.auth
 
+import android.content.ContentValues
 import android.content.Intent
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -14,6 +15,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class AuthViewModel: ViewModel(){
@@ -217,5 +220,20 @@ class AuthViewModel: ViewModel(){
         Log.w("Lim", "계정을 삭제했습니다.")
         logout()
     }
-
+    fun userInfoInputConfirm(){
+        val user_info = hashMapOf(
+            "name" to inputName,
+            "MBTI" to inputMbti?.lowercase(),
+            "std-num" to inputStdNum,
+            "Verified date" to FieldValue.serverTimestamp()
+        )
+        if(!userInfoInputCheck(user_info)) { return }
+        Firebase.firestore.collection("users").document(Firebase.auth.uid!!)
+            .set(user_info)
+            .addOnSuccessListener { Log.w(ContentValues.TAG, "유저 정보를 firestore에 성공적으로 저장했습니다.") }
+            .addOnFailureListener { e -> Log.w(ContentValues.TAG, "유저 정보를 firestore에 저장하는데 실패했습니다.", e) }
+    }
+    fun userInfoInputCheck(user_info: HashMap<String, Any?>): Boolean {
+        return true
+    }
 }

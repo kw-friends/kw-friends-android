@@ -27,6 +27,7 @@ import com.google.firebase.ktx.Firebase
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
     if(Firebase.auth?.currentUser != null){ // 로그인 이력 있으면 자동로그인
         if(Firebase.auth?.currentUser?.isEmailVerified == true){ //이메일 인증 검사
+            //유저 정보 입력 안돼있으면 입력창으로 이동
             viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
         }
         else{
