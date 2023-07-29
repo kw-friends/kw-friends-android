@@ -1,7 +1,9 @@
 package hello.kwfriends.auth
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -19,19 +21,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.auth.api.Auth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
-    if(Firebase.auth?.currentUser != null){ // 로그인 이력 있으면 자동로그인
-        if(Firebase.auth?.currentUser?.isEmailVerified == true){ //이메일 인증 검사
-            //유저 정보 입력 안돼있으면 입력창으로 이동
-            viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
-        }
-        else{
-            viewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+    if(viewModel.uiState != AuthUiState.Loading){
+        if(Firebase.auth?.currentUser != null){ // 로그인 이력 있으면 자동로그인
+            if(Firebase.auth?.currentUser?.isEmailVerified == true){ //이메일 인증 검사
+                if(viewModel.uiState != AuthUiState.InputUserInfo) {
+                    Log.w("Lim", "자동로그인")
+                    viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
+                }
+            }
+            else{
+                viewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+            }
         }
     }
     when(viewModel.uiState){
@@ -164,27 +172,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 }
             }
         }
-        is AuthUiState.SignInSuccess -> {
-            //Call After Sign in Screen
-
-            Column(
-                modifier = modifier.padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "사용자 정보:")
-                Text(text = "Uid: ${Firebase.auth.currentUser?.uid ?: "uid 가져오지 못함"}")
-                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
-                Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.logout() }) {
-                    Text(text = "로그아웃하기")
-                }
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.deleteUser() }) {
-                    Text(text = "회원탈퇴하기")
-                }
-            }
-        }
         is AuthUiState.InputUserInfo -> {
             Column(modifier = modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.padding(5.dp))
@@ -212,10 +199,35 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     placeholder = { Text("MBTI") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.userInfoInputConfirm() }) {
                     Text(text = "입력 완료")
                 }
             }
         }
+        is AuthUiState.SignInSuccess -> {
+            //Call After Sign in Screen
+            if(viewModel.userInputChecked == false){
+                viewModel.userInfoInputedCheck()
+            }
+
+            Column(
+                modifier = modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "사용자 정보:")
+                Text(text = "Uid: ${Firebase.auth.currentUser?.uid ?: "uid 가져오지 못함"}")
+                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
+                Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
+                Button(modifier = Modifier.fillMaxWidth(),
+                    onClick = { viewModel.logout() }) {
+                    Text(text = "로그아웃하기")
+                }
+                Button(modifier = Modifier.fillMaxWidth(),
+                    onClick = { viewModel.deleteUser() }) {
+                    Text(text = "회원탈퇴하기")
+                }
+            }
+        }
+
     }
 }

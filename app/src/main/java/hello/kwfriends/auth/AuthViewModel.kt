@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -32,6 +33,8 @@ class AuthViewModel: ViewModel(){
     var inputName by mutableStateOf<String?>("")
     var inputStdNum by mutableStateOf<String?>("")
     var inputMbti by mutableStateOf<String?>("")
+
+    var userInputChecked by mutableStateOf<Boolean?>(false)
 
     fun setInputEmailText(text: String) { inputEmail = text }
     fun setInputPasswordText(text: String) { inputPassword = text }
@@ -213,7 +216,6 @@ class AuthViewModel: ViewModel(){
                 }
             }
     }
-
     fun deleteUser(){
         uiState = AuthUiState.Loading
         Firebase.auth.currentUser?.delete()
@@ -227,13 +229,35 @@ class AuthViewModel: ViewModel(){
             "std-num" to inputStdNum,
             "Verified date" to FieldValue.serverTimestamp()
         )
-        if(!userInfoInputCheck(user_info)) { return }
+        if(!userInfoFormCheck(user_info)) { return }
         Firebase.firestore.collection("users").document(Firebase.auth.uid!!)
             .set(user_info)
-            .addOnSuccessListener { Log.w(ContentValues.TAG, "유저 정보를 firestore에 성공적으로 저장했습니다.") }
+            .addOnSuccessListener {
+                Log.w(ContentValues.TAG, "유저 정보를 firestore에 성공적으로 저장했습니다.")
+                uiState = AuthUiState.SignInSuccess
+            }
             .addOnFailureListener { e -> Log.w(ContentValues.TAG, "유저 정보를 firestore에 저장하는데 실패했습니다.", e) }
     }
-    fun userInfoInputCheck(user_info: HashMap<String, Any?>): Boolean {
+    fun userInfoFormCheck(user_info: HashMap<String, Any?>): Boolean {
         return true
+    }
+    fun userInfoInputedCheck(){
+        uiState = AuthUiState.Loading
+        Log.w("Lim", "firestore 유저 정보 정보 정상인지 확인중..")
+        Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.data != null) {
+                    Log.w(ContentValues.TAG, "data: ${document.data}")
+                    //정보에 이상있으면 정보 입력창으로 이동
+                    //userInfoFormCheck()
+                    Log.w(ContentValues.TAG, "유저 정보 정상 체크 확인완료")
+                    userInputChecked = true
+                    uiState = AuthUiState.SignInSuccess
+                } else {
+                    Log.w(ContentValues.TAG, "유저 정보가 존재하지 않아 정보 입력창으로 이동합니다.")
+                    uiState = AuthUiState.InputUserInfo
+                }
+            }
+            .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
     }
 }
