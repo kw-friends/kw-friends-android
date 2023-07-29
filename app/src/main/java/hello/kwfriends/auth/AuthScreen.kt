@@ -155,7 +155,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 Text(text = "이메일 인증 후 [인증 완료] 버튼을 눌러주세요.")
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.confirmVerify() }) {
+                    onClick = { viewModel.tryEmailVerify() }) {
                     Text(text = "인증 완료")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
@@ -163,7 +163,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     Text(text = "광운대학교 웹메일 확인하러 가기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.tryEmailVerify() }) {
+                    onClick = { viewModel.trySendAuthEmail() }) {
                     Text(text = "이메일 인증 재요청하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
@@ -199,7 +199,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     placeholder = { Text("MBTI") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.userInfoInputConfirm() }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.trySaveUserInfo() }) {
                     Text(text = "입력 완료")
                 }
             }
