@@ -97,6 +97,7 @@ class AuthViewModel: ViewModel(){
 
     //회원가입 시도 함수
     fun tryRegister(){
+        autoEmailLink()
         if(inputEmail == "" || inputPassword == ""){ //이메일, 비밀번호 입력 확인
             Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
             return
@@ -200,6 +201,7 @@ class AuthViewModel: ViewModel(){
     //로그인 시도 함수
     fun trySignIn(){
         uiState = AuthUiState.Loading
+        autoEmailLink()
         Firebase.auth.signInWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
             .addOnCompleteListener { task ->
                 if(task.isSuccessful){
@@ -218,6 +220,16 @@ class AuthViewModel: ViewModel(){
                     Log.w("Lim", "로그인 시도 실패")
                 }
             }
+    }
+
+    //이메일 @kw.ac.kr 자동으로 붙이기
+    fun autoEmailLink(){
+        if(inputEmail.indexOf('@') == -1 && inputEmail.lowercase() !in "kw.ac.kr"){ //@없음 && 실수로 @만 안 친 경우 아님:
+            inputEmail += "@kw.ac.kr"
+        }
+        else if(inputEmail.indexOf('@') == inputEmail.length - 1){ // @뒤를 안 친 경우:
+            inputEmail += "kw.ac.kr"
+        }
     }
 
     //로그아웃 함수
