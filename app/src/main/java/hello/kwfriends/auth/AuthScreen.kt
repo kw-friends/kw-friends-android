@@ -3,6 +3,7 @@ package hello.kwfriends.auth
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
+import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.CheckBox
 import androidx.activity.viewModels
@@ -43,6 +44,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.auth.ui.theme.KWFriendsTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
@@ -271,7 +276,11 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     Text(text = "로그아웃하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.deleteUser() }) {
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch{
+                            viewModel.deleteUser()
+                        }
+                    }) {
                     Text(text = "회원탈퇴하기")
                 }
             }
