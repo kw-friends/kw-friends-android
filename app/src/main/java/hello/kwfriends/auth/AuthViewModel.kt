@@ -200,6 +200,10 @@ class AuthViewModel: ViewModel(){
 
     //로그인 시도 함수
     fun trySignIn(){
+        if(inputEmail == "" || inputPassword == ""){
+            Log.w("Lim", "이메일 또는 비밀번호를 입력하지 않았습니다.")
+            return
+        }
         uiState = AuthUiState.Loading
         autoEmailLink()
         Firebase.auth.signInWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")

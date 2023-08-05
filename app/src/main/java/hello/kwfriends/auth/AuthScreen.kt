@@ -51,13 +51,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
-    if(viewModel.uiState != AuthUiState.Loading){
+    if(viewModel.uiState == AuthUiState.Menu){
         if(Firebase.auth?.currentUser != null){ // 로그인 된 상태일 때
             if(Firebase.auth?.currentUser?.isEmailVerified == true){ //이메일 인증 검사
-                if(viewModel.uiState != AuthUiState.InputUserInfo && viewModel.uiState != AuthUiState.InputUserDepartment) {
-                    Log.w("Lim", "로그인 기록 확인")
-                    viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
-                }
+                Log.w("Lim", "로그인 기록 확인")
+                viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
             }
             else{
                 viewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
@@ -285,6 +283,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 }
             }
         }
+
 
     }
 }
