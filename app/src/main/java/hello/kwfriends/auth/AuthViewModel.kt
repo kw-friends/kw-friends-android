@@ -233,7 +233,7 @@ class AuthViewModel: ViewModel(){
     }
 
     //로그아웃 함수
-    fun logout(){
+    fun signOut(){
         uiState = AuthUiState.Loading
         Firebase.auth.signOut()
         Log.w("Lim", "로그아웃")
@@ -322,7 +322,7 @@ class AuthViewModel: ViewModel(){
                 Log.w("Lim", "성공적으로 계정을 삭제했습니다.")
                 userInputChecked = false
                 userDepartAuto = false
-                logout()
+                signOut()
             }
             ?.addOnFailureListener {
                 Log.w("Lim", "계정을 삭제하는데 실패했습니다. error=${it}")
@@ -473,7 +473,11 @@ class AuthViewModel: ViewModel(){
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
                     Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
-                    if(!userInfoFormCheck(document.data!!)){
+                    if(document["state"] != "available"){ // 유저 상태 available 아니면 로그아웃
+                        signOut()
+                        Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
+                    }
+                    else if(!userInfoFormCheck(document.data!!)){
                         Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
                         uiState = AuthUiState.InputUserInfo
                     }

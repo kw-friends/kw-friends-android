@@ -196,7 +196,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     Text(text = "이메일 인증 재요청하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.logout() }) {
+                    onClick = { viewModel.signOut() }) {
                     Text(text = "로그아웃하기")
                 }
             }
@@ -272,7 +272,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
                 Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.logout() }) {
+                    onClick = { viewModel.signOut() }) {
                     Text(text = "로그아웃하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
