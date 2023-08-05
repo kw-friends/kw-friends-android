@@ -4,4 +4,5 @@
     <string name="title_activity_auth_screen">AuthScreen</string>
     <string name="title_activity_auth_ui_state">AuthUiState</string>
     <string name="title_activity_auth_view_model">AuthViewModel</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

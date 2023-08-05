@@ -7,6 +7,7 @@ sealed class AuthUiState{
     object Register: AuthUiState() // 회원가입 화면
     object RequestEmailVerify: AuthUiState() // 이메일 인증 요청 화면
     object InputUserInfo: AuthUiState() // 정보 입력 화면
+    object InputUserDepartment: AuthUiState() // 소속 입력 화면
     object SignInSuccess: AuthUiState() // 로그인 성공 화면
 
 }

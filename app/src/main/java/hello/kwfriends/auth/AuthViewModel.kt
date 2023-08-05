@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
+import java.util.concurrent.Flow
 
 class AuthViewModel: ViewModel(){
     //비밀번호로 입력 가능한 특수문자 목록
@@ -37,21 +38,34 @@ class AuthViewModel: ViewModel(){
     //유저 화면 상태 저장 변수
     var uiState by mutableStateOf<AuthUiState>(AuthUiState.Menu)
 
-    var userInputChecked by mutableStateOf<Boolean?>(false) //firestore 유저 정보 확인 여부
+    //firestore 유저 정보 확인 여부
+    var userInputChecked by mutableStateOf<Boolean>(false)
+
+    //유저 소속 자동 확인 함수 실행 여부
+    var userDepartAuto by mutableStateOf<Boolean>(false)
+
+    //아이디저장 체크 여부
+    var idSaveChecked by mutableStateOf<Boolean>(false)
+    //자동로그인 체크 여부
+    var autoSignInChecked by mutableStateOf<Boolean>(false)
 
     // -- TextField 입력 변수, 함수 --
-    var inputEmail by mutableStateOf<String?>("")
-    var inputPassword by mutableStateOf<String?>("")
-    var inputPasswordConfirm by mutableStateOf<String?>("")
-    var inputName by mutableStateOf<String?>("")
-    var inputStdNum by mutableStateOf<String?>("")
-    var inputMbti by mutableStateOf<String?>("")
+    var inputEmail by mutableStateOf<String>("")
+    var inputPassword by mutableStateOf<String>("")
+    var inputPasswordConfirm by mutableStateOf<String>("")
+    var inputName by mutableStateOf<String>("")
+    var inputStdNum by mutableStateOf<String>("")
+    var inputMbti by mutableStateOf<String>("")
+    var inputCollege by mutableStateOf<String>("")
+    var inputDepartment by mutableStateOf<String>("")
     fun setInputEmailText(text: String) { inputEmail = text }
     fun setInputPasswordText(text: String) { inputPassword = text }
     fun setInputPasswordConfirmText(text: String) { inputPasswordConfirm = text }
     fun setInputNameText(text: String) { inputName = text }
     fun setInputStdNumText(text: String) { inputStdNum = text }
     fun setInputMbtiText(text: String) { inputMbti = text }
+    fun setInputCollegeText(text: String) { inputCollege = text }
+    fun setInputDepartmentText(text: String) { inputDepartment = text }
 
     // -- 뷰 변환 함수 --
     fun changeLoginView(){
@@ -175,6 +189,11 @@ class AuthViewModel: ViewModel(){
         return true
     }
 
+//    Sharedpreferences 저장 함수, 저장 경로는 data/data/어플리케이션 패키지 이름/shared_prefs/shared객체 key 값/
+    fun savePreferenceDataStore(key: String, value: String){
+
+    }
+
     //로그인 시도 함수
     fun trySignIn(){
         uiState = AuthUiState.Loading
@@ -267,19 +286,40 @@ class AuthViewModel: ViewModel(){
                 uiState = AuthUiState.Menu
             }
     }
-    
+
+    //학번으로 유저 소속 인식
+    fun userDepartmentAutoRecognition(){
+        userDepartAuto = true
+        Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.data != null) {
+                    Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
+                    val tempStdNum = document["std-num"].toString() //2023203045
+                    inputCollege = collegeList[tempStdNum[4]]?:""
+                    inputDepartment = departmentList[collegeList[tempStdNum[4]]]?.get(tempStdNum.slice(IntRange(5, 6)).toString()) ?: ""
+                    Log.w("Lim", "단과대:${inputCollege}, 학부:${inputDepartment}")
+                } else {
+                    Log.w(ContentValues.TAG, "유저 정보가 존재하지 않음.")
+                }
+            }
+            .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
+    }
+
     //유저 정보 firestore에 저장 시도 함수
     fun trySaveUserInfo(){
-        val user_info = mapOf(
+        val userInfo = mapOf(
             "name" to inputName,
             "mbti" to inputMbti?.lowercase(),
             "std-num" to inputStdNum,
-            "verified date" to FieldValue.serverTimestamp()
+            "verified date" to FieldValue.serverTimestamp(),
+            "college" to "",
+            "department" to ""
         )
-        if(!userInfoFormCheck(user_info)) { return }
+        if(!userInfoFormCheck(userInfo)) { return }
         uiState = AuthUiState.Loading
         Firebase.firestore.collection("users").document(Firebase.auth.uid!!)
-            .set(user_info)
+            .set(userInfo)
             .addOnSuccessListener {
                 Log.w(ContentValues.TAG, "유저 정보를 firestore에 성공적으로 저장했습니다.")
                 uiState = AuthUiState.SignInSuccess
@@ -290,14 +330,34 @@ class AuthViewModel: ViewModel(){
             }
 
     }
+
+    //유저 소속 정보 firesotre에 저장 시도 함수
+    fun trySaveUserDepartment(){
+        val userInfo = mapOf(
+            "college" to inputCollege,
+            "department" to inputDepartment,
+        )
+        if(!userInfoDepartmentCheck(userInfo)) { return }
+        uiState = AuthUiState.Loading
+        Firebase.firestore.collection("users").document(Firebase.auth.uid!!)
+            .update(userInfo)
+            .addOnSuccessListener {
+                Log.w(ContentValues.TAG, "유저 정보를 firestore에 성공적으로 저장했습니다.")
+                uiState = AuthUiState.SignInSuccess
+            }
+            .addOnFailureListener { e ->
+                Log.w(ContentValues.TAG, "유저 정보를 firestore에 저장하는데 실패했습니다.", e)
+                uiState = AuthUiState.Menu
+            }
+    }
     
     //유저가 입력한 유저 정보 형식 확인 함수
     //학번: 2023(입학년도)/2(단과대번호)/03(학부번호)/045(학생번호)
-    fun userInfoFormCheck(user_info: Map<String, Any?>): Boolean {
+    fun userInfoFormCheck(userInfo: Map<String, Any?>): Boolean {
         updateMaxStdNum() // 가능한 최대 입학년도 업데이트
-        val name = user_info["name"].toString()
-        val mbti = user_info["mbti"].toString()
-        val stdNum = user_info["std-num"].toString()
+        val name = userInfo["name"].toString()
+        val mbti = userInfo["mbti"].toString()
+        val stdNum = userInfo["std-num"].toString()
         if(name == ""){
             Log.w("Lim", "유저 이름 입력 안됨.")
             return false
@@ -335,6 +395,21 @@ class AuthViewModel: ViewModel(){
         }
         return true
     }
+
+    //유저 소속(단과대, 학부) 체크
+    fun userInfoDepartmentCheck(userDepartment: Map<String, Any?>): Boolean {
+        val stdCollege = userDepartment["college"].toString()
+        val stdDepartment = userDepartment["department"].toString()
+        if(stdCollege == ""){
+            Log.w("Lim", "단과대 입력 안됨.")
+            return false
+        }
+        if(stdDepartment == ""){
+            Log.w("Lim", "학부 입력 안됨.")
+            return false
+        }
+        return true
+    }
     
     //firestore에 저장되어있는 유저 정보 확인 함수
     fun userInfoInputedCheck(){
@@ -348,7 +423,12 @@ class AuthViewModel: ViewModel(){
                     if(!userInfoFormCheck(document.data!!)){
                         Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
                         uiState = AuthUiState.InputUserInfo
-                    } else {
+                    }
+                    else if(!userInfoDepartmentCheck(document.data!!)){
+                        Log.w(ContentValues.TAG, "유저 소속 정보 비정상. 소속 정보 입력 화면으로 이동.")
+                        uiState = AuthUiState.InputUserDepartment
+                    }
+                    else {
                         Log.w(ContentValues.TAG, "유저 정보 정상 체크 확인완료")
                         userInputChecked = true
                         uiState = AuthUiState.SignInSuccess
@@ -360,4 +440,6 @@ class AuthViewModel: ViewModel(){
             }
             .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
     }
+
+
 }
