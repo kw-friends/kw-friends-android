@@ -6,16 +6,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.tasks.Tasks.await
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.firestoreManager.PostManager.db
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
-import java.util.concurrent.Flow
+
 
 class AuthViewModel: ViewModel(){
     //비밀번호로 입력 가능한 특수문자 목록
@@ -102,7 +107,7 @@ class AuthViewModel: ViewModel(){
 
     //회원가입 시도 함수
     fun tryRegister(){
-        autoEmailLink()
+        inputEmail = autoEmailLink(inputEmail)
         if(inputEmail == "" || inputPassword == ""){ //이메일, 비밀번호 입력 확인
             Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
             return
@@ -204,41 +209,43 @@ class AuthViewModel: ViewModel(){
     }
 
     //로그인 시도 함수
-    fun trySignIn(){
-        if(inputEmail == "" || inputPassword == ""){
+    fun signIn(email: String, password: String, successUiState: AuthUiState){
+        if(email == "" || password == ""){
             Log.w("Lim", "이메일 또는 비밀번호를 입력하지 않았습니다.")
             return
         }
+        val lastUiState = uiState
         uiState = AuthUiState.Loading
-        autoEmailLink()
-        Firebase.auth.signInWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
+        Firebase.auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if(task.isSuccessful){
                     Log.w("Lim", "로그인 시도 성공")
                     if(Firebase.auth.currentUser?.isEmailVerified!!){
-                        uiState = AuthUiState.SignInSuccess
+                        uiState = successUiState
                         Log.w("Lim", "로그인 성공!")
                     }
                     else{
-                        uiState = AuthUiState.SignIn
+                        uiState = lastUiState
                         Log.w("Lim", "로그인 실패")
                     }
                 }
                 else{
-                    uiState = AuthUiState.SignIn
+                    uiState = lastUiState
                     Log.w("Lim", "로그인 시도 실패")
                 }
             }
     }
 
     //이메일 @kw.ac.kr 자동으로 붙이기
-    fun autoEmailLink(){
-        if(inputEmail.indexOf('@') == -1 && inputEmail.lowercase() !in "kw.ac.kr"){ //@없음 && 실수로 @만 안 친 경우 아님:
-            inputEmail += "@kw.ac.kr"
+    fun autoEmailLink(email: String): String{
+        var result = ""
+        if(email.indexOf('@') == -1 && email.lowercase() !in "kw.ac.kr"){ //@없음 && 실수로 @만 안 친 경우 아님:
+            result = email + "@kw.ac.kr"
         }
-        else if(inputEmail.indexOf('@') == inputEmail.length - 1){ // @뒤를 안 친 경우:
-            inputEmail += "kw.ac.kr"
+        else if(email.indexOf('@') == email.length - 1){ // @뒤를 안 친 경우:
+            result = email + "kw.ac.kr"
         }
+        return result
     }
 
     //로그아웃 함수
@@ -295,73 +302,79 @@ class AuthViewModel: ViewModel(){
                 }
             }
     }
-    
+
+    //사용자 재인증 함수
+    suspend fun reAuth(email: String, password: String): Boolean{
+        var result = false
+        val credential = EmailAuthProvider.getCredential(email, password)
+        Firebase.auth.currentUser!!.reauthenticate(credential)
+            .addOnCompleteListener { sendTask ->
+                result = sendTask.isSuccessful
+                Log.w("Lim", "result:$result")
+            }.await()
+        Log.w("Lim", "result return")
+        return result
+    }
+
     //회원탈퇴 함수
-    suspend fun deleteUser(){
+    fun deleteUser(){
         uiState = AuthUiState.Loading
-        var tempSignInSuccess = false
         Log.w("Lim", "회원탈퇴시 재로그인 필요")
+        inputEmail = autoEmailLink(inputEmail)
         //재로그인
-        autoEmailLink()
         try{
-            Firebase.auth.signInWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
+            //재인증
+            Firebase.auth.signInWithEmailAndPassword(inputEmail, inputPassword)
                 .addOnSuccessListener {
-                    tempSignInSuccess = true
                     Log.w("Lim", "재로그인 성공")
+                    //유저 상태 불러오기
+                    var lastState: String = ""
+                    Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+                        .get()
+                        .addOnSuccessListener { document ->
+                            if (document != null && document.data != null) {
+                                Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
+                                lastState = document["state"].toString()
+                                Log.w("Lim", "유저 계정 이전 상태 불러옴: ${lastState}")
+                                //유저 상태 삭제됨으로 변경
+                                Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+                                    .set(mapOf("state" to "deleted"), SetOptions.merge())
+                                    .addOnSuccessListener {
+                                        Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경했습니다.")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경하지 못했습니다.", e)
+                                    }
+                                //회원탈퇴
+                                Firebase.auth.currentUser?.delete()
+                                    ?.addOnSuccessListener {
+                                        Log.w("Lim", "성공적으로 계정을 삭제했습니다.")
+                                        userInputChecked = false
+                                        userDepartAuto = false
+                                        signOut()
+                                    }
+                                    ?.addOnFailureListener {
+                                        Log.w("Lim", "계정을 삭제하는데 실패했습니다. error=${it}")
+                                        //유저 상태 롤백
+                                        Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+                                            .set(mapOf("state" to lastState), SetOptions.merge())
+                                            .addOnSuccessListener {
+                                                Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백했습니다.")
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백하지 못했습니다.", e)
+                                            }
+                                        uiState = AuthUiState.Menu
+                                    }
+                            } else {
+                                Log.w(ContentValues.TAG, "유저 계정 이전 상태 불러오기 실패.")
+                            }
+                        }
+                        .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
+
                 }
                 .addOnFailureListener {
                     Log.w("Lim", "재로그인 실패")
-                }
-                .await()
-            if(!tempSignInSuccess){
-                uiState = AuthUiState.SignInSuccess
-                return
-            }
-            //유저 상태 불러오기
-            var lastState: String = ""
-            Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.data != null) {
-                        Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
-                        lastState = document["state"].toString()
-                        Log.w("Lim", "유저 계정 이전 상태 불러옴: ${lastState}")
-                    } else {
-                        Log.w(ContentValues.TAG, "유저 계정 이전 상태 불러오기 실패.")
-                    }
-                }
-                .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
-                .await()
-            //유저 상태 삭제됨으로 변경
-            Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
-                .set(mapOf("state" to "deleted"), SetOptions.merge())
-                .addOnSuccessListener {
-                    Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경했습니다.")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경하지 못했습니다.", e)
-                }
-                .await()
-            //회원탈퇴
-            Firebase.auth.currentUser?.delete()
-                ?.addOnSuccessListener {
-                    Log.w("Lim", "성공적으로 계정을 삭제했습니다.")
-                    userInputChecked = false
-                    userDepartAuto = false
-                    signOut()
-                }
-                ?.addOnFailureListener {
-                    Log.w("Lim", "계정을 삭제하는데 실패했습니다. error=${it}")
-                    //유저 상태 롤백
-                    Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
-                        .set(mapOf("state" to lastState), SetOptions.merge())
-                        .addOnSuccessListener {
-                            Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백했습니다.")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백하지 못했습니다.", e)
-                        }
-                    uiState = AuthUiState.Menu
                 }
         }catch (e: Exception){
             Log.w("Lim", "오류:${e}")

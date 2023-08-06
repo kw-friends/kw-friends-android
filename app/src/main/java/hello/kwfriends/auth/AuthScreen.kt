@@ -109,17 +109,23 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     placeholder = { Text(text = "비밀번호") }
                 )
-                Spacer(modifier = Modifier.padding(5.dp))
+                Spacer(modifier = Modifier.padding(2.dp))
                 Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
                         Checkbox(checked = viewModel.idSaveChecked, onCheckedChange = { viewModel.idSaveChecked = !viewModel.idSaveChecked })
                         Text(text = "아이디 저장", modifier = Modifier.clickable { viewModel.idSaveChecked = !viewModel.idSaveChecked })
                         Checkbox(checked = viewModel.autoSignInChecked, onCheckedChange = { viewModel.autoSignInChecked = !viewModel.autoSignInChecked })
                         Text(text = "자동 로그인", modifier = Modifier.clickable { viewModel.autoSignInChecked = !viewModel.autoSignInChecked })
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Text(text = "ID / Password 찾기", modifier = Modifier.clickable {  })
                     }
                 }
                 Spacer(modifier = Modifier.padding(5.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.trySignIn() }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    CoroutineScope(Dispatchers.IO).launch { CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.signIn(viewModel.autoEmailLink(viewModel.inputEmail?:""), viewModel.inputPassword?:"", AuthUiState.SignInSuccess) }
+                    }
+                }) {
                     Text(text = "로그인하기")
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
@@ -303,9 +309,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    CoroutineScope(Dispatchers.IO).launch{
-                        viewModel.deleteUser()
-                    }
+                    viewModel.deleteUser()
                 }) {
                     Text(text = "회원탈퇴하기")
                 }
