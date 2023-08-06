@@ -36,7 +36,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.auth.api.Auth
 import com.google.firebase.auth.ktx.auth
@@ -274,12 +276,42 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel){
                     Text(text = "로그아웃하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        CoroutineScope(Dispatchers.IO).launch{
-                            viewModel.deleteUser()
-                        }
-                    }) {
+                    onClick = { viewModel.changeDeleteUserView() }) {
                     Text(text = "회원탈퇴하기")
+                }
+            }
+        }
+        is AuthUiState.DeleteUser -> {
+            Column(modifier = modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.padding(5.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel.inputEmail ?: "",
+                    onValueChange = { viewModel.setInputEmailText(it) },
+                    singleLine = true,
+                    placeholder = { Text(text = "광운대학교 웹메일") }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel.inputPassword,
+                    onValueChange = { viewModel.setInputPasswordText(it) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    placeholder = { Text(text = "비밀번호") }
+                )
+                Spacer(modifier = Modifier.padding(5.dp))
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    CoroutineScope(Dispatchers.IO).launch{
+                        viewModel.deleteUser()
+                    }
+                }) {
+                    Text(text = "회원탈퇴하기")
+                }
+                Spacer(modifier = Modifier.padding(2.dp))
+                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.uiState = AuthUiState.SignInSuccess }) {
+                    Text(text = "이전화면으로")
                 }
             }
         }

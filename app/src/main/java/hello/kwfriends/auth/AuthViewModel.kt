@@ -82,6 +82,11 @@ class AuthViewModel: ViewModel(){
         inputPasswordConfirm = ""
         uiState = AuthUiState.Register
     }
+    fun changeDeleteUserView(){
+        inputEmail = ""
+        inputPassword = ""
+        uiState = AuthUiState.DeleteUser
+    }
 
     //가능한 최대 입학년도 갱신(업데이트) 함수
     fun updateMaxStdNum(){
@@ -294,53 +299,74 @@ class AuthViewModel: ViewModel(){
     //회원탈퇴 함수
     suspend fun deleteUser(){
         uiState = AuthUiState.Loading
-        var lastState: String = ""
-        //유저 상태 불러오기
-        Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
-                    lastState = document["state"].toString()
-                    Log.w("Lim", "유저 계정 이전 상태 불러옴: ${lastState}")
-                } else {
-                    Log.w(ContentValues.TAG, "유저 계정 이전 상태 불러오기 실패.")
+        var tempSignInSuccess = false
+        Log.w("Lim", "회원탈퇴시 재로그인 필요")
+        //재로그인
+        autoEmailLink()
+        try{
+            Firebase.auth.signInWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
+                .addOnSuccessListener {
+                    tempSignInSuccess = true
+                    Log.w("Lim", "재로그인 성공")
                 }
+                .addOnFailureListener {
+                    Log.w("Lim", "재로그인 실패")
+                }
+                .await()
+            if(!tempSignInSuccess){
+                uiState = AuthUiState.SignInSuccess
+                return
             }
-            .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
-            .await()
-        //유저 상태 삭제됨으로 변경
-        uiState = AuthUiState.Loading
-        Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
-            .set(mapOf("state" to "deleted"), SetOptions.merge())
-            .addOnSuccessListener {
-                Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경했습니다.")
-            }
-            .addOnFailureListener { e ->
-                Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경하지 못했습니다.", e)
-            }
-            .await()
-        //회원탈퇴
-        Firebase.auth.currentUser?.delete()
-            ?.addOnSuccessListener {
-                Log.w("Lim", "성공적으로 계정을 삭제했습니다.")
-                userInputChecked = false
-                userDepartAuto = false
-                signOut()
-            }
-            ?.addOnFailureListener {
-                Log.w("Lim", "계정을 삭제하는데 실패했습니다. error=${it}")
-                //유저 상태 롤백
-                Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
-                    .set(mapOf("state" to lastState), SetOptions.merge())
-                    .addOnSuccessListener {
-                        Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백했습니다.")
+            //유저 상태 불러오기
+            var lastState: String = ""
+            Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.data != null) {
+                        Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
+                        lastState = document["state"].toString()
+                        Log.w("Lim", "유저 계정 이전 상태 불러옴: ${lastState}")
+                    } else {
+                        Log.w(ContentValues.TAG, "유저 계정 이전 상태 불러오기 실패.")
                     }
-                    .addOnFailureListener { e ->
-                        Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백하지 못했습니다.", e)
-                    }
-                uiState = AuthUiState.Menu
-            }
+                }
+                .addOnFailureListener { e-> Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e) }
+                .await()
+            //유저 상태 삭제됨으로 변경
+            Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+                .set(mapOf("state" to "deleted"), SetOptions.merge())
+                .addOnSuccessListener {
+                    Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경했습니다.")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(ContentValues.TAG, "유저 상태를 deleted로 변경하지 못했습니다.", e)
+                }
+                .await()
+            //회원탈퇴
+            Firebase.auth.currentUser?.delete()
+                ?.addOnSuccessListener {
+                    Log.w("Lim", "성공적으로 계정을 삭제했습니다.")
+                    userInputChecked = false
+                    userDepartAuto = false
+                    signOut()
+                }
+                ?.addOnFailureListener {
+                    Log.w("Lim", "계정을 삭제하는데 실패했습니다. error=${it}")
+                    //유저 상태 롤백
+                    Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid!!)
+                        .set(mapOf("state" to lastState), SetOptions.merge())
+                        .addOnSuccessListener {
+                            Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백했습니다.")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(ContentValues.TAG, "유저 상태를 ${lastState}로 롤백하지 못했습니다.", e)
+                        }
+                    uiState = AuthUiState.Menu
+                }
+        }catch (e: Exception){
+            Log.w("Lim", "오류:${e}")
+            uiState = AuthUiState.SignInSuccess
+        }
     }
 
     //학번으로 유저 소속 인식
