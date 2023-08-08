@@ -1,6 +1,5 @@
 package hello.kwfriends.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hello.kwfriends.screens.home.GatheringCard
+import hello.kwfriends.screens.myPage.UserInfoCard
 import hello.kwfriends.screens.settings.SettingsScreen
 
 @Composable
@@ -62,7 +62,7 @@ fun MainScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxHeight()
                 ) {
-                    Text(text = "마ㅡ이페이지마ㅡ이페이지마ㅡ이페이지마ㅡ이페이지", modifier = Modifier.padding(40.dp))
+                    UserInfoCard(userName = "어승경", admissionyear = 23, major = "소프트웨어학부", grade = 1)
                     BottomNavigationBar(viewModel = viewModel)
                 }
             }
