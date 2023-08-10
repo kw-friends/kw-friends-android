@@ -1,5 +1,6 @@
 package hello.kwfriends.auth
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -30,10 +31,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firestoreManager.userDataManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
     if (viewModel.uiState == AuthUiState.Menu) {
@@ -136,13 +140,12 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(5.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewModel.signIn(
-                                viewModel.autoEmailLink(viewModel.inputEmail ?: ""),
-                                viewModel.inputPassword ?: "",
-                                AuthUiState.SignInSuccess
-                            )
-                        }
+                        viewModel.signIn(
+                            viewModel.autoEmailLink(viewModel.inputEmail ?: ""),
+                            viewModel.inputPassword ?: "",
+                            AuthUiState.SignInSuccess,
+                            AuthUiState.SignIn
+                        )
                     }
                 }) {
                     Text(text = "로그인하기")
@@ -268,7 +271,9 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySaveUserInfo() }) {
+                    onClick = {
+                        CoroutineScope(Dispatchers.IO).launch { viewModel.trySaveUserInfo() }
+                    }) {
                     Text(text = "입력 완료")
                 }
             }
@@ -276,7 +281,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
 
         is AuthUiState.InputUserDepartment -> {
             if (!viewModel.userDepartAuto) {
-                viewModel.userDepartmentAutoRecognition()
+                CoroutineScope(Dispatchers.IO).launch { viewModel.userDepartmentAutoRecognition() }
             } // 학번으로 유저 소속 자동인식
 
             Column(
@@ -302,7 +307,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySaveUserDepartment() }) {
+                    onClick = { CoroutineScope(Dispatchers.IO).launch {  viewModel.trySaveUserDepartment() } }) {
                     Text(text = "입력 완료")
                 }
             }
@@ -310,7 +315,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
 
         is AuthUiState.SignInSuccess -> {
             if (!viewModel.userInputChecked) {
-                viewModel.userInfoInputedCheck()
+                CoroutineScope(Dispatchers.Main).launch { viewModel.userInfoInputedCheck() }
             } //유저 정보 정상인지 확인
 
             //로그인 성공 후 화면
@@ -358,7 +363,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    viewModel.deleteUser()
+                    CoroutineScope(Dispatchers.IO).launch { viewModel.deleteUser() }
                 }) {
                     Text(text = "회원탈퇴하기")
                 }
