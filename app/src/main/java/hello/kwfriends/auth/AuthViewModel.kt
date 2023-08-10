@@ -10,15 +10,12 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebaseManager.UserAuth
 import hello.kwfriends.firestoreManager.UserDataManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -159,8 +156,8 @@ class AuthViewModel : ViewModel() {
         Log.w("Lim", "최대 입학년도가 ${maxAdmissionYear}년으로 설정되었습니다.")
     }
 
-    //회원가입 시도 함수
-    fun tryRegister() {
+    //회원가입 함수
+    suspend fun tryRegister() {
         inputEmail = autoEmailLink(inputEmail)
         if (inputEmail == "" || inputPassword == "") { //이메일, 비밀번호 입력 확인
             Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
@@ -181,17 +178,10 @@ class AuthViewModel : ViewModel() {
         Log.w("Lim", "비밀번호 확인 일치")
         Log.w("Lim", "이메일 등록 시도")
         uiState = AuthUiState.Loading
-        Firebase.auth.createUserWithEmailAndPassword(inputEmail ?: "", inputPassword ?: "")
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) { //이메일 등록 성공
-                    Log.w("Lim", "이메일 등록에 성공했습니다. 인증 메일을 전송합니다.")
-                    trySendAuthEmail()
-                    uiState = AuthUiState.Menu
-                } else {
-                    uiState = AuthUiState.Menu
-                    Log.w("Lim", "이메일 등록에 실패했습니다.")
-                }
-            }
+        if(UserAuth.createUser(inputEmail, inputPassword)){
+            trySendAuthEmail()
+        }
+        uiState = AuthUiState.Menu
     }
 
     //입력한 이메일 형식 확인 함수
@@ -207,13 +197,6 @@ class AuthViewModel : ViewModel() {
         return false
     }
 
-    /* [ 비밀번호 규칙 참고자료 ]
-    자바스크립트를 사용하여 비밀번호 기반 계정으로 Firebase에 인증하기 - https://firebase.google.com/docs/auth/web/password-auth?hl=ko
-    IBM Security Identity Manager(비밀번호 보안 수준 규칙) - https://www.ibm.com/docs/ko/sim/7.0.1.13?topic=rules-password-strength
-    한국보건산업진흥원 비밀번호 생성규칙 안내 - https://www.khidi.or.kr/includes/password.jsp
-    한국인터넷진흥원 패스워드 선택 및 이용 안내서 - https://www.kisa.or.kr/2060305/form?postSeq=14&lang_type=KO#fnPostAttachDownload
-    microsoft Create and use strong passwords - https://support.microsoft.com/en-us/windows/create-and-use-strong-passwords-c5cebb49-8c53-4f5e-2bc4-fe357ca048eb
-    Password Strength Checker - https://www.security.org/how-secure-is-my-password/ */
     //비밀번호 규칙 확인 함수
     fun passwordSafetyCheck(password: String): Boolean {
         if (inputPassword?.length ?: 0 < 8) { // 최대길이
@@ -263,41 +246,15 @@ class AuthViewModel : ViewModel() {
         return true
     }
 
-    //    Sharedpreferences 저장 함수, 저장 경로는 data/data/어플리케이션 패키지 이름/shared_prefs/shared객체 key 값/
-    fun savePreferenceDataStore(key: String, value: String) {
-
-    }
-
     //로그인 시도 함수
-    suspend fun signIn(email: String, password: String, successUiState: AuthUiState, failedUiState: AuthUiState): Boolean {
-        if (email == "" || password == "") {
-            Log.w("Lim", "이메일 또는 비밀번호를 입력하지 않았습니다.")
-            uiState = failedUiState
-            return false
-        }
+    suspend fun trySignIn() {
         uiState = AuthUiState.Loading
-        val result = suspendCoroutine<Boolean> { continuation ->
-            Firebase.auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.w("Lim", "로그인 시도 성공")
-                        if (Firebase.auth.currentUser?.isEmailVerified!!) {
-                            uiState = successUiState
-                            Log.w("Lim", "로그인 성공!")
-                            continuation.resume(true)
-                        } else {
-                            uiState = failedUiState
-                            Log.w("Lim", "로그인 실패")
-                            continuation.resume(false)
-                        }
-                    } else {
-                        uiState = failedUiState
-                        Log.w("Lim", "로그인 시도 실패")
-                        continuation.resume(false)
-                    }
-                }
+        if(UserAuth.signIn(autoEmailLink(inputEmail), inputPassword)){
+            uiState = AuthUiState.SignInSuccess
         }
-        return result
+        else{
+            uiState = AuthUiState.Menu
+        }
     }
 
     //이메일 @kw.ac.kr 자동으로 붙이기
@@ -308,32 +265,26 @@ class AuthViewModel : ViewModel() {
         } else if (email.indexOf('@') == email.length - 1) { // @뒤를 안 친 경우:
             result = email + "kw.ac.kr"
         }
+        else{
+            result = email
+        }
         return result
     }
 
     //로그아웃 함수
-    fun signOut() {
+    fun trySignOut() {
         uiState = AuthUiState.Loading
-        Firebase.auth.signOut()
-        Log.w("Lim", "로그아웃")
+        UserAuth.signOut()
         uiState = AuthUiState.Menu
     }
 
     //인증 이메일 전송 시도 함수
-    fun trySendAuthEmail() {
+    suspend fun trySendAuthEmail() {
         uiState = AuthUiState.Loading
         if (Firebase.auth?.currentUser?.email != null) {
-            Firebase.auth.currentUser?.sendEmailVerification()
-                ?.addOnCompleteListener { sendTask ->
-                    if (sendTask.isSuccessful) {
-                        uiState = AuthUiState.Menu
-                        Log.w("Lim", "인증 메일 전송에 성공했습니다.")
-                    } else {
-                        uiState = AuthUiState.Menu
-                        Log.w("Lim", "인증 메일 전송에 실패했습니다.")
-                    }
-                }
+            UserAuth.sendAuthEmail()
         } else Log.w("Lim", "이메일이 등록되지 않아 인증메일을 전송할 수 없습니다.")
+        uiState = AuthUiState.Menu
     }
 
     //이메일 인증 화면 이동 함수
@@ -343,39 +294,19 @@ class AuthViewModel : ViewModel() {
     }
 
     //이메일 인증 확인 시도 함수
-    fun tryEmailVerify() {
+    suspend fun tryEmailVerify() {
         uiState = AuthUiState.Loading
-        FirebaseAuth.getInstance().currentUser!!.reload()
-            .addOnCompleteListener { sendTask ->
-                if (sendTask.isSuccessful) {
-                    if (Firebase.auth.currentUser?.isEmailVerified == true) {
-                        Firebase.auth.signOut()
-                        changeLoginView()
-                        Log.w("Lim", "이메일 인증 완료, 로그인하세요")
-                    } else {
-                        uiState = AuthUiState.Menu
-                        Log.w("Lim", "이메일 인증이 되지 않았습니다.")
-                    }
-                } else {
-                    Log.w("Lim", "리로드 실패")
-                }
+        if(UserAuth.reload()) {
+            if (Firebase.auth.currentUser?.isEmailVerified == true) {
+                UserAuth.signOut()
+                changeLoginView()
+                Log.w("Lim", "이메일 인증 완료, 로그인하세요")
+            } else {
+                uiState = AuthUiState.Menu
+                Log.w("Lim", "이메일 인증이 되지 않았습니다.")
             }
-    }
-
-    //사용자 재인증 함수
-    suspend fun reAuth(email: String, password: String) {
-        val credential = EmailAuthProvider.getCredential(email, password)
-        suspendCoroutine<Unit> { continuation ->
-            Firebase.auth.currentUser!!.reauthenticate(credential)
-                .addOnSuccessListener {
-                    Log.w("Lim", "재인증 성공")
-                    continuation.resume(Unit)
-                }
-                .addOnFailureListener {
-                    Log.w("Lim", "재인증 실패")
-                    continuation.resumeWithException(it)
-                }
         }
+        else{ uiState = AuthUiState.Menu }
     }
 
     //회원탈퇴 함수
@@ -383,37 +314,36 @@ class AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         Log.w("Lim", "회원탈퇴시 재로그인 필요")
         val email = autoEmailLink(inputEmail)
-
         //재로그인
-        if(!signIn(email, inputPassword, AuthUiState.Loading, AuthUiState.DeleteUser)) { return }
-
+        if(!UserAuth.signIn(email, inputPassword)) {
+            uiState = AuthUiState.Menu
+            return
+        }
         //유저 현재 상태 불러오기
         var lastState: String
         try {
             lastState = UserDataManager.getUserData()?.get("state").toString()
         } catch (e:Exception){
+            uiState = AuthUiState.Menu
             return
         }
-
         //유저 상태 삭제됨으로 변경
-        if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) { return }
+        if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) {
+            uiState = AuthUiState.Menu
+            return
+        }
         Log.w("Lim", "유저 계정 상태 deleted로 변경됨.")
-
         //회원탈퇴
-        Firebase.auth.currentUser?.delete()
-            ?.addOnSuccessListener {
-                Log.w("Lim", "성공적으로 계정을 삭제했습니다.")
-                userInputChecked = false
-                userDepartAuto = false
-                signOut()
-            }
-            ?.addOnFailureListener {
-                Log.w("Lim", "계정을 삭제하는데 실패했습니다. error=${it}")
-                //유저 상태 롤백
-                CoroutineScope(Dispatchers.IO).launch { UserDataManager.mergeSetUserData(mapOf("state" to lastState)) }
-                uiState = AuthUiState.Menu
-            }
-
+        if(UserAuth.deleteUser()){
+            userInputChecked = false
+            userDepartAuto = false
+            UserAuth.signOut()
+        }
+        else{
+            //유저 firestore 상태 롤백
+            CoroutineScope(Dispatchers.IO).launch { UserDataManager.mergeSetUserData(mapOf("state" to lastState)) }
+        }
+        uiState = AuthUiState.Menu
     }
 
     //학번으로 유저 소속 인식
@@ -527,9 +457,8 @@ class AuthViewModel : ViewModel() {
     }
 
     //firestore에 저장되어있는 유저 정보 확인 함수
-    suspend fun userInfoInputedCheck() {
+    suspend fun userInfoCheck() {
         uiState = AuthUiState.Loading
-        Log.w("Lim", "firestore 유저 정보 정보 정상인지 확인중..")
 
         //유저 정보 불러오기
         var userInfo: Map<String, Any>?
@@ -542,7 +471,7 @@ class AuthViewModel : ViewModel() {
 
         if (userInfo != null) {
             if (userInfo["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                signOut()
+                UserAuth.signOut()
                 Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
 
             } else if (!userInfoFormCheck(userInfo)) {
@@ -566,5 +495,12 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    suspend fun userAuthAvailableCheck(){
+        UserAuth.reload()
+        if(Firebase.auth?.currentUser == null || Firebase.auth?.currentUser?.isEmailVerified != true){
+            trySignOut()
+            Log.w("Lim", "유저의 firebase 인증상태가 사용불가능하여 로그아웃되었습니다.")
+        }
+    }
 
 }

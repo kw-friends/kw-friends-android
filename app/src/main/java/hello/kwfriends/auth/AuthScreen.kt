@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebaseManager.UserAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -139,12 +140,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(5.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.signIn(
-                            viewModel.autoEmailLink(viewModel.inputEmail ?: ""),
-                            viewModel.inputPassword ?: "",
-                            AuthUiState.SignInSuccess,
-                            AuthUiState.SignIn
-                        )
+                        viewModel.trySignIn()
                     }
                 }) {
                     Text(text = "로그인하기")
@@ -192,7 +188,9 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     placeholder = { Text("비밀번호 확인") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    CoroutineScope(Dispatchers.IO).launch{ viewModel.tryRegister() }
+                }) {
                     Text(text = "회원가입하기")
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
@@ -220,7 +218,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Text(text = "이메일 인증 후 [인증 완료] 버튼을 눌러주세요.")
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.tryEmailVerify() }) {
+                    onClick = { CoroutineScope(Dispatchers.IO).launch { viewModel.tryEmailVerify() }  }) {
                     Text(text = "인증 완료")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
@@ -228,11 +226,13 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     Text(text = "광운대학교 웹메일 확인하러 가기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySendAuthEmail() }) {
+                    onClick = { CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.trySendAuthEmail() }
+                    }) {
                     Text(text = "이메일 인증 재요청하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.signOut() }) {
+                    onClick = { viewModel.trySignOut() }) {
                     Text(text = "로그아웃하기")
                 }
             }
@@ -313,9 +313,12 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.SignInSuccess -> {
+            //유저 상태 정상인지 확인
             if (!viewModel.userInputChecked) {
-                CoroutineScope(Dispatchers.Main).launch { viewModel.userInfoInputedCheck() }
-            } //유저 정보 정상인지 확인
+                Log.w("Lim", "유저 정보 정상인지 확인중..")
+                CoroutineScope(Dispatchers.Main).launch { viewModel.userInfoCheck() } //firestore 정보 검사
+                CoroutineScope(Dispatchers.IO).launch { viewModel.userAuthAvailableCheck() } //firebase 인증 검사
+            }
 
             //로그인 성공 후 화면
             Column(
@@ -327,7 +330,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
                 Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.signOut() }) {
+                    onClick = { viewModel.trySignOut() }) {
                     Text(text = "로그아웃하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
