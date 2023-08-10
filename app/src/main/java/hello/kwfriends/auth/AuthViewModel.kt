@@ -397,6 +397,7 @@ class AuthViewModel : ViewModel() {
 
         //유저 상태 삭제됨으로 변경
         if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) { return }
+        Log.w("Lim", "유저 계정 상태 deleted로 변경됨.")
 
         //회원탈퇴
         Firebase.auth.currentUser?.delete()
@@ -541,16 +542,8 @@ class AuthViewModel : ViewModel() {
 
         if (userInfo != null) {
             if (userInfo["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                if(!userInfo.containsKey("state")){ //첫 로그인
-                    Log.w(ContentValues.TAG, "첫 로그인입니다!")
-                    UserDataManager.mergeSetUserData(
-                        mapOf("state" to "available", "first-login" to FieldValue.serverTimestamp())
-                    )
-                }
-                else{
-                    signOut()
-                    Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
-                }
+                signOut()
+                Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
 
             } else if (!userInfoFormCheck(userInfo)) {
                 Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
@@ -564,6 +557,10 @@ class AuthViewModel : ViewModel() {
                 uiState = AuthUiState.SignInSuccess
             }
         } else {
+            Log.w(ContentValues.TAG, "첫 로그인입니다!")
+            UserDataManager.mergeSetUserData(
+                mapOf("state" to "available", "first-login" to FieldValue.serverTimestamp())
+            )
             Log.w(ContentValues.TAG, "유저 정보가 존재하지 않아 정보 입력창으로 이동합니다.")
             uiState = AuthUiState.InputUserInfo
         }
