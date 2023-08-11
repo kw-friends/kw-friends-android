@@ -1,23 +1,15 @@
 package hello.kwfriends.firebaseManager
 
-import hello.kwfriends.auth.AuthMainActivity
 import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.auth.AuthUiState
-import hello.kwfriends.auth.AuthViewModel
-import hello.kwfriends.firestoreManager.UserDataManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 object UserAuth {
 
-    val fa = Firebase.auth
+    private val fa = Firebase.auth
 
     //로그인 함수
     suspend fun signIn(email: String, password: String): Boolean {

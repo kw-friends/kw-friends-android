@@ -1,5 +1,6 @@
 package hello.kwfriends.auth
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -24,40 +25,19 @@ import kotlin.coroutines.suspendCoroutine
 
 class AuthViewModel : ViewModel() {
     //비밀번호로 입력 가능한 특수문자 목록
-    private val specialCharList =
-        listOf(33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126) //사용 가능한 특수문자 리스트
+    private val specialCharList = listOf(33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126) //사용 가능한 특수문자 리스트
 
     //학번: 2023(입학년도)/2(단과대번호)/03(학부번호)/045(학생번호)
     //학번에 들어가는 단과대 리스트
-    private val collegeList = mapOf<Char, String>(
-        '7' to "전자정보공과대학",
-        '2' to "소프트웨어융합대학",
-        '1' to "공과대학",
-        '6' to "자연과학대학",
-        '3' to "인문사회과학대학",
-        '8' to "정책법학대학",
-        '5' to "경영대학"
-    )
+    private val collegeList = mapOf<Char, String>('7' to "전자정보공과대학", '2' to "소프트웨어융합대학", '1' to "공과대학", '6' to "자연과학대학", '3' to "인문사회과학대학", '8' to "정책법학대학", '5' to "경영대학")
 
     //학번에 들어가는 학과 리스트
     private val departmentList = mapOf<String, Map<String, String>>(
         "전자정보공과대학" to mapOf("27" to "건축학과", "17" to "건축공학과", "14" to "화학공학과", "16" to "환경공학과"),
         "소프트웨어융합대학" to mapOf("02" to "컴퓨터정보공학부", "03" to "소프트웨어학부", "04" to "정보융합학부"),
         "공과대학" to mapOf("27" to "건축학과", "17" to "건축공학과", "14" to "화학공학과", "16" to "환경공학과"),
-        "자연과학대학" to mapOf(
-            "03" to "수학과",
-            "10" to "전자바이오물리학과",
-            "05" to "화학과",
-            "13" to "스포츠융합학과",
-            "12" to "정보콘텐츠학과"
-        ),
-        "인문사회과학대학" to mapOf(
-            "04" to "국어국문학과",
-            "22" to "영어산업학과",
-            "23" to "미디어커뮤니케이션학부",
-            "11" to "산업심리학과",
-            "21" to "동북아문화산업학부"
-        ),
+        "자연과학대학" to mapOf("03" to "수학과", "10" to "전자바이오물리학과", "05" to "화학과", "13" to "스포츠융합학과", "12" to "정보콘텐츠학과"),
+        "인문사회과학대학" to mapOf("04" to "국어국문학과", "22" to "영어산업학과", "23" to "미디어커뮤니케이션학부", "11" to "산업심리학과", "21" to "동북아문화산업학부"),
         "정책법학대학" to mapOf("02" to "행정학과", "04" to "국제학부", "03" to "법학부", "05" to "자산관리학과"),
         "경영대학" to mapOf("08" to "경영학부", "10" to "국제통상학부")
     )
@@ -93,37 +73,14 @@ class AuthViewModel : ViewModel() {
     var inputMbti by mutableStateOf<String>("")
     var inputCollege by mutableStateOf<String>("")
     var inputDepartment by mutableStateOf<String>("")
-    fun setInputEmailText(text: String) {
-        inputEmail = text
-    }
-
-    fun setInputPasswordText(text: String) {
-        inputPassword = text
-    }
-
-    fun setInputPasswordConfirmText(text: String) {
-        inputPasswordConfirm = text
-    }
-
-    fun setInputNameText(text: String) {
-        inputName = text
-    }
-
-    fun setInputStdNumText(text: String) {
-        inputStdNum = text
-    }
-
-    fun setInputMbtiText(text: String) {
-        inputMbti = text
-    }
-
-    fun setInputCollegeText(text: String) {
-        inputCollege = text
-    }
-
-    fun setInputDepartmentText(text: String) {
-        inputDepartment = text
-    }
+    fun setInputEmailText(text: String) { inputEmail = text }
+    fun setInputPasswordText(text: String) { inputPassword = text }
+    fun setInputPasswordConfirmText(text: String) { inputPasswordConfirm = text }
+    fun setInputNameText(text: String) { inputName = text }
+    fun setInputStdNumText(text: String) { inputStdNum = text }
+    fun setInputMbtiText(text: String) { inputMbti = text }
+    fun setInputCollegeText(text: String) { inputCollege = text }
+    fun setInputDepartmentText(text: String) { inputDepartment = text }
 
     // -- 뷰 변환 함수 --
     fun changeLoginView() {
@@ -163,11 +120,11 @@ class AuthViewModel : ViewModel() {
             Log.w("Lim", "이메일 또는 비밀번호가 입력되지 않았습니다.")
             return
         }
-        if (!emailRuleCheck(inputEmail!!)) {
+        if (!emailRuleCheck(inputEmail)) {
             Log.w("Lim", "이메일 형식 검사 불통과")
             return
         }
-        if (!passwordSafetyCheck(inputPassword!!)) { // 안전성 검사
+        if (!passwordSafetyCheck(inputPassword)) { // 안전성 검사
             Log.w("Lim", "비밀번호 안전성 검사 불통과")
             return
         }
@@ -199,18 +156,18 @@ class AuthViewModel : ViewModel() {
 
     //비밀번호 규칙 확인 함수
     fun passwordSafetyCheck(password: String): Boolean {
-        if (inputPassword?.length ?: 0 < 8) { // 최대길이
+        if (password.length < 8) { // 최대길이
             Log.w("Lim", "비밀번호는 8자리 이상이여야 합니다.")
             return false
         }
-        if (inputPassword?.length ?: 0 > 16) { // 최대길이
+        if (password.length > 16) { // 최대길이
             Log.w("Lim", "비밀번호는 16자리 이하여야 합니다.")
             return false
         }
-        var includeSpecialChar = mutableListOf<Char>() // 특수문자 카운트 변수
-        var includeNumber = mutableListOf<Char>() // 숫자 카운트 변수
-        var includeChar = mutableListOf<Char>() // 문자 카운트 변수
-        for (i in inputPassword!!) {
+        val includeSpecialChar = mutableListOf<Char>() // 특수문자 카운트 변수
+        val includeNumber = mutableListOf<Char>() // 숫자 카운트 변수
+        val includeChar = mutableListOf<Char>() // 문자 카운트 변수
+        for (i in password) {
             when (i.code) {
                 in 48..57 -> { // 0~9까지의 숫자인지 확인
                     includeNumber.add(i)
@@ -251,22 +208,19 @@ class AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         if(UserAuth.signIn(autoEmailLink(inputEmail), inputPassword)){
             uiState = AuthUiState.SignInSuccess
-        }
-        else{
+        } else{
             uiState = AuthUiState.Menu
         }
     }
 
     //이메일 @kw.ac.kr 자동으로 붙이기
     fun autoEmailLink(email: String): String {
-        var result = ""
-        if (email.indexOf('@') == -1 && email.lowercase() !in "kw.ac.kr") { //@없음 && 실수로 @만 안 친 경우 아님:
-            result = email + "@kw.ac.kr"
+        val result = if (email.indexOf('@') == -1 && email.lowercase() !in "kw.ac.kr") { //@없음 && 실수로 @만 안 친 경우 아님:
+            "$email@kw.ac.kr"
         } else if (email.indexOf('@') == email.length - 1) { // @뒤를 안 친 경우:
-            result = email + "kw.ac.kr"
-        }
-        else{
-            result = email
+            "${email}kw.ac.kr"
+        } else{
+            email
         }
         return result
     }
@@ -281,7 +235,7 @@ class AuthViewModel : ViewModel() {
     //인증 이메일 전송 시도 함수
     suspend fun trySendAuthEmail() {
         uiState = AuthUiState.Loading
-        if (Firebase.auth?.currentUser?.email != null) {
+        if (Firebase.auth.currentUser?.email != null) {
             UserAuth.sendAuthEmail()
         } else Log.w("Lim", "이메일이 등록되지 않아 인증메일을 전송할 수 없습니다.")
         uiState = AuthUiState.Menu
@@ -310,7 +264,7 @@ class AuthViewModel : ViewModel() {
     }
 
     //회원탈퇴 함수
-    suspend fun deleteUser() {
+    suspend fun tryDeleteUser() {
         uiState = AuthUiState.Loading
         Log.w("Lim", "회원탈퇴시 재로그인 필요")
         val email = autoEmailLink(inputEmail)
@@ -320,7 +274,7 @@ class AuthViewModel : ViewModel() {
             return
         }
         //유저 현재 상태 불러오기
-        var lastState: String
+        val lastState: String
         try {
             lastState = UserDataManager.getUserData()?.get("state").toString()
         } catch (e:Exception){
@@ -350,7 +304,7 @@ class AuthViewModel : ViewModel() {
     suspend fun userDepartmentAutoRecognition() {
         userDepartAuto = true
         //유저 정보 불러오기
-        var userInfo: Map<String, Any>?
+        val userInfo: Map<String, Any>?
         try {
             userInfo = UserDataManager.getUserData()
         }
@@ -360,7 +314,7 @@ class AuthViewModel : ViewModel() {
         }
 
         if (userInfo != null) {
-            Log.w(ContentValues.TAG, "Firestore 유저 정보: ${userInfo}")
+            Log.w(ContentValues.TAG, "Firestore 유저 정보: $userInfo")
             val tempStdNum = userInfo["std-num"].toString() //2023203045
             inputCollege = collegeList[tempStdNum[4]] ?: ""
             inputDepartment = departmentList[collegeList[tempStdNum[4]]]
@@ -461,7 +415,7 @@ class AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
 
         //유저 정보 불러오기
-        var userInfo: Map<String, Any>?
+        val userInfo: Map<String, Any>?
         try { userInfo = UserDataManager.getUserData() }
         catch (e: Exception) {
             Log.w(ContentValues.TAG, "유저 정보를 불러오지 못했습니다. error=$e")
@@ -495,9 +449,10 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    //유저 인증 정보 유효성 확인 함수
     suspend fun userAuthAvailableCheck(){
         UserAuth.reload()
-        if(Firebase.auth?.currentUser == null || Firebase.auth?.currentUser?.isEmailVerified != true){
+        if(Firebase.auth.currentUser == null || Firebase.auth.currentUser?.isEmailVerified != true){
             trySignOut()
             Log.w("Lim", "유저의 firebase 인증상태가 사용불가능하여 로그아웃되었습니다.")
         }

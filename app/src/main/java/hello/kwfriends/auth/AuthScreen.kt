@@ -41,8 +41,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
     if (viewModel.uiState == AuthUiState.Menu) {
-        if (Firebase.auth?.currentUser != null) { // 로그인 된 상태일 때
-            if (Firebase.auth?.currentUser?.isEmailVerified == true) { //이메일 인증 검사
+        if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
+            if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
                 Log.w("Lim", "로그인 기록 확인")
                 viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
             } else {
@@ -92,7 +92,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(5.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputEmail ?: "",
+                    value = viewModel.inputEmail,
                     onValueChange = { viewModel.setInputEmailText(it) },
                     singleLine = true,
                     placeholder = { Text(text = "광운대학교 웹메일") }
@@ -162,7 +162,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(5.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = viewModel?.inputEmail ?: "",
+                    value = viewModel.inputEmail,
                     onValueChange = { viewModel.setInputEmailText(it) },
                     singleLine = true,
                     placeholder = { Text("광운대학교 웹메일") }
@@ -170,7 +170,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = viewModel?.inputPassword ?: "",
+                    value = viewModel.inputPassword,
                     onValueChange = { viewModel.setInputPasswordText(it) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
@@ -180,7 +180,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = viewModel?.inputPasswordConfirm ?: "",
+                    value = viewModel.inputPasswordConfirm,
                     onValueChange = { viewModel.setInputPasswordConfirmText(it) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
@@ -348,7 +348,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(5.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputEmail ?: "",
+                    value = viewModel.inputEmail,
                     onValueChange = { viewModel.setInputEmailText(it) },
                     singleLine = true,
                     placeholder = { Text(text = "광운대학교 웹메일") }
@@ -365,7 +365,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    CoroutineScope(Dispatchers.IO).launch { viewModel.deleteUser() }
+                    CoroutineScope(Dispatchers.IO).launch { viewModel.tryDeleteUser() }
                 }) {
                     Text(text = "회원탈퇴하기")
                 }

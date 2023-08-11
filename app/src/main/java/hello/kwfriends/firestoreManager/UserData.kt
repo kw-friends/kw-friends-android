@@ -1,5 +1,6 @@
 package hello.kwfriends.firestoreManager
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
@@ -10,9 +11,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-object UserDataManager{
+object UserDataManager {
 
-    val fs = Firebase.firestore
+    private val fs = Firebase.firestore
 
     //유저 데이터 가져오기
     suspend fun getUserData(): Map<String, Any>?{
@@ -23,7 +24,7 @@ object UserDataManager{
                 .get()
                 .addOnSuccessListener { document ->
                     Log.w(ContentValues.TAG, "Firestore 유저 정보: ${document.data}")
-                    continuation.resume(document.data?:null)
+                    continuation.resume(document.data)
                 }
                 .addOnFailureListener { e ->
                     Log.w(ContentValues.TAG, "유저 정보를 불러오는데 실패했습니다.", e)
