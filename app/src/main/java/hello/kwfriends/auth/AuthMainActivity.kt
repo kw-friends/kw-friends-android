@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import hello.kwfriends.auth.ui.theme.KWFriendsTheme
+import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class AuthMainActivity : ComponentActivity() {
 
