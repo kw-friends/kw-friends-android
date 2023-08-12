@@ -120,7 +120,7 @@ object PostManager {
 
 
     suspend fun deletePost(target: String) {
-        db.collection("posts").document("target")
+        db.collection("posts").document(target)
             .delete()
             .addOnSuccessListener {
                 Log.i("deletePost", "게시물 삭제 완료")
