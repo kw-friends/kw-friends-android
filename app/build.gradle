@@ -78,4 +78,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 }
