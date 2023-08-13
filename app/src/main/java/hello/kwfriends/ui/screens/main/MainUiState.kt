@@ -1,4 +1,4 @@
-package hello.kwfriends.screens
+package hello.kwfriends.ui.screens.main
 
 sealed class MainUiState {
     object Home : MainUiState()

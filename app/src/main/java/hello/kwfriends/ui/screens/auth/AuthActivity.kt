@@ -1,4 +1,4 @@
-package hello.kwfriends.auth
+package hello.kwfriends.ui.screens.auth
 
 import android.os.Bundle
 import androidx.activity.compose.setContent

@@ -1,4 +1,4 @@
-package hello.kwfriends.auth
+package hello.kwfriends.ui.screens.auth
 
 sealed class AuthUiState{
     object Loading: AuthUiState() // 로딩 화면

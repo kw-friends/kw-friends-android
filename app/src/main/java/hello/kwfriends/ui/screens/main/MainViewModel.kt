@@ -1,4 +1,4 @@
-package hello.kwfriends.screens
+package hello.kwfriends.ui.screens.main
 
 import android.util.Log
 import androidx.compose.runtime.getValue

@@ -1,4 +1,4 @@
-package hello.kwfriends.screens
+package hello.kwfriends.ui.screens.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package hello.kwfriends.screens.home
+package hello.kwfriends.ui.screens.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

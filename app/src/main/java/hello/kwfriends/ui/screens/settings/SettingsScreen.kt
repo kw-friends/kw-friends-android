@@ -1,4 +1,4 @@
-package hello.kwfriends.screens.settings
+package hello.kwfriends.ui.screens.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package hello.kwfriends.screens.myPage
+package hello.kwfriends.ui.screens.myPage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

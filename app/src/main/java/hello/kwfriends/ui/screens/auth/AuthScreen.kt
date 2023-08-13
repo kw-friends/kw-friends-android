@@ -1,4 +1,4 @@
-package hello.kwfriends.auth
+package hello.kwfriends.ui.screens.auth
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -31,10 +31,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.firebaseManager.UserAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")

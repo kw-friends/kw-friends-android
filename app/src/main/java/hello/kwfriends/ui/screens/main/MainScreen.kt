@@ -1,4 +1,4 @@
-package hello.kwfriends.screens
+package hello.kwfriends.ui.screens.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import hello.kwfriends.screens.home.GatheringCard
-import hello.kwfriends.screens.myPage.UserInfoCard
-import hello.kwfriends.screens.settings.SettingsScreen
+import hello.kwfriends.ui.screens.home.GatheringCard
+import hello.kwfriends.ui.screens.myPage.UserInfoCard
+import hello.kwfriends.ui.screens.settings.SettingsScreen
 
 @Composable
 fun ToolBarWithTitle(title: String, modifier: Modifier = Modifier) {
