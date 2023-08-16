@@ -9,5 +9,6 @@ sealed class AuthUiState{
     object InputUserInfo: AuthUiState() // 정보 입력 화면
     object InputUserDepartment: AuthUiState() // 소속 입력 화면
     object DeleteUser: AuthUiState() // 회원탈퇴를 위한 로그인
+    object FindPassword: AuthUiState() // 비밀번호 찾기 화면
     object SignInSuccess: AuthUiState() // 로그인 성공 화면
 }

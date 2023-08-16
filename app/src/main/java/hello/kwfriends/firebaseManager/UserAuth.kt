@@ -126,4 +126,36 @@ object UserAuth {
         }
         return result
     }
+
+    //비밀번호 변경 함수
+    suspend fun updatePassword(newPassword: String): Boolean {
+        val result = suspendCoroutine<Boolean> { continuation ->
+            fa.currentUser!!.updatePassword(newPassword)
+                .addOnSuccessListener {
+                    Log.w("Lim", "비밀번호 변경 성공")
+                    continuation.resume(true)
+                }
+                .addOnFailureListener {
+                    Log.w("Lim", "비밀번호 변경 실패: ", it)
+                    continuation.resume(false)
+                }
+        }
+        return result
+    }
+
+    //비밀번호 재설정 이메일 전송 함수
+    suspend fun sendPasswordResetEmail(email: String): Boolean {
+        val result = suspendCoroutine<Boolean> { continuation ->
+            fa.sendPasswordResetEmail(email)
+                .addOnSuccessListener {
+                    Log.w("Lim", "비밀번호 재설정 이메일 전송 성공")
+                    continuation.resume(true)
+                }
+                .addOnFailureListener {
+                    Log.w("Lim", "비밀번호 재설정 이메일 전송 실패: ", it)
+                    continuation.resume(false)
+                }
+        }
+        return result
+    }
 }

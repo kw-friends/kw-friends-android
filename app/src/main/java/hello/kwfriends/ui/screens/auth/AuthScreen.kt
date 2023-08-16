@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebaseManager.UserAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,7 +133,9 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                                 viewModel.autoSignInChecked = !viewModel.autoSignInChecked
                             })
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Text(text = "ID / Password 찾기", modifier = Modifier.clickable { })
+                        Text(text = "Password 찾기", modifier = Modifier.clickable {
+                            viewModel.changeFindPasswordView()
+                        })
                     }
                 }
                 Spacer(modifier = Modifier.padding(5.dp))
@@ -147,6 +150,36 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { viewModel.uiState = AuthUiState.Menu }) {
+                    Text(text = "이전화면으로")
+                }
+            }
+        }
+
+        is AuthUiState.FindPassword -> {
+            Column(
+                modifier = modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.padding(5.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = viewModel.inputEmail,
+                    onValueChange = { viewModel.setInputEmailText(it) },
+                    singleLine = true,
+                    placeholder = { Text(text = "광운대학교 웹메일") }
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { CoroutineScope(Dispatchers.IO).launch {
+                        viewModel.trySendPasswordResetEmail() }
+                    }) {
+                    Text(text = "비밀번호 재설정 이메일 보내기")
+                }
+                Spacer(modifier = Modifier.padding(2.dp))
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { viewModel.changeLoginView() }) {
                     Text(text = "이전화면으로")
                 }
             }

@@ -82,18 +82,20 @@ class AuthViewModel : ViewModel() {
         inputPassword = ""
         uiState = AuthUiState.SignIn
     }
-
     fun changeRegisterView() {
         inputEmail = ""
         inputPassword = ""
         inputPasswordConfirm = ""
         uiState = AuthUiState.Register
     }
-
     fun changeDeleteUserView() {
         inputEmail = ""
         inputPassword = ""
         uiState = AuthUiState.DeleteUser
+    }
+    fun changeFindPasswordView() {
+        inputEmail = ""
+        uiState = AuthUiState.FindPassword
     }
 
     //가능한 최대 입학년도 갱신(업데이트) 함수
@@ -200,16 +202,20 @@ class AuthViewModel : ViewModel() {
     //로그인 시도 함수
     suspend fun trySignIn() {
         uiState = AuthUiState.Loading
-        if(UserAuth.signIn(autoEmailLink(inputEmail), inputPassword)){
+        inputEmail = autoEmailLink(inputEmail)
+        if(UserAuth.signIn(inputEmail, inputPassword)){
             uiState = AuthUiState.SignInSuccess
         } else{
-            uiState = AuthUiState.Menu
+            uiState = AuthUiState.SignIn
         }
     }
 
     //이메일 @kw.ac.kr 자동으로 붙이기
     fun autoEmailLink(email: String): String {
-        val result = if (email.indexOf('@') == -1 && email.lowercase() !in "kw.ac.kr") { //@없음 && 실수로 @만 안 친 경우 아님:
+        val result = if(email == "") {
+            ""
+        }
+        else if (email.indexOf('@') == -1 && email.lowercase() !in "kw.ac.kr") { //@없음 && 실수로 @만 안 친 경우 아님:
             "$email@kw.ac.kr"
         } else if (email.indexOf('@') == email.length - 1) { // @뒤를 안 친 경우:
             "${email}kw.ac.kr"
@@ -449,6 +455,24 @@ class AuthViewModel : ViewModel() {
         if(Firebase.auth.currentUser == null || Firebase.auth.currentUser?.isEmailVerified != true){
             trySignOut()
             Log.w("Lim", "유저의 firebase 인증상태가 사용불가능하여 로그아웃되었습니다.")
+        }
+    }
+
+    //비밀번호 재설정 이메일 전송 시도 함수
+    suspend fun trySendPasswordResetEmail(){
+        inputEmail = autoEmailLink(inputEmail)
+        uiState = AuthUiState.Loading
+        try {
+            if(UserAuth.sendPasswordResetEmail(inputEmail)){
+                uiState = AuthUiState.SignIn
+            }
+            else{
+                uiState = AuthUiState.FindPassword
+            }
+        }
+        catch (e: Exception){
+            Log.w("Lim", "비밀번호 재설정 이메일 전송 시도 실패: ", e)
+            uiState = AuthUiState.FindPassword
         }
     }
 
