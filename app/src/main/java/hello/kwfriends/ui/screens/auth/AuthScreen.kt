@@ -122,16 +122,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                             modifier = Modifier.clickable {
                                 viewModel.idSaveChecked = !viewModel.idSaveChecked
                             })
-                        Checkbox(
-                            checked = viewModel.autoSignInChecked,
-                            onCheckedChange = {
-                                viewModel.autoSignInChecked = !viewModel.autoSignInChecked
-                            })
-                        Text(
-                            text = "자동 로그인",
-                            modifier = Modifier.clickable {
-                                viewModel.autoSignInChecked = !viewModel.autoSignInChecked
-                            })
                         Spacer(modifier = Modifier.padding(5.dp))
                         Text(text = "Password 찾기", modifier = Modifier.clickable {
                             viewModel.changeFindPasswordView()

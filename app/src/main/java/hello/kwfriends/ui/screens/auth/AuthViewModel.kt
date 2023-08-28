@@ -55,9 +55,6 @@ class AuthViewModel : ViewModel() {
     //아이디저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
 
-    //자동로그인 체크 여부
-    var autoSignInChecked by mutableStateOf<Boolean>(false)
-
     // -- TextField 입력 변수, 함수 --
     var inputEmail by mutableStateOf<String>("")
     var inputPassword by mutableStateOf<String>("")
