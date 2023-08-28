@@ -85,4 +85,5 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("androidx.datastore:datastore-preferences:1.0.0") //preference datastore
 }

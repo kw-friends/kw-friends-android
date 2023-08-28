@@ -252,9 +252,8 @@ class AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         if(UserAuth.reload()) {
             if (Firebase.auth.currentUser?.isEmailVerified == true) {
-                UserAuth.signOut()
-                changeLoginView()
-                Log.w("Lim", "이메일 인증 완료, 로그인하세요")
+                Log.w("Lim", "이메일 인증 완료. 회원가입 성공")
+                uiState = AuthUiState.Menu
             } else {
                 uiState = AuthUiState.Menu
                 Log.w("Lim", "이메일 인증이 되지 않았습니다.")

@@ -347,8 +347,10 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
             //유저 상태 정상인지 확인
             if (!viewModel.userInputChecked) {
                 Log.w("Lim", "유저 정보 정상인지 확인중..")
-                CoroutineScope(Dispatchers.Main).launch { viewModel.userInfoCheck() } //firestore 정보 검사
-                CoroutineScope(Dispatchers.IO).launch { viewModel.userAuthAvailableCheck() } //firebase 인증 검사
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.userInfoCheck() //firestore 정보 검사
+                    viewModel.userAuthAvailableCheck() //firebase 인증 검사
+                }
             }
 
             //로그인 성공 후 화면
