@@ -1,18 +1,24 @@
 package hello.kwfriends.ui.screens.auth
 
+import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.firebaseManager.UserAuth
 import hello.kwfriends.firestoreManager.UserDataManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
@@ -55,6 +61,10 @@ class AuthViewModel : ViewModel() {
     //아이디저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
 
+    //USER_DATA datastore 객체 저장 변수
+    var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
+
+
     // -- TextField 입력 변수, 함수 --
     var inputEmail by mutableStateOf<String>("")
     var inputPassword by mutableStateOf<String>("")
@@ -76,6 +86,7 @@ class AuthViewModel : ViewModel() {
     // -- 뷰 변환 함수 --
     fun changeLoginView() {
         inputEmail = ""
+        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
         inputPassword = ""
         uiState = AuthUiState.SignIn
     }
@@ -87,11 +98,13 @@ class AuthViewModel : ViewModel() {
     }
     fun changeDeleteUserView() {
         inputEmail = ""
+        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
         inputPassword = ""
         uiState = AuthUiState.DeleteUser
     }
     fun changeFindPasswordView() {
         inputEmail = ""
+        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
         uiState = AuthUiState.FindPassword
     }
 
@@ -202,6 +215,17 @@ class AuthViewModel : ViewModel() {
         inputEmail = autoEmailLink(inputEmail)
         if(UserAuth.signIn(inputEmail, inputPassword)){
             uiState = AuthUiState.SignInSuccess
+            if(idSaveChecked){ //아이디 저장
+                CoroutineScope(Dispatchers.Main).launch {
+                    setUserData("ID", inputEmail)
+                    setUserData("ID_SAVE_CHECKED", "true")
+                }
+            }
+            else{
+                CoroutineScope(Dispatchers.Main).launch {
+                    setUserData("IS_ID_CHECKED", "false")
+                }
+            }
         } else{
             uiState = AuthUiState.SignIn
         }
@@ -469,6 +493,35 @@ class AuthViewModel : ViewModel() {
         catch (e: Exception){
             Log.w("Lim", "비밀번호 재설정 이메일 전송 시도 실패: ", e)
             uiState = AuthUiState.FindPassword
+        }
+    }
+
+    //데이터 저장
+    suspend fun setUserData(key: String, value: String){
+        preferencesDataStore!!.setData(key, value)
+    }
+
+    //데이터 읽기
+    suspend fun getUserData(key: String): Flow<String> {
+        return preferencesDataStore!!.getData(key)
+    }
+
+    //USER_DATA datastore에 아이디 저장이 체크되어있으면 아이디 불러오기
+    fun userIdSaveCheckAndLoad(){
+        try {
+            Log.w("Lim", "저장된 아이디 불러오기 시도")
+            CoroutineScope(Dispatchers.IO).launch {
+                getUserData("ID_SAVE_CHECKED").collect(){ isChecked ->
+                    if(isChecked == "true"){
+                        idSaveChecked = true
+                        getUserData("ID").collect(){ id ->
+                            inputEmail = id
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception){
+            Log.w("Lim", "저장된 아이디 불러오기 실패: ", e)
         }
     }
 

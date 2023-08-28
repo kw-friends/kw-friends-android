@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.auth
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -31,14 +32,21 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.firebaseManager.UserAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
+    //USER_DATA DataStore 객체 저장
+    if(viewModel.preferencesDataStore == null){
+        viewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
+    }
+
     if (viewModel.uiState == AuthUiState.Menu) {
         if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
             if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
