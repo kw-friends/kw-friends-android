@@ -66,14 +66,15 @@ class AuthViewModel : ViewModel() {
 
 
     // -- TextField 입력 변수, 함수 --
-    var inputEmail by mutableStateOf<String>("")
-    var inputPassword by mutableStateOf<String>("")
-    var inputPasswordConfirm by mutableStateOf<String>("")
-    var inputName by mutableStateOf<String>("")
-    var inputStdNum by mutableStateOf<String>("")
-    var inputMbti by mutableStateOf<String>("")
-    var inputCollege by mutableStateOf<String>("")
-    var inputDepartment by mutableStateOf<String>("")
+    var inputEmail by mutableStateOf("")
+    var inputPassword by mutableStateOf("")
+    var inputPasswordConfirm by mutableStateOf("")
+    var inputName by mutableStateOf("")
+    var inputStdNum by mutableStateOf("")
+    var inputMbti by mutableStateOf("")
+    var inputCollege by mutableStateOf("")
+    var inputDepartment by mutableStateOf("")
+    var inputGender by mutableStateOf("male")
     fun setInputEmailText(text: String) { inputEmail = text }
     fun setInputPasswordText(text: String) { inputPassword = text }
     fun setInputPasswordConfirmText(text: String) { inputPasswordConfirm = text }
@@ -351,6 +352,7 @@ class AuthViewModel : ViewModel() {
             "name" to inputName,
             "mbti" to inputMbti.lowercase(),
             "std-num" to inputStdNum,
+            "gender" to inputGender
         )
         if (!userInfoFormCheck(userInfo)) { return } //userInfo 형식 체크
         uiState = AuthUiState.Loading
@@ -380,6 +382,7 @@ class AuthViewModel : ViewModel() {
         val name = userInfo["name"].toString()
         val mbti = userInfo["mbti"].toString()
         val stdNum = userInfo["std-num"].toString()
+        val gender = userInfo["gender"].toString()
         if (name == "") {
             Log.w("Lim", "유저 이름 입력 안됨.")
             return false
@@ -413,6 +416,10 @@ class AuthViewModel : ViewModel() {
                 stdNum.slice(IntRange(5, 6))) != true
         ) {
             Log.w("Lim", "${stdNum.slice(IntRange(5, 6))}는 확인되지 않은 학과 번호입니다.")
+        }
+        if(gender != "male" && gender != "female" && gender != "etc"){
+            Log.w("Lim", "성별이 male, female, etc 중 하나가 아님.")
+            return false
         }
         return true
     }
@@ -502,11 +509,11 @@ class AuthViewModel : ViewModel() {
     }
 
     //데이터 읽기
-    suspend fun getUserData(key: String): Flow<String> {
+    fun getUserData(key: String): Flow<String> {
         return preferencesDataStore!!.getData(key)
     }
 
-    //USER_DATA datastore에 아이디 저장이 체크되어있으면 아이디 불러오기
+    //USER_DATA datastore에서 아이디 저장 유무 불러오고 체크되어있으면 아이디 불러오기
     fun userIdSaveCheckAndLoad(){
         try {
             Log.w("Lim", "저장된 아이디 불러오기 시도")

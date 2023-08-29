@@ -297,6 +297,19 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     placeholder = { Text("MBTI") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                    Text(text = " 성별:")
+                    Spacer(modifier = Modifier.padding(3.dp))
+                    Checkbox(checked = viewModel.inputGender == "male", onCheckedChange = { viewModel.inputGender = "male" })
+                    Text(text = "남자", modifier = Modifier.clickable { viewModel.inputGender = "male" })
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Checkbox(checked = viewModel.inputGender == "female", onCheckedChange = { viewModel.inputGender = "female" })
+                    Text(text = "여자", modifier = Modifier.clickable { viewModel.inputGender = "female" })
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Checkbox(checked = viewModel.inputGender == "etc", onCheckedChange = { viewModel.inputGender = "etc" })
+                    Text(text = "기타", modifier = Modifier.clickable { viewModel.inputGender = "etc" })
+                }
+                Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
@@ -408,7 +421,5 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 }
             }
         }
-
-
     }
 }
