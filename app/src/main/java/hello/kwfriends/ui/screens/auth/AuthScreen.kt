@@ -136,9 +136,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 }
                 Spacer(modifier = Modifier.padding(5.dp))
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.trySignIn()
-                    }
+                    viewModel.trySignIn()
                 }) {
                     Text(text = "로그인하기")
                 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
@@ -207,25 +208,23 @@ class AuthViewModel : ViewModel() {
     }
 
     //로그인 시도 함수
-    suspend fun trySignIn() {
+    fun trySignIn() {
         uiState = AuthUiState.Loading
         inputEmail = autoEmailLink(inputEmail)
-        if(UserAuth.signIn(inputEmail, inputPassword)){
+        viewModelScope.launch { if(UserAuth.signIn(inputEmail, inputPassword)){
             uiState = AuthUiState.SignInSuccess
             if(idSaveChecked){ //아이디 저장
-                CoroutineScope(Dispatchers.Main).launch {
-                    setUserData("ID", inputEmail)
-                    setUserData("ID_SAVE_CHECKED", "true")
-                }
+                setUserData("ID", inputEmail)
+                setUserData("ID_SAVE_CHECKED", "true")
             }
             else{
-                CoroutineScope(Dispatchers.Main).launch {
-                    setUserData("IS_ID_CHECKED", "false")
-                }
+                setUserData("IS_ID_CHECKED", "false")
             }
         } else{
             uiState = AuthUiState.SignIn
         }
+        }
+
     }
 
     //이메일 @kw.ac.kr 자동으로 붙이기
