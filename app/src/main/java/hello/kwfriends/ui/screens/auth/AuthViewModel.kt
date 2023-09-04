@@ -1,21 +1,17 @@
 package hello.kwfriends.ui.screens.auth
 
-import android.app.Activity
 import android.content.ContentValues
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.datastoreManager.PreferenceDataStore
-import hello.kwfriends.firebaseManager.UserAuth
-import hello.kwfriends.firestoreManager.UserDataManager
+import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
+import hello.kwfriends.firebase.firebaseManager.UserAuth
+import hello.kwfriends.firebase.firestoreManager.UserDataManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

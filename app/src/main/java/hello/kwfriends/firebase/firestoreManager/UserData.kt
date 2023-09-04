@@ -1,6 +1,5 @@
-package hello.kwfriends.firestoreManager
+package hello.kwfriends.firebase.firestoreManager
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
 import com.google.firebase.auth.ktx.auth

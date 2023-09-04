@@ -1,4 +1,4 @@
-package hello.kwfriends.base
+package hello.kwfriends.ui.base
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

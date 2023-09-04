@@ -15,7 +15,6 @@
         <activity
             android:name="hello.kwfriends.ui.screens.auth.AuthActivity"
             android:exported="true"
-            android:label="@string/title_activity_auth_main"
             android:theme="@style/Theme.KWFriends">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

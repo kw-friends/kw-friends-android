@@ -1,7 +1,6 @@
 package hello.kwfriends.ui.screens.auth
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -32,8 +31,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.datastoreManager.PreferenceDataStore
-import hello.kwfriends.firebaseManager.UserAuth
+import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

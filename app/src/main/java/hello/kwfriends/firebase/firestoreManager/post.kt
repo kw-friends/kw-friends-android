@@ -1,4 +1,4 @@
-package hello.kwfriends.firestoreManager
+package hello.kwfriends.firebase.firestoreManager
 
 import android.content.ContentValues
 import android.util.Log
