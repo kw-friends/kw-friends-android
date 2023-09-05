@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
+import hello.kwfriends.ui.screens.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,6 +41,8 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
+val context = LocalContext.current
+
     //USER_DATA DataStore 객체 저장
     if(viewModel.preferencesDataStore == null){
         viewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
@@ -85,6 +88,12 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { viewModel.changeRegisterView() }) {
                     Text(text = "회원가입하기")
+                }
+                Spacer(modifier = Modifier.padding(4.dp))
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { context.startActivity(Intent(context, MainActivity::class.java)) }) {
+                    Text(text = "테스트하기")
                 }
             }
         }

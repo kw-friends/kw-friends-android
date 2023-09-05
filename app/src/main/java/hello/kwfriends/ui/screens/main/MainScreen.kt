@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hello.kwfriends.ui.component.BottomNavigationBar
 import hello.kwfriends.ui.screens.home.GatheringCard
 import hello.kwfriends.ui.screens.myPage.UserInfoCard
 import hello.kwfriends.ui.screens.settings.SettingsScreen

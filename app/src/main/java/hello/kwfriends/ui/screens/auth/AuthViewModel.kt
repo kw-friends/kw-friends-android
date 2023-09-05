@@ -13,6 +13,9 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
 import hello.kwfriends.firebase.firebaseManager.UserAuth
 import hello.kwfriends.firebase.firestoreManager.UserDataManager
+import hello.kwfriends.ui.screens.main.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -60,6 +63,8 @@ class AuthViewModel : ViewModel() {
     var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
 
 
+
+
     // -- TextField 입력 변수, 함수 --
     var inputEmail by mutableStateOf("")
     var inputPassword by mutableStateOf("")
@@ -103,6 +108,7 @@ class AuthViewModel : ViewModel() {
         userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
         uiState = AuthUiState.FindPassword
     }
+
 
     //가능한 최대 입학년도 갱신(업데이트) 함수
     fun updateMaxStdNum() {

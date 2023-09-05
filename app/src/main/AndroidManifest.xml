@@ -26,6 +26,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:name=".ui.screens.main.MainActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
