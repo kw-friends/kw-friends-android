@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.home
+package hello.kwfriends.ui.screens.findGathering
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.LocationOn
@@ -24,12 +23,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun GatheringCard() {
+fun GatheringCard(
+    title: String,
+    location: String,
+    currentParticipants: Int,
+    minimumParticipants: Int,
+    maximumParticipants: Int,
+    time: String //추후 datetime으로 변경
+) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -40,7 +45,7 @@ fun GatheringCard() {
             .background(color = Color(0xffffffff))
     ) {
         Text(
-            text = "같이 화장실 갈 사람 구해요~",
+            text = title,
             fontSize = 26.sp,
             fontWeight = FontWeight(760),
             modifier = Modifier.padding(start = 20.dp, top = 15.dp)
@@ -62,7 +67,7 @@ fun GatheringCard() {
                         Modifier.size(27.dp)
                     )
                     Spacer(modifier = Modifier.size(5.dp))
-                    Text(text = "광운대역 1호선")
+                    Text(text = location)
                 }
                 Spacer(modifier = Modifier.size(6.dp))
                 Row(
@@ -75,7 +80,7 @@ fun GatheringCard() {
                         Modifier.size(27.dp)
                     )
                     Spacer(modifier = Modifier.size(5.dp))
-                    Text(text = "2023.10.26 17:00")
+                    Text(text = time)
                 }
                 Spacer(modifier = Modifier.size(15.dp))
             }
@@ -89,13 +94,23 @@ fun GatheringCard() {
                     contentDescription = null,
                     Modifier.size(32.dp)
                 )
-                Text(text = "2명 ~ 6명", fontSize = 15.sp)
+                Text(text = "${minimumParticipants}명 ~ ${maximumParticipants}명", fontSize = 15.sp)
                 Spacer(modifier = Modifier.size(3.dp))
-                Text(text = "1명 참여")
+                Text(text = "${currentParticipants}명 참여")
                 Spacer(modifier = Modifier.size(15.dp))
             }
         }
-
-
     }
+}
+
+@Composable
+fun findGatheringScreen() {
+    GatheringCard(
+        title = "코틀린 스터디 모집합니다!",
+        location = "광운대학교 중앙도서관 오픈열람실",
+        currentParticipants = 3,
+        minimumParticipants = 2,
+        maximumParticipants = 6,
+        time = "2023-09-10"
+    )
 }
