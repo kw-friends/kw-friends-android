@@ -134,7 +134,8 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         CheckboxStyle1(
                             text = "아이디 저장",
                             checked = viewModel.idSaveChecked,
-                            onCheckedChange = { viewModel.idSaveChecked = !viewModel.idSaveChecked }
+                            onCheckedChange = { viewModel.idSaveChecked = !viewModel.idSaveChecked },
+                            onTextClicked = { viewModel.idSaveChecked = !viewModel.idSaveChecked }
                         )
                     }
                     Spacer(modifier = Modifier.height(33.dp))
