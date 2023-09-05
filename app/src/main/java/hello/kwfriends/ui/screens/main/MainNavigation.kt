@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -36,9 +37,9 @@ fun ToolBarWithTitle(title: String, modifier: Modifier = Modifier) {
 @Composable
 fun NavigationBar(navController: NavHostController) {
     val items = listOf<BottomNavItem>(
-        BottomNavItem.myPage,
-        BottomNavItem.findGathering,
-        BottomNavItem.settings
+        BottomNavItem.MyPage,
+        BottomNavItem.FindGathering,
+        BottomNavItem.Settings
     )
 
 
@@ -60,7 +61,7 @@ fun NavigationBar(navController: NavHostController) {
                     }
                 },
                 icon = { Icon(imageVector = item.icon, contentDescription = null) },
-                label = { Text(text = item.title) },
+                label = { Text(text = item.title, fontWeight = FontWeight(600)) },
                 alwaysShowLabel = true,
                 selectedContentColor = Color(0xFFD56450),
                 unselectedContentColor = Color(0xFF929292)
@@ -73,15 +74,15 @@ fun NavigationBar(navController: NavHostController) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = BottomNavItem.findGathering.screenRoute
+        startDestination = BottomNavItem.FindGathering.screenRoute
     ) {
-        composable(BottomNavItem.findGathering.screenRoute) {
+        composable(BottomNavItem.FindGathering.screenRoute) {
             findGatheringScreen()
         }
-        composable(BottomNavItem.myPage.screenRoute) {
+        composable(BottomNavItem.MyPage.screenRoute) {
             MyPageScreen()
         }
-        composable(BottomNavItem.settings.screenRoute) {
+        composable(BottomNavItem.Settings.screenRoute) {
             SettingsScreen()
         }
     }
@@ -90,19 +91,19 @@ fun NavigationGraph(navController: NavHostController) {
 sealed class BottomNavItem(
     val title: String, val icon: ImageVector, val screenRoute: String
 ) {
-    object myPage : BottomNavItem(
+    object MyPage : BottomNavItem(
         "마이페이지",
         Icons.Default.AccountCircle,
         "myPage"
     )
 
-    object findGathering : BottomNavItem(
+    object FindGathering : BottomNavItem(
         "모임 찾기",
         Icons.Default.Group,
         "findGathering"
     )
 
-    object settings : BottomNavItem(
+    object Settings : BottomNavItem(
         "설정",
         Icons.Default.Settings,
         "settings"
