@@ -13,9 +13,6 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
 import hello.kwfriends.firebase.firebaseManager.UserAuth
 import hello.kwfriends.firebase.firestoreManager.UserDataManager
-import hello.kwfriends.ui.screens.main.MainActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -47,7 +44,7 @@ class AuthViewModel : ViewModel() {
     private var maxAdmissionYear = 2023
 
     //유저 화면 상태 저장 변수
-    var uiState by mutableStateOf<AuthUiState>(AuthUiState.Menu)
+    var uiState by mutableStateOf<AuthUiState>(AuthUiState.SignIn)
 
     // -- 최초실행 --
     //firestore 유저 정보 확인 여부
@@ -148,7 +145,7 @@ class AuthViewModel : ViewModel() {
                 trySendAuthEmail()
             }
         }
-        uiState = AuthUiState.Menu
+        uiState = AuthUiState.SignIn
     }
 
     //입력한 이메일 형식 확인 함수
@@ -252,7 +249,7 @@ class AuthViewModel : ViewModel() {
     fun trySignOut() {
         uiState = AuthUiState.Loading
         UserAuth.signOut()
-        uiState = AuthUiState.Menu
+        uiState = AuthUiState.SignIn
     }
 
     //인증 이메일 전송 시도 함수
@@ -261,7 +258,7 @@ class AuthViewModel : ViewModel() {
         if (Firebase.auth.currentUser?.email != null) {
             viewModelScope.launch { UserAuth.sendAuthEmail() }
         } else Log.w("Lim", "이메일이 등록되지 않아 인증메일을 전송할 수 없습니다.")
-        uiState = AuthUiState.Menu
+        uiState = AuthUiState.SignIn
     }
 
     //이메일 인증 화면 이동 함수
@@ -277,13 +274,13 @@ class AuthViewModel : ViewModel() {
             if(UserAuth.reload()) {
                 if (Firebase.auth.currentUser?.isEmailVerified == true) {
                     Log.w("Lim", "이메일 인증 완료. 회원가입 성공")
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                 } else {
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                     Log.w("Lim", "이메일 인증이 되지 않았습니다.")
                 }
             }
-            else{ uiState = AuthUiState.Menu }
+            else{ uiState = AuthUiState.SignIn }
         }
     }
 
@@ -295,14 +292,14 @@ class AuthViewModel : ViewModel() {
         //재로그인
         viewModelScope.launch {
             if(!UserAuth.signIn(email, inputPassword)) {
-                uiState = AuthUiState.Menu
+                uiState = AuthUiState.SignIn
             }
             else {
                 //유저 현재 상태 불러오기
                 val lastState: String = UserDataManager.getUserData()?.get("state").toString()
                 //유저 상태 삭제됨으로 변경
                 if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) {
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                 }
                 else {
                     Log.w("Lim", "유저 계정 상태 deleted로 변경됨.")
@@ -316,7 +313,7 @@ class AuthViewModel : ViewModel() {
                         //유저 firestore 상태 롤백
                         viewModelScope.launch { UserDataManager.mergeSetUserData(mapOf("state" to lastState)) }
                     }
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                 }
             }
         }
@@ -362,7 +359,7 @@ class AuthViewModel : ViewModel() {
         //유저 데이터 저장
         viewModelScope.launch {
             if(UserDataManager.mergeSetUserData(userInfo)) { uiState = AuthUiState.SignInSuccess }
-            else { uiState = AuthUiState.Menu }
+            else { uiState = AuthUiState.SignIn }
         }
     }
 
@@ -377,7 +374,7 @@ class AuthViewModel : ViewModel() {
         //유저 소속 정보 저장
         viewModelScope.launch {
             if(UserDataManager.mergeSetUserData(userInfo)) { uiState = AuthUiState.SignInSuccess }
-            else {uiState = AuthUiState.Menu  }
+            else {uiState = AuthUiState.SignIn  }
         }
     }
 
