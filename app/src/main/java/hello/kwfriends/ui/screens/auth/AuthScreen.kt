@@ -165,9 +165,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.trySendPasswordResetEmail() }
-                    }) {
+                    onClick = { viewModel.trySendPasswordResetEmail() }) {
                     Text(text = "비밀번호 재설정 이메일 보내기")
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
@@ -213,9 +211,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     placeholder = { Text("비밀번호 확인") }
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    CoroutineScope(Dispatchers.IO).launch{ viewModel.tryRegister() }
-                }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
                     Text(text = "회원가입하기")
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
@@ -243,7 +239,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Text(text = "이메일 인증 후 [인증 완료] 버튼을 눌러주세요.")
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { CoroutineScope(Dispatchers.IO).launch { viewModel.tryEmailVerify() }  }) {
+                    onClick = { viewModel.tryEmailVerify() }) {
                     Text(text = "인증 완료")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
@@ -251,9 +247,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     Text(text = "광운대학교 웹메일 확인하러 가기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { CoroutineScope(Dispatchers.IO).launch {
-                        viewModel.trySendAuthEmail() }
-                    }) {
+                    onClick = { viewModel.trySendAuthEmail() }) {
                     Text(text = "이메일 인증 재요청하기")
                 }
                 Button(modifier = Modifier.fillMaxWidth(),
@@ -308,18 +302,14 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        CoroutineScope(Dispatchers.IO).launch { viewModel.trySaveUserInfo() }
-                    }) {
+                    onClick = { viewModel.trySaveUserInfo() }) {
                     Text(text = "입력 완료")
                 }
             }
         }
 
         is AuthUiState.InputUserDepartment -> {
-            if (!viewModel.userDepartAuto) {
-                CoroutineScope(Dispatchers.IO).launch { viewModel.userDepartmentAutoRecognition() }
-            } // 학번으로 유저 소속 자동인식
+            if (!viewModel.userDepartAuto) { viewModel.userDepartmentAutoRecognition() } // 학번으로 유저 소속 자동인식
 
             Column(
                 modifier = modifier.padding(10.dp),
@@ -344,7 +334,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 Spacer(modifier = Modifier.padding(10.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { CoroutineScope(Dispatchers.IO).launch {  viewModel.trySaveUserDepartment() } }) {
+                    onClick = { viewModel.trySaveUserDepartment() }) {
                     Text(text = "입력 완료")
                 }
             }
@@ -404,9 +394,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     placeholder = { Text(text = "비밀번호") }
                 )
                 Spacer(modifier = Modifier.padding(5.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    CoroutineScope(Dispatchers.IO).launch { viewModel.tryDeleteUser() }
-                }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryDeleteUser() }) {
                     Text(text = "회원탈퇴하기")
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
