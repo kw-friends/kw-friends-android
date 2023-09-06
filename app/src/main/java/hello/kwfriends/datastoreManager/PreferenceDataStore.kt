@@ -1,4 +1,4 @@
-package hello.kwfriends.firebase.datastoreManager
+package hello.kwfriends.datastoreManager
 
 import android.content.Context
 import android.util.Log
