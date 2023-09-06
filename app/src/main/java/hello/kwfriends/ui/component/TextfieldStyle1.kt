@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextfieldStyle1(text: String, icon: ImageVector, value: String, isPassword: Boolean = false, onValueChange: (String) -> Unit){
+fun TextfieldStyle1(text: String, icon: ImageVector, isPassword: Boolean = false, value: String,  onValueChange: (String) -> Unit){
     Box {
         Row {
             Spacer(
@@ -93,5 +93,5 @@ fun TextfieldStyle1(text: String, icon: ImageVector, value: String, isPassword: 
 @Preview
 @Composable
 fun TextfieldStyle1Preview() {
-    TextfieldStyle1("Preview", Icons.Default.Preview, "",  false) {}
+    TextfieldStyle1("Preview", Icons.Default.Preview, false,  "") {}
 }

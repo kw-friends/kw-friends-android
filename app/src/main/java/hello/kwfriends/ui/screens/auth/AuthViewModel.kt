@@ -101,7 +101,6 @@ class AuthViewModel : ViewModel() {
     }
     fun changeFindPasswordView() {
         inputEmail = ""
-        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
         uiState = AuthUiState.FindPassword
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,12 +23,12 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextfieldStyle2(text: String){
+fun TextfieldStyle2(text: String, value: String,  onValueChange: (String) -> Unit){
     val interactionSource = remember { MutableInteractionSource() }
 
     BasicTextField(
-        value = text,
-        onValueChange = { },
+        value = value,
+        onValueChange = onValueChange,
         modifier = Modifier
             .width(266.dp)
             .height(40.dp),
@@ -39,6 +40,7 @@ fun TextfieldStyle2(text: String){
             color = Color(0xFFF1F1F1),
             textAlign = TextAlign.Center
         ),
+
         ) { innerTextField ->
         val containerColor = Color(0x66F1F1F1)
         TextFieldDefaults.DecorationBox(
@@ -58,6 +60,9 @@ fun TextfieldStyle2(text: String){
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),
+            placeholder = {
+                Text(text = text, color = Color(0xFFF1F1F1), fontWeight = FontWeight(300))
+            },
             contentPadding = PaddingValues(0.dp), // this is how you can remove the padding
         )
     }
@@ -66,5 +71,5 @@ fun TextfieldStyle2(text: String){
 @Preview
 @Composable
 fun TextfieldStyle2Preview(){
-    TextfieldStyle2(text = "Preview")
+    TextfieldStyle2(text = "Preview", value = "", onValueChange = {})
 }

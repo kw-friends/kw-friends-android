@@ -48,7 +48,9 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
 import hello.kwfriends.ui.component.ButtonStyle1
 import hello.kwfriends.ui.component.CheckboxStyle1
+import hello.kwfriends.ui.component.TextStyle1
 import hello.kwfriends.ui.component.TextfieldStyle1
+import hello.kwfriends.ui.component.TextfieldStyle2
 import hello.kwfriends.ui.screens.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,7 +111,14 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         contentDescription = "앱 로고",
                         modifier = Modifier
                             .size(102.dp)
-                            .clickable { context.startActivity(Intent(context, MainActivity::class.java)) }
+                            .clickable {
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        MainActivity::class.java
+                                    )
+                                )
+                            }
                     )
                     Spacer(modifier = Modifier.height(80.dp))
                     TextfieldStyle1(
@@ -177,29 +186,43 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.FindPassword -> {
-            Column(
-                modifier = modifier.padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.padding(5.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputEmail,
-                    onValueChange = { viewModel.setInputEmailText(it) },
-                    singleLine = true,
-                    placeholder = { Text(text = "광운대학교 웹메일") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySendPasswordResetEmail() }) {
-                    Text(text = "비밀번호 재설정 이메일 보내기")
-                }
-                Spacer(modifier = Modifier.padding(2.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.changeLoginView() }) {
-                    Text(text = "이전화면으로")
+            viewModel.userIdSaveCheckAndLoad()
+
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xFFE79898))
+            )
+            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier
+                        .requiredWidth(266.dp)
+                        .fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top
+                ) {
+                    Spacer(modifier = Modifier.height(77.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "앱 로고",
+                        modifier = Modifier.size(102.dp)
+                    )
+                    Spacer(modifier = Modifier.height(54.dp))
+                    TextStyle1("비밀번호 재설정")
+                    Spacer(modifier = Modifier.height(38.dp))
+                    TextfieldStyle2(
+                        text = "Web-Mail",
+                        value = viewModel.inputEmail,
+                        onValueChange = { viewModel.setInputEmailText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(140.dp))
+                    ButtonStyle1(text = "메일 전송하기", onClick = { viewModel.trySendPasswordResetEmail() })
+                    Spacer(modifier = Modifier.height(11.dp))
+                    Row(Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(7.dp))
+                        Text(
+                            text = "이전화면",
+                            color = Color(0xFFF1F1F1),
+                            modifier = Modifier.clickable { viewModel.changeLoginView() }
+                        )
+                    }
                 }
             }
         }
