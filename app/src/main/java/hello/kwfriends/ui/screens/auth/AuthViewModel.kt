@@ -84,7 +84,6 @@ class AuthViewModel : ViewModel() {
     // -- 뷰 변환 함수 --
     fun changeLoginView() {
         inputEmail = ""
-        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
         inputPassword = ""
         uiState = AuthUiState.SignIn
     }
