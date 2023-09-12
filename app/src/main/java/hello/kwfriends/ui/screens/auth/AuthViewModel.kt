@@ -56,6 +56,11 @@ class AuthViewModel : ViewModel() {
     //아이디저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
 
+    //유저 이메일 저장 변수
+    var userEmail by mutableStateOf<String>("")
+
+    var idSaveLoaded by mutableStateOf<Boolean>(false)
+
     //USER_DATA datastore 객체 저장 변수
     var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
 
@@ -84,6 +89,7 @@ class AuthViewModel : ViewModel() {
     // -- 뷰 변환 함수 --
     fun changeLoginView() {
         inputEmail = ""
+        if(idSaveChecked){ inputEmail = userEmail }
         inputPassword = ""
         uiState = AuthUiState.SignIn
     }
@@ -95,12 +101,13 @@ class AuthViewModel : ViewModel() {
     }
     fun changeDeleteUserView() {
         inputEmail = ""
-        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
+        if(idSaveChecked){ inputEmail = userEmail }
         inputPassword = ""
         uiState = AuthUiState.DeleteUser
     }
     fun changeFindPasswordView() {
         inputEmail = ""
+        if(idSaveChecked){ inputEmail = userEmail }
         uiState = AuthUiState.FindPassword
     }
 
@@ -212,18 +219,20 @@ class AuthViewModel : ViewModel() {
     fun trySignIn() {
         uiState = AuthUiState.Loading
         inputEmail = autoEmailLink(inputEmail)
-        viewModelScope.launch { if(UserAuth.signIn(inputEmail, inputPassword)){
-            uiState = AuthUiState.SignInSuccess
-            if(idSaveChecked){ //아이디 저장
-                setUserData("ID", inputEmail)
-                setUserData("ID_SAVE_CHECKED", "true")
+        viewModelScope.launch {
+            if(UserAuth.signIn(inputEmail, inputPassword)){
+                uiState = AuthUiState.SignInSuccess
+                if(idSaveChecked){ //아이디 저장
+                    setUserData("ID", inputEmail)
+                    setUserData("ID_SAVE_CHECKED", "true")
+                    Log.w("Lim", "아이디 저장 완료.")
+                }
+                else{
+                    setUserData("ID_SAVE_CHECKED", "false")
+                }
+            } else{
+                uiState = AuthUiState.SignIn
             }
-            else{
-                setUserData("IS_ID_CHECKED", "false")
-            }
-        } else{
-            uiState = AuthUiState.SignIn
-        }
         }
 
     }
@@ -247,6 +256,9 @@ class AuthViewModel : ViewModel() {
     fun trySignOut() {
         uiState = AuthUiState.Loading
         UserAuth.signOut()
+        inputEmail = ""
+        inputPassword = ""
+        idSaveLoaded = false
         uiState = AuthUiState.SignIn
     }
 
@@ -305,7 +317,7 @@ class AuthViewModel : ViewModel() {
                     if(UserAuth.deleteUser()){
                         userInputChecked = false
                         userDepartAuto = false
-                        UserAuth.signOut()
+                        trySignOut()
                     }
                     else{
                         //유저 firestore 상태 롤백
@@ -440,7 +452,7 @@ class AuthViewModel : ViewModel() {
     fun userInfoCheck() {
         uiState = AuthUiState.Loading
 
-            //유저 정보 불러오기
+        //유저 정보 불러오기
         viewModelScope.launch {
             try {
                 val userInfo: Map<String, Any>? = UserDataManager.getUserData()
@@ -519,17 +531,19 @@ class AuthViewModel : ViewModel() {
     fun userIdSaveCheckAndLoad(){
         viewModelScope.launch {
             try {
-                Log.w("Lim", "저장된 아이디 불러오기 시도")
+                Log.w("Lim", "아이디 저장 데이터 불러오기")
                 getUserData("ID_SAVE_CHECKED").collect() { isChecked ->
+                    Log.w("Lim", "[idSaveLoad] isChecked: $isChecked")
                     if (isChecked == "true") {
                         idSaveChecked = true
                         getUserData("ID").collect() { id ->
-                            inputEmail = id
+                            Log.w("Lim", "[idSaveLoad] id: $id")
+                            userEmail = id
+                            inputEmail = userEmail
                         }
                     }
 
                 }
-
             } catch (e: Exception) {
                 Log.w("Lim", "저장된 아이디 불러오기 실패: ", e)
             }

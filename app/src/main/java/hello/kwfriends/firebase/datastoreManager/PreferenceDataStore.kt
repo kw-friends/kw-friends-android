@@ -16,7 +16,7 @@ class PreferenceDataStore(context: Context, datastoreName: String) {
 
     //데이터 저장
     suspend fun setData(key: String, value: String){
-        Log.w("Lim", "데이터를 저장합니다.")
+        Log.w("Lim", "[pref] 데이터를 저장합니다. $key : $value")
         pref.edit {
             val prefKey = stringPreferencesKey(key)
             it[prefKey] = value
@@ -25,7 +25,7 @@ class PreferenceDataStore(context: Context, datastoreName: String) {
 
     //데이터 불러오기(IOException 등 발생 가능)
     fun getData(key: String): Flow<String> {
-        Log.w("Lim", "데이터를 불러옵니다.")
+        Log.w("Lim", "[pref] 데이터를 불러옵니다. key = $key")
         val prefKey = stringPreferencesKey(key)
         return pref.data
             .map{

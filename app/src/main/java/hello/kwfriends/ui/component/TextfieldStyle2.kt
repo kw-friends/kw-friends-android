@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -15,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,11 +26,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextfieldStyle2(text: String, value: String,  onValueChange: (String) -> Unit){
+fun TextfieldStyle2(text: String, isPassword: Boolean = false, value: String,  onValueChange: (String) -> Unit){
     val interactionSource = remember { MutableInteractionSource() }
 
     BasicTextField(
-        value = value,
+        value = if(value.isEmpty()) text else value,
         onValueChange = onValueChange,
         modifier = Modifier
             .width(266.dp)
@@ -40,6 +43,8 @@ fun TextfieldStyle2(text: String, value: String,  onValueChange: (String) -> Uni
             color = Color(0xFFF1F1F1),
             textAlign = TextAlign.Center
         ),
+        visualTransformation = if(isPassword && value.isNotEmpty()) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = if(isPassword && value.isNotEmpty()) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default
 
         ) { innerTextField ->
         val containerColor = Color(0x66F1F1F1)

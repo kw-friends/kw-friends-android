@@ -77,6 +77,10 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
             }
         }
     }
+    if (!viewModel.idSaveLoaded){
+        viewModel.idSaveLoaded = true
+        viewModel.userIdSaveCheckAndLoad() // 유저 아이디 저장 정보 불러오기
+    }
     when (viewModel.uiState) {
         is AuthUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -91,7 +95,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
 
         }
         is AuthUiState.SignIn -> {
-            viewModel.userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
             Box(modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color(0xFFE79898))
@@ -186,8 +189,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.FindPassword -> {
-            viewModel.userIdSaveCheckAndLoad()
-
             Box(modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color(0xFFE79898))
@@ -228,51 +229,125 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.Register -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
+            )
             Column(
-                modifier = modifier.padding(10.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.padding(5.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputEmail,
-                    onValueChange = { viewModel.setInputEmailText(it) },
-                    singleLine = true,
-                    placeholder = { Text("광운대학교 웹메일") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputPassword,
-                    onValueChange = { viewModel.setInputPasswordText(it) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    placeholder = { Text("비밀번호") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputPasswordConfirm,
-                    onValueChange = { viewModel.setInputPasswordConfirmText(it) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    placeholder = { Text("비밀번호 확인") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
-                    Text(text = "회원가입하기")
-                }
-                Spacer(modifier = Modifier.padding(2.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                    viewModel.uiState =
-                        AuthUiState.SignIn
-                }) {
-                    Text(text = "이전화면으로")
+                Column(
+                    modifier = Modifier
+                        .requiredWidth(266.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Spacer(modifier = Modifier.height(77.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "앱 로고",
+                        modifier = Modifier.size(102.dp)
+                    )
+                    Spacer(modifier = Modifier.height(54.dp))
+                    TextStyle1("회원 가입")
+                    Spacer(modifier = Modifier.height(25.dp))
+                    TextfieldStyle2(
+                        text = "KWANGWOON WEB-MAIL",
+                        value = viewModel.inputEmail,
+                        onValueChange = { viewModel.setInputEmailText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(13.dp))
+                    TextfieldStyle2(
+                        text = "Password",
+                        isPassword = true,
+                        value = viewModel.inputPassword,
+                        onValueChange = { viewModel.setInputPasswordText(it) },
+                    )
+                    Spacer(modifier = Modifier.height(13.dp))
+                    TextfieldStyle2(
+                        text = "Password Again",
+                        isPassword = true,
+                        value = viewModel.inputPasswordConfirm,
+                        onValueChange = { viewModel.setInputPasswordConfirmText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(13.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Spacer(modifier = Modifier.width(7.dp))
+                        CheckboxStyle1(
+                            text = "이용약관 및 개인정보 처리방침에 동의합니다.",
+                            checked = true,
+                            onCheckedChange = { },
+                            onTextClicked = { }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(33.dp))
+                    ButtonStyle1(
+                        text = "계정 만들기",
+                        onClick = { viewModel.tryRegister() }
+                    )
+                    Spacer(modifier = Modifier.height(11.dp))
+                    Row(Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(7.dp))
+                        Text(
+                            text = "이전화면",
+                            color = Color(0xFFF1F1F1),
+                            modifier = Modifier.clickable { viewModel.changeLoginView() }
+                        )
+                    }
                 }
             }
         }
+
+//            Column(
+//                modifier = modifier.padding(10.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Spacer(modifier = Modifier.padding(5.dp))
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    value = viewModel.inputEmail,
+//                    onValueChange = { viewModel.setInputEmailText(it) },
+//                    singleLine = true,
+//                    placeholder = { Text("광운대학교 웹메일") }
+//                )
+//                Spacer(modifier = Modifier.padding(10.dp))
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    value = viewModel.inputPassword,
+//                    onValueChange = { viewModel.setInputPasswordText(it) },
+//                    singleLine = true,
+//                    visualTransformation = PasswordVisualTransformation(),
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                    placeholder = { Text("비밀번호") }
+//                )
+//                Spacer(modifier = Modifier.padding(10.dp))
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    value = viewModel.inputPasswordConfirm,
+//                    onValueChange = { viewModel.setInputPasswordConfirmText(it) },
+//                    singleLine = true,
+//                    visualTransformation = PasswordVisualTransformation(),
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                    placeholder = { Text("비밀번호 확인") }
+//                )
+//                Spacer(modifier = Modifier.padding(10.dp))
+//                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
+//                    Text(text = "회원가입하기")
+//                }
+//                Spacer(modifier = Modifier.padding(2.dp))
+//                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+//                    viewModel.uiState =
+//                        AuthUiState.SignIn
+//                }) {
+//                    Text(text = "이전화면으로")
+//                }
+//            }
 
         is AuthUiState.RequestEmailVerify -> {
             //Email verity request screen
