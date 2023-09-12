@@ -1,9 +1,12 @@
 package hello.kwfriends.ui.screens.main
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +21,15 @@ import hello.kwfriends.ui.screens.settings.SettingsScreen
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val backDisPatcher = LocalOnBackPressedDispatcherOwner.current
+    val currentRoute = remember {
+        navController.currentBackStackEntry?.destination?.route
+    }
+    val backCallback = BackHandler {
+
+    }
     Scaffold(
+
         topBar = { ToolBarWithTitle(navController = navController) },
         bottomBar = { NavigationBar(navController = navController) }
     ) {

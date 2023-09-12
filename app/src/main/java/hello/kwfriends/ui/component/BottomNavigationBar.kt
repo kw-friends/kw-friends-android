@@ -38,7 +38,7 @@ fun NavigationBar(navController: NavHostController) {
                 selected = currentRoute == item.screenRoute,
                 onClick = {
                     navController.navigate(item.screenRoute) {
-                        navController.graph.startDestinationRoute
+                    navController.graph.startDestinationRoute
                         launchSingleTop = true
                         restoreState = true
                     }
