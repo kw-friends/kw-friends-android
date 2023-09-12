@@ -53,21 +53,3 @@ fun NavigationBar(navController: NavHostController) {
         }
     }
 }
-
-@Composable
-fun NavigationGraph(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = BottomNavItem.FindGathering.screenRoute
-    ) {
-        composable(BottomNavItem.FindGathering.screenRoute) {
-            findGatheringScreen()
-        }
-        composable(BottomNavItem.MyPage.screenRoute) {
-            MyPageScreen()
-        }
-        composable(BottomNavItem.Settings.screenRoute) {
-            SettingsScreen()
-        }
-    }
-}

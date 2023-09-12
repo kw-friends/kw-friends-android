@@ -5,21 +5,38 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.component.NavigationBar
-import hello.kwfriends.ui.component.NavigationGraph
 import hello.kwfriends.ui.component.ToolBarWithTitle
+import hello.kwfriends.ui.screens.findGathering.findGatheringScreen
+import hello.kwfriends.ui.screens.myPage.MyPageScreen
+import hello.kwfriends.ui.screens.settings.SettingsScreen
 
 
 @Composable
-fun MainScreenView() {
+fun MainScreen() {
     val navController = rememberNavController()
     Scaffold(
         topBar = { ToolBarWithTitle(navController = navController) },
         bottomBar = { NavigationBar(navController = navController) }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            NavigationGraph(navController = navController)
+            NavHost(
+                navController = navController,
+                startDestination = BottomNavItem.FindGathering.screenRoute
+            ) {
+                composable(BottomNavItem.FindGathering.screenRoute) {
+                    findGatheringScreen()
+                }
+                composable(BottomNavItem.MyPage.screenRoute) {
+                    MyPageScreen()
+                }
+                composable(BottomNavItem.Settings.screenRoute) {
+                    SettingsScreen()
+                }
+            }
         }
     }
 }
