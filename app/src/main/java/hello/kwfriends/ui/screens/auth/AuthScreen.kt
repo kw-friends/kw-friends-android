@@ -161,7 +161,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         Row {
                             Spacer(modifier = Modifier.width(7.dp))
                             Text(
-                                text = "ID 찾기",
+                                text = "비밀번호를 잊으셨나요?",
                                 style = TextStyle(
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight(300),
