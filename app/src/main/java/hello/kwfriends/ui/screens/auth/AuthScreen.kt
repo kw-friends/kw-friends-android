@@ -209,7 +209,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     TextStyle1("비밀번호 재설정")
                     Spacer(modifier = Modifier.height(38.dp))
                     TextfieldStyle2(
-                        text = "Web-Mail",
+                        placeholder = "Web-Mail",
                         value = viewModel.inputEmail,
                         onValueChange = { viewModel.setInputEmailText(it) }
                     )
@@ -255,20 +255,20 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     TextStyle1("회원 가입")
                     Spacer(modifier = Modifier.height(25.dp))
                     TextfieldStyle2(
-                        text = "KWANGWOON WEB-MAIL",
+                        placeholder = "KWANGWOON WEB-MAIL",
                         value = viewModel.inputEmail,
                         onValueChange = { viewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(13.dp))
                     TextfieldStyle2(
-                        text = "Password",
+                        placeholder = "Password",
                         isPassword = true,
                         value = viewModel.inputPassword,
                         onValueChange = { viewModel.setInputPasswordText(it) },
                     )
                     Spacer(modifier = Modifier.height(13.dp))
                     TextfieldStyle2(
-                        text = "Password Again",
+                        placeholder = "Password Again",
                         isPassword = true,
                         value = viewModel.inputPasswordConfirm,
                         onValueChange = { viewModel.setInputPasswordConfirmText(it) }
@@ -303,51 +303,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 }
             }
         }
-
-//            Column(
-//                modifier = modifier.padding(10.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Spacer(modifier = Modifier.padding(5.dp))
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    value = viewModel.inputEmail,
-//                    onValueChange = { viewModel.setInputEmailText(it) },
-//                    singleLine = true,
-//                    placeholder = { Text("광운대학교 웹메일") }
-//                )
-//                Spacer(modifier = Modifier.padding(10.dp))
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    value = viewModel.inputPassword,
-//                    onValueChange = { viewModel.setInputPasswordText(it) },
-//                    singleLine = true,
-//                    visualTransformation = PasswordVisualTransformation(),
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                    placeholder = { Text("비밀번호") }
-//                )
-//                Spacer(modifier = Modifier.padding(10.dp))
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    value = viewModel.inputPasswordConfirm,
-//                    onValueChange = { viewModel.setInputPasswordConfirmText(it) },
-//                    singleLine = true,
-//                    visualTransformation = PasswordVisualTransformation(),
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                    placeholder = { Text("비밀번호 확인") }
-//                )
-//                Spacer(modifier = Modifier.padding(10.dp))
-//                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryRegister() }) {
-//                    Text(text = "회원가입하기")
-//                }
-//                Spacer(modifier = Modifier.padding(2.dp))
-//                Button(modifier = Modifier.fillMaxWidth(), onClick = {
-//                    viewModel.uiState =
-//                        AuthUiState.SignIn
-//                }) {
-//                    Text(text = "이전화면으로")
-//                }
-//            }
 
         is AuthUiState.RequestEmailVerify -> {
             //Email verity request screen
