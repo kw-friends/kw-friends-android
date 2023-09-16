@@ -20,11 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
@@ -42,8 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.ktx.auth
@@ -500,39 +496,95 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.DeleteUser -> {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xFFE79898))
+            )
             Column(
-                modifier = modifier.padding(10.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.padding(5.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputEmail,
-                    onValueChange = { viewModel.setInputEmailText(it) },
-                    singleLine = true,
-                    placeholder = { Text(text = "광운대학교 웹메일") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputPassword,
-                    onValueChange = { viewModel.setInputPasswordText(it) },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    placeholder = { Text(text = "비밀번호") }
-                )
-                Spacer(modifier = Modifier.padding(5.dp))
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryDeleteUser() }) {
-                    Text(text = "회원탈퇴하기")
-                }
-                Spacer(modifier = Modifier.padding(2.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.uiState = AuthUiState.SignInSuccess }) {
-                    Text(text = "이전화면으로")
+                Column(
+                    modifier = Modifier
+                        .requiredWidth(266.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Spacer(modifier = Modifier.height(77.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "앱 로고",
+                        modifier = Modifier.size(102.dp)
+                    )
+                    Spacer(modifier = Modifier.height(54.dp))
+                    TextStyle1("회원 탈퇴")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextfieldStyle1(
+                        text = "광운대학교 웹메일",
+                        icon = Icons.Default.AccountBox,
+                        value = viewModel.inputEmail,
+                        onValueChange = { viewModel.setInputEmailText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextfieldStyle1(
+                        text = "비밀번호",
+                        icon = Icons.Default.Person,
+                        value = viewModel.inputPassword,
+                        onValueChange = { viewModel.setInputPasswordText(it) },
+                        isPassword = true
+                    )
+                    Spacer(modifier = Modifier.height(128.dp))
+                    ButtonStyle1(
+                        text = "회원탈퇴",
+                        onClick = { viewModel.tryDeleteUser() }
+                    )
+                    Spacer(modifier = Modifier.height(11.dp))
+                    Row(Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(7.dp))
+                        Text(
+                            text = "이전화면",
+                            color = Color(0xFFF1F1F1),
+                            modifier = Modifier.clickable {
+                                viewModel.uiState = AuthUiState.SignInSuccess
+                            }
+                        )
+                    }
                 }
             }
+//            Column(
+//                modifier = modifier.padding(10.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Spacer(modifier = Modifier.padding(5.dp))
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    value = viewModel.inputEmail,
+//                    onValueChange = { viewModel.setInputEmailText(it) },
+//                    singleLine = true,
+//                    placeholder = { Text(text = "광운대학교 웹메일") }
+//                )
+//                Spacer(modifier = Modifier.padding(10.dp))
+//                TextField(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    value = viewModel.inputPassword,
+//                    onValueChange = { viewModel.setInputPasswordText(it) },
+//                    singleLine = true,
+//                    visualTransformation = PasswordVisualTransformation(),
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                    placeholder = { Text(text = "비밀번호") }
+//                )
+//                Spacer(modifier = Modifier.padding(5.dp))
+//                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryDeleteUser() }) {
+//                    Text(text = "회원탈퇴하기")
+//                }
+//                Spacer(modifier = Modifier.padding(2.dp))
+//                Button(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    onClick = { viewModel.uiState = AuthUiState.SignInSuccess }) {
+//                    Text(text = "이전화면으로")
+//                }
+//            }
         }
     }
 }
