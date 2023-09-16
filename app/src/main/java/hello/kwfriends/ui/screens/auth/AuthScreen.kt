@@ -29,6 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
@@ -420,32 +422,49 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
 
         is AuthUiState.InputUserDepartment -> {
             if (!viewModel.userDepartAuto) { viewModel.userDepartmentAutoRecognition() } // 학번으로 유저 소속 자동인식
-
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xFFE79898))
+            )
             Column(
-                modifier = modifier.padding(10.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.padding(5.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputCollege,
-                    onValueChange = { viewModel.setInputCollegeText(it) },
-                    singleLine = true,
-                    placeholder = { Text("단과대") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputDepartment,
-                    onValueChange = { viewModel.setInputDepartmentText(it) },
-                    singleLine = true,
-                    placeholder = { Text("학부") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySaveUserDepartment() }) {
-                    Text(text = "입력 완료")
+                Column(
+                    modifier = Modifier
+                        .requiredWidth(266.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Spacer(modifier = Modifier.height(77.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "앱 로고",
+                        modifier = Modifier.size(102.dp)
+                    )
+                    Spacer(modifier = Modifier.height(54.dp))
+                    TextStyle1("회원 정보 입력")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextfieldStyle1(
+                        text = "단과대",
+                        icon = Icons.Default.LocationOn,
+                        value = viewModel.inputCollege,
+                        onValueChange = { viewModel.setInputCollegeText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextfieldStyle1(
+                        text = "학부",
+                        icon = Icons.Default.Home,
+                        value = viewModel.inputDepartment,
+                        onValueChange = { viewModel.setInputDepartmentText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(128.dp))
+
+                    ButtonStyle1(
+                        text = "완료",
+                        onClick = { viewModel.trySaveUserDepartment() }
+                    )
                 }
             }
         }
