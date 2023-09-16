@@ -284,6 +284,9 @@ class AuthViewModel : ViewModel() {
             if(UserAuth.reload()) {
                 if (Firebase.auth.currentUser?.isEmailVerified == true) {
                     Log.w("Lim", "이메일 인증 완료. 회원가입 성공")
+                    setUserData("ID", inputEmail)
+                    setUserData("ID_SAVE_CHECKED", "true")
+                    idSaveChecked = true
                     uiState = AuthUiState.SignIn
                 } else {
                     uiState = AuthUiState.SignIn
@@ -317,6 +320,7 @@ class AuthViewModel : ViewModel() {
                     if(UserAuth.deleteUser()){
                         userInputChecked = false
                         userDepartAuto = false
+                        setUserData("ID", "")
                         trySignOut()
                     }
                     else{
