@@ -22,13 +22,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -338,52 +340,80 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.InputUserInfo -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
+            )
             Column(
-                modifier = modifier.padding(10.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.padding(5.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputStdNum,
-                    onValueChange = { viewModel.setInputStdNumText(it) },
-                    singleLine = true,
-                    placeholder = { Text("학번") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputName,
-                    onValueChange = { viewModel.setInputNameText(it) },
-                    singleLine = true,
-                    placeholder = { Text("이름") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = viewModel.inputMbti,
-                    onValueChange = { viewModel.setInputMbtiText(it) },
-                    singleLine = true,
-                    placeholder = { Text("MBTI") }
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                    Text(text = " 성별:")
-                    Spacer(modifier = Modifier.padding(3.dp))
-                    Checkbox(checked = viewModel.inputGender == "male", onCheckedChange = { viewModel.inputGender = "male" })
-                    Text(text = "남자", modifier = Modifier.clickable { viewModel.inputGender = "male" })
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Checkbox(checked = viewModel.inputGender == "female", onCheckedChange = { viewModel.inputGender = "female" })
-                    Text(text = "여자", modifier = Modifier.clickable { viewModel.inputGender = "female" })
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Checkbox(checked = viewModel.inputGender == "etc", onCheckedChange = { viewModel.inputGender = "etc" })
-                    Text(text = "기타", modifier = Modifier.clickable { viewModel.inputGender = "etc" })
-                }
-                Spacer(modifier = Modifier.padding(10.dp))
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySaveUserInfo() }) {
-                    Text(text = "입력 완료")
+                Column(
+                    modifier = Modifier
+                        .requiredWidth(266.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Spacer(modifier = Modifier.height(77.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "앱 로고",
+                        modifier = Modifier.size(102.dp)
+                    )
+                    Spacer(modifier = Modifier.height(54.dp))
+                    TextStyle1("회원 정보 입력")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextfieldStyle1(
+                        text = "학번",
+                        icon = Icons.Default.AccountBox,
+                        value = viewModel.inputStdNum,
+                        onValueChange = { viewModel.setInputStdNumText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextfieldStyle1(
+                        text = "이름",
+                        icon = Icons.Default.Person,
+                        value = viewModel.inputName,
+                        onValueChange = { viewModel.setInputNameText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextfieldStyle1(
+                        text = "mbti",
+                        icon = Icons.Default.Face,
+                        value = viewModel.inputMbti,
+                        onValueChange = { viewModel.setInputMbtiText(it) }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(7.dp))
+                        CheckboxStyle1(
+                            text = "남자",
+                            checked = viewModel.inputGender == "male",
+                            onCheckedChange = { viewModel.inputGender = "male" },
+                            onTextClicked = { viewModel.inputGender = "male" }
+                        )
+                        Spacer(modifier = Modifier.width(17.dp))
+                        CheckboxStyle1(
+                            text = "여자",
+                            checked = viewModel.inputGender == "female",
+                            onCheckedChange = { viewModel.inputGender = "female" },
+                            onTextClicked = { viewModel.inputGender = "female" }
+                        )
+                        Spacer(modifier = Modifier.width(17.dp))
+                        CheckboxStyle1(
+                            text = "기타",
+                            viewModel.inputGender == "etc",
+                            onCheckedChange = { viewModel.inputGender = "etc" },
+                            onTextClicked = { viewModel.inputGender = "etc" }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(38.dp))
+                    ButtonStyle1(
+                        text = "완료",
+                        onClick = { viewModel.trySaveUserInfo() }
+                    )
                 }
             }
         }
