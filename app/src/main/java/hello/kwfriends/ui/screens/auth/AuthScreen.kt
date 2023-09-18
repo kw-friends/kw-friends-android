@@ -125,14 +125,14 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     )
                     Spacer(modifier = Modifier.height(80.dp))
                     TextfieldStyle1(
-                        text = "KW WEB-MAIL",
+                        placeholder = "KW WEB-MAIL",
                         icon = Icons.Default.Email,
                         value = viewModel.inputEmail,
                         onValueChange = { viewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
-                        text = "PASSWORD",
+                        placeholder = "PASSWORD",
                         icon = Icons.Default.Lock,
                         value = viewModel.inputPassword,
                         isPassword = true,
@@ -364,21 +364,21 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     TextStyle1("회원 정보 입력")
                     Spacer(modifier = Modifier.height(16.dp))
                     TextfieldStyle1(
-                        text = "학번",
+                        placeholder = "학번",
                         icon = Icons.Default.AccountBox,
                         value = viewModel.inputStdNum,
                         onValueChange = { viewModel.setInputStdNumText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
-                        text = "이름",
+                        placeholder = "이름",
                         icon = Icons.Default.Person,
                         value = viewModel.inputName,
                         onValueChange = { viewModel.setInputNameText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
-                        text = "mbti",
+                        placeholder = "mbti",
                         icon = Icons.Default.Face,
                         value = viewModel.inputMbti,
                         onValueChange = { viewModel.setInputMbtiText(it) }
@@ -443,14 +443,14 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     TextStyle1("회원 정보 입력")
                     Spacer(modifier = Modifier.height(16.dp))
                     TextfieldStyle1(
-                        text = "단과대",
+                        placeholder = "단과대",
                         icon = Icons.Default.LocationOn,
                         value = viewModel.inputCollege,
                         onValueChange = { viewModel.setInputCollegeText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
-                        text = "학부",
+                        placeholder = "학부",
                         icon = Icons.Default.Home,
                         value = viewModel.inputDepartment,
                         onValueChange = { viewModel.setInputDepartmentText(it) }
@@ -521,14 +521,14 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     TextStyle1("회원 탈퇴")
                     Spacer(modifier = Modifier.height(16.dp))
                     TextfieldStyle1(
-                        text = "광운대학교 웹메일",
+                        placeholder = "광운대학교 웹메일",
                         icon = Icons.Default.AccountBox,
                         value = viewModel.inputEmail,
                         onValueChange = { viewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
-                        text = "비밀번호",
+                        placeholder = "비밀번호",
                         icon = Icons.Default.Person,
                         value = viewModel.inputPassword,
                         onValueChange = { viewModel.setInputPasswordText(it) },
