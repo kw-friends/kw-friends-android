@@ -552,39 +552,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                     }
                 }
             }
-//            Column(
-//                modifier = modifier.padding(10.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Spacer(modifier = Modifier.padding(5.dp))
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    value = viewModel.inputEmail,
-//                    onValueChange = { viewModel.setInputEmailText(it) },
-//                    singleLine = true,
-//                    placeholder = { Text(text = "광운대학교 웹메일") }
-//                )
-//                Spacer(modifier = Modifier.padding(10.dp))
-//                TextField(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    value = viewModel.inputPassword,
-//                    onValueChange = { viewModel.setInputPasswordText(it) },
-//                    singleLine = true,
-//                    visualTransformation = PasswordVisualTransformation(),
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                    placeholder = { Text(text = "비밀번호") }
-//                )
-//                Spacer(modifier = Modifier.padding(5.dp))
-//                Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.tryDeleteUser() }) {
-//                    Text(text = "회원탈퇴하기")
-//                }
-//                Spacer(modifier = Modifier.padding(2.dp))
-//                Button(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.uiState = AuthUiState.SignInSuccess }) {
-//                    Text(text = "이전화면으로")
-//                }
-//            }
         }
     }
 }
