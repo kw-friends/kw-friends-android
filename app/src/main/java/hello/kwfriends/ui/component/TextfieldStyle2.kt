@@ -31,14 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, value: String,  onValueChange: (String) -> Unit){
+fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueChange: Boolean = true, value: String,  onValueChange: (String) -> Unit){
     val interactionSource = remember { MutableInteractionSource() }
     var containerColor by remember { mutableStateOf(Color(0x66F1F1F1)) }
     var textColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
     BasicTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = if(canValueChange) onValueChange else { _ -> Unit },
         modifier = Modifier
             .width(266.dp)
             .height(40.dp)
@@ -52,8 +52,7 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, value: Str
                     textColor = Color(0xFFF1F1F1)
                     placeholderColor = Color(0xFFF1F1F1)
                 }
-            }
-        ,
+            },
         interactionSource = interactionSource,
         singleLine = true,
         textStyle = TextStyle(
