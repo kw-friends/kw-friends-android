@@ -25,7 +25,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun onClickedHome() {
+    fun onClickedFindGathering() {
         viewModelScope.launch {
             uiState = MainUiState.Home
             Log.d("minmul", "onClickedHome")

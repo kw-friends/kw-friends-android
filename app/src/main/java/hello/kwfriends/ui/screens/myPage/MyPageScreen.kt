@@ -105,6 +105,11 @@ fun UserInfoCard(
     }
 }
 
+@Composable
+fun MyPageScreen() {
+    UserInfoCard(userName = "어승경", admissionyear = 23, major = "소프트웨어학부", grade = 1)
+}
+
 @Preview
 @Composable
 fun UserInfoCardPreview() {

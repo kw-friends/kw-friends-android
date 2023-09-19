@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
+import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.firebase.firebaseManager.UserAuth
 import hello.kwfriends.firebase.firestoreManager.UserDataManager
 import kotlinx.coroutines.flow.Flow

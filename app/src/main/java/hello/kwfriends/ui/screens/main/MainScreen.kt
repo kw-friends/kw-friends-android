@@ -1,72 +1,103 @@
 package hello.kwfriends.ui.screens.main
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import hello.kwfriends.ui.component.BottomNavigationBar
-import hello.kwfriends.ui.screens.home.GatheringCard
-import hello.kwfriends.ui.screens.myPage.UserInfoCard
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import hello.kwfriends.ui.screens.findGathering.findGatheringScreen
+import hello.kwfriends.ui.screens.myPage.MyPageScreen
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 
+
 @Composable
-fun ToolBarWithTitle(title: String, modifier: Modifier = Modifier) {
+fun MainScreen() {
+    val navController = rememberNavController()
+    Scaffold(
+        topBar = { ToolBarWithTitle(navController = navController) },
+        bottomBar = { NavigationBar(navController = navController) }
+    ) {
+        Box(modifier = Modifier.padding(it)) {
+            NavHost(
+                navController = navController,
+                startDestination = BottomNavItem.FindGathering.screenRoute
+            ) {
+                composable(BottomNavItem.FindGathering.screenRoute) {
+                    findGatheringScreen()
+                }
+                composable(BottomNavItem.MyPage.screenRoute) {
+                    MyPageScreen()
+                }
+                composable(BottomNavItem.Settings.screenRoute) {
+                    SettingsScreen()
+                }
+            }
+        }
+    }
+}
+
+@Composable //상단 바
+fun ToolBarWithTitle(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     TopAppBar(
-        title = { Text(text = title, fontSize = 22.sp) },
-        backgroundColor = Color(0xFFE4C5C5),
-        modifier = modifier
+        title = {
+            if (currentRoute != null) {
+                Text(text = currentRoute, fontSize = 22.sp)
+            }
+        },
+        backgroundColor = Color(0xFFE4C5C5)
     )
 }
 
 @Composable
-fun MainScreen(
-    viewModel: MainViewModel
-) {
-    when (viewModel.uiState) {
-        MainUiState.Home -> {
-            Column {
-                ToolBarWithTitle(title = "모임 찾기")
-                Column(
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxHeight()
-                ) {
-                    GatheringCard()
-                    BottomNavigationBar(viewModel = viewModel)
-                }
-            }
-        }
+fun NavigationBar(navController: NavHostController) {
+    val items = listOf(
+        BottomNavItem.MyPage,
+        BottomNavItem.FindGathering,
+        BottomNavItem.Settings
+    )
 
-        MainUiState.Settings -> {
-            Column {
-                ToolBarWithTitle(title = "설정", modifier = Modifier.padding(bottom = 30.dp))
-                Column(
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxHeight()
-                ) {
-                    SettingsScreen()
-                    BottomNavigationBar(viewModel = viewModel)
-                }
-            }
-        }
 
-        MainUiState.MyPage -> {
-            Column {
-                ToolBarWithTitle(title = "마이페이지")
-                Column(
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxHeight()
-                ) {
-                    UserInfoCard(userName = "어승경", admissionyear = 23, major = "소프트웨어학부", grade = 1)
-                    BottomNavigationBar(viewModel = viewModel)
-                }
-            }
+    BottomNavigation(
+        backgroundColor = Color(0xFFFFD9C9),
+        contentColor = Color(0xFFD56450)
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        for (item in items) {
+            BottomNavigationItem(
+                selected = currentRoute == item.screenRoute,
+                onClick = {
+                    navController.navigate(item.screenRoute) {
+                        navController.graph.startDestinationRoute
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+
+                },
+                icon = { Icon(imageVector = item.icon, contentDescription = null) },
+                label = { Text(text = item.title, fontWeight = FontWeight(600)) },
+                alwaysShowLabel = true,
+                selectedContentColor = Color(0xFFD56450),
+                unselectedContentColor = Color(0xFF929292)
+            )
         }
     }
 }
