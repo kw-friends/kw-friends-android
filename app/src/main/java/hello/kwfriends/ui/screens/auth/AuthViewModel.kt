@@ -44,7 +44,7 @@ class AuthViewModel : ViewModel() {
     private var maxAdmissionYear = 2023
 
     //유저 화면 상태 저장 변수
-    var uiState by mutableStateOf<AuthUiState>(AuthUiState.Menu)
+    var uiState by mutableStateOf<AuthUiState>(AuthUiState.SignIn)
 
     // -- 최초실행 --
     //firestore 유저 정보 확인 여부
@@ -55,6 +55,11 @@ class AuthViewModel : ViewModel() {
 
     //아이디저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
+
+    //유저 이메일 저장 변수
+    var userEmail by mutableStateOf<String>("")
+
+    var idSaveLoaded by mutableStateOf<Boolean>(false)
 
     //USER_DATA datastore 객체 저장 변수
     var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
@@ -84,7 +89,7 @@ class AuthViewModel : ViewModel() {
     // -- 뷰 변환 함수 --
     fun changeLoginView() {
         inputEmail = ""
-        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
+        if(idSaveChecked){ inputEmail = userEmail }
         inputPassword = ""
         uiState = AuthUiState.SignIn
     }
@@ -96,13 +101,13 @@ class AuthViewModel : ViewModel() {
     }
     fun changeDeleteUserView() {
         inputEmail = ""
-        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
+        if(idSaveChecked){ inputEmail = userEmail }
         inputPassword = ""
         uiState = AuthUiState.DeleteUser
     }
     fun changeFindPasswordView() {
         inputEmail = ""
-        userIdSaveCheckAndLoad() //아이디 저장 체크되어있으면 저장된 아이디 불러오기
+        if(idSaveChecked){ inputEmail = userEmail }
         uiState = AuthUiState.FindPassword
     }
 
@@ -145,7 +150,7 @@ class AuthViewModel : ViewModel() {
                 trySendAuthEmail()
             }
         }
-        uiState = AuthUiState.Menu
+        uiState = AuthUiState.SignIn
     }
 
     //입력한 이메일 형식 확인 함수
@@ -214,18 +219,20 @@ class AuthViewModel : ViewModel() {
     fun trySignIn() {
         uiState = AuthUiState.Loading
         inputEmail = autoEmailLink(inputEmail)
-        viewModelScope.launch { if(UserAuth.signIn(inputEmail, inputPassword)){
-            uiState = AuthUiState.SignInSuccess
-            if(idSaveChecked){ //아이디 저장
-                setUserData("ID", inputEmail)
-                setUserData("ID_SAVE_CHECKED", "true")
+        viewModelScope.launch {
+            if(UserAuth.signIn(inputEmail, inputPassword)){
+                uiState = AuthUiState.SignInSuccess
+                if(idSaveChecked){ //아이디 저장
+                    setUserData("ID", inputEmail)
+                    setUserData("ID_SAVE_CHECKED", "true")
+                    Log.w("Lim", "아이디 저장 완료.")
+                }
+                else{
+                    setUserData("ID_SAVE_CHECKED", "false")
+                }
+            } else{
+                uiState = AuthUiState.SignIn
             }
-            else{
-                setUserData("IS_ID_CHECKED", "false")
-            }
-        } else{
-            uiState = AuthUiState.SignIn
-        }
         }
 
     }
@@ -249,7 +256,10 @@ class AuthViewModel : ViewModel() {
     fun trySignOut() {
         uiState = AuthUiState.Loading
         UserAuth.signOut()
-        uiState = AuthUiState.Menu
+        inputEmail = ""
+        inputPassword = ""
+        idSaveLoaded = false
+        uiState = AuthUiState.SignIn
     }
 
     //인증 이메일 전송 시도 함수
@@ -258,7 +268,7 @@ class AuthViewModel : ViewModel() {
         if (Firebase.auth.currentUser?.email != null) {
             viewModelScope.launch { UserAuth.sendAuthEmail() }
         } else Log.w("Lim", "이메일이 등록되지 않아 인증메일을 전송할 수 없습니다.")
-        uiState = AuthUiState.Menu
+        uiState = AuthUiState.SignIn
     }
 
     //이메일 인증 화면 이동 함수
@@ -274,13 +284,16 @@ class AuthViewModel : ViewModel() {
             if(UserAuth.reload()) {
                 if (Firebase.auth.currentUser?.isEmailVerified == true) {
                     Log.w("Lim", "이메일 인증 완료. 회원가입 성공")
-                    uiState = AuthUiState.Menu
+                    setUserData("ID", inputEmail)
+                    setUserData("ID_SAVE_CHECKED", "true")
+                    idSaveChecked = true
+                    uiState = AuthUiState.SignIn
                 } else {
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                     Log.w("Lim", "이메일 인증이 되지 않았습니다.")
                 }
             }
-            else{ uiState = AuthUiState.Menu }
+            else{ uiState = AuthUiState.SignIn }
         }
     }
 
@@ -292,14 +305,14 @@ class AuthViewModel : ViewModel() {
         //재로그인
         viewModelScope.launch {
             if(!UserAuth.signIn(email, inputPassword)) {
-                uiState = AuthUiState.Menu
+                uiState = AuthUiState.SignIn
             }
             else {
                 //유저 현재 상태 불러오기
                 val lastState: String = UserDataManager.getUserData()?.get("state").toString()
                 //유저 상태 삭제됨으로 변경
                 if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) {
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                 }
                 else {
                     Log.w("Lim", "유저 계정 상태 deleted로 변경됨.")
@@ -307,13 +320,14 @@ class AuthViewModel : ViewModel() {
                     if(UserAuth.deleteUser()){
                         userInputChecked = false
                         userDepartAuto = false
-                        UserAuth.signOut()
+                        setUserData("ID", "")
+                        trySignOut()
                     }
                     else{
                         //유저 firestore 상태 롤백
                         viewModelScope.launch { UserDataManager.mergeSetUserData(mapOf("state" to lastState)) }
                     }
-                    uiState = AuthUiState.Menu
+                    uiState = AuthUiState.SignIn
                 }
             }
         }
@@ -323,8 +337,8 @@ class AuthViewModel : ViewModel() {
     fun userDepartmentAutoRecognition() {
         userDepartAuto = true
         //유저 정보 불러오기
-        try {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            try {
                 val userInfo: Map<String, Any>? = UserDataManager.getUserData()
                 if (userInfo != null) {
                     Log.w(ContentValues.TAG, "Firestore 유저 정보: $userInfo")
@@ -336,11 +350,9 @@ class AuthViewModel : ViewModel() {
                 } else {
                     Log.w(ContentValues.TAG, "유저 정보가 존재하지 않음.")
                 }
+            } catch (e: Exception) {
+                Log.w(ContentValues.TAG, "userDepartmentAutoRecognition() error =", e)
             }
-        }
-        catch (e: Exception) {
-            Log.w(ContentValues.TAG, "userDepartmentAutoRecognition() error =", e)
-            return
         }
 
 
@@ -359,7 +371,7 @@ class AuthViewModel : ViewModel() {
         //유저 데이터 저장
         viewModelScope.launch {
             if(UserDataManager.mergeSetUserData(userInfo)) { uiState = AuthUiState.SignInSuccess }
-            else { uiState = AuthUiState.Menu }
+            else { uiState = AuthUiState.SignIn }
         }
     }
 
@@ -374,7 +386,7 @@ class AuthViewModel : ViewModel() {
         //유저 소속 정보 저장
         viewModelScope.launch {
             if(UserDataManager.mergeSetUserData(userInfo)) { uiState = AuthUiState.SignInSuccess }
-            else {uiState = AuthUiState.Menu  }
+            else {uiState = AuthUiState.SignIn  }
         }
     }
 
@@ -445,8 +457,8 @@ class AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
 
         //유저 정보 불러오기
-        try {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            try {
                 val userInfo: Map<String, Any>? = UserDataManager.getUserData()
                 if (userInfo != null) {
                     if (userInfo["state"] != "available") { // 유저 상태 available 아니면 로그아웃
@@ -473,10 +485,10 @@ class AuthViewModel : ViewModel() {
                     uiState = AuthUiState.InputUserInfo
                 }
             }
-        }
-        catch (e: Exception) {
-            Log.w(ContentValues.TAG, "userInfoCheck() error=$e")
-            uiState = AuthUiState.InputUserInfo
+            catch (e: Exception) {
+                Log.w(ContentValues.TAG, "userInfoCheck() error=$e")
+                uiState = AuthUiState.InputUserInfo
+            }
         }
 
 
@@ -495,18 +507,17 @@ class AuthViewModel : ViewModel() {
     fun trySendPasswordResetEmail(){
         inputEmail = autoEmailLink(inputEmail)
         uiState = AuthUiState.Loading
-        try {
-            viewModelScope.launch {
-                uiState = if(UserAuth.sendPasswordResetEmail(inputEmail)){
+        viewModelScope.launch {
+            try {
+                uiState = if (UserAuth.sendPasswordResetEmail(inputEmail)) {
                     AuthUiState.SignIn
-                } else{
+                } else {
                     AuthUiState.FindPassword
                 }
+            } catch (e: Exception) {
+                Log.w("Lim", "비밀번호 재설정 이메일 전송 시도 실패: ", e)
+                uiState = AuthUiState.FindPassword
             }
-        }
-        catch (e: Exception){
-            Log.w("Lim", "비밀번호 재설정 이메일 전송 시도 실패: ", e)
-            uiState = AuthUiState.FindPassword
         }
     }
 
@@ -522,21 +533,24 @@ class AuthViewModel : ViewModel() {
 
     //USER_DATA datastore에서 아이디 저장 유무 불러오고 체크되어있으면 아이디 불러오기
     fun userIdSaveCheckAndLoad(){
-        try {
-            Log.w("Lim", "저장된 아이디 불러오기 시도")
-            viewModelScope.launch {
-                getUserData("ID_SAVE_CHECKED").collect(){ isChecked ->
-                    if(isChecked == "true"){
+        viewModelScope.launch {
+            try {
+                Log.w("Lim", "아이디 저장 데이터 불러오기")
+                getUserData("ID_SAVE_CHECKED").collect() { isChecked ->
+                    Log.w("Lim", "[idSaveLoad] isChecked: $isChecked")
+                    if (isChecked == "true") {
                         idSaveChecked = true
-                        getUserData("ID").collect(){ id ->
-                            inputEmail = id
+                        getUserData("ID").collect() { id ->
+                            Log.w("Lim", "[idSaveLoad] id: $id")
+                            userEmail = id
+                            inputEmail = userEmail
                         }
                     }
 
                 }
+            } catch (e: Exception) {
+                Log.w("Lim", "저장된 아이디 불러오기 실패: ", e)
             }
-        } catch (e: Exception){
-            Log.w("Lim", "저장된 아이디 불러오기 실패: ", e)
         }
     }
 
