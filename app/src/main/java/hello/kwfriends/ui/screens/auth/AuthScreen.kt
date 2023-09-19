@@ -273,7 +273,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         value = viewModel.inputPasswordConfirm,
                         onValueChange = { viewModel.setInputPasswordConfirmText(it) }
                     )
-                    Spacer(modifier = Modifier.height(13.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
@@ -305,37 +305,127 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.RequestEmailVerify -> {
-            //Email verity request screen
+            val context = LocalContext.current
+            val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
+            )
             Column(
-                modifier = modifier.padding(10.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val context = LocalContext.current
-                val intent =
-                    remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
-                Spacer(modifier = Modifier.padding(10.dp))
-                Text(text = "사용자 정보:")
-                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
-                Text(text = "이메일 인증 후 [인증 완료] 버튼을 눌러주세요.")
-                Spacer(modifier = Modifier.padding(10.dp))
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.tryEmailVerify() }) {
-                    Text(text = "인증 완료")
-                }
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { context.startActivity(intent) }) {
-                    Text(text = "광운대학교 웹메일 확인하러 가기")
-                }
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySendAuthEmail() }) {
-                    Text(text = "이메일 인증 재요청하기")
-                }
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySignOut() }) {
-                    Text(text = "로그아웃하기")
+                Column(
+                    modifier = Modifier
+                        .requiredWidth(266.dp)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    Spacer(modifier = Modifier.height(77.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "앱 로고",
+                        modifier = Modifier.size(102.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    androidx.compose.material3.Text(
+                        text = "인증 메일이 발송되었습니다!",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight(300),
+                            color = Color(0xFFF1F1F1),
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(88.dp))
+                    TextfieldStyle2(
+                        value = Firebase.auth.currentUser?.email ?: "email 가져오지 못함",
+                        onValueChange = {},
+                        canValueChange = false,
+                        placeholder = "KW WEB MAIL"
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row {
+                            Spacer(modifier = Modifier.width(7.dp))
+                            androidx.compose.material3.Text(
+                                text = "웹메일 확인하러 가기",
+                                style = TextStyle(
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight(300),
+                                    color = Color(0xFFF1F1F1),
+                                ),
+                                modifier = Modifier.clickable { context.startActivity(intent) }
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            androidx.compose.material3.Text(
+                                text = "이메일 재전송",
+                                style = TextStyle(
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight(300),
+                                    color = Color(0xFFF1F1F1),
+                                ),
+                                modifier = Modifier.clickable { viewModel.trySendAuthEmail() }
+                            )
+                            Spacer(modifier = Modifier.width(7.dp))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(94.dp))
+                    ButtonStyle1(
+                        text = "인증 완료",
+                        onClick = { viewModel.tryEmailVerify() }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(Modifier.fillMaxWidth()) {
+                        Spacer(modifier = Modifier.width(7.dp))
+                        androidx.compose.material3.Text(
+                            text = "로그아웃",
+                            color = Color(0xFFF1F1F1),
+                            modifier = Modifier.clickable { viewModel.trySignOut() }
+                        )
+                    }
                 }
             }
         }
+//            Column(
+//                modifier = modifier.padding(10.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                val context = LocalContext.current
+//                val intent =
+//                    remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
+//                Spacer(modifier = Modifier.padding(10.dp))
+//                Text(text = "사용자 정보:")
+//                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
+//                Text(text = "이메일 인증 후 [인증 완료] 버튼을 눌러주세요.")
+//                Spacer(modifier = Modifier.padding(10.dp))
+//                Button(modifier = Modifier.fillMaxWidth(),
+//                    onClick = { viewModel.tryEmailVerify() }) {
+//                    Text(text = "인증 완료")
+//                }
+//                Button(modifier = Modifier.fillMaxWidth(),
+//                    onClick = { context.startActivity(intent) }) {
+//                    Text(text = "광운대학교 웹메일 확인하러 가기")
+//                }
+//                Button(modifier = Modifier.fillMaxWidth(),
+//                    onClick = { viewModel.trySendAuthEmail() }) {
+//                    Text(text = "이메일 인증 재요청하기")
+//                }
+//                Button(modifier = Modifier.fillMaxWidth(),
+//                    onClick = { viewModel.trySignOut() }) {
+//                    Text(text = "로그아웃하기")
+//                }
+//            }
+//        }
 
         is AuthUiState.InputUserInfo -> {
             Box(

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -81,6 +82,9 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueCh
                     )
                 // you have to invoke this function then cursor will focus and you will able to write something
                 innerTextField.invoke()
+                if(!canValueChange){
+                    LocalFocusManager.current.clearFocus()
+                }
             }
         }
     )
