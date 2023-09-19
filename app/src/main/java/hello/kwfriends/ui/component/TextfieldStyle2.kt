@@ -62,8 +62,8 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, value: Str
             color = textColor,
             textAlign = TextAlign.Center
         ),
-        visualTransformation = if(isPassword && value.isNotEmpty()) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = if(isPassword && value.isNotEmpty()) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
+        visualTransformation = if(isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = if(isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
