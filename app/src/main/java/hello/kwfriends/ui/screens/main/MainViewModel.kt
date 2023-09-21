@@ -11,24 +11,26 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     var uiState by mutableStateOf<MainUiState>(MainUiState.Home)
 
-    fun onClickedMyPage() {
+    fun goToNewPostPage() {
+        viewModelScope.launch {
+            uiState = MainUiState.NewPost
+            Log.d("minmul", "goToNewPostPage")
+        }
+    }
+
+    fun goToHome() {
+        viewModelScope.launch {
+            uiState = MainUiState.Home
+            Log.d("minmul", "goToHome")
+        }
+    }
+
+
+
+/*    fun onClickedMyPage() {
         viewModelScope.launch {
             uiState = MainUiState.MyPage
             Log.d("minmul", "onClickedMyPage")
         }
-    }
-
-    fun onClickedSettings() {
-        viewModelScope.launch {
-            uiState = MainUiState.Settings
-            Log.d("minmul", "onClickedSettings")
-        }
-    }
-
-    fun onClickedFindGathering() {
-        viewModelScope.launch {
-            uiState = MainUiState.Home
-            Log.d("minmul", "onClickedHome")
-        }
-    }
+    }*/
 }

@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
-import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
+import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.ui.component.ButtonStyle1
 import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
