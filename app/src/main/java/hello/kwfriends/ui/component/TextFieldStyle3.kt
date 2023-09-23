@@ -113,7 +113,7 @@ fun TextfieldStyle3(
         ),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = if (isPassword) {
-            KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
+            KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction)
         } else {
             KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
         },
