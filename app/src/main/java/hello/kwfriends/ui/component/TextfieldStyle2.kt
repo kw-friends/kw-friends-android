@@ -32,14 +32,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueChange: Boolean = true, value: String,  onValueChange: (String) -> Unit){
+fun TextfieldStyle2(
+    placeholder: String,
+    isPassword: Boolean = false,
+    canValueChange: Boolean = true,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
     var containerColor by remember { mutableStateOf(Color(0x66F1F1F1)) }
     var textColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
     BasicTextField(
         value = value,
-        onValueChange = if(canValueChange) onValueChange else { _ -> Unit },
+        onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         modifier = Modifier
             .width(266.dp)
             .height(40.dp)
@@ -62,8 +68,8 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueCh
             color = textColor,
             textAlign = TextAlign.Center
         ),
-        visualTransformation = if(isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = if(isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
@@ -71,8 +77,8 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueCh
                     .clip(RoundedCornerShape(10.dp))
                     .background(containerColor),
                 contentAlignment = Alignment.Center
-            ){
-                if(value.isEmpty())
+            ) {
+                if (value.isEmpty())
                     Text(
                         text = placeholder,
                         fontSize = 20.sp,
@@ -82,7 +88,7 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueCh
                     )
                 // you have to invoke this function then cursor will focus and you will able to write something
                 innerTextField.invoke()
-                if(!canValueChange){
+                if (!canValueChange) {
                     LocalFocusManager.current.clearFocus()
                 }
             }
@@ -92,6 +98,6 @@ fun TextfieldStyle2(placeholder: String, isPassword: Boolean = false, canValueCh
 
 @Preview
 @Composable
-fun TextfieldStyle2Preview(){
+fun TextfieldStyle2Preview() {
     TextfieldStyle2(placeholder = "Preview", value = "", onValueChange = {})
 }

@@ -23,13 +23,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CheckboxStyle1(text: String, checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, onTextClicked: () -> Unit){
-    Row{
+fun CheckboxStyle1(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    onTextClicked: () -> Unit
+) {
+    Row {
         Box {
-            Spacer(modifier = Modifier
-                .clip(RoundedCornerShape(3.dp))
-                .size(15.dp)
-                .background(Color(0xFFF1F1F1))
+            Spacer(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(3.dp))
+                    .size(15.dp)
+                    .background(Color(0xFFF1F1F1))
             )
             Checkbox(
                 checked = checked,
@@ -45,7 +51,8 @@ fun CheckboxStyle1(text: String, checked: Boolean, onCheckedChange: ((Boolean) -
             )
         }
         Spacer(modifier = Modifier.width(5.dp))
-        Text(text = text,
+        Text(
+            text = text,
             color = Color(0xFFF1F1F1),
             style = TextStyle(
                 fontWeight = FontWeight(300),
@@ -59,6 +66,6 @@ fun CheckboxStyle1(text: String, checked: Boolean, onCheckedChange: ((Boolean) -
 
 @Preview
 @Composable
-fun CheckboxStyle1Preview(){
+fun CheckboxStyle1Preview() {
     CheckboxStyle1("Preview", true, {}, {})
 }

@@ -38,7 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextfieldStyle1(placeholder: String, icon: ImageVector, isPassword: Boolean = false, value: String,  onValueChange: (String) -> Unit){
+fun TextfieldStyle1(
+    placeholder: String,
+    icon: ImageVector,
+    isPassword: Boolean = false,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
     var containerColor by remember { mutableStateOf(Color(0x66F1F1F1)) }
     var textColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
@@ -67,8 +73,7 @@ fun TextfieldStyle1(placeholder: String, icon: ImageVector, isPassword: Boolean 
                             textColor = Color(0xFFF1F1F1)
                             placeholderColor = Color(0xFFF1F1F1)
                         }
-                    }
-                ,
+                    },
                 interactionSource = interactionSource,
                 singleLine = true,
                 textStyle = TextStyle(
@@ -77,8 +82,8 @@ fun TextfieldStyle1(placeholder: String, icon: ImageVector, isPassword: Boolean 
                     color = textColor,
                     textAlign = TextAlign.Center
                 ),
-                visualTransformation = if(isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-                keyboardOptions = if(isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
+                visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+                keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions.Default,
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier
@@ -86,8 +91,8 @@ fun TextfieldStyle1(placeholder: String, icon: ImageVector, isPassword: Boolean 
                             .clip(RoundedCornerShape(0.dp, 10.dp, 10.dp, 0.dp))
                             .background(containerColor),
                         contentAlignment = Alignment.Center
-                    ){
-                        if(value.isEmpty())
+                    ) {
+                        if (value.isEmpty())
                             Text(
                                 text = placeholder,
                                 fontSize = 20.sp,
@@ -126,5 +131,5 @@ fun TextfieldStyle1(placeholder: String, icon: ImageVector, isPassword: Boolean 
 @Preview
 @Composable
 fun TextfieldStyle1Preview() {
-    TextfieldStyle1("Preview", Icons.Default.Preview, false,  "") {}
+    TextfieldStyle1("Preview", Icons.Default.Preview, false, "") {}
 }

@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
-import hello.kwfriends.firebase.datastoreManager.PreferenceDataStore
+import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.ui.component.ButtonStyle1
 import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
@@ -63,7 +63,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
     val context = LocalContext.current
 
     //USER_DATA DataStore 객체 저장
-    if(viewModel.preferencesDataStore == null){
+    if (viewModel.preferencesDataStore == null) {
         viewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
     }
 
@@ -77,7 +77,7 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
             }
         }
     }
-    if (!viewModel.idSaveLoaded){
+    if (!viewModel.idSaveLoaded) {
         viewModel.idSaveLoaded = true
         viewModel.userIdSaveCheckAndLoad() // 유저 아이디 저장 정보 불러오기
     }
@@ -94,12 +94,17 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
             }
 
         }
+
         is AuthUiState.SignIn -> {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFFE79898))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
             )
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Column(
                     modifier = Modifier
                         .requiredWidth(266.dp)
@@ -147,7 +152,9 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         CheckboxStyle1(
                             text = "아이디 저장",
                             checked = viewModel.idSaveChecked,
-                            onCheckedChange = { viewModel.idSaveChecked = !viewModel.idSaveChecked },
+                            onCheckedChange = {
+                                viewModel.idSaveChecked = !viewModel.idSaveChecked
+                            },
                             onTextClicked = { viewModel.idSaveChecked = !viewModel.idSaveChecked }
                         )
                     }
@@ -157,7 +164,10 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         onClick = { viewModel.trySignIn() }
                     )
                     Spacer(modifier = Modifier.height(13.dp))
-                    Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()){
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Row {
                             Spacer(modifier = Modifier.width(7.dp))
                             Text(
@@ -170,7 +180,10 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                                 modifier = Modifier.clickable { viewModel.changeFindPasswordView() }
                             )
                         }
-                        Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
                             Text(
                                 text = "회원가입",
                                 style = TextStyle(
@@ -189,15 +202,21 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.FindPassword -> {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFFE79898))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
             )
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Column(
                     modifier = Modifier
                         .requiredWidth(266.dp)
-                        .fillMaxHeight(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
                 ) {
                     Spacer(modifier = Modifier.height(77.dp))
                     Image(
@@ -214,7 +233,9 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                         onValueChange = { viewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(140.dp))
-                    ButtonStyle1(text = "메일 전송하기", onClick = { viewModel.trySendPasswordResetEmail() })
+                    ButtonStyle1(
+                        text = "메일 전송하기",
+                        onClick = { viewModel.trySendPasswordResetEmail() })
                     Spacer(modifier = Modifier.height(11.dp))
                     Row(Modifier.fillMaxWidth()) {
                         Spacer(modifier = Modifier.width(7.dp))
@@ -306,7 +327,8 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
 
         is AuthUiState.RequestEmailVerify -> {
             val context = LocalContext.current
-            val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
+            val intent =
+                remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
 
             Box(
                 modifier = Modifier
@@ -507,10 +529,13 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.InputUserDepartment -> {
-            if (!viewModel.userDepartAuto) { viewModel.userDepartmentAutoRecognition() } // 학번으로 유저 소속 자동인식
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFFE79898))
+            if (!viewModel.userDepartAuto) {
+                viewModel.userDepartmentAutoRecognition()
+            } // 학번으로 유저 소속 자동인식
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
             )
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -586,9 +611,10 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
         }
 
         is AuthUiState.DeleteUser -> {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color(0xFFE79898))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
             )
             Column(
                 modifier = Modifier.fillMaxSize(),

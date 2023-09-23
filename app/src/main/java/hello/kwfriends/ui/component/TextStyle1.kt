@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextStyle1(text: String){
+fun TextStyle1(text: String) {
     Text(
         text = text,
         style = TextStyle(
@@ -22,6 +22,6 @@ fun TextStyle1(text: String){
 
 @Preview
 @Composable
-fun TextStylePreview(){
+fun TextStylePreview() {
     TextStyle1("Preview")
 }

@@ -44,7 +44,7 @@ object PostManager {
         }
     }
 
-    fun postCertification(post: HashMap<String, Any>): Boolean {
+    private fun postCertification(post: HashMap<String, Any>): Boolean {
         for ((key, value) in post) {
             when (key) {
                 "gatheringTitle" -> {
