@@ -76,8 +76,7 @@ fun TextfieldStyle3(
         )
     }
 
-    BasicTextField(
-        value = value,
+    BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         enabled = canValueChange,
         modifier = Modifier
@@ -120,12 +119,10 @@ fun TextfieldStyle3(
         },
         cursorBrush = SolidColor(Color(0xF1363636)),
         maxLines = maxLines,
-        keyboardActions = KeyboardActions(
-            onDone = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }
-        ),
+        keyboardActions = KeyboardActions(onDone = {
+            focusManager.clearFocus()
+            keyboardController?.hide()
+        }),
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
@@ -146,8 +143,7 @@ fun TextfieldStyle3(
                 }
                 innerTextField.invoke()
             }
-        }
-    )
+        })
 }
 
 @Preview
