@@ -1,13 +1,18 @@
 package hello.kwfriends.ui.screens.post
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import hello.kwfriends.ui.component.TextfieldStyle2
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import hello.kwfriends.ui.component.TextfieldStyle3
 import hello.kwfriends.ui.screens.main.MainViewModel
 import hello.kwfriends.ui.screens.main.ToolBarWithTitle
 
@@ -17,29 +22,49 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
         topBar = { ToolBarWithTitle("새 모임 만들기") }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            TextfieldStyle2(
+            Spacer(modifier = Modifier.size(10.dp))
+            TextfieldStyle3(
                 placeholder = "모임 이름",
                 value = postViewModel.gatheringTitle,
-                onValueChange = {postViewModel.gatheringTitleChange(it)})
-            TextfieldStyle2(
+                onValueChange = { postViewModel.gatheringTitleChange(it) },
+                imeAction = ImeAction.Next
+            )
+            TextfieldStyle3(
                 placeholder = "모임 주최자",
                 value = postViewModel.gatheringPromoter,
                 canValueChange = false,
                 onValueChange = {})
-            TextfieldStyle2(
+            TextfieldStyle3(
                 placeholder = "모임 위치",
                 value = postViewModel.gatheringLocation,
-                onValueChange = {postViewModel.gatheringLocationChange(it)})
-            TextfieldStyle2(
+                onValueChange = { postViewModel.gatheringLocationChange(it) },
+                imeAction = ImeAction.Next
+            )
+            TextfieldStyle3(
                 placeholder = "모임 시기",
                 value = postViewModel.gatheringTime,
-                onValueChange = {postViewModel.gatheringTimeChange(it)})
-            TextfieldStyle2(
+                onValueChange = { postViewModel.gatheringTimeChange(it) },
+                imeAction = ImeAction.Next
+            )
+            TextfieldStyle3(
                 placeholder = "최대 인원 수",
                 value = postViewModel.maximumMemberCount.toString(),
-                onValueChange = {postViewModel.maximumMemberCountChange(it)})
+                onValueChange = {},
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Decimal,
+                externalTitle = "최대 인원 수"
+            )
+            Spacer(modifier = Modifier.size(5.dp))
+            TextfieldStyle3(
+                value = postViewModel.gatheringDescription.toString(),
+                onValueChange = { postViewModel.gatheringDescriptionChange(it) },
+                isSingleLine = false,
+                maxLines = 6,
+                imeAction = ImeAction.Default,
+                externalTitle = "모임 설명"
+            )
 
-            Button(onClick = { mainViewModel.goToHome() }) {
+            Button(modifier = Modifier.padding(15.dp), onClick = { mainViewModel.goToHome() }) {
                 Text("뒤로가기")
             }
         }

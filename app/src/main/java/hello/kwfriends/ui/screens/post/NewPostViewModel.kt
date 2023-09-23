@@ -7,16 +7,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class NewPostViewModel : ViewModel() {
-    var gatheringTitle by mutableStateOf<String>("")
-    var gatheringPromoter by mutableStateOf<String>("")
-    var gatheringTime by mutableStateOf<String>("")
-    var gatheringLocation by mutableStateOf<String>("")
+    var gatheringTitle by mutableStateOf("")
+    var gatheringPromoter by mutableStateOf("")
+    var gatheringTime by mutableStateOf("")
+    var gatheringLocation by mutableStateOf("")
     var maximumMemberCount by mutableIntStateOf(0)
+    var gatheringDescription by mutableStateOf("")
 
 
     fun gatheringTitleChange(text: String) {gatheringTitle = text}
     fun gatheringTimeChange(text: String) {gatheringTime = text}
     fun gatheringLocationChange(text: String) {gatheringLocation = text}
+    fun gatheringDescriptionChange(text: String) {gatheringDescription = text}
     fun maximumMemberCountChange(text: Int) {maximumMemberCount = text}
 
 

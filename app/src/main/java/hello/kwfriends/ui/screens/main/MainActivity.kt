@@ -10,7 +10,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setScreen {
-            MainScreen(viewModel = MainViewModel())
+            MainScreen(viewModel = viewModel)
         }
     }
 
