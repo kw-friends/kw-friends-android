@@ -11,10 +11,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,13 +32,37 @@ import androidx.compose.ui.unit.sp
 import hello.kwfriends.ui.component.TextfieldStyle3
 import hello.kwfriends.ui.screens.main.MainViewModel
 import hello.kwfriends.ui.screens.main.ToolBarWithTitle
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel) {
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+    val snackbarMessage by postViewModel.snackbarEvent.collectAsState()
+
+    snackbarMessage?.let { message ->
+        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() // running snackbar 종료
+        scope.launch {
+            scaffoldState.snackbarHostState.showSnackbar(message) // snackbar 표시
+            postViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
+        }
+    }
+
     Scaffold(
-        topBar = { ToolBarWithTitle("새 모임 만들기") }
+        scaffoldState = scaffoldState,
+        topBar = { ToolBarWithTitle("새 모임 만들기") },
+        snackbarHost = {
+            SnackbarHost(it) { data ->
+                // custom snackbar with the custom border
+                Snackbar(
+                    actionOnNewLine = true,
+                    snackbarData = data
+                )
+            }
+        }
     ) { paddingValues ->
+
         val context = LocalContext.current
         Column(modifier = Modifier.padding(paddingValues)) {
             Spacer(modifier = Modifier.size(10.dp))
@@ -107,7 +137,16 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
                 }
                 Button(modifier = Modifier
                     .padding(15.dp),
-                    onClick = { postViewModel.uploadGatheringToFirestore() }) {
+                    onClick = {
+                        if (!postViewModel.isUploading) {
+                            if (!postViewModel.validateGatheringInfo()) {
+                                postViewModel.showSnackbar("모임 정보가 부족합니다.")
+                            } else {
+                                postViewModel.uploadGatheringToFirestore()
+                            }
+                        }
+                    }
+                ) {
                     if (!postViewModel.isUploading) {
                         Text("모임 만들기", fontSize = 14.sp)
                     } else {

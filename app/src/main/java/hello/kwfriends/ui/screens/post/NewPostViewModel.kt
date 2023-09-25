@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hello.kwfriends.firebase.firestoreManager.PostManager
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class NewPostViewModel : ViewModel() {
@@ -27,6 +29,13 @@ class NewPostViewModel : ViewModel() {
     var gatheringDescription by mutableStateOf("")
 
     var isUploading by mutableStateOf(false)
+    var uploadResult by mutableStateOf(true)
+    val _snackbarEvent = MutableStateFlow<String?>(null)
+    val snackbarEvent: StateFlow<String?> get() = _snackbarEvent
+
+    fun showSnackbar(message: String) {
+        _snackbarEvent.value = message
+    }
 
     fun isStrHasData(text: String?): Boolean {
         Log.d("isStrHasData()", (text == null || text == "").toString())
@@ -83,15 +92,21 @@ class NewPostViewModel : ViewModel() {
                 maximumMemberCountStatus)
     }
 
+    fun uploadResultUpdate(result: Boolean) {
+        uploadResult = result
+    }
+
+
     fun uploadGatheringToFirestore() {
+        showSnackbar("모임 생성 중...")
+
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
         Log.w("NewPostViewModel", "gatheringTitle = $gatheringTitleStatus")
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
         Log.w("NewPostViewModel", "gatheringLocation = $gatheringLocationStatus")
         Log.w("NewPostViewModel", "gatheringTime = $gatheringTimeStatus")
         Log.w("NewPostViewModel", "maximumMemberCount = $maximumMemberCountStatus")
-        if (validateGatheringInfo()) {
-
+        if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
                 isUploading = true
                 PostManager.uploadPost(
@@ -99,7 +114,8 @@ class NewPostViewModel : ViewModel() {
                     gatheringPromoter,
                     gatheringLocation,
                     gatheringTime,
-                    maximumMemberCount
+                    maximumMemberCount,
+                    this@NewPostViewModel
                 )
                 isUploading = false
             }

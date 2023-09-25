@@ -2,8 +2,10 @@ package hello.kwfriends.firebase.firestoreManager
 
 import android.content.ContentValues
 import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.ui.screens.post.NewPostViewModel
 import kotlinx.coroutines.tasks.await
 
 data class PostDetail(
@@ -50,8 +52,8 @@ object PostManager {
         gatheringLocation: String,
         gatheringTime: String,
         maximumParticipant: String,
+        postViewModel: NewPostViewModel
     ) {
-
         val post: HashMap<String, Any> = hashMapOf(
             "gatheringTitle" to gatheringTitle,
             "gatheringPromoter" to gatheringPromoter,
@@ -59,15 +61,24 @@ object PostManager {
             "gatheringTime" to gatheringTime,
             "maximumParticipant" to maximumParticipant
         )
-        db.collection("posts")
-            .add(post)
-            .addOnSuccessListener { documentReference ->
-                Log.d(ContentValues.TAG, "게시글이 업로드 성공. ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(ContentValues.TAG, "게시글 작성 실패: ", e)
-            }
-            .await()
+        try {
+            db.collection("posts")
+                .add(post)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(ContentValues.TAG, "모임 생성 성공. ID: ${documentReference.id}")
+                    postViewModel.showSnackbar("모임 생성 성공")
+                    postViewModel.uploadResultUpdate(true)
+                }
+                .addOnFailureListener { e ->
+                    Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
+                    postViewModel.showSnackbar("모임 생성 실패")
+                    postViewModel.uploadResultUpdate(false)
+                }
+                .await()
+        } catch (e: FirebaseFirestoreException) {
+            Log.w(ContentValues.TAG, "모임 생성 실패")
+            postViewModel.uploadResultUpdate(false)
+        }
     }
 
 
