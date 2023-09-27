@@ -24,7 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import hello.kwfriends.ui.screens.findGathering.findGatheringScreen
+import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
 import hello.kwfriends.ui.screens.myPage.MyPageScreen
 import hello.kwfriends.ui.screens.post.NewPostScreen
 import hello.kwfriends.ui.screens.post.NewPostViewModel
@@ -34,7 +34,7 @@ import hello.kwfriends.ui.screens.settings.SettingsScreen
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
-    when (viewModel.uiState){
+    when (viewModel.uiState) {
         MainUiState.Home -> {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -49,20 +49,10 @@ fun MainScreen(viewModel: MainViewModel) {
                 floatingActionButton = {
                     ExtendedFloatingActionButton(
                         text = { Text(text = "모임 생성하기") },
-                        icon = { Icon(Icons.Default.Add, null)},
+                        icon = { Icon(Icons.Default.Add, null) },
                         onClick = {
                             viewModel.goToNewPostPage()
                             Toast.makeText(context, "모임 글 생성 페이지 진입", Toast.LENGTH_SHORT).show()
-
-                            /*CoroutineScope(Dispatchers.IO).launch {
-                                PostManager.uploadPost(
-                                    gatheringTitle = "Sample Title",
-                                    gatheringLocation = "Sample Location",
-                                    gatheringPromoter = "Someone",
-                                    gatheringTime = "Someday",
-                                    maximumParticipant = 10
-                                )
-                            }*/
                         })
                 }
             ) {
@@ -72,7 +62,7 @@ fun MainScreen(viewModel: MainViewModel) {
                         startDestination = BottomNavItem.FindGathering.screenRoute
                     ) {
                         composable(BottomNavItem.FindGathering.screenRoute) {
-                            findGatheringScreen()
+                            FindGatheringScreen(viewModel = MainViewModel())
                         }
                         composable(BottomNavItem.MyPage.screenRoute) {
                             MyPageScreen()
@@ -89,8 +79,6 @@ fun MainScreen(viewModel: MainViewModel) {
             NewPostScreen(mainViewModel = viewModel, postViewModel = NewPostViewModel())
         }
     }
-
-
 }
 
 @Composable //상단 바

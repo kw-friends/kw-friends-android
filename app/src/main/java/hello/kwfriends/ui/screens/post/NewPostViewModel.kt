@@ -106,6 +106,8 @@ class NewPostViewModel : ViewModel() {
         Log.w("NewPostViewModel", "gatheringLocation = $gatheringLocationStatus")
         Log.w("NewPostViewModel", "gatheringTime = $gatheringTimeStatus")
         Log.w("NewPostViewModel", "maximumMemberCount = $maximumMemberCountStatus")
+        Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
+
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
                 isUploading = true
@@ -115,7 +117,9 @@ class NewPostViewModel : ViewModel() {
                     gatheringLocation,
                     gatheringTime,
                     maximumMemberCount,
+                    gatheringDescription,
                     this@NewPostViewModel
+
                 )
                 isUploading = false
             }

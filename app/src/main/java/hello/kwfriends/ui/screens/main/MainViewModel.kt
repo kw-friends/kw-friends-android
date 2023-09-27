@@ -6,10 +6,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hello.kwfriends.firebase.firestoreManager.PostDetail
+import hello.kwfriends.firebase.firestoreManager.PostManager
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     var uiState by mutableStateOf<MainUiState>(MainUiState.Home)
+
+    var posts by mutableStateOf<List<PostDetail>>(listOf())
+
 
     fun goToNewPostPage() {
         viewModelScope.launch {
@@ -25,12 +30,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
-
-
-/*    fun onClickedMyPage() {
+    fun getPostFromFirestore() {
+        Log.d("getPostFromFirestore()",  "데이터 가져옴")
         viewModelScope.launch {
-            uiState = MainUiState.MyPage
-            Log.d("minmul", "onClickedMyPage")
+            posts = PostManager.getPostRef()
         }
-    }*/
+    }
 }

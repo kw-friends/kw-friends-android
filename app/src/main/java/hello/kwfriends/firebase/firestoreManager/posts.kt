@@ -1,5 +1,6 @@
 package hello.kwfriends.firebase.firestoreManager
 
+import android.content.ClipDescription
 import android.content.ContentValues
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -13,7 +14,8 @@ data class PostDetail(
     val gatheringPromoter: String,
     val gatheringLocation: String,
     val gatheringTime: String,
-    val maximumParticipant: Long,
+    val maximumParticipant: String,
+    val gatheringDescription: String
 )
 
 object PostManager {
@@ -41,7 +43,8 @@ object PostManager {
                 gatheringPromoter = document.getString("gatheringPromoter") ?: "",
                 gatheringLocation = document.getString("gatheringLocation") ?: "",
                 gatheringTime = document.getString("gatheringTime") ?: "",
-                maximumParticipant = document.getLong("maximumParticipant") ?: 0,
+                maximumParticipant = document.getString("maximumParticipant") ?: "",
+                gatheringDescription = document.getString("gatheringDescription") ?: ""
             )
         }
     }
@@ -52,6 +55,7 @@ object PostManager {
         gatheringLocation: String,
         gatheringTime: String,
         maximumParticipant: String,
+        gatheringDescription: String,
         postViewModel: NewPostViewModel
     ) {
         val post: HashMap<String, Any> = hashMapOf(
@@ -59,7 +63,8 @@ object PostManager {
             "gatheringPromoter" to gatheringPromoter,
             "gatheringLocation" to gatheringLocation,
             "gatheringTime" to gatheringTime,
-            "maximumParticipant" to maximumParticipant
+            "maximumParticipant" to maximumParticipant,
+            "gatheringDescription" to gatheringDescription
         )
         try {
             db.collection("posts")
