@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -25,15 +28,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hello.kwfriends.firebase.firestoreManager.PostManager
+import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun GatheringCard(
     title: String,
     location: String,
-    currentParticipants: Int,
-    minimumParticipants: Int,
-    maximumParticipants: Int,
-    time: String //추후 datetime으로 변경
+    currentParticipants: String,
+    minimumParticipants: String,
+    maximumParticipants: String,
+    time: String, //추후 datetime으로 변경,
+    description: String
 ) {
     Column(
         modifier = Modifier
@@ -48,7 +54,7 @@ fun GatheringCard(
             text = title,
             fontSize = 26.sp,
             fontWeight = FontWeight(760),
-            modifier = Modifier.padding(start = 20.dp, top = 15.dp)
+            modifier = Modifier.padding(start = 22.dp, top = 18.dp)
         )
         Spacer(modifier = Modifier.size(20.dp))
         Row(
@@ -100,17 +106,31 @@ fun GatheringCard(
                 Spacer(modifier = Modifier.size(15.dp))
             }
         }
+        Text(
+            text = description,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(horizontal = 22.dp, vertical = 14.dp)
+        )
+
     }
 }
 
+
 @Composable
-fun findGatheringScreen() {
-    GatheringCard(
-        title = "코틀린 스터디 모집합니다!",
-        location = "광운대학교 중앙도서관 오픈열람실",
-        currentParticipants = 3,
-        minimumParticipants = 2,
-        maximumParticipants = 6,
-        time = "2023-09-10"
-    )
+fun FindGatheringScreen(viewModel: MainViewModel) {
+    val posts = viewModel.posts
+    viewModel.getPostFromFirestore()
+    LazyColumn {
+        items(posts) { postData ->
+            GatheringCard(
+                title = postData.gatheringTitle,
+                location = postData.gatheringLocation,
+                currentParticipants = "X",
+                minimumParticipants = "X",
+                maximumParticipants = postData.maximumParticipant,
+                time = postData.gatheringTime,
+                description = postData.gatheringDescription
+            )
+        }
+    }
 }

@@ -1,9 +1,12 @@
 package hello.kwfriends.firebase.firestoreManager
 
+import android.content.ClipDescription
 import android.content.ContentValues
 import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.ui.screens.post.NewPostViewModel
 import kotlinx.coroutines.tasks.await
 
 data class PostDetail(
@@ -11,7 +14,8 @@ data class PostDetail(
     val gatheringPromoter: String,
     val gatheringLocation: String,
     val gatheringTime: String,
-    val maximumParticipant: Long,
+    val maximumParticipant: String,
+    val gatheringDescription: String
 )
 
 object PostManager {
@@ -39,52 +43,10 @@ object PostManager {
                 gatheringPromoter = document.getString("gatheringPromoter") ?: "",
                 gatheringLocation = document.getString("gatheringLocation") ?: "",
                 gatheringTime = document.getString("gatheringTime") ?: "",
-                maximumParticipant = document.getLong("maximumParticipant") ?: 0,
+                maximumParticipant = document.getString("maximumParticipant") ?: "",
+                gatheringDescription = document.getString("gatheringDescription") ?: ""
             )
         }
-    }
-
-    private fun postCertification(post: HashMap<String, Any>): Boolean {
-        for ((key, value) in post) {
-            when (key) {
-                "gatheringTitle" -> {
-                    if (value is String && value == "") {
-                        Log.w("postCertification", "모임 제목이 없습니다.")
-                        return false
-                    }
-                }
-
-                "gatheringPromoter" -> {
-                    if (value is String && value == "") {
-                        Log.w("postCertification", "모임 주최자 정보가 없습니다")
-                        return false
-                    }
-                }
-
-                "gatheringLocation" -> {
-                    if (value is String && value == "") {
-                        Log.w("postCertification", "모임 위치 정보가 없습니다.")
-                        return false
-
-                    }
-                }
-
-                "gatheringTime" -> {
-                    if (value is String && value == "") {
-                        Log.w("postCertification", "모임 시간이 없습니다.")
-                        return false
-                    }
-                }
-
-                "maximumParticipant" -> {
-                    if (value is Int && value <= 1) {
-                        Log.w("postCertification", "최대 모임 인원은 2명 이상이어야 합니다")
-                        return false
-                    }
-                }
-            }
-        }
-        return true
     }
 
     suspend fun uploadPost(
@@ -92,29 +54,35 @@ object PostManager {
         gatheringPromoter: String,
         gatheringLocation: String,
         gatheringTime: String,
-        maximumParticipant: Int,
+        maximumParticipant: String,
+        gatheringDescription: String,
+        postViewModel: NewPostViewModel
     ) {
-
         val post: HashMap<String, Any> = hashMapOf(
             "gatheringTitle" to gatheringTitle,
             "gatheringPromoter" to gatheringPromoter,
             "gatheringLocation" to gatheringLocation,
             "gatheringTime" to gatheringTime,
-            "maximumParticipant" to maximumParticipant
+            "maximumParticipant" to maximumParticipant,
+            "gatheringDescription" to gatheringDescription
         )
-
-        if (postCertification(post)) {
+        try {
             db.collection("posts")
                 .add(post)
                 .addOnSuccessListener { documentReference ->
-                    Log.d(ContentValues.TAG, "게시글이 업로드 성공. ID: ${documentReference.id}")
+                    Log.d(ContentValues.TAG, "모임 생성 성공. ID: ${documentReference.id}")
+                    postViewModel.showSnackbar("모임 생성 성공")
+                    postViewModel.uploadResultUpdate(true)
                 }
                 .addOnFailureListener { e ->
-                    Log.w(ContentValues.TAG, "게시글 작성 실패: ", e)
+                    Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
+                    postViewModel.showSnackbar("모임 생성 실패")
+                    postViewModel.uploadResultUpdate(false)
                 }
                 .await()
-        } else {
-            Log.w("uploadPost", "게시물이 업로드되지 않았습니다.")
+        } catch (e: FirebaseFirestoreException) {
+            Log.w(ContentValues.TAG, "모임 생성 실패")
+            postViewModel.uploadResultUpdate(false)
         }
     }
 

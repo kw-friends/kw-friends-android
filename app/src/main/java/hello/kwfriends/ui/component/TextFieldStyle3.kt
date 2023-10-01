@@ -2,15 +2,15 @@ package hello.kwfriends.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -56,7 +56,9 @@ fun TextfieldStyle3(
     isSingleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
-    externalTitle: String = ""
+    externalTitle: String = "",
+    isError: Boolean = false,
+    errorMessage: String = "",
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -66,18 +68,36 @@ fun TextfieldStyle3(
     var textColor by remember { mutableStateOf(Color(0xFF000000)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
 
-    if (externalTitle != "") {
-        Spacer(modifier = Modifier.size(2.dp))
-        Text(
-            text = externalTitle,
-            color = Color(0xFF636363),
-            fontSize = 14.sp,
-            modifier = Modifier.padding(horizontal = 14.dp)
-        )
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier
+            .height(intrinsicSize = IntrinsicSize.Min)
+            .fillMaxWidth()
+            .padding(top = 4.dp)
+    ) {
+        if (externalTitle != "") {
+            Text(
+                text = externalTitle,
+                color = Color(0xFF636363),
+                fontSize = 14.sp,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 1.dp)
+            )
+        }
+        if (isError) {
+            Text(
+                text = errorMessage,
+                color = Color(0xFFFF0000),
+                fontSize = 12.sp,
+                modifier = Modifier.padding(end = 14.dp)
+            )
+        }
     }
 
-    BasicTextField(
-        value = value,
+
+
+
+    BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         enabled = canValueChange,
         modifier = Modifier
@@ -95,7 +115,7 @@ fun TextfieldStyle3(
                     textColor = Color.Black
                     placeholderColor = Color(0xFF4B4B4B)
                 } else if (!it.isFocused && canValueChange) {
-                    containerColor = Color(0xFFE9E8E8)
+                    containerColor = Color(0xFFF8F8F8)
                     textColor = Color(0xFF161616)
                     placeholderColor = Color(0xFF4B4B4B)
                 } else {
@@ -114,25 +134,23 @@ fun TextfieldStyle3(
         ),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = if (isPassword) {
-            KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
+            KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction)
         } else {
             KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
         },
         cursorBrush = SolidColor(Color(0xF1363636)),
         maxLines = maxLines,
-        keyboardActions = KeyboardActions(
-            onDone = {
-                focusManager.clearFocus()
-                keyboardController?.hide()
-            }
-        ),
+        keyboardActions = KeyboardActions(onDone = {
+            focusManager.clearFocus()
+            keyboardController?.hide()
+        }),
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(9.dp))
                     .background(containerColor)
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = 12.dp, vertical = 3.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (value.isEmpty()) {
@@ -146,8 +164,7 @@ fun TextfieldStyle3(
                 }
                 innerTextField.invoke()
             }
-        }
-    )
+        })
 }
 
 @Preview
