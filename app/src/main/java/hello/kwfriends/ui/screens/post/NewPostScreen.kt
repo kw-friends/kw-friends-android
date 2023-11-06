@@ -10,19 +10,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import hello.kwfriends.ui.component.TextfieldStyle3
 import hello.kwfriends.ui.screens.main.MainViewModel
 import kotlinx.coroutines.launch
@@ -39,30 +45,52 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel) {
-    val scaffoldState = rememberScaffoldState()
+fun NewPostScreen(
+    mainViewModel: MainViewModel,
+    postViewModel: NewPostViewModel,
+    navigation: NavController
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val snackbarMessage by postViewModel.snackbarEvent.collectAsState()
 
     snackbarMessage?.let { message ->
-        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() // running snackbar 종료
+        snackbarHostState.currentSnackbarData?.dismiss() // running snackbar 종료
         scope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(message) // snackbar 표시
+            snackbarHostState.showSnackbar(message) // snackbar 표시
             postViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
         }
     }
 
     Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = { TopAppBar(
-            title = { Text(text = "새 모임 생성") },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color(0xFFE4C5C5),
-                titleContentColor = Color(0xff000000)
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "새 모임 생성",
+                        fontSize = 22.sp,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFFE2A39B)
+                ),
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigation.popBackStack() },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Go to HomeScreen",
+                            modifier = Modifier.size(35.dp)
+                        )
+                    }
+                }
             )
-        ) },
+        },
         snackbarHost = {
-            SnackbarHost(it) { data ->
+            SnackbarHost(snackbarHostState) { data ->
                 // custom snackbar with the custom border
                 Snackbar(
                     actionOnNewLine = true,
@@ -71,7 +99,6 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
             }
         }
     ) { paddingValues ->
-
         val context = LocalContext.current
         Column(modifier = Modifier.padding(paddingValues)) {
             Spacer(modifier = Modifier.size(10.dp))
@@ -121,7 +148,7 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
                 externalTitle = "최대 인원 수"
             )
             TextfieldStyle3(
-                value = postViewModel.gatheringDescription.toString(),
+                value = postViewModel.gatheringDescription,
                 onValueChange = { postViewModel.gatheringDescriptionChange(it) },
                 isSingleLine = false,
                 maxLines = 6,
@@ -141,7 +168,7 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
                         Modifier
                             .width(IntrinsicSize.Min)
                             .widthIn(min = 110.dp)
-                    ), onClick = { mainViewModel.goToHome() }) {
+                    ), onClick = { navigation.popBackStack() }) {
                     Text("뒤로가기")
                 }
                 Button(modifier = Modifier
@@ -168,7 +195,6 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
                             Spacer(modifier = Modifier.size(7.dp))
                             Text(text = "업로드 중..", fontSize = 14.sp)
                         }
-
                     }
                 }
             }

@@ -40,6 +40,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
@@ -57,7 +58,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun AuthScreen(viewModel: AuthViewModel) {
+fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
     val context = LocalContext.current
 
     //USER_DATA DataStore 객체 저장

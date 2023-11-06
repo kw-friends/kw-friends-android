@@ -11,24 +11,7 @@ import hello.kwfriends.firebase.firestoreManager.PostManager
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-    var uiState by mutableStateOf<MainUiState>(MainUiState.Home)
-
     var posts by mutableStateOf<List<PostDetail>>(listOf())
-
-
-    fun goToNewPostPage() {
-        viewModelScope.launch {
-            uiState = MainUiState.NewPost
-            Log.d("minmul", "goToNewPostPage")
-        }
-    }
-
-    fun goToHome() {
-        viewModelScope.launch {
-            uiState = MainUiState.Home
-            Log.d("minmul", "goToHome")
-        }
-    }
 
     fun getPostFromFirestore() {
         Log.d("getPostFromFirestore()",  "데이터 가져옴")

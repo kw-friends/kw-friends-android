@@ -13,23 +13,17 @@
         android:theme="@style/Theme.KWFriends"
         tools:targetApi="31">
         <activity
-            android:name="hello.kwfriends.ui.screens.auth.AuthActivity"
+            android:name=".ui.screens.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.KWFriends">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-
-        <activity
-            android:name=".ui.screens.main.MainActivity"
-            android:exported="true">
         </activity>
     </application>
 
