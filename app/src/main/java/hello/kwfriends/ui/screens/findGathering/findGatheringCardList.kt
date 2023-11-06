@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import hello.kwfriends.firebase.firestoreManager.PostManager
 import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
@@ -117,7 +115,7 @@ fun GatheringCard(
 
 
 @Composable
-fun FindGatheringScreen(viewModel: MainViewModel) {
+fun FindGatheringCardList(viewModel: MainViewModel) {
     val posts = viewModel.posts
     viewModel.getPostFromFirestore()
     LazyColumn {

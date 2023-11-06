@@ -17,6 +17,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,10 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hello.kwfriends.ui.component.TextfieldStyle3
 import hello.kwfriends.ui.screens.main.MainViewModel
-import hello.kwfriends.ui.screens.main.ToolBarWithTitle
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel) {
     val scaffoldState = rememberScaffoldState()
@@ -51,7 +54,13 @@ fun NewPostScreen(mainViewModel: MainViewModel, postViewModel: NewPostViewModel)
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { ToolBarWithTitle("새 모임 만들기") },
+        topBar = { TopAppBar(
+            title = { Text(text = "새 모임 생성") },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color(0xFFE4C5C5),
+                titleContentColor = Color(0xff000000)
+            )
+        ) },
         snackbarHost = {
             SnackbarHost(it) { data ->
                 // custom snackbar with the custom border
