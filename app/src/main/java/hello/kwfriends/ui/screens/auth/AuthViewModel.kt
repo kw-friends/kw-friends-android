@@ -16,6 +16,8 @@ import hello.kwfriends.firebase.firestoreManager.UserDataManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class AuthViewModel : ViewModel() {
@@ -47,8 +49,11 @@ class AuthViewModel : ViewModel() {
     var uiState by mutableStateOf<AuthUiState>(AuthUiState.SignIn)
 
     // -- 최초실행 --
-    //firestore 유저 정보 확인 여부
+    //firestore 유저 정보 검사 여부
     var userInputChecked by mutableStateOf<Boolean>(false)
+
+    //firebase 유저 인증 검사 여부
+    var userAuthChecked by mutableStateOf<Boolean>(false)
 
     //유저 소속 자동 확인 함수 실행 여부
     var userDepartAuto by mutableStateOf<Boolean>(false)
@@ -286,6 +291,7 @@ class AuthViewModel : ViewModel() {
                     Log.w("Lim", "이메일 인증 완료. 회원가입 성공")
                     setUserData("ID", inputEmail)
                     setUserData("ID_SAVE_CHECKED", "true")
+                    userEmail = inputEmail
                     idSaveChecked = true
                     uiState = AuthUiState.SignIn
                 } else {
@@ -453,53 +459,78 @@ class AuthViewModel : ViewModel() {
     }
 
     //firestore에 저장되어있는 유저 정보 확인 함수
-    fun userInfoCheck() {
+    suspend fun userInfoCheck():Boolean {
         uiState = AuthUiState.Loading
 
         //유저 정보 불러오기
-        viewModelScope.launch {
-            try {
-                val userInfo: Map<String, Any>? = UserDataManager.getUserData()
-                if (userInfo != null) {
-                    if (userInfo["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                        UserAuth.signOut()
-                        Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
-
-                    } else if (!userInfoFormCheck(userInfo)) {
-                        Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
-                        uiState = AuthUiState.InputUserInfo
-                    } else if (!userInfoDepartmentCheck(userInfo)) {
-                        Log.w(ContentValues.TAG, "유저 소속 정보 비정상. 소속 정보 입력 화면으로 이동.")
-                        uiState = AuthUiState.InputUserDepartment
+        try {
+            val result = suspendCoroutine<Boolean> { continuation ->
+                viewModelScope.launch {
+                    val userInfo: Map<String, Any>? = UserDataManager.getUserData()
+                    if (userInfo != null) {
+                        if (userInfo["state"] != "available") { // 유저 상태 available 아니면 로그아웃
+                            UserAuth.signOut()
+                            Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
+                            continuation.resume(false)
+                        } else if (!userInfoFormCheck(userInfo)) {
+                            Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
+                            uiState = AuthUiState.InputUserInfo
+                            continuation.resume(false)
+                        } else if (!userInfoDepartmentCheck(userInfo)) {
+                            Log.w(ContentValues.TAG, "유저 소속 정보 비정상. 소속 정보 입력 화면으로 이동.")
+                            uiState = AuthUiState.InputUserDepartment
+                            continuation.resume(false)
+                        } else {
+                            Log.w(ContentValues.TAG, "유저 정보 정상 체크 확인완료")
+                            userInputChecked = true
+                            uiState = AuthUiState.SignInSuccess
+                            continuation.resume(true)
+                        }
                     } else {
-                        Log.w(ContentValues.TAG, "유저 정보 정상 체크 확인완료")
-                        userInputChecked = true
-                        uiState = AuthUiState.SignInSuccess
+                        Log.w(ContentValues.TAG, "첫 로그인입니다!")
+                        UserDataManager.mergeSetUserData(
+                            mapOf("state" to "available", "first-login" to FieldValue.serverTimestamp())
+                        )
+                        Log.w(ContentValues.TAG, "유저 정보가 존재하지 않아 정보 입력창으로 이동합니다.")
+                        uiState = AuthUiState.InputUserInfo
+                        continuation.resume(false)
                     }
-                } else {
-                    Log.w(ContentValues.TAG, "첫 로그인입니다!")
-                    UserDataManager.mergeSetUserData(
-                        mapOf("state" to "available", "first-login" to FieldValue.serverTimestamp())
-                    )
-                    Log.w(ContentValues.TAG, "유저 정보가 존재하지 않아 정보 입력창으로 이동합니다.")
-                    uiState = AuthUiState.InputUserInfo
                 }
             }
-            catch (e: Exception) {
-                Log.w(ContentValues.TAG, "userInfoCheck() error=$e")
-                uiState = AuthUiState.InputUserInfo
-            }
+            return result
         }
-
-
+        catch (e: Exception) {
+            Log.w(ContentValues.TAG, "userInfoCheck() error=$e")
+            uiState = AuthUiState.InputUserInfo
+            return false
+        }
     }
 
     //유저 인증 정보 유효성 확인 함수
-    fun userAuthAvailableCheck(){
-        viewModelScope.launch { UserAuth.reload() }
-        if(Firebase.auth.currentUser == null || Firebase.auth.currentUser?.isEmailVerified != true){
-            trySignOut()
-            Log.w("Lim", "유저의 firebase 인증상태가 사용불가능하여 로그아웃되었습니다.")
+    suspend fun userAuthAvailableCheck(): Boolean{
+        val result = suspendCoroutine<Boolean> { continuation ->
+            viewModelScope.launch {
+                if (UserAuth.reload()) {
+                    if (Firebase.auth.currentUser == null || Firebase.auth.currentUser?.isEmailVerified != true) {
+                        trySignOut()
+                        Log.w("Lim", "유저의 firebase 인증상태가 사용불가능하여 로그아웃되었습니다.")
+                        continuation.resume(false)
+                    }
+                    userAuthChecked = true
+                    continuation.resume(true)
+                }
+                continuation.resume(false)
+            }
+        }
+        return result
+    }
+
+    //유저 검사
+    fun userCheck(){
+        viewModelScope.launch { 
+            if(userAuthAvailableCheck()){
+                userInfoCheck()
+            }
         }
     }
 

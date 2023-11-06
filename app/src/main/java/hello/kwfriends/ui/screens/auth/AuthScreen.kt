@@ -16,11 +16,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -59,7 +57,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
+fun AuthScreen(viewModel: AuthViewModel) {
     val context = LocalContext.current
 
     //USER_DATA DataStore 객체 저장
@@ -418,36 +416,6 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
                 }
             }
         }
-//            Column(
-//                modifier = modifier.padding(10.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                val context = LocalContext.current
-//                val intent =
-//                    remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://webmail.kw.ac.kr/")) }
-//                Spacer(modifier = Modifier.padding(10.dp))
-//                Text(text = "사용자 정보:")
-//                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
-//                Text(text = "이메일 인증 후 [인증 완료] 버튼을 눌러주세요.")
-//                Spacer(modifier = Modifier.padding(10.dp))
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.tryEmailVerify() }) {
-//                    Text(text = "인증 완료")
-//                }
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { context.startActivity(intent) }) {
-//                    Text(text = "광운대학교 웹메일 확인하러 가기")
-//                }
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.trySendAuthEmail() }) {
-//                    Text(text = "이메일 인증 재요청하기")
-//                }
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.trySignOut() }) {
-//                    Text(text = "로그아웃하기")
-//                }
-//            }
-//        }
 
         is AuthUiState.InputUserInfo -> {
             Box(
@@ -582,32 +550,60 @@ fun AuthScreen(modifier: Modifier = Modifier, viewModel: AuthViewModel) {
 
         is AuthUiState.SignInSuccess -> {
             //유저 상태 정상인지 확인
-            if (!viewModel.userInputChecked) {
-                Log.w("Lim", "유저 정보 정상인지 확인중..")
+            Log.w("Lim", "유저 정보 정상인지 확인중..")
+
+            if (!viewModel.userAuthChecked) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    viewModel.userInfoCheck() //firestore 정보 검사
-                    viewModel.userAuthAvailableCheck() //firebase 인증 검사
+                    if (viewModel.userAuthAvailableCheck()) {  //firebase 인증 검사
+                        if (!viewModel.userInputChecked) {
+                            if (viewModel.userInfoCheck()) { //firestore 정보 검사
+                                Log.w("Lim", "로그인 완료, 다음 Activity로 이동.")
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        MainActivity::class.java
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
+            } else if (!viewModel.userInputChecked) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.userInfoCheck()
+                }
+            }
+            else {
+                Log.w("Lim", "로그인 완료, 다음 Activity로 이동.")
+                context.startActivity(
+                    Intent(
+                        context,
+                        MainActivity::class.java
+                    )
+                )
             }
 
+
             //로그인 성공 후 화면
-            Column(
-                modifier = modifier.padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "사용자 정보:")
-                Text(text = "Uid: ${Firebase.auth.currentUser?.uid ?: "uid 가져오지 못함"}")
-                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
-                Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.trySignOut() }) {
-                    Text(text = "로그아웃하기")
-                }
-                Button(modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.changeDeleteUserView() }) {
-                    Text(text = "회원탈퇴하기")
-                }
-            }
+
+
+//            Column(
+//                modifier = modifier.padding(10.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text(text = "사용자 정보:")
+//                Text(text = "Uid: ${Firebase.auth.currentUser?.uid ?: "uid 가져오지 못함"}")
+//                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
+//                Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
+//                Button(modifier = Modifier.fillMaxWidth(),
+//                    onClick = { viewModel.trySignOut() }) {
+//                    Text(text = "로그아웃하기")
+//                }
+//                Button(modifier = Modifier.fillMaxWidth(),
+//                    onClick = { viewModel.changeDeleteUserView() }) {
+//                    Text(text = "회원탈퇴하기")
+//                }
+//            }
         }
 
         is AuthUiState.DeleteUser -> {

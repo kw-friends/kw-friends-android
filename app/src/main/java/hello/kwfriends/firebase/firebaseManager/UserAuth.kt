@@ -104,7 +104,7 @@ object UserAuth {
                 }
                 .addOnFailureListener {
                     Log.w("Lim", "유저 인증 상태 리로드 실패")
-                    continuation.resume(true)
+                    continuation.resume(false)
                 }
         }
         return result
