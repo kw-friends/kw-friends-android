@@ -17,17 +17,25 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, navigation: NavController) {
-    val context = LocalContext.current
+
+    //인증 과정 안되어있으면 인증 화면으로 이동
+    if (Firebase.auth.currentUser == null || Firebase.auth.currentUser?.isEmailVerified != true) { // 로그인 된 상태일 때
+        navigation.navigate(Routes.AUTH_SCREEN)
+    }
+    
+    //정보 입력 안되어있으면 정보 입력 화면으로 이동하게 하기
+    
     Scaffold(
         topBar = {
             TopAppBar(

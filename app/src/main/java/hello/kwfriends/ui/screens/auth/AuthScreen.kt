@@ -118,7 +118,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                         modifier = Modifier
                             .size(102.dp)
                             .clickable {
-                                navigation.navigate(Routes.SETTINGS_SCREEN)
+                                navigation.navigate(Routes.HOME_SCREEN)
                             }
                     )
                     Spacer(modifier = Modifier.height(80.dp))
@@ -562,7 +562,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
             }
             else {
                 Log.w("Lim", "로그인 완료, 이후 화면으로 이동.")
-                navigation.navigate(Routes.SETTINGS_SCREEN)
+                navigation.navigate(Routes.HOME_SCREEN)
             }
 
 
