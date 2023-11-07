@@ -75,6 +75,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
             }
         }
     }
+
     if (!viewModel.idSaveLoaded) {
         viewModel.idSaveLoaded = true
         viewModel.userIdSaveCheckAndLoad() // 유저 아이디 저장 정보 불러오기
@@ -547,28 +548,37 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
             //유저 상태 정상인지 확인
             Log.w("Lim", "유저 정보 정상인지 확인중..")
 
-            if (!viewModel.userAuthChecked) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (viewModel.userAuthAvailableCheck()) {  //firebase 인증 검사
-                        if (!viewModel.userInputChecked) {
-                            viewModel.userInfoCheck()//firestore 정보 검사
-                        }
-                    }
-                }
-            } else if (!viewModel.userInputChecked) {
-                CoroutineScope(Dispatchers.Main).launch {
+//            if (!viewModel.userAuthChecked) {
+//                Log.w("Lim", "유효성 검사 안되어있음. 진행")
+//                CoroutineScope(Dispatchers.).launch {
+//                    if(viewModel.userAuthAvailableCheck()){
+//                        Log.w("Lim", "test")
+//                    }
+//                }
+//            } else
+            CoroutineScope(Dispatchers.Main).launch {
+//                if (!viewModel.userAuthChecked) {
+//                    Log.w("Lim", "유효성 검사 안되어있음. 진행")
+//                    if(viewModel.userAuthAvailableCheck()){
+//                        Log.w("Lim", "test")
+//                    }
+//                } else
+                if (!viewModel.userInputChecked && !viewModel.userInfoChcekStarted) {
+                    Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
+                    viewModel.userInfoChcekStarted = true
                     viewModel.userInfoCheck()
+                    viewModel.userInfoChcekStarted = false
+                    Log.w("Lim", "정보 검사 끝")
+                }
+                else {
+                    Log.w("Lim", "로그인 및 정보 입력 완료, 이후 화면으로 이동.")
+                    navigation.navigate(Routes.HOME_SCREEN)
                 }
             }
-            else {
-                Log.w("Lim", "로그인 완료, 이후 화면으로 이동.")
-                navigation.navigate(Routes.HOME_SCREEN)
-            }
+
 
 
             //로그인 성공 후 화면
-
-
 //            Column(
 //                modifier = modifier.padding(10.dp),
 //                horizontalAlignment = Alignment.CenterHorizontally

@@ -32,11 +32,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import hello.kwfriends.ui.screens.auth.AuthViewModel
+import hello.kwfriends.ui.screens.main.Routes
 import hello.kwfriends.ui.component.UserInfoCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navigation: NavController) {
+fun SettingsScreen(
+    authViewModel: AuthViewModel,
+    navigation: NavController
+) {
     val scrollState = rememberScrollState()
     Scaffold(
         topBar = {

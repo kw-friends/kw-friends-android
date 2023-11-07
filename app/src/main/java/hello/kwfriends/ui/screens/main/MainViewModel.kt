@@ -13,6 +13,10 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
 
+    //유저 검사 여부 저장
+    var userFirstCheck by mutableStateOf<Boolean>(false)
+
+
     fun getPostFromFirestore() {
         Log.d("getPostFromFirestore()",  "데이터 가져옴")
         viewModelScope.launch {
