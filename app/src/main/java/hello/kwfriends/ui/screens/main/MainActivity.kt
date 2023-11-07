@@ -1,14 +1,11 @@
 package hello.kwfriends.ui.screens.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.auth.AuthViewModel
@@ -19,13 +16,12 @@ import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             KWFriendsTheme {
-
-                val authViewModel = AuthViewModel()
                 val navController = rememberNavController()
                 var startNav = Routes.HOME_SCREEN
 
@@ -50,7 +46,6 @@ class MainActivity : BaseActivity() {
                             mainViewModel = mainViewModel,
                             authViewModel = authViewModel,
                             navigation = navController
-
                         )
                     }
                     composable(Routes.SETTINGS_SCREEN) {

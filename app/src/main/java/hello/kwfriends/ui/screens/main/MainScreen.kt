@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -30,7 +29,6 @@ import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import hello.kwfriends.ui.theme.AppFont
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -41,6 +39,7 @@ fun MainScreen(
     authViewModel: AuthViewModel,
     navigation: NavController
 ) {
+
     CoroutineScope(Dispatchers.Main).launch {
         if (
             !mainViewModel.userFirstCheck &&
@@ -55,8 +54,7 @@ fun MainScreen(
             Log.w("Lim", "인증 화면으로 이동!")
             Log.w("Lim", "${authViewModel.userInputChecked}")
             navigation.navigate(Routes.AUTH_SCREEN)
-        }
-        else{
+        } else {
             Log.w("Lim", "${authViewModel.userInputChecked}")
         }
     }
@@ -102,7 +100,7 @@ fun MainScreen(
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            FindGatheringCardList(viewModel = MainViewModel())
+            FindGatheringCardList(viewModel = mainViewModel)
         }
     }
 }
