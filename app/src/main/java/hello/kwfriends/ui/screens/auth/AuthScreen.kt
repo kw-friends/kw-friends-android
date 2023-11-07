@@ -50,7 +50,7 @@ import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
 import hello.kwfriends.ui.component.TextfieldStyle1
 import hello.kwfriends.ui.component.TextfieldStyle2
-import hello.kwfriends.ui.screens.main.MainActivity
+import hello.kwfriends.ui.screens.main.Routes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,7 +59,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
-    val context = LocalContext.current
 
     //USER_DATA DataStore 객체 저장
     if (viewModel.preferencesDataStore == null) {
@@ -119,12 +118,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                         modifier = Modifier
                             .size(102.dp)
                             .clickable {
-                                context.startActivity(
-                                    Intent(
-                                        context,
-                                        MainActivity::class.java
-                                    )
-                                )
+                                navigation.navigate(Routes.SETTINGS_SCREEN)
                             }
                     )
                     Spacer(modifier = Modifier.height(80.dp))
@@ -557,15 +551,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (viewModel.userAuthAvailableCheck()) {  //firebase 인증 검사
                         if (!viewModel.userInputChecked) {
-                            if (viewModel.userInfoCheck()) { //firestore 정보 검사
-                                Log.w("Lim", "로그인 완료, 다음 Activity로 이동.")
-                                context.startActivity(
-                                    Intent(
-                                        context,
-                                        MainActivity::class.java
-                                    )
-                                )
-                            }
+                            viewModel.userInfoCheck()//firestore 정보 검사
                         }
                     }
                 }
@@ -575,13 +561,8 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                 }
             }
             else {
-                Log.w("Lim", "로그인 완료, 다음 Activity로 이동.")
-                context.startActivity(
-                    Intent(
-                        context,
-                        MainActivity::class.java
-                    )
-                )
+                Log.w("Lim", "로그인 완료, 이후 화면으로 이동.")
+                navigation.navigate(Routes.SETTINGS_SCREEN)
             }
 
 
