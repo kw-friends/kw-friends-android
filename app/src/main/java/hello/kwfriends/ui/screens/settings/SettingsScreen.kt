@@ -1,31 +1,25 @@
 package hello.kwfriends.ui.screens.settings
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -34,13 +28,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import hello.kwfriends.ui.screens.main.Routes
+import hello.kwfriends.ui.component.UserInfoCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +44,7 @@ fun SettingsScreen(navigation: NavController) {
                 title = {
                     Text(
                         text = "설정",
-                        fontSize = 22.sp,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(5.dp)
                     )
                 },
@@ -81,13 +73,12 @@ fun SettingsScreen(navigation: NavController) {
         ) {
             UserInfoCard(
                 userName = "어승경",
-                admissionyear = 23,
+                admissionYear = 23,
                 major = "소프트웨어학부",
                 grade = 1,
                 navigation = navigation
             )
-            Spacer(modifier = Modifier.height(7.dp))
-            SettingsSwitchItem(title = "다크 모드", checked = true, firstItem = true)
+            SettingsSwitchItem(title = "다크 모드", checked = true)
             SettingsSwitchItem(
                 title = "조용 모드",
                 checked = false,
@@ -116,32 +107,37 @@ fun SettingsScreen(navigation: NavController) {
 fun SettingsButtonItem(
     title: String,
     description: String = "",
-    firstItem: Boolean = false,
     onClick: () -> Unit
 ) {
-    if (!firstItem) {
-        Divider(
-            color = Color.DarkGray,
-            thickness = 1.dp,
-            modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
-        )
-    }
+    Divider(
+        color = Color(0xFF353535),
+        thickness = 0.5.dp,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    )
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 30.dp)
+            .padding(horizontal = 20.dp)
             .clickable { onClick() }
     ) {
-        Column(Modifier.weight(10F)) {
-            Text(text = title, fontSize = 20.sp, fontWeight = FontWeight(550))
-            if (description != "") {
-                Text(
-                    text = description,
-                    fontSize = 15.sp,
-                )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(10F)) {
+                Text(text = title, style = MaterialTheme.typography.titleMedium)
+                if (description != "") {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
+            Icon(
+                imageVector = Icons.Default.ArrowForwardIos,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 8.dp),
+                tint = Color.DarkGray
+            )
         }
     }
 }
@@ -151,105 +147,35 @@ fun SettingsSwitchItem(
     title: String,
     checked: Boolean,
     description: String = "",
-    firstItem: Boolean = false
 ) {
-    if (!firstItem) {
-        Divider(
-            color = Color.DarkGray,
-            thickness = 1.dp,
-            modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp)
-        )
-    }
+    Divider(
+        color = Color(0xFF353535),
+        thickness = 0.5.dp,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    )
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp)
+            .heightIn(min = 70.dp)
     ) {
-        Column(Modifier.weight(10F)) {
-            Text(text = title, fontSize = 20.sp, fontWeight = FontWeight(550))
+        Column() {
+            Text(text = title, style = MaterialTheme.typography.titleMedium, lineHeight = 1.sp)
             if (description != "") {
-                Text(text = description, fontSize = 15.sp)
-            }
-        }
-        Switch(checked = checked, onCheckedChange = {/*TODO*/ }, Modifier.weight(2F))
-    }
-}
-
-
-@Composable
-fun UserInfoCard(
-    userName: String,
-    admissionyear: Int,
-    major: String,
-    grade: Int,
-    navigation: NavController
-) {
-    Column(
-        modifier = Modifier
-            .padding(15.dp)
-            .clip(shape = RoundedCornerShape(15.dp))
-            .background(Color(0xFFF3ADBD))
-
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 17.dp)
-                .height(IntrinsicSize.Min)
-        ) {
-            Text(
-                text = userName,
-                fontSize = 35.sp,
-                fontWeight = FontWeight(600),
-                modifier = Modifier.padding(horizontal = 30.dp, vertical = 15.dp)
-            )
-            Button(
-                onClick = { navigation.navigate(Routes.AUTH_SCREEN) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFF0D1D8),
-                    contentColor = Color(0xFF111111)
-                ),
-                modifier = Modifier
-                    .padding(horizontal = 30.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.widthIn(max = 200.dp)
                 )
-                Spacer(modifier = Modifier.size(5.dp))
-                Text(text = "내 정보 수정", fontSize = 15.sp)
             }
         }
-        Row(
+        Switch(
+            checked = checked,
+            onCheckedChange = {/*TODO*/ },
             modifier = Modifier
-                .clip(RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp))
-                .background(Color(0xFFEBDACF))
-                .fillMaxWidth()
-                .padding(vertical = 15.dp, horizontal = 25.dp)
-                .height(IntrinsicSize.Min)
-        ) {
-            Text(text = major)
-            Divider(
-                color = Color.DarkGray,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 6.dp)
-                    .width(1.dp)
-            )
-            Text(text = "${admissionyear}학번")
-            Divider(
-                color = Color.DarkGray,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 6.dp)
-                    .width(1.dp)
-            )
-            Text(text = "${grade}학년")
-        }
+                .align(Alignment.CenterVertically)
+        )
     }
 }

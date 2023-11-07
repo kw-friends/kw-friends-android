@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.screens.post
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -17,6 +15,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -68,8 +67,7 @@ fun NewPostScreen(
                 title = {
                     Text(
                         text = "새 모임 생성",
-                        fontSize = 22.sp,
-                        modifier = Modifier.padding(5.dp)
+                        style = MaterialTheme.typography.titleLarge
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -77,9 +75,7 @@ fun NewPostScreen(
                 ),
                 navigationIcon = {
                     IconButton(
-                        onClick = { navigation.popBackStack() },
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
+                        onClick = { navigation.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go to HomeScreen",
@@ -156,23 +152,18 @@ fun NewPostScreen(
                 externalTitle = "모임 설명 (선택 사항)"
             )
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(modifier = Modifier
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(15.dp)
-                    .width(IntrinsicSize.Min)
-                    .then(
-                        Modifier
-                            .width(IntrinsicSize.Min)
-                            .widthIn(min = 110.dp)
-                    ), onClick = { navigation.popBackStack() }) {
-                    Text("뒤로가기")
-                }
-                Button(modifier = Modifier
-                    .padding(15.dp),
+            ) {
+                Text(
+                    text = "커뮤니티 가이드라인을 준수하여 모임을 생성해 주세요!",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(0xff888888)
+                )
+
+                Button(
                     onClick = {
                         if (!postViewModel.isUploading) {
                             if (!postViewModel.validateGatheringInfo()) {
@@ -181,10 +172,13 @@ fun NewPostScreen(
                                 postViewModel.uploadGatheringToFirestore()
                             }
                         }
-                    }
+                    },
+                    modifier = Modifier
+                        .width(IntrinsicSize.Max)
+                        .align(Alignment.End)
                 ) {
                     if (!postViewModel.isUploading) {
-                        Text("모임 만들기", fontSize = 14.sp)
+                        Text(text = "모임 만들기", style = MaterialTheme.typography.labelLarge)
                     } else {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             CircularProgressIndicator(
@@ -193,7 +187,7 @@ fun NewPostScreen(
                                 strokeWidth = 2.dp
                             )
                             Spacer(modifier = Modifier.size(7.dp))
-                            Text(text = "업로드 중..", fontSize = 14.sp)
+                            Text(text = "업로드 중..", style = MaterialTheme.typography.labelLarge)
                         }
                     }
                 }

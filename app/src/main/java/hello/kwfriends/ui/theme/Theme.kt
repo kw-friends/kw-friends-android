@@ -78,7 +78,8 @@ fun KWFriendsTheme(
     val colors = if (!useDarkTheme) {
         KwFriendsLightColors
     } else {
-        KwFriendsDarkColors
+        KwFriendsLightColors
+        /*KwFriendsDarkColors*/
     }
 
     MaterialTheme(

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,16 +32,14 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import hello.kwfriends.ui.theme.AppFont
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -49,8 +48,6 @@ fun TextfieldStyle3(
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
     value: String,
-    fontSize: TextUnit = 18.sp,
-    fontWeight: FontWeight = FontWeight(450),
     onValueChange: (String) -> Unit,
     maxLines: Int = 1,
     isSingleLine: Boolean = true,
@@ -59,6 +56,7 @@ fun TextfieldStyle3(
     externalTitle: String = "",
     isError: Boolean = false,
     errorMessage: String = "",
+    style: TextStyle = MaterialTheme.typography.labelMedium
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -74,28 +72,24 @@ fun TextfieldStyle3(
         modifier = Modifier
             .height(intrinsicSize = IntrinsicSize.Min)
             .fillMaxWidth()
-            .padding(top = 4.dp)
     ) {
         if (externalTitle != "") {
             Text(
                 text = externalTitle,
                 color = Color(0xFF636363),
-                fontSize = 14.sp,
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 1.dp)
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(horizontal = 14.dp)
             )
         }
         if (isError) {
             Text(
                 text = errorMessage,
                 color = Color(0xFFFF0000),
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.padding(end = 14.dp)
             )
         }
     }
-
-
-
 
     BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
@@ -106,9 +100,9 @@ fun TextfieldStyle3(
             .then(
                 Modifier
                     .height(IntrinsicSize.Min)
-                    .heightIn(min = 50.dp)
+                    .heightIn(min = 45.dp)
             )
-            .padding(vertical = 5.dp, horizontal = 10.dp)
+            .padding(horizontal = 10.dp)
             .onFocusChanged {
                 if (it.isFocused && canValueChange) {
                     containerColor = Color(0xFFF8F8F8)
@@ -127,8 +121,7 @@ fun TextfieldStyle3(
         interactionSource = interactionSource,
         singleLine = isSingleLine,
         textStyle = TextStyle(
-            fontSize = fontSize,
-            fontWeight = fontWeight,
+            fontFamily = AppFont.defaultFontFamily,
             color = textColor,
             textAlign = TextAlign.Start,
         ),
@@ -148,23 +141,23 @@ fun TextfieldStyle3(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(9.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .background(containerColor)
-                    .padding(horizontal = 12.dp, vertical = 3.dp),
+                    .padding(horizontal = 12.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
-                        fontSize = fontSize,
-                        fontWeight = fontWeight,
+                        style = style,
                         color = placeholderColor,
                         textAlign = TextAlign.Start,
                     )
                 }
                 innerTextField.invoke()
             }
-        })
+        }
+    )
 }
 
 @Preview
