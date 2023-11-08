@@ -61,6 +61,9 @@ class AuthViewModel : ViewModel() {
     //아이디저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
 
+    //유저 정보 확인 시작 여부
+    var userInfoChcekStarted by mutableStateOf<Boolean>(false)
+
     //유저 이메일 저장 변수
     var userEmail by mutableStateOf<String>("")
 
@@ -527,7 +530,7 @@ class AuthViewModel : ViewModel() {
 
     //유저 검사
     fun userCheck(){
-        viewModelScope.launch { 
+        viewModelScope.launch {
             if(userAuthAvailableCheck()){
                 userInfoCheck()
             }
