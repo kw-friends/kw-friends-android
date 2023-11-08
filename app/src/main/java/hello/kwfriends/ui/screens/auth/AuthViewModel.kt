@@ -61,9 +61,6 @@ class AuthViewModel : ViewModel() {
     //아이디저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
 
-    //유저 정보 확인 시작 여부
-    var userInfoChcekStarted by mutableStateOf<Boolean>(false)
-
     //유저 이메일 저장 변수
     var userEmail by mutableStateOf<String>("")
 
@@ -486,7 +483,6 @@ class AuthViewModel : ViewModel() {
                         } else {
                             Log.w(ContentValues.TAG, "유저 정보 정상 체크 확인완료")
                             userInputChecked = true
-                            uiState = AuthUiState.SignInSuccess
                             continuation.resume(true)
                         }
                     } else {
@@ -519,10 +515,14 @@ class AuthViewModel : ViewModel() {
                         Log.w("Lim", "유저의 firebase 인증상태가 사용불가능하여 로그아웃되었습니다.")
                         continuation.resume(false)
                     }
-                    userAuthChecked = true
-                    continuation.resume(true)
+                    else{
+                        userAuthChecked = true
+                        continuation.resume(true)
+                    }
                 }
-                continuation.resume(false)
+                else{
+                    continuation.resume(false)
+                }
             }
         }
         return result

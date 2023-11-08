@@ -548,54 +548,25 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
             //유저 상태 정상인지 확인
             Log.w("Lim", "유저 정보 정상인지 확인중..")
 
-//            if (!viewModel.userAuthChecked) {
-//                Log.w("Lim", "유효성 검사 안되어있음. 진행")
-//                CoroutineScope(Dispatchers.).launch {
-//                    if(viewModel.userAuthAvailableCheck()){
-//                        Log.w("Lim", "test")
-//                    }
-//                }
-//            } else
             CoroutineScope(Dispatchers.Main).launch {
-//                if (!viewModel.userAuthChecked) {
-//                    Log.w("Lim", "유효성 검사 안되어있음. 진행")
-//                    if(viewModel.userAuthAvailableCheck()){
-//                        Log.w("Lim", "test")
-//                    }
-//                } else
-                if (!viewModel.userInputChecked && !viewModel.userInfoChcekStarted) {
-                    Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
-                    viewModel.userInfoChcekStarted = true
-                    viewModel.userInfoCheck()
-                    viewModel.userInfoChcekStarted = false
-                    Log.w("Lim", "정보 검사 끝")
+                if (!viewModel.userAuthChecked) {
+                    Log.w("Lim", "유효성 검사 안되어있음. 진행")
+                    if(viewModel.userAuthAvailableCheck()){
+                        Log.w("Lim", "유효성 검사 성공")
+                    }
                 }
-                else {
-                    Log.w("Lim", "로그인 및 정보 입력 완료, 이후 화면으로 이동.")
+                if (!viewModel.userInputChecked) {
+                    Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
+                    if(viewModel.userInfoCheck()) {
+                        Log.w("Lim", "정보 입력 검사 성공")
+                    }
+                }
+                if(viewModel.userAuthChecked && viewModel.userInputChecked) {
+                    Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
                     navigation.navigate(Routes.HOME_SCREEN)
                 }
             }
 
-
-
-            //로그인 성공 후 화면
-//            Column(
-//                modifier = modifier.padding(10.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(text = "사용자 정보:")
-//                Text(text = "Uid: ${Firebase.auth.currentUser?.uid ?: "uid 가져오지 못함"}")
-//                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
-//                Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.trySignOut() }) {
-//                    Text(text = "로그아웃하기")
-//                }
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.changeDeleteUserView() }) {
-//                    Text(text = "회원탈퇴하기")
-//                }
-//            }
         }
 
         is AuthUiState.DeleteUser -> {
