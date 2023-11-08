@@ -1,12 +1,11 @@
 package hello.kwfriends.firebase.firestoreManager
 
-import android.content.ClipDescription
 import android.content.ContentValues
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.ui.screens.post.NewPostViewModel
+import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import kotlinx.coroutines.tasks.await
 
 data class PostDetail(
@@ -14,7 +13,8 @@ data class PostDetail(
     val gatheringPromoter: String,
     val gatheringLocation: String,
     val gatheringTime: String,
-    val maximumParticipant: String,
+    val maximumParticipants: String,
+    val minimumParticipants: String,
     val gatheringDescription: String
 )
 
@@ -43,7 +43,8 @@ object PostManager {
                 gatheringPromoter = document.getString("gatheringPromoter") ?: "",
                 gatheringLocation = document.getString("gatheringLocation") ?: "",
                 gatheringTime = document.getString("gatheringTime") ?: "",
-                maximumParticipant = document.getString("maximumParticipant") ?: "",
+                maximumParticipants = document.getString("maximumParticipants") ?: "",
+                minimumParticipants = document.getString("minimumParticipants") ?: "",
                 gatheringDescription = document.getString("gatheringDescription") ?: ""
             )
         }
@@ -54,7 +55,8 @@ object PostManager {
         gatheringPromoter: String,
         gatheringLocation: String,
         gatheringTime: String,
-        maximumParticipant: String,
+        maximumParticipants: String,
+        minimumParticipants: String,
         gatheringDescription: String,
         postViewModel: NewPostViewModel
     ) {
@@ -63,7 +65,8 @@ object PostManager {
             "gatheringPromoter" to gatheringPromoter,
             "gatheringLocation" to gatheringLocation,
             "gatheringTime" to gatheringTime,
-            "maximumParticipant" to maximumParticipant,
+            "maximumParticipants" to maximumParticipants,
+            "minimumParticipants" to minimumParticipants,
             "gatheringDescription" to gatheringDescription
         )
         try {

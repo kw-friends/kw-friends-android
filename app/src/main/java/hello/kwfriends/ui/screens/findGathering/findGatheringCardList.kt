@@ -109,80 +109,8 @@ fun GatheringCard(
                     }
                 }
             }
-
         }
     }
-    /*Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .border(
-                border = BorderStroke(width = 1.dp, color = Color(65, 65, 65, 255)),
-                shape = AbsoluteRoundedCornerShape(corner = CornerSize(30.dp)),
-            )
-            .background(color = Color(0xffffffff))
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(start = 22.dp, top = 18.dp)
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(verticalArrangement = Arrangement.Bottom) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = 20.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = null,
-                        Modifier.size(27.dp)
-                    )
-                    Spacer(modifier = Modifier.size(5.dp))
-                    Text(text = location)
-                }
-                Spacer(modifier = Modifier.size(6.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Schedule,
-                        contentDescription = null,
-                        Modifier.size(27.dp)
-                    )
-                    Spacer(modifier = Modifier.size(5.dp))
-                    Text(text = time)
-                }
-                Spacer(modifier = Modifier.size(15.dp))
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(end = 25.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Groups,
-                    contentDescription = null,
-                    Modifier.size(32.dp)
-                )
-                Text(text = "${minimumParticipants}명 ~ ${maximumParticipants}명", fontSize = 15.sp)
-                Spacer(modifier = Modifier.size(3.dp))
-                Text(text = "${currentParticipants}명 참여")
-                Spacer(modifier = Modifier.size(15.dp))
-            }
-        }
-        Text(
-            text = description,
-            fontSize = 12.sp,
-            modifier = Modifier.padding(horizontal = 22.dp, vertical = 14.dp)
-        )
-
-    }*/
 }
 
 
@@ -196,8 +124,8 @@ fun FindGatheringCardList(viewModel: MainViewModel) {
                 title = postData.gatheringTitle,
                 location = postData.gatheringLocation,
                 currentParticipants = "X",
-                minimumParticipants = "X",
-                maximumParticipants = postData.maximumParticipant,
+                minimumParticipants = postData.minimumParticipants,
+                maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
                 description = postData.gatheringDescription
             )

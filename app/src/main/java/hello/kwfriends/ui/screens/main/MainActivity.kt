@@ -9,8 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.auth.AuthViewModel
-import hello.kwfriends.ui.screens.post.NewPostScreen
-import hello.kwfriends.ui.screens.post.NewPostViewModel
+import hello.kwfriends.ui.screens.newPost.NewPostScreen
+import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
