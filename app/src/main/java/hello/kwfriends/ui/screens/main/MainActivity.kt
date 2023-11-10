@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.post.NewPostScreen
 import hello.kwfriends.ui.screens.post.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
@@ -16,30 +15,27 @@ import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
-    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             KWFriendsTheme {
                 val navController = rememberNavController()
+                val startPoint = intent.getStringExtra("startPoint")
+                val startDestination = if(startPoint == "auth") Routes.AUTH_SCREEN else Routes.HOME_SCREEN
 
-                NavHost(navController = navController, startDestination = Routes.AUTH_SCREEN) {
+                NavHost(navController = navController, startDestination = startDestination) {
                     composable(Routes.HOME_SCREEN) {
                         MainScreen(
                             mainViewModel = mainViewModel,
-                            authViewModel = authViewModel,
                             navigation = navController
                         )
                     }
                     composable(Routes.SETTINGS_SCREEN) {
-                        SettingsScreen(
-                            authViewModel = authViewModel,
-                            navigation = navController
-                        )
+                        SettingsScreen(navigation = navController)
                     }
                     composable(Routes.AUTH_SCREEN) {
-                        AuthScreen(viewModel = authViewModel, navigation = navController)
+                        AuthScreen(navigation = navController)
                     }
                     composable(Routes.NEW_POST_SCREEN) {
                         NewPostScreen(

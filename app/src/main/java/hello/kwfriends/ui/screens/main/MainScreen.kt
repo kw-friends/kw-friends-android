@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 
 
@@ -30,7 +29,6 @@ import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel,
-    authViewModel: AuthViewModel,
     navigation: NavController
 ) {
 

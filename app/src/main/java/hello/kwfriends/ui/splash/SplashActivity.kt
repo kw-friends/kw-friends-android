@@ -12,11 +12,12 @@ class SplashActivity : BaseActivity() {
 
     private val viewModel: SplashViewModel by viewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            SplashScreen()
+            SplashScreen(viewModel = viewModel)
         }
 
 

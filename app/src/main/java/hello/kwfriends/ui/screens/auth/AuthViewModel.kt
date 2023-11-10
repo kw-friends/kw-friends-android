@@ -20,7 +20,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-class AuthViewModel : ViewModel() {
+object AuthViewModel : ViewModel() {
     //비밀번호로 입력 가능한 특수문자 목록
     private val specialCharList = listOf(33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126) //사용 가능한 특수문자 리스트
 
