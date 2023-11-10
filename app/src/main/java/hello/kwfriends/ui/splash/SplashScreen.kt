@@ -30,7 +30,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
             targetValue = 1f,
             animationSpec = tween(1500)
         )
-        viewModel.test(context)
+        viewModel.SplashUserCheck(context)
     })
     Box(
         Modifier
