@@ -20,7 +20,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-class AuthViewModel : ViewModel() {
+object AuthViewModel : ViewModel() {
+    
+//상수 -------------
     //비밀번호로 입력 가능한 특수문자 목록
     private val specialCharList = listOf(33, 34, 35, 36, 37, 38, 39, 42, 58, 59, 63, 64, 92, 94, 126) //사용 가능한 특수문자 리스트
 
@@ -47,8 +49,9 @@ class AuthViewModel : ViewModel() {
 
     //유저 화면 상태 저장 변수
     var uiState by mutableStateOf<AuthUiState>(AuthUiState.SignIn)
+//-----------------
 
-    // -- 최초실행 --
+//한 번만 실행 -----
     //firestore 유저 정보 검사 여부
     var userInputChecked by mutableStateOf<Boolean>(false)
 
@@ -58,18 +61,22 @@ class AuthViewModel : ViewModel() {
     //유저 소속 자동 확인 함수 실행 여부
     var userDepartAuto by mutableStateOf<Boolean>(false)
 
-    //아이디저장 체크 여부
-    var idSaveChecked by mutableStateOf<Boolean>(false)
+    //유저 아이디 저장 여부 PreferenceDataStore에서 불러왔는지 여부
+    var idSaveLoaded by mutableStateOf<Boolean>(false)
+//--------------
 
+//유저 정보 저장 ------
     //유저 이메일 저장 변수
     var userEmail by mutableStateOf<String>("")
 
-    var idSaveLoaded by mutableStateOf<Boolean>(false)
+    //아이디 저장 체크 여부
+    var idSaveChecked by mutableStateOf<Boolean>(false)
 
     //USER_DATA datastore 객체 저장 변수
     var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
-
-
+    
+    var userInfo by mutableStateOf<Map<String, Any>?>(null)
+//-----------------
 
 
     // -- TextField 입력 변수, 함수 --
@@ -345,10 +352,10 @@ class AuthViewModel : ViewModel() {
         //유저 정보 불러오기
         viewModelScope.launch {
             try {
-                val userInfo: Map<String, Any>? = UserDataManager.getUserData()
+                userInfo = UserDataManager.getUserData()
                 if (userInfo != null) {
                     Log.w(ContentValues.TAG, "Firestore 유저 정보: $userInfo")
-                    val tempStdNum = userInfo["std-num"].toString() //2023203045
+                    val tempStdNum = userInfo!!["std-num"].toString() //2023203045
                     inputCollege = collegeList[tempStdNum[4]] ?: ""
                     inputDepartment = departmentList[collegeList[tempStdNum[4]]]
                         ?.get(tempStdNum.slice(IntRange(5, 6))) ?: ""
@@ -366,44 +373,44 @@ class AuthViewModel : ViewModel() {
 
     //유저 정보 firestore에 저장 시도 함수
     fun trySaveUserInfo() {
-        val userInfo = mapOf(
+        val tempUserInfo = mapOf(
             "name" to inputName,
             "mbti" to inputMbti.lowercase(),
             "std-num" to inputStdNum,
             "gender" to inputGender
         )
-        if (!userInfoFormCheck(userInfo)) { return } //userInfo 형식 체크
+        if (!userInfoFormCheck(tempUserInfo)) { return } //userInfo 형식 체크
         uiState = AuthUiState.Loading
         //유저 데이터 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(userInfo)) { uiState = AuthUiState.SignInSuccess }
+            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
             else { uiState = AuthUiState.SignIn }
         }
     }
 
     //유저 소속 정보 firesotre에 저장 시도 함수
     fun trySaveUserDepartment() {
-        val userInfo = mapOf(
+        val tempUserInfo = mapOf(
             "college" to inputCollege,
             "department" to inputDepartment,
         )
-        if (!userInfoDepartmentCheck(userInfo)) { return } //유저 소속 자동 인식, 형식 체크
+        if (!userInfoDepartmentCheck(tempUserInfo)) { return } //유저 소속 자동 인식, 형식 체크
         uiState = AuthUiState.Loading
         //유저 소속 정보 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(userInfo)) { uiState = AuthUiState.SignInSuccess }
+            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
             else {uiState = AuthUiState.SignIn  }
         }
     }
 
     //유저가 입력한 유저 정보 형식 확인 함수
     //학번: 2023(입학년도)/2(단과대번호)/03(학부번호)/045(학생번호)
-    fun userInfoFormCheck(userInfo: Map<String, Any?>): Boolean {
+    fun userInfoFormCheck(tempUserInfo: Map<String, Any?>): Boolean {
         updateMaxStdNum() // 가능한 최대 입학년도 업데이트
-        val name = userInfo["name"].toString()
-        val mbti = userInfo["mbti"].toString()
-        val stdNum = userInfo["std-num"].toString()
-        val gender = userInfo["gender"].toString()
+        val name = tempUserInfo["name"].toString()
+        val mbti = tempUserInfo["mbti"].toString()
+        val stdNum = tempUserInfo["std-num"].toString()
+        val gender = tempUserInfo["gender"].toString()
         if (name == "") {
             Log.w("Lim", "유저 이름 입력 안됨.")
             return false
@@ -446,12 +453,12 @@ class AuthViewModel : ViewModel() {
     }
 
     //유저 소속(단과대, 학부) 체크
-    fun userInfoDepartmentCheck(userInfo: Map<String, Any?>): Boolean {
-        if (userInfo["college"].toString() == "" || !userInfo.containsKey("college")) {
+    fun userInfoDepartmentCheck(tempUserInfo: Map<String, Any?>): Boolean {
+        if (tempUserInfo["college"].toString() == "" || !tempUserInfo.containsKey("college")) {
             Log.w("Lim", "단과대 입력 안됨.")
             return false
         }
-        if (userInfo["department"].toString() == "" || !userInfo.containsKey("department")) {
+        if (tempUserInfo["department"].toString() == "" || !tempUserInfo.containsKey("department")) {
             Log.w("Lim", "학부 입력 안됨.")
             return false
         }
@@ -466,17 +473,17 @@ class AuthViewModel : ViewModel() {
         try {
             val result = suspendCoroutine<Boolean> { continuation ->
                 viewModelScope.launch {
-                    val userInfo: Map<String, Any>? = UserDataManager.getUserData()
+                    userInfo = UserDataManager.getUserData()
                     if (userInfo != null) {
-                        if (userInfo["state"] != "available") { // 유저 상태 available 아니면 로그아웃
+                        if (userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
                             UserAuth.signOut()
                             Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
                             continuation.resume(false)
-                        } else if (!userInfoFormCheck(userInfo)) {
+                        } else if (!userInfoFormCheck(userInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserInfo
                             continuation.resume(false)
-                        } else if (!userInfoDepartmentCheck(userInfo)) {
+                        } else if (!userInfoDepartmentCheck(userInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 소속 정보 비정상. 소속 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserDepartment
                             continuation.resume(false)
