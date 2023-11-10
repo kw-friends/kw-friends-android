@@ -251,15 +251,16 @@ object AuthViewModel : ViewModel() {
 
     //이메일 @kw.ac.kr 자동으로 붙이기
     fun autoEmailLink(email: String): String {
-        val result = if(email == "") {
+        var tempEmail = email.replace(" ", "")
+        val result = if(tempEmail == "") {
             ""
         }
-        else if (email.indexOf('@') == -1 && email.lowercase() !in "kw.ac.kr") { //@없음 && 실수로 @만 안 친 경우 아님:
-            "$email@kw.ac.kr"
-        } else if (email.indexOf('@') == email.length - 1) { // @뒤를 안 친 경우:
-            "${email}kw.ac.kr"
+        else if (tempEmail.indexOf('@') == -1 && tempEmail.lowercase() !in "kw.ac.kr") { //@없음 && 실수로 @만 안 친 경우 아님:
+            "$tempEmail@kw.ac.kr"
+        } else if (tempEmail.indexOf('@') == tempEmail.length - 1) { // @뒤를 안 친 경우:
+            "${tempEmail}kw.ac.kr"
         } else{
-            email
+            tempEmail
         }
         return result
     }
