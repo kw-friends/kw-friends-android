@@ -97,15 +97,20 @@ object UserAuth {
     //유저 인증 정보 리로드 (firebase auth reload)
     suspend fun reload(): Boolean{
         val result = suspendCoroutine<Boolean> { continuation ->
-            fa.currentUser!!.reload()
-                .addOnSuccessListener {
-                    Log.w("Lim", "유저 인증 상태 리로드 성공")
-                    continuation.resume(true)
-                }
-                .addOnFailureListener {
-                    Log.w("Lim", "유저 인증 상태 리로드 실패")
-                    continuation.resume(false)
-                }
+            if(fa.currentUser == null){
+                continuation.resume(false)
+            }
+            else{
+                fa.currentUser!!.reload()
+                    .addOnSuccessListener {
+                        Log.w("Lim", "유저 인증 상태 리로드 성공")
+                        continuation.resume(true)
+                    }
+                    .addOnFailureListener {
+                        Log.w("Lim", "유저 인증 상태 리로드 실패")
+                        continuation.resume(false)
+                    }
+            }
         }
         return result
     }

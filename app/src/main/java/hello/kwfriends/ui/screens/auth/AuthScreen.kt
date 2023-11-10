@@ -58,29 +58,29 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
+fun AuthScreen(navigation: NavController) {
 
     //USER_DATA DataStore 객체 저장
-    if (viewModel.preferencesDataStore == null) {
-        viewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
+    if (AuthViewModel.preferencesDataStore == null) {
+        AuthViewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
     }
 
-    if (viewModel.uiState == AuthUiState.SignIn) {
-        if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
+    if (AuthViewModel.uiState == AuthUiState.SignIn) {
+        if (Firebase.auth.currentUser != null) { // 로그`인 된 상태일 때
             if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
                 Log.w("Lim", "로그인 기록 확인")
-                viewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
+                AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
             } else {
-                viewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+                AuthViewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
             }
         }
     }
 
-    if (!viewModel.idSaveLoaded) {
-        viewModel.idSaveLoaded = true
-        viewModel.userIdSaveCheckAndLoad() // 유저 아이디 저장 정보 불러오기
+    if (!AuthViewModel.idSaveLoaded) {
+        AuthViewModel.idSaveLoaded = true
+        AuthViewModel.userIdSaveCheckAndLoad() // 유저 아이디 저장 정보 불러오기
     }
-    when (viewModel.uiState) {
+    when (AuthViewModel.uiState) {
         is AuthUiState.Loading -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
@@ -126,16 +126,16 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     TextfieldStyle1(
                         placeholder = "KW WEB-MAIL",
                         icon = Icons.Default.Email,
-                        value = viewModel.inputEmail,
-                        onValueChange = { viewModel.setInputEmailText(it) }
+                        value = AuthViewModel.inputEmail,
+                        onValueChange = { AuthViewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
                         placeholder = "PASSWORD",
                         icon = Icons.Default.Lock,
-                        value = viewModel.inputPassword,
+                        value = AuthViewModel.inputPassword,
                         isPassword = true,
-                        onValueChange = { viewModel.setInputPasswordText(it) }
+                        onValueChange = { AuthViewModel.setInputPasswordText(it) }
                     )
                     Spacer(modifier = Modifier.height(13.dp))
                     Row(
@@ -145,17 +145,17 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "아이디 저장",
-                            checked = viewModel.idSaveChecked,
+                            checked = AuthViewModel.idSaveChecked,
                             onCheckedChange = {
-                                viewModel.idSaveChecked = !viewModel.idSaveChecked
+                                AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked
                             },
-                            onTextClicked = { viewModel.idSaveChecked = !viewModel.idSaveChecked }
+                            onTextClicked = { AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked }
                         )
                     }
                     Spacer(modifier = Modifier.height(33.dp))
                     ButtonStyle1(
                         text = "Login",
-                        onClick = { viewModel.trySignIn() }
+                        onClick = { AuthViewModel.trySignIn() }
                     )
                     Spacer(modifier = Modifier.height(13.dp))
                     Row(
@@ -171,7 +171,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                                     fontWeight = FontWeight(300),
                                     color = Color(0xFFF1F1F1),
                                 ),
-                                modifier = Modifier.clickable { viewModel.changeFindPasswordView() }
+                                modifier = Modifier.clickable { AuthViewModel.changeFindPasswordView() }
                             )
                         }
                         Row(
@@ -185,7 +185,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                                     fontWeight = FontWeight(300),
                                     color = Color(0xFFF1F1F1),
                                 ),
-                                modifier = Modifier.clickable { viewModel.changeRegisterView() }
+                                modifier = Modifier.clickable { AuthViewModel.changeRegisterView() }
                             )
                             Spacer(modifier = Modifier.width(7.dp))
                         }
@@ -223,20 +223,20 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     Spacer(modifier = Modifier.height(38.dp))
                     TextfieldStyle2(
                         placeholder = "Web-Mail",
-                        value = viewModel.inputEmail,
-                        onValueChange = { viewModel.setInputEmailText(it) }
+                        value = AuthViewModel.inputEmail,
+                        onValueChange = { AuthViewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(140.dp))
                     ButtonStyle1(
                         text = "메일 전송하기",
-                        onClick = { viewModel.trySendPasswordResetEmail() })
+                        onClick = { AuthViewModel.trySendPasswordResetEmail() })
                     Spacer(modifier = Modifier.height(11.dp))
                     Row(Modifier.fillMaxWidth()) {
                         Spacer(modifier = Modifier.width(7.dp))
                         Text(
                             text = "이전화면",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { viewModel.changeLoginView() }
+                            modifier = Modifier.clickable { AuthViewModel.changeLoginView() }
                         )
                     }
                 }
@@ -271,22 +271,22 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     Spacer(modifier = Modifier.height(25.dp))
                     TextfieldStyle2(
                         placeholder = "KWANGWOON WEB-MAIL",
-                        value = viewModel.inputEmail,
-                        onValueChange = { viewModel.setInputEmailText(it) }
+                        value = AuthViewModel.inputEmail,
+                        onValueChange = { AuthViewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(13.dp))
                     TextfieldStyle2(
                         placeholder = "Password",
                         isPassword = true,
-                        value = viewModel.inputPassword,
-                        onValueChange = { viewModel.setInputPasswordText(it) },
+                        value = AuthViewModel.inputPassword,
+                        onValueChange = { AuthViewModel.setInputPasswordText(it) },
                     )
                     Spacer(modifier = Modifier.height(13.dp))
                     TextfieldStyle2(
                         placeholder = "Password Again",
                         isPassword = true,
-                        value = viewModel.inputPasswordConfirm,
-                        onValueChange = { viewModel.setInputPasswordConfirmText(it) }
+                        value = AuthViewModel.inputPasswordConfirm,
+                        onValueChange = { AuthViewModel.setInputPasswordConfirmText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
@@ -304,7 +304,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     Spacer(modifier = Modifier.height(33.dp))
                     ButtonStyle1(
                         text = "계정 만들기",
-                        onClick = { viewModel.tryRegister() }
+                        onClick = { AuthViewModel.tryRegister() }
                     )
                     Spacer(modifier = Modifier.height(11.dp))
                     Row(Modifier.fillMaxWidth()) {
@@ -312,7 +312,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                         Text(
                             text = "이전화면",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { viewModel.changeLoginView() }
+                            modifier = Modifier.clickable { AuthViewModel.changeLoginView() }
                         )
                     }
                 }
@@ -390,7 +390,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                                     fontWeight = FontWeight(300),
                                     color = Color(0xFFF1F1F1),
                                 ),
-                                modifier = Modifier.clickable { viewModel.trySendAuthEmail() }
+                                modifier = Modifier.clickable { AuthViewModel.trySendAuthEmail() }
                             )
                             Spacer(modifier = Modifier.width(7.dp))
                         }
@@ -398,7 +398,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     Spacer(modifier = Modifier.height(94.dp))
                     ButtonStyle1(
                         text = "인증 완료",
-                        onClick = { viewModel.tryEmailVerify() }
+                        onClick = { AuthViewModel.tryEmailVerify() }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(Modifier.fillMaxWidth()) {
@@ -406,7 +406,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                         androidx.compose.material3.Text(
                             text = "로그아웃",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { viewModel.trySignOut() }
+                            modifier = Modifier.clickable { AuthViewModel.trySignOut() }
                         )
                     }
                 }
@@ -442,59 +442,59 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     TextfieldStyle1(
                         placeholder = "학번",
                         icon = Icons.Default.AccountBox,
-                        value = viewModel.inputStdNum,
-                        onValueChange = { viewModel.setInputStdNumText(it) }
+                        value = AuthViewModel.inputStdNum,
+                        onValueChange = { AuthViewModel.setInputStdNumText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
                         placeholder = "이름",
                         icon = Icons.Default.Person,
-                        value = viewModel.inputName,
-                        onValueChange = { viewModel.setInputNameText(it) }
+                        value = AuthViewModel.inputName,
+                        onValueChange = { AuthViewModel.setInputNameText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
                         placeholder = "mbti",
                         icon = Icons.Default.Face,
-                        value = viewModel.inputMbti,
-                        onValueChange = { viewModel.setInputMbtiText(it) }
+                        value = AuthViewModel.inputMbti,
+                        onValueChange = { AuthViewModel.setInputMbtiText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "남자",
-                            checked = viewModel.inputGender == "male",
-                            onCheckedChange = { viewModel.inputGender = "male" },
-                            onTextClicked = { viewModel.inputGender = "male" }
+                            checked = AuthViewModel.inputGender == "male",
+                            onCheckedChange = { AuthViewModel.inputGender = "male" },
+                            onTextClicked = { AuthViewModel.inputGender = "male" }
                         )
                         Spacer(modifier = Modifier.width(17.dp))
                         CheckboxStyle1(
                             text = "여자",
-                            checked = viewModel.inputGender == "female",
-                            onCheckedChange = { viewModel.inputGender = "female" },
-                            onTextClicked = { viewModel.inputGender = "female" }
+                            checked = AuthViewModel.inputGender == "female",
+                            onCheckedChange = { AuthViewModel.inputGender = "female" },
+                            onTextClicked = { AuthViewModel.inputGender = "female" }
                         )
                         Spacer(modifier = Modifier.width(17.dp))
                         CheckboxStyle1(
                             text = "기타",
-                            viewModel.inputGender == "etc",
-                            onCheckedChange = { viewModel.inputGender = "etc" },
-                            onTextClicked = { viewModel.inputGender = "etc" }
+                            AuthViewModel.inputGender == "etc",
+                            onCheckedChange = { AuthViewModel.inputGender = "etc" },
+                            onTextClicked = { AuthViewModel.inputGender = "etc" }
                         )
                     }
                     Spacer(modifier = Modifier.height(38.dp))
                     ButtonStyle1(
                         text = "완료",
-                        onClick = { viewModel.trySaveUserInfo() }
+                        onClick = { AuthViewModel.trySaveUserInfo() }
                     )
                 }
             }
         }
 
         is AuthUiState.InputUserDepartment -> {
-            if (!viewModel.userDepartAuto) {
-                viewModel.userDepartmentAutoRecognition()
+            if (!AuthViewModel.userDepartAuto) {
+                AuthViewModel.userDepartmentAutoRecognition()
             } // 학번으로 유저 소속 자동인식
             Box(
                 modifier = Modifier
@@ -524,21 +524,21 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     TextfieldStyle1(
                         placeholder = "단과대",
                         icon = Icons.Default.LocationOn,
-                        value = viewModel.inputCollege,
-                        onValueChange = { viewModel.setInputCollegeText(it) }
+                        value = AuthViewModel.inputCollege,
+                        onValueChange = { AuthViewModel.setInputCollegeText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
                         placeholder = "학부",
                         icon = Icons.Default.Home,
-                        value = viewModel.inputDepartment,
-                        onValueChange = { viewModel.setInputDepartmentText(it) }
+                        value = AuthViewModel.inputDepartment,
+                        onValueChange = { AuthViewModel.setInputDepartmentText(it) }
                     )
                     Spacer(modifier = Modifier.height(128.dp))
 
                     ButtonStyle1(
                         text = "완료",
-                        onClick = { viewModel.trySaveUserDepartment() }
+                        onClick = { AuthViewModel.trySaveUserDepartment() }
                     )
                 }
             }
@@ -548,54 +548,25 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
             //유저 상태 정상인지 확인
             Log.w("Lim", "유저 정보 정상인지 확인중..")
 
-//            if (!viewModel.userAuthChecked) {
-//                Log.w("Lim", "유효성 검사 안되어있음. 진행")
-//                CoroutineScope(Dispatchers.).launch {
-//                    if(viewModel.userAuthAvailableCheck()){
-//                        Log.w("Lim", "test")
-//                    }
-//                }
-//            } else
             CoroutineScope(Dispatchers.Main).launch {
-//                if (!viewModel.userAuthChecked) {
-//                    Log.w("Lim", "유효성 검사 안되어있음. 진행")
-//                    if(viewModel.userAuthAvailableCheck()){
-//                        Log.w("Lim", "test")
-//                    }
-//                } else
-                if (!viewModel.userInputChecked && !viewModel.userInfoChcekStarted) {
-                    Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
-                    viewModel.userInfoChcekStarted = true
-                    viewModel.userInfoCheck()
-                    viewModel.userInfoChcekStarted = false
-                    Log.w("Lim", "정보 검사 끝")
+                if (!AuthViewModel.userAuthChecked) {
+                    Log.w("Lim", "유효성 검사 안되어있음. 진행")
+                    if(AuthViewModel.userAuthAvailableCheck()){
+                        Log.w("Lim", "유효성 검사 성공")
+                    }
                 }
-                else {
-                    Log.w("Lim", "로그인 및 정보 입력 완료, 이후 화면으로 이동.")
+                if (!AuthViewModel.userInputChecked) {
+                    Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
+                    if(AuthViewModel.userInfoCheck()) {
+                        Log.w("Lim", "정보 입력 검사 성공")
+                    }
+                }
+                if(AuthViewModel.userAuthChecked && AuthViewModel.userInputChecked) {
+                    Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
                     navigation.navigate(Routes.HOME_SCREEN)
                 }
             }
 
-
-
-            //로그인 성공 후 화면
-//            Column(
-//                modifier = modifier.padding(10.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(text = "사용자 정보:")
-//                Text(text = "Uid: ${Firebase.auth.currentUser?.uid ?: "uid 가져오지 못함"}")
-//                Text(text = "Email: ${Firebase.auth.currentUser?.email ?: "email 가져오지 못함"}")
-//                Text(text = "EmailVerified: ${Firebase.auth.currentUser?.isEmailVerified ?: "emailverified 가져오지 못함"}")
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.trySignOut() }) {
-//                    Text(text = "로그아웃하기")
-//                }
-//                Button(modifier = Modifier.fillMaxWidth(),
-//                    onClick = { viewModel.changeDeleteUserView() }) {
-//                    Text(text = "회원탈퇴하기")
-//                }
-//            }
         }
 
         is AuthUiState.DeleteUser -> {
@@ -627,21 +598,21 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                     TextfieldStyle1(
                         placeholder = "광운대학교 웹메일",
                         icon = Icons.Default.AccountBox,
-                        value = viewModel.inputEmail,
-                        onValueChange = { viewModel.setInputEmailText(it) }
+                        value = AuthViewModel.inputEmail,
+                        onValueChange = { AuthViewModel.setInputEmailText(it) }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     TextfieldStyle1(
                         placeholder = "비밀번호",
                         icon = Icons.Default.Person,
-                        value = viewModel.inputPassword,
-                        onValueChange = { viewModel.setInputPasswordText(it) },
+                        value = AuthViewModel.inputPassword,
+                        onValueChange = { AuthViewModel.setInputPasswordText(it) },
                         isPassword = true
                     )
                     Spacer(modifier = Modifier.height(128.dp))
                     ButtonStyle1(
                         text = "회원탈퇴",
-                        onClick = { viewModel.tryDeleteUser() }
+                        onClick = { AuthViewModel.tryDeleteUser() }
                     )
                     Spacer(modifier = Modifier.height(11.dp))
                     Row(Modifier.fillMaxWidth()) {
@@ -650,7 +621,7 @@ fun AuthScreen(viewModel: AuthViewModel, navigation: NavController) {
                             text = "이전화면",
                             color = Color(0xFFF1F1F1),
                             modifier = Modifier.clickable {
-                                viewModel.uiState = AuthUiState.SignInSuccess
+                                AuthViewModel.uiState = AuthUiState.SignInSuccess
                             }
                         )
                     }
