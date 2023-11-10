@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.post
+package hello.kwfriends.ui.screens.newPost
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -23,8 +23,9 @@ class NewPostViewModel : ViewModel() {
     var gatheringLocation by mutableStateOf("")
     var gatheringLocationStatus by mutableStateOf(false)
 
-    var maximumMemberCount by mutableStateOf("")
-    var maximumMemberCountStatus by mutableStateOf(false)
+    var maximumParticipants by mutableStateOf("")
+    var minimumParticipants by mutableStateOf("")
+    var participantsRangeValidation by mutableStateOf(false)
 
     var gatheringDescription by mutableStateOf("")
 
@@ -42,22 +43,16 @@ class NewPostViewModel : ViewModel() {
         return !(text == null || text == "")
     }
 
-    // 입력받은 텍스트의 Null 여부 확인 후, Int 변환 값의 크기 비교
-    fun isInRange(text: String?, compare: String = "", target: Int = 0): Boolean {
-        return if (text == null || text == "") {
+    fun checkParticipantsRange(
+        min: String,
+        max: String
+    ): Boolean { // mix와 max가 2 이상, 100 이하이고, min < max인지를 확인
+        return try {
+            Log.i("checkParticipantsRange", "true")
+            min.toInt() < max.toInt() && min.toInt() in 2..100 && max.toInt() in 2..100
+        } catch (e: NumberFormatException) {
+            Log.i("checkParticipantsRange", "false")
             false
-        } else {
-            try {
-                if (compare == "bigger") {
-                    text.toInt() >= target
-                } else if (compare == "smaller") {
-                    text.toInt() <= target
-                } else {
-                    false
-                }
-            } catch (e: NumberFormatException) {
-                return false
-            }
         }
     }
 
@@ -80,16 +75,21 @@ class NewPostViewModel : ViewModel() {
         gatheringDescription = text
     }
 
-    fun maximumMemberCountChange(text: String) {
-        maximumMemberCount = text
-        maximumMemberCountStatus = isInRange(text, "bigger", 2)
+    fun maximumParticipantsChange(min: String = minimumParticipants, max: String) {
+        maximumParticipants = max
+        participantsRangeValidation = checkParticipantsRange(min, max)
+    }
+
+    fun minimumParticipantsChange(min: String, max: String = maximumParticipants) {
+        minimumParticipants = min
+        participantsRangeValidation = checkParticipantsRange(min, max)
     }
 
     fun validateGatheringInfo(): Boolean {
         return (gatheringTitleStatus &&
                 gatheringLocationStatus &&
                 gatheringTimeStatus &&
-                maximumMemberCountStatus)
+                participantsRangeValidation)
     }
 
     fun uploadResultUpdate(result: Boolean) {
@@ -105,20 +105,21 @@ class NewPostViewModel : ViewModel() {
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
         Log.w("NewPostViewModel", "gatheringLocation = $gatheringLocationStatus")
         Log.w("NewPostViewModel", "gatheringTime = $gatheringTimeStatus")
-        Log.w("NewPostViewModel", "maximumMemberCount = $maximumMemberCountStatus")
+        Log.w("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
 
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
                 isUploading = true
                 PostManager.uploadPost(
-                    gatheringTitle,
-                    gatheringPromoter,
-                    gatheringLocation,
-                    gatheringTime,
-                    maximumMemberCount,
-                    gatheringDescription,
-                    this@NewPostViewModel
+                    gatheringTitle = gatheringTitle,
+                    gatheringPromoter = gatheringPromoter,
+                    gatheringLocation = gatheringLocation,
+                    gatheringTime = gatheringTime,
+                    maximumParticipants = maximumParticipants,
+                    minimumParticipants = minimumParticipants,
+                    gatheringDescription = gatheringDescription,
+                    postViewModel = this@NewPostViewModel
 
                 )
                 isUploading = false

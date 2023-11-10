@@ -2,15 +2,10 @@ package hello.kwfriends.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -43,20 +38,16 @@ import hello.kwfriends.ui.theme.AppFont
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun TextfieldStyle3(
+fun SingleTextField(
     placeholder: String = "",
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
     value: String,
     onValueChange: (String) -> Unit,
-    maxLines: Int = 1,
     isSingleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
-    externalTitle: String = "",
-    isError: Boolean = false,
-    errorMessage: String = "",
-    style: TextStyle = MaterialTheme.typography.labelMedium
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -66,50 +57,19 @@ fun TextfieldStyle3(
     var textColor by remember { mutableStateOf(Color(0xFF000000)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom,
-        modifier = Modifier
-            .height(intrinsicSize = IntrinsicSize.Min)
-            .fillMaxWidth()
-    ) {
-        if (externalTitle != "") {
-            Text(
-                text = externalTitle,
-                color = Color(0xFF636363),
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(horizontal = 14.dp)
-            )
-        }
-        if (isError) {
-            Text(
-                text = errorMessage,
-                color = Color(0xFFFF0000),
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(end = 14.dp)
-            )
-        }
-    }
-
     BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         enabled = canValueChange,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .then(
-                Modifier
-                    .height(IntrinsicSize.Min)
-                    .heightIn(min = 45.dp)
-            )
-            .padding(horizontal = 10.dp)
+            .height(48.dp)
+            .width(72.dp)
             .onFocusChanged {
                 if (it.isFocused && canValueChange) {
-                    containerColor = Color(0xFFF8F8F8)
+                    containerColor = Color(0xFFDADADA)
                     textColor = Color.Black
                     placeholderColor = Color(0xFF4B4B4B)
                 } else if (!it.isFocused && canValueChange) {
-                    containerColor = Color(0xFFF8F8F8)
+                    containerColor = Color(0xFFE9E9E9)
                     textColor = Color(0xFF161616)
                     placeholderColor = Color(0xFF4B4B4B)
                 } else {
@@ -132,7 +92,7 @@ fun TextfieldStyle3(
             KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
         },
         cursorBrush = SolidColor(Color(0xF1363636)),
-        maxLines = maxLines,
+        maxLines = 1,
         keyboardActions = KeyboardActions(onDone = {
             focusManager.clearFocus()
             keyboardController?.hide()
@@ -140,7 +100,7 @@ fun TextfieldStyle3(
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .height(40.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(containerColor)
                     .padding(horizontal = 12.dp),
@@ -162,6 +122,10 @@ fun TextfieldStyle3(
 
 @Preview
 @Composable
-fun TextfieldStyle3Preview() {
-    TextfieldStyle3(placeholder = "Preview", value = "", onValueChange = {})
+fun SingleTextFieldPreview() {
+    SingleTextField(
+        value = "Text",
+        onValueChange = { },
+        imeAction = ImeAction.Next
+    )
 }

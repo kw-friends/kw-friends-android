@@ -468,7 +468,7 @@ object AuthViewModel : ViewModel() {
     //firestore에 저장되어있는 유저 정보 확인 함수
     suspend fun userInfoCheck():Boolean {
         uiState = AuthUiState.Loading
-
+    /*Firebase.auth.currentUser.uid*/
         //유저 정보 불러오기
         try {
             val result = suspendCoroutine<Boolean> { continuation ->
