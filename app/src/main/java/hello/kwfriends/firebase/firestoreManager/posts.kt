@@ -65,16 +65,7 @@ object PostManager {
         val post: HashMap<String, Any> = hashMapOf(
             "gatheringTitle" to gatheringTitle,
             "gatheringPromoter" to gatheringPromoter,
-            "gatheringLocation" to gatheringLocation,
-            "gatheringTime" to gatheringTime,
-            "maximumParticipants" to maximumParticipants,
-            "minimumParticipants" to minimumParticipants,
-            "gatheringDescription" to gatheringDescription
-        )
-
-        val subDocument: HashMap<String, Any> = hashMapOf(
-            "gatheringTitle" to gatheringTitle,
-            "gatheringPromoter" to gatheringPromoter,
+            "gatheringPromoterUID" to UserAuth.fa.uid.toString(),
             "gatheringLocation" to gatheringLocation,
             "gatheringTime" to gatheringTime,
             "maximumParticipants" to maximumParticipants,
@@ -107,8 +98,6 @@ object PostManager {
                     postViewModel.uploadResultUpdate(false)
                 }
                 .await()
-            val post1 = db.collection("posts")
-//            val participants = post1.firestore.collection("participants")
 
         } catch (e: FirebaseFirestoreException) {
             Log.w(ContentValues.TAG, "모임 생성 실패")

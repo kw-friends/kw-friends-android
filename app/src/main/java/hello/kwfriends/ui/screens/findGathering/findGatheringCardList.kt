@@ -37,6 +37,7 @@ import hello.kwfriends.ui.screens.main.MainViewModel
 fun GatheringCard(
     title: String,
     location: String,
+    promoter: String,
     currentParticipants: String,
     minimumParticipants: String,
     maximumParticipants: String,
@@ -81,7 +82,9 @@ fun GatheringCard(
                     Text(text = time, style = MaterialTheme.typography.bodyMedium)
                 }
                 Text(
-                    text = "최대 ${maximumParticipants}명 중 ${currentParticipants}명 참여\n최소 인원: $minimumParticipants",
+                    text = "최대 ${maximumParticipants}명 중 ${currentParticipants}명 참여\n" +
+                            "최소 인원: $minimumParticipants\n" +
+                            "주최자: $promoter",
                     modifier = Modifier
                         .padding(end = 2.dp),
                     style = MaterialTheme.typography.bodySmall
@@ -102,7 +105,7 @@ fun GatheringCard(
                             onClick = { /*TODO*/ },
                             modifier = Modifier
                                 .align(Alignment.End)
-                                .padding(vertical = 8.dp)
+                                .padding(bottom = 8.dp)
                         ) {
                             Text(text = "모임 참여", style = MaterialTheme.typography.labelMedium)
                         }
@@ -127,6 +130,7 @@ fun FindGatheringCardList(viewModel: MainViewModel) {
                 minimumParticipants = postData.minimumParticipants,
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
+                promoter = postData.gatheringPromoter,
                 description = postData.gatheringDescription
             )
         }

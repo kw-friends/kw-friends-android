@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hello.kwfriends.firebase.firestoreManager.PostManager
+import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ class NewPostViewModel : ViewModel() {
     var gatheringTitle by mutableStateOf("")
     var gatheringTitleStatus by mutableStateOf(false)
 
-    var gatheringPromoter by mutableStateOf("User")
+    var gatheringPromoter by mutableStateOf(AuthViewModel.userInfo!!["name"].toString())
 
     var gatheringTime by mutableStateOf("")
     var gatheringTimeStatus by mutableStateOf(false)
