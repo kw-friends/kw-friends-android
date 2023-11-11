@@ -388,7 +388,7 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 데이터 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
+            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
             else { uiState = AuthUiState.SignIn }
         }
     }
@@ -424,11 +424,11 @@ object AuthViewModel : ViewModel() {
             Log.w("Lim", "mbti 입력 안됨.")
             return false
         } else if (
+            (mbti.length != 4) ||
             !(mbti[0] == 'i' || mbti[0] == 'e') ||
             !(mbti[1] == 'n' || mbti[1] == 's') ||
             !(mbti[2] == 'f' || mbti[2] == 't') ||
-            !(mbti[3] == 'p' || mbti[3] == 'j') ||
-            (mbti.length != 4)
+            !(mbti[3] == 'p' || mbti[3] == 'j')
         ) {
             Log.w("Lim", "mbti 형식 틀림.")
             return false

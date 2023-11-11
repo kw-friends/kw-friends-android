@@ -83,7 +83,8 @@ fun SettingsScreen(
                 userName = AuthViewModel.userInfo!!["name"]!!.toString(),
                 admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString().slice(IntRange(2, 3)),
                 major = AuthViewModel.userInfo!!["department"]!!.toString(),
-                navigation = navigation
+                navigation = navigation,
+                mainViewModel = mainViewModel
             )
             SettingsSwitchItem(title = "다크 모드", checked = true)
             SettingsSwitchItem(

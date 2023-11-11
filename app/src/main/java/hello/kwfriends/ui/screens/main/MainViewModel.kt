@@ -16,9 +16,6 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
 
-    //유저 검사 여부 저장
-    var userFirstCheck by mutableStateOf<Boolean>(false)
-
 
     fun getPostFromFirestore() {
         Log.d("getPostFromFirestore()",  "데이터 가져옴")
@@ -38,6 +35,18 @@ class MainViewModel : ViewModel() {
     fun mainDeleteUser(navigation: NavController){
         Log.w("Lim", "SettingsScreen: 회원탈퇴 화면으로 이동")
         AuthViewModel.uiState = AuthUiState.DeleteUser
+        navigation.navigate(Routes.AUTH_SCREEN)
+    }
+
+    //정보수정
+    fun editUserInfo(navigation: NavController){
+        Log.w("Lim", "SettingsScreen: 정보 수정")
+        AuthViewModel.userInputChecked = false
+        AuthViewModel.uiState = AuthUiState.InputUserInfo
+        AuthViewModel.inputStdNum = AuthViewModel.userInfo!!["std-num"]!!.toString()
+        AuthViewModel.inputName = AuthViewModel.userInfo!!["name"]!!.toString()
+        AuthViewModel.inputMbti = AuthViewModel.userInfo!!["mbti"]!!.toString()
+        AuthViewModel.inputGender = AuthViewModel.userInfo!!["gender"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 }

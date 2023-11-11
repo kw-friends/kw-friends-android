@@ -28,13 +28,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun UserInfoCard(
     userName: String,
     admissionYear: String,
     major: String,
-    navigation: NavController
+    navigation: NavController,
+    mainViewModel: MainViewModel
 ) {
     Column(
         modifier = Modifier
@@ -58,7 +60,7 @@ fun UserInfoCard(
                 modifier = Modifier.padding(start = 12.dp)
             )
             Button(
-                onClick = { /*TODO 내 정보 수정*/ },
+                onClick = { mainViewModel.editUserInfo(navigation) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFF0D1D8),
                     contentColor = Color(0xFF111111)
