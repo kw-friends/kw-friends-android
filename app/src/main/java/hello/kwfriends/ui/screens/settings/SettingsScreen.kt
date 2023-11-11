@@ -76,7 +76,7 @@ fun SettingsScreen(
                 .padding(it)
         ) {
             UserInfoCard(
-                userName = "어승경",
+                userName = "!23",
                 admissionYear = 23,
                 major = "소프트웨어학부",
                 grade = 1,

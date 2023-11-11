@@ -5,6 +5,8 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.firebaseManager.UserAuth
+import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import kotlinx.coroutines.tasks.await
 
@@ -69,13 +71,35 @@ object PostManager {
             "minimumParticipants" to minimumParticipants,
             "gatheringDescription" to gatheringDescription
         )
+
+        val subDocument: HashMap<String, Any> = hashMapOf(
+            "gatheringTitle" to gatheringTitle,
+            "gatheringPromoter" to gatheringPromoter,
+            "gatheringLocation" to gatheringLocation,
+            "gatheringTime" to gatheringTime,
+            "maximumParticipants" to maximumParticipants,
+            "minimumParticipants" to minimumParticipants,
+            "gatheringDescription" to gatheringDescription
+        )
+
         try {
             db.collection("posts")
                 .add(post)
                 .addOnSuccessListener { documentReference ->
                     Log.d(ContentValues.TAG, "모임 생성 성공. ID: ${documentReference.id}")
-                    postViewModel.showSnackbar("모임 생성 성공")
-                    postViewModel.uploadResultUpdate(true)
+                    db.collection("posts").document(documentReference.id).collection("participants")
+                        .document(AuthViewModel.userInfo!!["name"].toString())
+                        .set(mapOf("UID" to UserAuth.fa.uid))
+                        .addOnSuccessListener {
+                            Log.d(ContentValues.TAG, "하위 참가자 목록 컬렉션 생성 성공.")
+                            postViewModel.showSnackbar("모임 생성 성공")
+                            postViewModel.uploadResultUpdate(true)
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
+                            postViewModel.showSnackbar("모임 생성 실패")
+                            postViewModel.uploadResultUpdate(false)
+                        }
                 }
                 .addOnFailureListener { e ->
                     Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
@@ -83,6 +107,9 @@ object PostManager {
                     postViewModel.uploadResultUpdate(false)
                 }
                 .await()
+            val post1 = db.collection("posts")
+//            val participants = post1.firestore.collection("participants")
+
         } catch (e: FirebaseFirestoreException) {
             Log.w(ContentValues.TAG, "모임 생성 실패")
             postViewModel.uploadResultUpdate(false)

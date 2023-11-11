@@ -9,7 +9,7 @@ import kotlin.coroutines.suspendCoroutine
 
 object UserAuth {
 
-    private val fa = Firebase.auth
+    val fa = Firebase.auth
 
     //로그인 함수
     suspend fun signIn(email: String, password: String): Boolean {
