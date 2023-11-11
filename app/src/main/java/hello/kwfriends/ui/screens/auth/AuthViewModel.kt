@@ -602,6 +602,10 @@ object AuthViewModel : ViewModel() {
 
     fun signInSuccessCheck(navigation: NavController){
         viewModelScope.launch {
+            if(Firebase.auth.currentUser == null){
+                uiState = AuthUiState.SignIn
+                return@launch
+            }
             if (!userAuthChecked) {
                 Log.w("Lim", "유효성 검사 안되어있음. 진행")
                 if(userAuthAvailableCheck()){

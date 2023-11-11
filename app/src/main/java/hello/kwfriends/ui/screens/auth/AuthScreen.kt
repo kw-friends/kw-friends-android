@@ -233,7 +233,7 @@ fun AuthScreen(navigation: NavController) {
                         Text(
                             text = "이전화면",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { AuthViewModel.changeLoginView() }
+                            modifier = Modifier.clickable { AuthViewModel.signInSuccessCheck(navigation) }
                         )
                     }
                 }

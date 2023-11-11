@@ -37,7 +37,6 @@ import androidx.navigation.NavController
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.MainViewModel
-import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,8 +97,12 @@ fun SettingsScreen(
                 description = "어승경만 아는 라면 레시피, 절대 실패할 일 없어요. 진짜에요!"
             )
             SettingsButtonItem(
+                title = "비밀번호 재설정",
+                onClick = { mainViewModel.mainFindPassword(navigation) }
+            )
+            SettingsButtonItem(
                 title = "로그아웃",
-                onClick = { mainViewModel.mainSignOut { navigation.navigate(Routes.AUTH_SCREEN) } }
+                onClick = { mainViewModel.mainSignOut(navigation) }
             )
             SettingsButtonItem(
                 title = "회원탈퇴",

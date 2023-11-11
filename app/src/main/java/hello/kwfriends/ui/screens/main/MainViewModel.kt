@@ -24,11 +24,18 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    //비밀번호 재설정
+    fun mainFindPassword(navigation: NavController){
+        Log.w("Lin", "SettingsScreen: 비밀번호 재설정")
+        AuthViewModel.uiState = AuthUiState.FindPassword
+        navigation.navigate(Routes.AUTH_SCREEN)
+    }
+
     //로그아웃
-    fun mainSignOut(goAuthNavigation: () -> Unit){
+    fun mainSignOut(navigation: NavController){
         Log.w("Lim", "SettingsScreen: 로그아웃")
         AuthViewModel.trySignOut()
-        goAuthNavigation()
+        navigation.navigate(Routes.AUTH_SCREEN)
     }
     
     //회원탈퇴
