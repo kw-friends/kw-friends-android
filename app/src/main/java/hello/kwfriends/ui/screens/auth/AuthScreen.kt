@@ -51,9 +51,6 @@ import hello.kwfriends.ui.component.TextStyle1
 import hello.kwfriends.ui.component.TextfieldStyle1
 import hello.kwfriends.ui.component.TextfieldStyle2
 import hello.kwfriends.ui.screens.main.Routes
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -66,7 +63,7 @@ fun AuthScreen(navigation: NavController) {
     }
 
     if (AuthViewModel.uiState == AuthUiState.SignIn) {
-        if (Firebase.auth.currentUser != null) { // 로그`인 된 상태일 때
+        if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
             if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
                 Log.w("Lim", "로그인 기록 확인")
                 AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
@@ -236,7 +233,7 @@ fun AuthScreen(navigation: NavController) {
                         Text(
                             text = "이전화면",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { AuthViewModel.changeLoginView() }
+                            modifier = Modifier.clickable { AuthViewModel.signInSuccessCheck(navigation) }
                         )
                     }
                 }
@@ -547,25 +544,7 @@ fun AuthScreen(navigation: NavController) {
         is AuthUiState.SignInSuccess -> {
             //유저 상태 정상인지 확인
             Log.w("Lim", "유저 정보 정상인지 확인중..")
-
-            CoroutineScope(Dispatchers.Main).launch {
-                if (!AuthViewModel.userAuthChecked) {
-                    Log.w("Lim", "유효성 검사 안되어있음. 진행")
-                    if(AuthViewModel.userAuthAvailableCheck()){
-                        Log.w("Lim", "유효성 검사 성공")
-                    }
-                }
-                if (!AuthViewModel.userInputChecked) {
-                    Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
-                    if(AuthViewModel.userInfoCheck()) {
-                        Log.w("Lim", "정보 입력 검사 성공")
-                    }
-                }
-                if(AuthViewModel.userAuthChecked && AuthViewModel.userInputChecked) {
-                    Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
-                    navigation.navigate(Routes.HOME_SCREEN)
-                }
-            }
+            AuthViewModel.signInSuccessCheck(navigation)
 
         }
 
@@ -618,10 +597,12 @@ fun AuthScreen(navigation: NavController) {
                     Row(Modifier.fillMaxWidth()) {
                         Spacer(modifier = Modifier.width(7.dp))
                         Text(
-                            text = "이전화면",
+                            text = "돌아가기",
                             color = Color(0xFFF1F1F1),
                             modifier = Modifier.clickable {
-                                AuthViewModel.uiState = AuthUiState.SignInSuccess
+                                //navigation.navigate(Routes.HOME_SCREEN)
+                                //AuthViewModel.uiState = AuthUiState.SignInSuccess
+                                AuthViewModel.signInSuccessCheck(navigation)
                             }
                         )
                     }

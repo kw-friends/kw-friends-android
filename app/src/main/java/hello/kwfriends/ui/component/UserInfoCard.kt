@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,17 +27,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import hello.kwfriends.ui.screens.main.Routes
+import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun UserInfoCard(
     userName: String,
-    admissionYear: Int,
+    admissionYear: String,
     major: String,
-    grade: Int,
-    navigation: NavController
+    navigation: NavController,
+    mainViewModel: MainViewModel
 ) {
     Column(
         modifier = Modifier
@@ -62,7 +60,7 @@ fun UserInfoCard(
                 modifier = Modifier.padding(start = 12.dp)
             )
             Button(
-                onClick = { navigation.navigate(Routes.AUTH_SCREEN) },
+                onClick = { mainViewModel.editUserInfo(navigation) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFF0D1D8),
                     contentColor = Color(0xFF111111)
@@ -96,14 +94,6 @@ fun UserInfoCard(
                     .width(1.dp)
             )
             Text(text = "${admissionYear}학번")
-            Divider(
-                color = Color.DarkGray,
-                modifier = Modifier
-                    .height(18.dp)
-                    .padding(horizontal = 6.dp)
-                    .width(1.dp)
-            )
-            Text(text = "${grade}학년")
         }
     }
 }

@@ -35,10 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.UserInfoCard
+import hello.kwfriends.ui.screens.auth.AuthViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    mainViewModel: MainViewModel,
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
@@ -76,11 +79,11 @@ fun SettingsScreen(
                 .padding(it)
         ) {
             UserInfoCard(
-                userName = "어승경",
-                admissionYear = 23,
-                major = "소프트웨어학부",
-                grade = 1,
-                navigation = navigation
+                userName = AuthViewModel.userInfo!!["name"]!!.toString(),
+                admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString().slice(IntRange(2, 3)),
+                major = AuthViewModel.userInfo!!["department"]!!.toString(),
+                navigation = navigation,
+                mainViewModel = mainViewModel
             )
             SettingsSwitchItem(title = "다크 모드", checked = true)
             SettingsSwitchItem(
@@ -94,12 +97,16 @@ fun SettingsScreen(
                 description = "어승경만 아는 라면 레시피, 절대 실패할 일 없어요. 진짜에요!"
             )
             SettingsButtonItem(
+                title = "비밀번호 재설정",
+                onClick = { mainViewModel.mainFindPassword(navigation) }
+            )
+            SettingsButtonItem(
                 title = "로그아웃",
-                onClick = {}
+                onClick = { mainViewModel.mainSignOut(navigation) }
             )
             SettingsButtonItem(
                 title = "회원탈퇴",
-                onClick = {}
+                onClick = { mainViewModel.mainDeleteUser(navigation) }
             )
 
         }

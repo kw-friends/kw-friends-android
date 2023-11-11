@@ -7,12 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.firebase.firebaseManager.UserAuth
 import hello.kwfriends.firebase.firestoreManager.UserDataManager
+import hello.kwfriends.ui.screens.main.Routes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -272,6 +274,8 @@ object AuthViewModel : ViewModel() {
         inputEmail = ""
         inputPassword = ""
         idSaveLoaded = false
+        userInputChecked = false
+        userAuthChecked = false
         uiState = AuthUiState.SignIn
     }
 
@@ -384,7 +388,7 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 데이터 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
+            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
             else { uiState = AuthUiState.SignIn }
         }
     }
@@ -420,11 +424,11 @@ object AuthViewModel : ViewModel() {
             Log.w("Lim", "mbti 입력 안됨.")
             return false
         } else if (
+            (mbti.length != 4) ||
             !(mbti[0] == 'i' || mbti[0] == 'e') ||
             !(mbti[1] == 'n' || mbti[1] == 's') ||
             !(mbti[2] == 'f' || mbti[2] == 't') ||
-            !(mbti[3] == 'p' || mbti[3] == 'j') ||
-            (mbti.length != 4)
+            !(mbti[3] == 'p' || mbti[3] == 'j')
         ) {
             Log.w("Lim", "mbti 형식 틀림.")
             return false
@@ -592,6 +596,31 @@ object AuthViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.w("Lim", "저장된 아이디 불러오기 실패: ", e)
+            }
+        }
+    }
+
+    fun signInSuccessCheck(navigation: NavController){
+        viewModelScope.launch {
+            if(Firebase.auth.currentUser == null){
+                uiState = AuthUiState.SignIn
+                return@launch
+            }
+            if (!userAuthChecked) {
+                Log.w("Lim", "유효성 검사 안되어있음. 진행")
+                if(userAuthAvailableCheck()){
+                    Log.w("Lim", "유효성 검사 성공")
+                }
+            }
+            if (!userInputChecked) {
+                Log.w("Lim", "정보 입력 검사 안되어있음. 진행")
+                if(userInfoCheck()) {
+                    Log.w("Lim", "정보 입력 검사 성공")
+                }
+            }
+            if(userAuthChecked && userInputChecked) {
+                Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
+                navigation.navigate(Routes.HOME_SCREEN)
             }
         }
     }
