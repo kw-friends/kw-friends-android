@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.UserInfoCard
+import hello.kwfriends.ui.screens.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,10 +77,9 @@ fun SettingsScreen(
                 .padding(it)
         ) {
             UserInfoCard(
-                userName = "어승경",
-                admissionYear = 23,
-                major = "소프트웨어학부",
-                grade = 1,
+                userName = AuthViewModel.userInfo!!["name"]!!.toString(),
+                admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString().slice(IntRange(2, 3)),
+                major = AuthViewModel.userInfo!!["department"]!!.toString(),
                 navigation = navigation
             )
             SettingsSwitchItem(title = "다크 모드", checked = true)

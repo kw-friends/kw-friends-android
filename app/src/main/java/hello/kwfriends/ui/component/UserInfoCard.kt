@@ -35,9 +35,8 @@ import hello.kwfriends.ui.screens.main.Routes
 @Composable
 fun UserInfoCard(
     userName: String,
-    admissionYear: Int,
+    admissionYear: String,
     major: String,
-    grade: Int,
     navigation: NavController
 ) {
     Column(
@@ -96,14 +95,6 @@ fun UserInfoCard(
                     .width(1.dp)
             )
             Text(text = "${admissionYear}학번")
-            Divider(
-                color = Color.DarkGray,
-                modifier = Modifier
-                    .height(18.dp)
-                    .padding(horizontal = 6.dp)
-                    .width(1.dp)
-            )
-            Text(text = "${grade}학년")
         }
     }
 }
