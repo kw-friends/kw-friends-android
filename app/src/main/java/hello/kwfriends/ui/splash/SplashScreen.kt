@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.splash
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -26,6 +27,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
         Animatable(0f)
     }
     LaunchedEffect(key1 = true, block = {
+        Log.w("Lim", "Splash 시작")
         alpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(1500)

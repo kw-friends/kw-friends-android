@@ -620,6 +620,7 @@ object AuthViewModel : ViewModel() {
             }
             if(userAuthChecked && userInputChecked) {
                 Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
+                inputPassword = ""
                 navigation.navigate(Routes.HOME_SCREEN)
             }
         }
