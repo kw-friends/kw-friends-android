@@ -36,10 +36,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.screens.auth.AuthViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    mainViewModel: MainViewModel,
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
@@ -95,7 +98,7 @@ fun SettingsScreen(
             )
             SettingsButtonItem(
                 title = "로그아웃",
-                onClick = {}
+                onClick = { mainViewModel.mainSignOut { navigation.navigate(Routes.AUTH_SCREEN) } }
             )
             SettingsButtonItem(
                 title = "회원탈퇴",

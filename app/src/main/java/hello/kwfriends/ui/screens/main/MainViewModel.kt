@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hello.kwfriends.firebase.firestoreManager.PostDetail
 import hello.kwfriends.firebase.firestoreManager.PostManager
+import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -22,5 +23,11 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             posts = PostManager.getPostRef()
         }
+    }
+
+    fun mainSignOut(goAuthNavigation: () -> Unit){
+        Log.w("Lim", "SettingsScreen: 로그아웃")
+        AuthViewModel.trySignOut()
+        goAuthNavigation()
     }
 }

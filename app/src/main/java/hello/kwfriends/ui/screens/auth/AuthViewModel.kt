@@ -272,6 +272,8 @@ object AuthViewModel : ViewModel() {
         inputEmail = ""
         inputPassword = ""
         idSaveLoaded = false
+        userInputChecked = false
+        userAuthChecked = false
         uiState = AuthUiState.SignIn
     }
 
