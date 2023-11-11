@@ -102,7 +102,7 @@ fun SettingsScreen(
             )
             SettingsButtonItem(
                 title = "회원탈퇴",
-                onClick = {}
+                onClick = { mainViewModel.mainDeleteUser(navigation) }
             )
 
         }
