@@ -128,6 +128,5 @@ class NewPostViewModel : ViewModel() {
         } else {
             Log.w("NewPostViewModel", "부족한 정보가 있습니다.")
         }
-
     }
 }

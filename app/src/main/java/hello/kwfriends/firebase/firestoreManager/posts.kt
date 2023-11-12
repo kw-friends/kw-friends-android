@@ -17,7 +17,8 @@ data class PostDetail(
     val gatheringTime: String,
     val maximumParticipants: String,
     val minimumParticipants: String,
-    val gatheringDescription: String
+    val gatheringDescription: String,
+    val postID: String
 )
 
 object PostManager {
@@ -47,7 +48,8 @@ object PostManager {
                 gatheringTime = document.getString("gatheringTime") ?: "",
                 maximumParticipants = document.getString("maximumParticipants") ?: "",
                 minimumParticipants = document.getString("minimumParticipants") ?: "",
-                gatheringDescription = document.getString("gatheringDescription") ?: ""
+                gatheringDescription = document.getString("gatheringDescription") ?: "",
+                postID = document.id
             )
         }
     }
@@ -105,6 +107,24 @@ object PostManager {
         }
     }
 
+    suspend fun updateParticipationState(target: String) {
+        val result = db.collection("posts").document(target).collection("participants")
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    Log.i("getDocRef", ": ${document.documents}") /////
+                } else {
+                    Log.i("getDocRef", "게시글이 비어있어요.")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("detDocRef", "게시글 불러오기 실패: ", exception)
+            }.await()
+
+        db.collection("posts").document(target).collection("participants")
+            .document(AuthViewModel.userInfo!!["name"].toString())
+            .set(mapOf("UID" to UserAuth.fa.uid))
+    }
 
     suspend fun deletePost(target: String) {
         db.collection("posts").document(target)

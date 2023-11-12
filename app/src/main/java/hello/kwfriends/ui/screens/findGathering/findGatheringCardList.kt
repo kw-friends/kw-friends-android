@@ -42,7 +42,9 @@ fun GatheringCard(
     minimumParticipants: String,
     maximumParticipants: String,
     time: String, //추후 datetime으로 변경,
-    description: String
+    description: String,
+    postID: String,
+    viewModel: MainViewModel
 ) {
     var descriptionOpened by remember {
         mutableStateOf(false)
@@ -94,7 +96,10 @@ fun GatheringCard(
                         color = Color(0xFF353535),
                         thickness = 0.5.dp
                     )
-                    Column(modifier = Modifier.padding(end = 4.dp)) {
+                    Column(
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
                         if (description != "") {
                             Text(
                                 text = description,
@@ -102,12 +107,9 @@ fun GatheringCard(
                             )
                         }
                         Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .padding(bottom = 8.dp)
+                            onClick = { viewModel.participateOnGathering(postID) },
                         ) {
-                            Text(text = "모임 참여", style = MaterialTheme.typography.labelMedium)
+                            Text(text = "모임 참여", style = MaterialTheme.typography.labelLarge)
                         }
                     }
                 }
@@ -131,7 +133,10 @@ fun FindGatheringCardList(viewModel: MainViewModel) {
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
                 promoter = postData.gatheringPromoter,
-                description = postData.gatheringDescription
+                description = postData.gatheringDescription,
+                postID = postData.postID,
+                viewModel = viewModel
+
             )
         }
     }
