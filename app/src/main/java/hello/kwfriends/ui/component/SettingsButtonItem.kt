@@ -36,7 +36,7 @@ fun SettingsButtonItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
             .clickable { onClick() }
             .clip(shape = AbsoluteRoundedCornerShape(10.dp))
     ) {
