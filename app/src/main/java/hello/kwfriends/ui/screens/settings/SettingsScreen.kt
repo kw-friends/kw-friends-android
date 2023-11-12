@@ -1,7 +1,6 @@
 package hello.kwfriends.ui.screens.settings
 
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,11 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,11 +26,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.MainViewModel
@@ -109,47 +106,6 @@ fun SettingsScreen(
                 onClick = { mainViewModel.mainDeleteUser(navigation) }
             )
 
-        }
-    }
-}
-
-
-@Composable
-fun SettingsButtonItem(
-    title: String,
-    description: String = "",
-    onClick: () -> Unit
-) {
-    Divider(
-        color = Color(0xFF353535),
-        thickness = 0.5.dp,
-        modifier = Modifier.padding(horizontal = 16.dp)
-    )
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp)
-            .clickable { onClick() }
-            .clip(shape = AbsoluteRoundedCornerShape(10.dp))
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(10F)) {
-                Text(text = title, style = MaterialTheme.typography.titleMedium)
-                if (description != "") {
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-            }
-            Icon(
-                imageVector = Icons.Default.ArrowForwardIos,
-                contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp),
-                tint = Color.DarkGray
-            )
         }
     }
 }
