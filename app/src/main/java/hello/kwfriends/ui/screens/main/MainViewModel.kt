@@ -16,6 +16,11 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
 
+    //다크모드 여부 저장
+    var isDarkMode by mutableStateOf<Boolean>(true)
+
+    //조용모드 여부 저장
+    var isQuietMode by mutableStateOf<Boolean>(false)
 
     fun getPostFromFirestore() {
         Log.d("getPostFromFirestore()",  "데이터 가져옴")
