@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,15 +39,21 @@ fun SettingsSwitchItem(
             .padding(horizontal = 16.dp)
             .heightIn(min = 70.dp)
     ) {
-        Column() {
-            Text(text = title, style = MaterialTheme.typography.titleMedium, lineHeight = 1.sp)
-            if (description != "") {
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.widthIn(max = 220.dp)
-                )
+        Column {
+            Box {
+                Text(text = title, style = MaterialTheme.typography.titleMedium, lineHeight = 1.sp)
+                if (description != "") {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.DarkGray,
+                        modifier = Modifier
+                            .padding(top = 30.dp)
+                            .widthIn(max = 220.dp)
+                    )
+                }
             }
+
         }
         Switch(
             checked = checked,

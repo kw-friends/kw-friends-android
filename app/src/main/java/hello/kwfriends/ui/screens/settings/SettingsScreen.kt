@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import hello.kwfriends.BuildConfig
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
@@ -119,6 +120,12 @@ fun SettingsScreen(
             SettingsButtonItem(
                 title = "회원탈퇴",
                 onClick = { mainViewModel.mainDeleteUser(navigation) }
+            )
+
+            SettingsButtonItem(
+                title = "앱 버전",
+                description = BuildConfig.VERSION_NAME,
+                onClick = {  }
             )
         }
     }
