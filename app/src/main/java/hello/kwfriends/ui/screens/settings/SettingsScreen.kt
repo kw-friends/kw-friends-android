@@ -78,15 +78,21 @@ fun SettingsScreen(
                 title = "프로필 이미지 등록",
                 onClick = {  }
             )
-            SettingsSwitchItem(title = "다크 모드", checked = true)
+            SettingsSwitchItem(
+                title = "다크 모드",
+                checked = mainViewModel.isDarkMode,
+                onCheckedChange = { mainViewModel.isDarkMode = !mainViewModel.isDarkMode }
+            )
             SettingsSwitchItem(
                 title = "조용 모드",
-                checked = false,
+                checked = mainViewModel.isQuietMode,
+                onCheckedChange = { mainViewModel.isQuietMode = !mainViewModel.isQuietMode },
                 description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
             )
             SettingsSwitchItem(
                 title = "라면에 식초 한숟갈?",
                 checked = true,
+                onCheckedChange = {},
                 description = "어승경만 아는 라면 레시피, 절대 실패할 일 없어요. 진짜에요!"
             )
 

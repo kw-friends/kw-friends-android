@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 fun SettingsSwitchItem(
     title: String,
     checked: Boolean,
+    onCheckedChange:  ((Boolean) -> Unit)?,
     description: String = "",
 ) {
     Divider(
@@ -49,7 +50,7 @@ fun SettingsSwitchItem(
         }
         Switch(
             checked = checked,
-            onCheckedChange = {/*TODO*/ },
+            onCheckedChange = onCheckedChange,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
         )
