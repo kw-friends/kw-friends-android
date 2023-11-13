@@ -27,6 +27,7 @@ import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +78,7 @@ fun SettingsScreen(
             )
             SettingsButtonItem(
                 title = "프로필 이미지 등록",
-                onClick = {  }
+                onClick = { navigation.navigate(Routes.PROFILE_IMAGE_SCREEN) }
             )
             SettingsSwitchItem(
                 title = "다크 모드",
