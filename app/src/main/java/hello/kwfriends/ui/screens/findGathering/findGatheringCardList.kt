@@ -128,7 +128,7 @@ fun FindGatheringCardList(viewModel: MainViewModel) {
             GatheringCard(
                 title = postData.gatheringTitle,
                 location = postData.gatheringLocation,
-                currentParticipants = "X",
+                currentParticipants = postData.currentParticipants,
                 minimumParticipants = postData.minimumParticipants,
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,

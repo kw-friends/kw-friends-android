@@ -17,6 +17,7 @@ data class PostDetail(
     val gatheringTime: String,
     val maximumParticipants: String,
     val minimumParticipants: String,
+    val currentParticipants: String,
     val gatheringDescription: String,
     val postID: String
 )
@@ -25,11 +26,13 @@ object PostManager {
     val db = Firebase.firestore
 
     suspend fun getPostRef(): List<PostDetail> {
-        val result = db.collection("posts")
-            .get()
+        val postsRes = db.collection("posts").get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.i("getDocRef", "게시글 가져옴: ${document.documents}") /////
+                    Log.i("getDocRef", "게시글 가져옴: ${document.documents}")
+                    for (document in document) {
+                        Log.d("count", "${document.id} => ${document.data}")
+                    }
                 } else {
                     Log.i("getDocRef", "게시글이 비어있어요.")
                 }
@@ -38,9 +41,11 @@ object PostManager {
                 Log.w("detDocRef", "게시글 불러오기 실패: ", exception)
             }.await()
 
+        return postsRes.documents.map { document ->
+            val participantsCount = db.collection("posts").document(document.id)
+                .collection("participants").get()
+                .await().size()
 
-
-        return result.documents.map { document ->
             PostDetail(
                 gatheringTitle = document.getString("gatheringTitle") ?: "",
                 gatheringPromoter = document.getString("gatheringPromoter") ?: "",
@@ -48,11 +53,13 @@ object PostManager {
                 gatheringTime = document.getString("gatheringTime") ?: "",
                 maximumParticipants = document.getString("maximumParticipants") ?: "",
                 minimumParticipants = document.getString("minimumParticipants") ?: "",
+                currentParticipants = participantsCount.toString(),
                 gatheringDescription = document.getString("gatheringDescription") ?: "",
                 postID = document.id
             )
         }
     }
+
 
     suspend fun uploadPost(
         gatheringTitle: String,
