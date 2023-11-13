@@ -49,7 +49,7 @@ class MainActivity : BaseActivity() {
                         )
                     }
                     composable(Routes.PROFILE_IMAGE_SCREEN) {
-                        ProfileImageScreen()
+                        ProfileImageScreen(navigation = navController)
                     }
                 }
             }

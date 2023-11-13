@@ -77,7 +77,7 @@ fun SettingsScreen(
                 mainViewModel = mainViewModel
             )
             SettingsButtonItem(
-                title = "프로필 이미지 등록",
+                title = "프로필 이미지 설정",
                 onClick = { navigation.navigate(Routes.PROFILE_IMAGE_SCREEN) }
             )
             SettingsSwitchItem(
