@@ -78,7 +78,11 @@ dependencies {// mode
     implementation("androidx.compose.material:material-icons-extended:$composeUiVersion")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("androidx.datastore:datastore-preferences:1.0.0") //preference datastore
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    // Add the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-storage")
 }
