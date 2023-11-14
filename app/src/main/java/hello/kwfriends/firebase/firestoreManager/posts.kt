@@ -88,8 +88,8 @@ object PostManager {
                 .addOnSuccessListener { documentReference ->
                     Log.d(ContentValues.TAG, "모임 생성 성공. ID: ${documentReference.id}")
                     db.collection("posts").document(documentReference.id).collection("participants")
-                        .document(AuthViewModel.userInfo!!["name"].toString())
-                        .set(mapOf("UID" to UserAuth.fa.uid))
+                        .document(UserAuth.fa.uid.toString())
+                        .set(mapOf("name" to AuthViewModel.userInfo!!["name"].toString()))
                         .addOnSuccessListener {
                             Log.d(ContentValues.TAG, "하위 참가자 목록 컬렉션 생성 성공.")
                             postViewModel.showSnackbar("모임 생성 성공")
@@ -115,22 +115,11 @@ object PostManager {
     }
 
     suspend fun updateParticipationState(target: String) {
-        val result = db.collection("posts").document(target).collection("participants")
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.i("getDocRef", ": ${document.documents}") /////
-                } else {
-                    Log.i("getDocRef", "게시글이 비어있어요.")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("detDocRef", "게시글 불러오기 실패: ", exception)
-            }.await()
-
         db.collection("posts").document(target).collection("participants")
             .document(AuthViewModel.userInfo!!["name"].toString())
             .set(mapOf("UID" to UserAuth.fa.uid))
+            .addOnSuccessListener { documentReference ->
+            }.await()
     }
 
     suspend fun deletePost(target: String) {
