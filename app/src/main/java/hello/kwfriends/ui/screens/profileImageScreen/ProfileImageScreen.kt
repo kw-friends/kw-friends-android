@@ -22,10 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,12 +34,10 @@ import hello.kwfriends.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileImageScreen(navigation: NavController) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-
+fun ProfileImageScreen(navigation: NavController, profileImageViewModel: ProfileImageViewModel) {
     val launcher = rememberLauncherForActivityResult(contract =
     ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-        imageUri = uri
+        profileImageViewModel.imageUri = uri
     }
 
     Scaffold(
@@ -82,7 +76,8 @@ fun ProfileImageScreen(navigation: NavController) {
                 .fillMaxSize()
         ) {
             AsyncImage(
-                model = imageUri ?: R.drawable.profile_default_image, // Use a default image resource
+                // Use a default image resource
+                model = profileImageViewModel.imageUri ?: R.drawable.profile_default_image,
                 contentDescription = "profile image",
                 modifier = Modifier
                     .padding(4.dp)
@@ -100,6 +95,14 @@ fun ProfileImageScreen(navigation: NavController) {
                 }
             ) {
                 Text("이미지 선택")
+            }
+            Button(
+                modifier = Modifier.padding(top = 10.dp),
+                onClick = {
+                    profileImageViewModel.imageUpload()
+                }
+            ) {
+                Text("이미지 업로드")
             }
         }
     }

@@ -11,6 +11,7 @@ import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.newPost.NewPostScreen
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.profileImageScreen.ProfileImageScreen
+import hello.kwfriends.ui.screens.profileImageScreen.ProfileImageViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
@@ -49,7 +50,10 @@ class MainActivity : BaseActivity() {
                         )
                     }
                     composable(Routes.PROFILE_IMAGE_SCREEN) {
-                        ProfileImageScreen(navigation = navController)
+                        ProfileImageScreen(
+                            navigation = navController,
+                            profileImageViewModel = ProfileImageViewModel()
+                        )
                     }
                 }
             }
