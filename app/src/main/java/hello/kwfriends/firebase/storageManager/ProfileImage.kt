@@ -9,7 +9,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object ProfileImage {
-    private val imageFolderRef = Firebase.storage.reference.child("profiles/${Firebase.auth.currentUser!!.uid}")
+    val storage = Firebase.storage
+    val profileImageRef = storage.reference.child("profiles/${Firebase.auth.currentUser!!.uid}")
 
     suspend fun upload(imageUri: Uri?): Boolean {
         if(imageUri == null){
@@ -17,7 +18,7 @@ object ProfileImage {
             return false
         }
         val result = suspendCoroutine<Boolean> { continuation ->
-            imageFolderRef.putFile(imageUri)
+            profileImageRef.putFile(imageUri)
                 .addOnProgressListener { send ->
                     val progress = (100.0 * send.bytesTransferred) / send.totalByteCount
                     Log.d("Lim", "Upload is $progress% done")
@@ -35,6 +36,18 @@ object ProfileImage {
         return result
     }
 
+    suspend fun getDownloadUrl(uid: String): Uri? {
+        val uidImageRef = storage.reference.child("profiles/${uid}")
+        val result = suspendCoroutine<Uri?> { continuation ->
+            uidImageRef.downloadUrl.addOnSuccessListener { uri ->
+                // Got the download URL for 'users/me/profile.png'
+                continuation.resume(uri)
+            }.addOnFailureListener {
+                continuation.resume(null)
+            }
+        }
+        return result
+    }
 
 
 }

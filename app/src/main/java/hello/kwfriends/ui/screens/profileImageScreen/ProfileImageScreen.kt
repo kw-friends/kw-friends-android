@@ -40,6 +40,7 @@ fun ProfileImageScreen(navigation: NavController, profileImageViewModel: Profile
         profileImageViewModel.imageUri = uri
     }
 
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -103,6 +104,14 @@ fun ProfileImageScreen(navigation: NavController, profileImageViewModel: Profile
                 }
             ) {
                 Text("이미지 업로드")
+            }
+            Button(
+                modifier = Modifier.padding(top = 10.dp),
+                onClick = {
+                    profileImageViewModel.imageLoad()
+                }
+            ) {
+                Text("이미지 로드")
             }
         }
     }
