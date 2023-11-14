@@ -119,6 +119,10 @@ object PostManager {
             .document(AuthViewModel.userInfo!!["name"].toString())
             .set(mapOf("UID" to UserAuth.fa.uid))
             .addOnSuccessListener { documentReference ->
+                Log.d(ContentValues.TAG, "모임 참여 성공")
+            }
+            .addOnFailureListener {e ->
+                Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
             }.await()
     }
 
