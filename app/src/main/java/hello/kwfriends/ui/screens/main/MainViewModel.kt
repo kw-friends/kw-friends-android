@@ -17,8 +17,6 @@ class MainViewModel : ViewModel() {
     var participationStatusMap = mutableStateMapOf<String, String>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
 
-
-
     fun participationStatusMapInit(postID: String, status: String) {
         participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {
             ParticipationStatus.PARTICIPATED

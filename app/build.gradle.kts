@@ -46,7 +46,7 @@ android {
 }
 
 val composeUiVersion = "1.5.4"
-val navVersion = "2.7.4"
+val navVersion = "2.7.5"
 
 dependencies {// mode
     implementation("androidx.core:core-ktx:1.12.0")
@@ -61,9 +61,9 @@ dependencies {// mode
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.compose.ui:ui-graphics")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeUiVersion")
-    androidTestImplementation("androidx.compose:compose-bom:2023.10.01")
-    implementation("androidx.compose:compose-bom:2023.10.01")
-    implementation("com.google.firebase:firebase-bom:32.5.0")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     debugImplementation("androidx.compose.ui:ui-tooling:$composeUiVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeUiVersion")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
@@ -77,8 +77,13 @@ dependencies {// mode
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeUiVersion")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("androidx.datastore:datastore-preferences:1.0.0") //preference datastore
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    // Add the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-storage")
+    implementation("io.coil-kt:coil-compose:2.5.0") //for Coil
 }
