@@ -11,10 +11,12 @@ import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.newPost.NewPostScreen
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
+import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,7 @@ class MainActivity : BaseActivity() {
                     }
                     composable(Routes.SETTINGS_SCREEN) {
                         SettingsScreen(
-                            mainViewModel = mainViewModel,
+                            settingsViewModel= settingsViewModel,
                             navigation = navController
                         )
                     }

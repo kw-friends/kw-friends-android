@@ -34,12 +34,11 @@ import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.screens.auth.AuthViewModel
-import hello.kwfriends.ui.screens.main.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    mainViewModel: MainViewModel,
+    settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
@@ -48,7 +47,7 @@ fun SettingsScreen(
             ProfileImage.myImageUri = uri
             if(uri != null){
                 Log.w("Lim", "이미지 선택 완료")
-                mainViewModel.profileImageUpload(uri)
+                settingsViewModel.profileImageUpload(uri)
             }
     }
     Scaffold(
@@ -88,7 +87,7 @@ fun SettingsScreen(
                 admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString().slice(IntRange(2, 3)),
                 major = AuthViewModel.userInfo!!["department"]!!.toString(),
                 navigation = navigation,
-                mainViewModel = mainViewModel
+                settingsViewModel = settingsViewModel
             )
             Column(modifier = Modifier.verticalScroll(scrollState)) {
                 Spacer(modifier = Modifier.height(4.dp))
@@ -103,13 +102,13 @@ fun SettingsScreen(
                 )
                 SettingsSwitchItem(
                     title = "다크 모드",
-                    checked = mainViewModel.isDarkMode,
-                    onCheckedChange = { mainViewModel.isDarkMode = !mainViewModel.isDarkMode }
+                    checked = settingsViewModel.isDarkMode,
+                    onCheckedChange = { settingsViewModel.isDarkMode = !settingsViewModel.isDarkMode }
                 )
                 SettingsSwitchItem(
                     title = "조용 모드",
-                    checked = mainViewModel.isQuietMode,
-                    onCheckedChange = { mainViewModel.isQuietMode = !mainViewModel.isQuietMode },
+                    checked = settingsViewModel.isQuietMode,
+                    onCheckedChange = { settingsViewModel.isQuietMode = !settingsViewModel.isQuietMode },
                     description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
                 )
                 SettingsButtonItem(
@@ -126,15 +125,15 @@ fun SettingsScreen(
                 )
                 SettingsButtonItem(
                     title = "비밀번호 재설정",
-                    onClick = { mainViewModel.mainFindPassword(navigation) }
+                    onClick = { settingsViewModel.mainFindPassword(navigation) }
                 )
                 SettingsButtonItem(
                     title = "로그아웃",
-                    onClick = { mainViewModel.mainSignOut(navigation) }
+                    onClick = { settingsViewModel.mainSignOut(navigation) }
                 )
                 SettingsButtonItem(
                     title = "회원탈퇴",
-                    onClick = { mainViewModel.mainDeleteUser(navigation) }
+                    onClick = { settingsViewModel.mainDeleteUser(navigation) }
                 )
 
                 SettingsButtonItem(

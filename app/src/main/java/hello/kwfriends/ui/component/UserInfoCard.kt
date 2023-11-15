@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
-import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 @Composable
 fun UserInfoCard(
@@ -42,7 +42,7 @@ fun UserInfoCard(
     admissionYear: String,
     major: String,
     navigation: NavController,
-    mainViewModel: MainViewModel
+    settingsViewModel: SettingsViewModel
 ) {
     Column(
         modifier = Modifier
@@ -97,7 +97,7 @@ fun UserInfoCard(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .clickable {
-                            mainViewModel.editUserInfo(navigation)
+                            settingsViewModel.editUserInfo(navigation)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
