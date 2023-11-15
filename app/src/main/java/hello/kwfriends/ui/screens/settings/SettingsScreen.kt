@@ -1,6 +1,11 @@
 package hello.kwfriends.ui.screens.settings
 
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,12 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.BuildConfig
+import hello.kwfriends.firebase.storageManager.ProfileImage
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.MainViewModel
-import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +41,14 @@ fun SettingsScreen(
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
+    val launcher = rememberLauncherForActivityResult(contract =
+        ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            ProfileImage.myImageUri = uri
+            if(uri != null){
+                Log.w("Lim", "이미지 선택 완료")
+                mainViewModel.profileImageUpload(uri)
+            }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,8 +90,12 @@ fun SettingsScreen(
                 mainViewModel = mainViewModel
             )
             SettingsButtonItem(
-                title = "프로필 이미지 설정",
-                onClick = { navigation.navigate(Routes.PROFILE_IMAGE_SCREEN) }
+                title = "프로필 이미지 선택",
+                onClick = {
+                    launcher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
             )
             SettingsSwitchItem(
                 title = "다크 모드",

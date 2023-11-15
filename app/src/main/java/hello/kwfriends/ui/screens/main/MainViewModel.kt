@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.main
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import hello.kwfriends.firebase.firestoreManager.PostDetail
 import hello.kwfriends.firebase.firestoreManager.PostManager
+import hello.kwfriends.firebase.storageManager.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.launch
@@ -29,6 +31,12 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun profileImageUpload(uri: Uri){
+        viewModelScope.launch {
+            ProfileImage.upload(uri)
+        }
+    }
+    
     //비밀번호 재설정
     fun mainFindPassword(navigation: NavController){
         Log.w("Lin", "SettingsScreen: 비밀번호 재설정")
