@@ -11,13 +11,11 @@ import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.newPost.NewPostScreen
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.profileImageScreen.ProfileImageScreen
-import hello.kwfriends.ui.screens.profileImageScreen.ProfileImageViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
-    private val profileImageViewModel: ProfileImageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +49,7 @@ class MainActivity : BaseActivity() {
                         )
                     }
                     composable(Routes.PROFILE_IMAGE_SCREEN) {
-                        ProfileImageScreen(
-                            navigation = navController,
-                            profileImageViewModel = profileImageViewModel
-                        )
+                        ProfileImageScreen(navigation = navController)
                     }
                 }
             }

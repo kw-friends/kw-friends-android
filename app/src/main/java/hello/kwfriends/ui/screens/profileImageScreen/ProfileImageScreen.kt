@@ -35,7 +35,7 @@ import hello.kwfriends.firebase.storageManager.ProfileImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileImageScreen(navigation: NavController, profileImageViewModel: ProfileImageViewModel) {
+fun ProfileImageScreen(navigation: NavController) {
     val launcher = rememberLauncherForActivityResult(contract =
     ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
         ProfileImage.myImageUri = uri
@@ -97,22 +97,6 @@ fun ProfileImageScreen(navigation: NavController, profileImageViewModel: Profile
                 }
             ) {
                 Text("이미지 선택")
-            }
-            Button(
-                modifier = Modifier.padding(top = 10.dp),
-                onClick = {
-                    profileImageViewModel.imageUpload()
-                }
-            ) {
-                Text("이미지 업로드")
-            }
-            Button(
-                modifier = Modifier.padding(top = 10.dp),
-                onClick = {
-                    profileImageViewModel.imageLoad()
-                }
-            ) {
-                Text("이미지 로드")
             }
         }
     }
