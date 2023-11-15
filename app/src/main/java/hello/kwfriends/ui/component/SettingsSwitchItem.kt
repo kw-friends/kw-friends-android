@@ -26,12 +26,15 @@ fun SettingsSwitchItem(
     checked: Boolean,
     onCheckedChange:  ((Boolean) -> Unit)?,
     description: String = "",
+    isUpperLine: Boolean = true
 ) {
-    Divider(
-        color = Color(0xFF353535),
-        thickness = 0.5.dp,
-        modifier = Modifier.padding(horizontal = 16.dp)
-    )
+    if(isUpperLine){
+        Divider(
+            color = Color(0xFF353535),
+            thickness = 0.5.dp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,

@@ -7,6 +7,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -78,73 +80,69 @@ fun SettingsScreen(
         }
     ) {
         Column(
-            Modifier
-                .verticalScroll(scrollState)
-                .padding(it)
+            Modifier.padding(it)
         ) {
             UserInfoCard(
+                profileImageUri = ProfileImage.myImageUri,
                 userName = AuthViewModel.userInfo!!["name"]!!.toString(),
                 admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString().slice(IntRange(2, 3)),
                 major = AuthViewModel.userInfo!!["department"]!!.toString(),
                 navigation = navigation,
                 mainViewModel = mainViewModel
             )
-            SettingsButtonItem(
-                title = "프로필 이미지 선택",
-                onClick = {
-                    launcher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }
-            )
-            SettingsSwitchItem(
-                title = "다크 모드",
-                checked = mainViewModel.isDarkMode,
-                onCheckedChange = { mainViewModel.isDarkMode = !mainViewModel.isDarkMode }
-            )
-            SettingsSwitchItem(
-                title = "조용 모드",
-                checked = mainViewModel.isQuietMode,
-                onCheckedChange = { mainViewModel.isQuietMode = !mainViewModel.isQuietMode },
-                description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
-            )
-            SettingsSwitchItem(
-                title = "라면에 식초 한숟갈?",
-                checked = true,
-                onCheckedChange = {},
-                description = "어승경만 아는 라면 레시피, 절대 실패할 일 없어요. 진짜에요!"
-            )
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
+                Spacer(modifier = Modifier.height(4.dp))
+                SettingsButtonItem(
+                    title = "프로필 이미지 선택",
+                    onClick = {
+                        launcher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
+                    isUpperLine = false
+                )
+                SettingsSwitchItem(
+                    title = "다크 모드",
+                    checked = mainViewModel.isDarkMode,
+                    onCheckedChange = { mainViewModel.isDarkMode = !mainViewModel.isDarkMode }
+                )
+                SettingsSwitchItem(
+                    title = "조용 모드",
+                    checked = mainViewModel.isQuietMode,
+                    onCheckedChange = { mainViewModel.isQuietMode = !mainViewModel.isQuietMode },
+                    description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
+                )
+                SettingsButtonItem(
+                    title = "공지사항",
+                    onClick = {  }
+                )
+                SettingsButtonItem(
+                    title = "문의하기",
+                    onClick = {  }
+                )
+                SettingsButtonItem(
+                    title = "이용규칙",
+                    onClick = {  }
+                )
+                SettingsButtonItem(
+                    title = "비밀번호 재설정",
+                    onClick = { mainViewModel.mainFindPassword(navigation) }
+                )
+                SettingsButtonItem(
+                    title = "로그아웃",
+                    onClick = { mainViewModel.mainSignOut(navigation) }
+                )
+                SettingsButtonItem(
+                    title = "회원탈퇴",
+                    onClick = { mainViewModel.mainDeleteUser(navigation) }
+                )
 
-            SettingsButtonItem(
-                title = "공지사항",
-                onClick = {  }
-            )
-            SettingsButtonItem(
-                title = "문의하기",
-                onClick = {  }
-            )
-            SettingsButtonItem(
-                title = "이용규칙",
-                onClick = {  }
-            )
-            SettingsButtonItem(
-                title = "비밀번호 재설정",
-                onClick = { mainViewModel.mainFindPassword(navigation) }
-            )
-            SettingsButtonItem(
-                title = "로그아웃",
-                onClick = { mainViewModel.mainSignOut(navigation) }
-            )
-            SettingsButtonItem(
-                title = "회원탈퇴",
-                onClick = { mainViewModel.mainDeleteUser(navigation) }
-            )
-
-            SettingsButtonItem(
-                title = "앱 버전",
-                description = BuildConfig.VERSION_NAME,
-                onClick = { /*앱스토어와 연결*/  }
-            )
+                SettingsButtonItem(
+                    title = "앱 버전",
+                    description = BuildConfig.VERSION_NAME,
+                    onClick = { /*앱스토어와 연결*/  }
+                )
+            }
         }
     }
 }
