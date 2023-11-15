@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.firestoreManager.PostDetail
 import hello.kwfriends.firebase.firestoreManager.PostManager
 import hello.kwfriends.firebase.storageManager.ProfileImage
@@ -31,9 +33,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    //자신의 프로필 이미지를 업로드함
     fun profileImageUpload(uri: Uri){
         viewModelScope.launch {
-            ProfileImage.upload(uri)
+            ProfileImage.upload(Firebase.auth.currentUser!!.uid, uri)
         }
     }
     

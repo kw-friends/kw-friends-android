@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlin.coroutines.resume
@@ -13,16 +12,18 @@ import kotlin.coroutines.suspendCoroutine
 
 object ProfileImage {
     val storage = Firebase.storage
-    val profileImageRef = storage.reference.child("profiles/${Firebase.auth.currentUser!!.uid}")
+    val profileImageRef = storage.reference.child("profiles")
     var myImageUri by mutableStateOf<Uri?>(null)
 
-    suspend fun upload(imageUri: Uri?): Boolean {
+    //uri값을 받아 자신의 프로필 이미지로 firebase storage에 업로드
+    suspend fun upload(uid: String, imageUri: Uri?): Boolean {
         if(imageUri == null){
             Log.w("Lim", "이미지 uri가 null이라 업로드에 실패했습니다.")
             return false
         }
         val result = suspendCoroutine<Boolean> { continuation ->
-            profileImageRef.putFile(imageUri)
+            val uploadRef = profileImageRef.child(uid)
+            uploadRef.putFile(imageUri)
                 .addOnProgressListener { send ->
                     val progress = (100.0 * send.bytesTransferred) / send.totalByteCount
                     Log.d("Lim", "Upload is $progress% done")
@@ -40,6 +41,7 @@ object ProfileImage {
         return result
     }
 
+    //특정 uid의 프로필 이미지를 다운로드하여 uri를 반환
     suspend fun getDownloadUrl(uid: String): Uri? {
         val uidImageRef = storage.reference.child("profiles/${uid}")
         val result = suspendCoroutine<Uri?> { continuation ->
