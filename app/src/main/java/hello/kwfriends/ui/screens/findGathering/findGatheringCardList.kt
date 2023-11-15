@@ -9,14 +9,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,21 +34,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import hello.kwfriends.firebase.firestoreManager.ParticipationStatus
 import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun GatheringCard(
     title: String,
     location: String,
-    currentParticipants: String,
+    promoter: String,
     minimumParticipants: String,
     maximumParticipants: String,
     time: String, //추후 datetime으로 변경,
-    description: String
+    description: String,
+    postID: String,
+    viewModel: MainViewModel
 ) {
     var descriptionOpened by remember {
         mutableStateOf(false)
     }
+
+    val participationStatus = viewModel.participationStatusMap[postID]
+    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postID]
 
     Card(
         modifier = Modifier
@@ -81,7 +90,9 @@ fun GatheringCard(
                     Text(text = time, style = MaterialTheme.typography.bodyMedium)
                 }
                 Text(
-                    text = "최대 ${maximumParticipants}명 중 ${currentParticipants}명 참여\n최소 인원: $minimumParticipants",
+                    text = "최대 ${maximumParticipants}명 중 ${currentParticipationStatus}명 참여\n" +
+                            "최소 인원: $minimumParticipants\n" +
+                            "주최자: $promoter",
                     modifier = Modifier
                         .padding(end = 2.dp),
                     style = MaterialTheme.typography.bodySmall
@@ -91,7 +102,10 @@ fun GatheringCard(
                         color = Color(0xFF353535),
                         thickness = 0.5.dp
                     )
-                    Column(modifier = Modifier.padding(end = 4.dp)) {
+                    Column(
+                        modifier = Modifier.padding(bottom = 12.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
                         if (description != "") {
                             Text(
                                 text = description,
@@ -99,12 +113,65 @@ fun GatheringCard(
                             )
                         }
                         Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .padding(vertical = 8.dp)
+                            onClick = {
+                                if (participationStatus == ParticipationStatus.PARTICIPATED
+                                    || participationStatus == ParticipationStatus.NOT_PARTICIPATED
+                                ) {
+                                    viewModel.updateParticipationStatus(
+                                        postID = postID,
+                                        viewModel = viewModel
+                                    )
+                                }
+                            },
                         ) {
-                            Text(text = "모임 참여", style = MaterialTheme.typography.labelMedium)
+                            when (participationStatus) {
+                                ParticipationStatus.PARTICIPATED -> {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "participated"
+                                        )
+                                        Spacer(modifier = Modifier.size(7.dp))
+                                        Text(
+                                            text = "참가 완료",
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    }
+                                }
+
+                                ParticipationStatus.GETTING_IN -> {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        color = Color(0xFFFFFFFF),
+                                        strokeWidth = 2.dp
+                                    )
+                                    Spacer(modifier = Modifier.size(7.dp))
+                                    Text(
+                                        text = "참가 중..",
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+
+                                ParticipationStatus.GETTING_OUT -> {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        color = Color(0xFFFFFFFF),
+                                        strokeWidth = 2.dp
+                                    )
+                                    Spacer(modifier = Modifier.size(7.dp))
+                                    Text(
+                                        text = "나가는 중..",
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+
+                                else -> { // participationsStatus == ParticipationStatus.NOT_PARTICIPATED
+                                    Text(
+                                        text = "모임 참여",
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -117,17 +184,20 @@ fun GatheringCard(
 @Composable
 fun FindGatheringCardList(viewModel: MainViewModel) {
     val posts = viewModel.posts
-    viewModel.getPostFromFirestore()
+    viewModel.getPostFromFirestore(viewModel = viewModel)
     LazyColumn {
         items(posts) { postData ->
             GatheringCard(
                 title = postData.gatheringTitle,
                 location = postData.gatheringLocation,
-                currentParticipants = "X",
                 minimumParticipants = postData.minimumParticipants,
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
-                description = postData.gatheringDescription
+                promoter = postData.gatheringPromoter,
+                description = postData.gatheringDescription,
+                postID = postData.postID,
+                viewModel = viewModel
+
             )
         }
     }

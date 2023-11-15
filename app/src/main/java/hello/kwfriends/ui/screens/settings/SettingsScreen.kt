@@ -82,6 +82,68 @@ fun SettingsScreen(
             Modifier.padding(it)
         ) {
             UserInfoCard(
+                userName = "!23",
+                admissionYear = 23,
+                major = "소프트웨어학부",
+                grade = 1,
+                navigation = navigation
+            )
+            SettingsSwitchItem(title = "다크 모드", checked = true)
+            SettingsSwitchItem(
+                title = "조용 모드",
+                checked = false,
+                description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
+            )
+            SettingsSwitchItem(
+                title = "라면에 식초 한숟갈?",
+                checked = true,
+                description = "어승경만 아는 라면 레시피, 절대 실패할 일 없어요. 진짜에요!"
+            )
+            SettingsButtonItem(
+                title = "로그아웃",
+                onClick = {}
+            )
+            SettingsButtonItem(
+                title = "회원탈퇴",
+                onClick = {}
+            )
+
+        }
+    }
+}
+
+
+@Composable
+fun SettingsButtonItem(
+    title: String,
+    description: String = "",
+    onClick: () -> Unit
+) {
+    Divider(
+        color = Color(0xFF353535),
+        thickness = 0.5.dp,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    )
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 4.dp)
+            .clickable { onClick() }
+            .clip(shape = AbsoluteRoundedCornerShape(10.dp))
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(10F)) {
+                Text(text = title, style = MaterialTheme.typography.titleMedium)
+                if (description != "") {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+            Icon(
                 profileImageUri = ProfileImage.myImageUri,
                 userName = AuthViewModel.userInfo!!["name"]!!.toString(),
                 admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString().slice(IntRange(2, 3)),
