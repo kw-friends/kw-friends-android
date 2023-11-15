@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.main
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,8 +8,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.firestoreManager.PostDetail
 import hello.kwfriends.firebase.firestoreManager.PostManager
+import hello.kwfriends.firebase.storageManager.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.launch
@@ -29,6 +33,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    //자신의 프로필 이미지를 업로드함
+    fun profileImageUpload(uri: Uri){
+        viewModelScope.launch {
+            ProfileImage.upload(Firebase.auth.currentUser!!.uid, uri)
+        }
+    }
+    
     //비밀번호 재설정
     fun mainFindPassword(navigation: NavController){
         Log.w("Lin", "SettingsScreen: 비밀번호 재설정")
