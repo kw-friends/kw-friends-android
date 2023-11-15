@@ -17,6 +17,7 @@ import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
+    private val profileImageViewModel: ProfileImageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.PROFILE_IMAGE_SCREEN) {
                         ProfileImageScreen(
                             navigation = navController,
-                            profileImageViewModel = ProfileImageViewModel()
+                            profileImageViewModel = profileImageViewModel
                         )
                     }
                 }

@@ -39,15 +39,14 @@ object ProfileImage {
     suspend fun getDownloadUrl(uid: String): Uri? {
         val uidImageRef = storage.reference.child("profiles/${uid}")
         val result = suspendCoroutine<Uri?> { continuation ->
-            uidImageRef.downloadUrl.addOnSuccessListener { uri ->
-                // Got the download URL for 'users/me/profile.png'
+            uidImageRef.downloadUrl
+                .addOnSuccessListener { uri ->
                 continuation.resume(uri)
-            }.addOnFailureListener {
-                continuation.resume(null)
-            }
+                }.addOnFailureListener {
+                    continuation.resume(null)
+                }
         }
         return result
     }
-
 
 }
