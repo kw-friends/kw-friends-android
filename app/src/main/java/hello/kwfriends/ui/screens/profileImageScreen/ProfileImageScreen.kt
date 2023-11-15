@@ -31,13 +31,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
+import hello.kwfriends.firebase.storageManager.ProfileImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileImageScreen(navigation: NavController, profileImageViewModel: ProfileImageViewModel) {
     val launcher = rememberLauncherForActivityResult(contract =
     ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-        profileImageViewModel.imageUri = uri
+        ProfileImage.myImageUri = uri
     }
 
 
@@ -78,8 +79,8 @@ fun ProfileImageScreen(navigation: NavController, profileImageViewModel: Profile
         ) {
             AsyncImage(
                 // Use a default image resource
-                model = profileImageViewModel.imageUri ?: R.drawable.profile_default_image,
-                contentDescription = "profile image",
+                model = ProfileImage.myImageUri ?: R.drawable.profile_default_image,
+                contentDescription = "my profile image",
                 modifier = Modifier
                     .padding(4.dp)
                     .size(150.dp)

@@ -2,6 +2,9 @@ package hello.kwfriends.firebase.storageManager
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -11,6 +14,7 @@ import kotlin.coroutines.suspendCoroutine
 object ProfileImage {
     val storage = Firebase.storage
     val profileImageRef = storage.reference.child("profiles/${Firebase.auth.currentUser!!.uid}")
+    var myImageUri by mutableStateOf<Uri?>(null)
 
     suspend fun upload(imageUri: Uri?): Boolean {
         if(imageUri == null){
