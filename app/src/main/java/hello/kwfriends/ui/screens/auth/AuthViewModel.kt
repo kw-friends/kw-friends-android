@@ -253,7 +253,7 @@ object AuthViewModel : ViewModel() {
 
     //이메일 @kw.ac.kr 자동으로 붙이기
     fun autoEmailLink(email: String): String {
-        var tempEmail = email.replace(" ", "")
+        val tempEmail = email.replace(" ", "")
         val result = if(tempEmail == "") {
             ""
         }
@@ -286,12 +286,6 @@ object AuthViewModel : ViewModel() {
             viewModelScope.launch { UserAuth.sendAuthEmail() }
         } else Log.w("Lim", "이메일이 등록되지 않아 인증메일을 전송할 수 없습니다.")
         uiState = AuthUiState.SignIn
-    }
-
-    //이메일 인증 화면 이동 함수
-    fun requestEmailVerify() {
-        Log.w("Lim", "이메일 인증 요청")
-        uiState = AuthUiState.RequestEmailVerify
     }
 
     //이메일 인증 확인 시도 함수
@@ -540,15 +534,6 @@ object AuthViewModel : ViewModel() {
         return result
     }
 
-    //유저 검사
-    fun userCheck(){
-        viewModelScope.launch {
-            if(userAuthAvailableCheck()){
-                userInfoCheck()
-            }
-        }
-    }
-
     //비밀번호 재설정 이메일 전송 시도 함수
     fun trySendPasswordResetEmail(){
         inputEmail = autoEmailLink(inputEmail)
@@ -569,12 +554,12 @@ object AuthViewModel : ViewModel() {
 
     //데이터 저장
     fun setUserData(key: String, value: String){
-        viewModelScope.launch { preferencesDataStore!!.setData(key, value) }
+        viewModelScope.launch { preferencesDataStore!!.setStringData(key, value) }
     }
 
     //데이터 읽기
     fun getUserData(key: String): Flow<String> {
-        return preferencesDataStore!!.getData(key)
+        return preferencesDataStore!!.getStringData(key)
     }
 
     //USER_DATA datastore에서 아이디 저장 유무 불러오고 체크되어있으면 아이디 불러오기

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -34,40 +35,24 @@ class SettingsViewModel: ViewModel() {
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){
         viewModelScope.launch {
-            preferencesDataStore!!.getData("IS_DARK_MODE").collect() {
-                Log.w("Lim", "[LOAD] [IS_DARK_MODE]: $it")
-                if(it == ""){
-                    Log.w("Lim", "IS_DARK_MODE기본값으로 설정")
-                    preferencesDataStore!!.setData("IS_DARK_MODE", "false")
-
-                }
-                isDarkMode = it.toBoolean()
-            }
-        }
-        viewModelScope.launch {
-            preferencesDataStore!!.getData("IS_QUIET_MODE").collect() {
-                Log.w("Lim", "[LOAD] [IS_QUIET_MODE]: $it")
-                if(it == ""){
-                    Log.w("Lim", "IS_QUIET_MODE기본값으로 설정")
-                    preferencesDataStore!!.setData("IS_QUIET_MODE", "false")
-                }
-                isQuietMode = it.toBoolean()
+            preferencesDataStore!!.getDataFlow().collect {
+                isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")] ?: false
+                isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")] ?: false
             }
         }
     }
 
-
     //다크모드 스위치 변경 함수
     fun switchDarkMode(){
         viewModelScope.launch {
-            preferencesDataStore!!.setData("IS_DARK_MODE", (!isDarkMode).toString())
+            preferencesDataStore!!.setBooleanData("SETTINGS_DARK_MODE", !isDarkMode)
         }
     }
 
     //조용모드 스위치 변경 함수
     fun switchQuietMode(){
         viewModelScope.launch {
-            preferencesDataStore!!.setData("IS_QUIET_MODE", (!isQuietMode).toString())
+            preferencesDataStore!!.setBooleanData("SETTINGS_QUIET_MODE", !isQuietMode)
         }
     }
 
@@ -96,7 +81,7 @@ class SettingsViewModel: ViewModel() {
     //회원탈퇴
     fun mainDeleteUser(navigation: NavController){
         Log.w("Lim", "SettingsScreen: 회원탈퇴 화면으로 이동")
-        AuthViewModel.uiState = AuthUiState.DeleteUser
+        AuthViewModel.changeDeleteUserView()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 
