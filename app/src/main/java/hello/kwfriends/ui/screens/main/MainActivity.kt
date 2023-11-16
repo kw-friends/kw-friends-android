@@ -30,6 +30,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.HOME_SCREEN) {
                         MainScreen(
                             mainViewModel = mainViewModel,
+                            settingsViewModel = settingsViewModel,
                             navigation = navController
                         )
                     }

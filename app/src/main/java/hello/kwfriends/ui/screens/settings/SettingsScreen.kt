@@ -52,6 +52,7 @@ fun SettingsScreen(
             settingsViewModel.profileImageUpload(uri)
         }
     }
+    //USER_DATA DataStore 객체 저장
     Scaffold(
         topBar = {
             TopAppBar(
@@ -106,16 +107,12 @@ fun SettingsScreen(
                 SettingsSwitchItem(
                     title = "다크 모드",
                     checked = settingsViewModel.isDarkMode,
-                    onCheckedChange = {
-                        settingsViewModel.isDarkMode = !settingsViewModel.isDarkMode
-                    }
+                    onCheckedChange = { settingsViewModel.switchDarkMode() }
                 )
                 SettingsSwitchItem(
                     title = "조용 모드",
                     checked = settingsViewModel.isQuietMode,
-                    onCheckedChange = {
-                        settingsViewModel.isQuietMode = !settingsViewModel.isQuietMode
-                    },
+                    onCheckedChange = { settingsViewModel.switchQuietMode() },
                     description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
                 )
                 SettingsButtonItem(
