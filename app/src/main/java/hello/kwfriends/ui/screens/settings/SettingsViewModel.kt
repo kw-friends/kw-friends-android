@@ -36,12 +36,21 @@ class SettingsViewModel: ViewModel() {
         viewModelScope.launch {
             preferencesDataStore!!.getData("IS_DARK_MODE").collect() {
                 Log.w("Lim", "[LOAD] [IS_DARK_MODE]: $it")
+                if(it == ""){
+                    Log.w("Lim", "IS_DARK_MODE기본값으로 설정")
+                    preferencesDataStore!!.setData("IS_DARK_MODE", "false")
+
+                }
                 isDarkMode = it.toBoolean()
             }
         }
         viewModelScope.launch {
             preferencesDataStore!!.getData("IS_QUIET_MODE").collect() {
                 Log.w("Lim", "[LOAD] [IS_QUIET_MODE]: $it")
+                if(it == ""){
+                    Log.w("Lim", "IS_QUIET_MODE기본값으로 설정")
+                    preferencesDataStore!!.setData("IS_QUIET_MODE", "false")
+                }
                 isQuietMode = it.toBoolean()
             }
         }
@@ -50,17 +59,15 @@ class SettingsViewModel: ViewModel() {
 
     //다크모드 스위치 변경 함수
     fun switchDarkMode(){
-        isDarkMode = !isDarkMode
         viewModelScope.launch {
-            preferencesDataStore!!.setData("IS_DARK_MODE", isDarkMode.toString())
+            preferencesDataStore!!.setData("IS_DARK_MODE", (!isDarkMode).toString())
         }
     }
 
     //조용모드 스위치 변경 함수
     fun switchQuietMode(){
-        isQuietMode = !isQuietMode
         viewModelScope.launch {
-            preferencesDataStore!!.setData("IS_QUIET_MODE", isQuietMode.toString())
+            preferencesDataStore!!.setData("IS_QUIET_MODE", (!isQuietMode).toString())
         }
     }
 
