@@ -27,17 +27,20 @@ class SettingsViewModel: ViewModel() {
     var userSettingValuesLoaded by mutableStateOf<Boolean>(false)
 
     //다크모드 여부 저장
-    var isDarkMode by mutableStateOf<Boolean>(true)
+    var isDarkMode by mutableStateOf<Boolean?>(true)
 
     //조용모드 여부 저장
-    var isQuietMode by mutableStateOf<Boolean>(false)
+    var isQuietMode by mutableStateOf<Boolean?>(false)
 
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){
         viewModelScope.launch {
             preferencesDataStore!!.getDataFlow().collect {
-                isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")] ?: false
-                isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")] ?: false
+                isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")]
+                isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")]
+                //유저 설정 기본값
+                if(isDarkMode == null) isDarkMode = false
+                if(isQuietMode == null) isQuietMode = false
             }
         }
     }
@@ -45,14 +48,14 @@ class SettingsViewModel: ViewModel() {
     //다크모드 스위치 변경 함수
     fun switchDarkMode(){
         viewModelScope.launch {
-            preferencesDataStore!!.setBooleanData("SETTINGS_DARK_MODE", !isDarkMode)
+            preferencesDataStore!!.setBooleanData("SETTINGS_DARK_MODE", !isDarkMode!!)
         }
     }
 
     //조용모드 스위치 변경 함수
     fun switchQuietMode(){
         viewModelScope.launch {
-            preferencesDataStore!!.setBooleanData("SETTINGS_QUIET_MODE", !isQuietMode)
+            preferencesDataStore!!.setBooleanData("SETTINGS_QUIET_MODE", !isQuietMode!!)
         }
     }
 
