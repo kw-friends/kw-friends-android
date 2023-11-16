@@ -60,6 +60,7 @@ class SettingsViewModel: ViewModel() {
     //자신의 프로필 이미지를 업로드함
     fun profileImageUpload(uri: Uri){
         viewModelScope.launch {
+            Log.w("Lim", "이미지 업로드 시작")
             ProfileImage.upload(Firebase.auth.currentUser!!.uid, uri)
         }
     }

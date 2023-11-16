@@ -46,9 +46,9 @@ fun SettingsScreen(
         contract =
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
-        ProfileImage.myImageUri = uri
         if (uri != null) {
             Log.w("Lim", "이미지 선택 완료")
+            ProfileImage.myImageUri = uri
             settingsViewModel.profileImageUpload(uri)
         }
     }
