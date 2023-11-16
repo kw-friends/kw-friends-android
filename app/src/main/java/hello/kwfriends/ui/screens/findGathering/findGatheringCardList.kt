@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.findGathering
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -126,54 +128,58 @@ fun GatheringCard(
                             enabled =
                             participationStatus == ParticipationStatus.PARTICIPATED
                                     || participationStatus == ParticipationStatus.NOT_PARTICIPATED
-
                         ) {
-                            when (participationStatus) {
-                                ParticipationStatus.PARTICIPATED -> {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.Default.Check,
-                                            contentDescription = "participated"
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .animateContentSize()
+                            ) {
+                                when (participationStatus) {
+                                    ParticipationStatus.PARTICIPATED -> {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                imageVector = Icons.Default.Check,
+                                                contentDescription = "participated"
+                                            )
+                                            Spacer(modifier = Modifier.size(7.dp))
+                                            Text(
+                                                text = "참가 완료",
+                                                style = MaterialTheme.typography.labelLarge
+                                            )
+                                        }
+                                    }
+
+                                    ParticipationStatus.GETTING_IN -> {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(18.dp),
+                                            strokeWidth = 2.dp
                                         )
                                         Spacer(modifier = Modifier.size(7.dp))
                                         Text(
-                                            text = "참가 완료",
+                                            text = "참가 중..",
                                             style = MaterialTheme.typography.labelLarge
                                         )
                                     }
-                                }
 
-                                ParticipationStatus.GETTING_IN -> {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(18.dp),
-                                        color = Color(0xFFFFFFFF),
-                                        strokeWidth = 2.dp
-                                    )
-                                    Spacer(modifier = Modifier.size(7.dp))
-                                    Text(
-                                        text = "참가 중..",
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
-                                }
+                                    ParticipationStatus.GETTING_OUT -> {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(18.dp),
+                                            strokeWidth = 2.dp
+                                        )
+                                        Spacer(modifier = Modifier.size(7.dp))
+                                        Text(
+                                            text = "나가는 중..",
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    }
 
-                                ParticipationStatus.GETTING_OUT -> {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(18.dp),
-                                        color = Color(0xFFFFFFFF),
-                                        strokeWidth = 2.dp
-                                    )
-                                    Spacer(modifier = Modifier.size(7.dp))
-                                    Text(
-                                        text = "나가는 중..",
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
-                                }
-
-                                else -> { // participationsStatus == ParticipationStatus.NOT_PARTICIPATED
-                                    Text(
-                                        text = "모임 참여",
-                                        style = MaterialTheme.typography.labelLarge
-                                    )
+                                    else -> { // participationsStatus == ParticipationStatus.NOT_PARTICIPATED
+                                        Text(
+                                            text = "모임 참여",
+                                            style = MaterialTheme.typography.labelLarge
+                                        )
+                                    }
                                 }
                             }
                         }
