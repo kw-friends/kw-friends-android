@@ -93,7 +93,7 @@ object PostManager {
         maximumParticipants: String,
         minimumParticipants: String,
         gatheringDescription: String,
-        postViewModel: NewPostViewModel
+        newPostViewModel: NewPostViewModel
     ) {
         val post: HashMap<String, Any> = hashMapOf(
             "gatheringTitle" to gatheringTitle,
@@ -116,25 +116,25 @@ object PostManager {
                         .set(mapOf("name" to AuthViewModel.userInfo!!["name"].toString()))
                         .addOnSuccessListener {
                             Log.d(ContentValues.TAG, "하위 참가자 목록 컬렉션 생성 성공.")
-                            postViewModel.showSnackbar("모임 생성 성공")
-                            postViewModel.uploadResultUpdate(true)
+                            newPostViewModel.showSnackbar("모임 생성 성공")
+                            newPostViewModel.uploadResultUpdate(true)
                         }
                         .addOnFailureListener { e ->
                             Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
-                            postViewModel.showSnackbar("모임 생성 실패")
-                            postViewModel.uploadResultUpdate(false)
+                            newPostViewModel.showSnackbar("모임 생성 실패")
+                            newPostViewModel.uploadResultUpdate(false)
                         }
                 }
                 .addOnFailureListener { e ->
                     Log.w(ContentValues.TAG, "모임 생성 실패: ", e)
-                    postViewModel.showSnackbar("모임 생성 실패")
-                    postViewModel.uploadResultUpdate(false)
+                    newPostViewModel.showSnackbar("모임 생성 실패")
+                    newPostViewModel.uploadResultUpdate(false)
                 }
                 .await()
 
         } catch (e: FirebaseFirestoreException) {
             Log.w(ContentValues.TAG, "모임 생성 실패")
-            postViewModel.uploadResultUpdate(false)
+            newPostViewModel.uploadResultUpdate(false)
         }
     }
 

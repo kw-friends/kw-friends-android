@@ -120,7 +120,7 @@ class NewPostViewModel : ViewModel() {
                     maximumParticipants = maximumParticipants,
                     minimumParticipants = minimumParticipants,
                     gatheringDescription = gatheringDescription,
-                    postViewModel = this@NewPostViewModel
+                    newPostViewModel = this@NewPostViewModel
 
                 )
                 isUploading = false

@@ -123,6 +123,10 @@ fun GatheringCard(
                                     )
                                 }
                             },
+                            enabled =
+                            participationStatus == ParticipationStatus.PARTICIPATED
+                                    || participationStatus == ParticipationStatus.NOT_PARTICIPATED
+
                         ) {
                             when (participationStatus) {
                                 ParticipationStatus.PARTICIPATED -> {

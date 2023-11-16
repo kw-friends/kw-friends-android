@@ -25,7 +25,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun currentParticipationStatusMapUpdate(postID: String, add: Int){
+    fun currentParticipationStatusMapUpdate(postID: String, add: Int) {
         currentParticipationStatusMap[postID] = currentParticipationStatusMap[postID]!! + add
     }
 
