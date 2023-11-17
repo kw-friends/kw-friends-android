@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class UserDataStore(context: Context) {
@@ -17,8 +18,8 @@ class UserDataStore(context: Context) {
     companion object{
         val Context.dataStore : DataStore<Preferences> by preferencesDataStore("USER_DATA")
         lateinit var pref: DataStore<Preferences>
-        //String 데이터 저장
 
+        //String 데이터 저장
         suspend fun setStringData(key: String, value: String){
             Log.w("Lim", "[pref] 데이터를 저장합니다. $key : $value")
             pref.edit {
@@ -36,8 +37,20 @@ class UserDataStore(context: Context) {
             }
         }
 
-        //key값에 해당하는 데이터 String Flow 받아오기
-        fun getStringData(key: String): Flow<String> {
+        suspend fun getStringData(key: String): String {
+            val prefKey = stringPreferencesKey(key)
+            val preferences = pref.data.first() // flow의 첫 요소 반환하고 flow취소
+            return preferences[prefKey] ?: "" // 기본값으로 ""를 반환
+        }
+
+        suspend fun getBooleanData(key: String): Boolean {
+            val prefKey = booleanPreferencesKey(key)
+            val preferences = pref.data.first() // flow의 첫 요소 반환하고 flow취소
+            return preferences[prefKey] ?: false // 기본값으로 false를 반환
+        }
+
+        //key값에 해당하는 String데이터의 Flow 받아오기
+        fun getStringDataFlow(key: String): Flow<String> {
             Log.w("Lim", "[pref] 데이터를 불러옵니다. key = $key")
             val prefKey = stringPreferencesKey(key)
             return pref.data

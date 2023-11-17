@@ -15,7 +15,6 @@ import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.firestoreDatabase.UserDataManager
 import hello.kwfriends.ui.main.Routes
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import kotlin.coroutines.resume
@@ -234,12 +233,12 @@ object AuthViewModel : ViewModel() {
             if(UserAuth.signIn(inputEmail, inputPassword)){
                 uiState = AuthUiState.SignInSuccess
                 if(idSaveChecked){ //아이디 저장
-                    setUserData("ID", inputEmail)
-                    setUserData("ID_SAVE_CHECKED", "true")
+                    UserDataStore.setStringData("ID", inputEmail)
+                    UserDataStore.setBooleanData("ID_SAVE_CHECKED", true)
                     Log.w("Lim", "아이디 저장 완료.")
                 }
                 else{
-                    setUserData("ID_SAVE_CHECKED", "false")
+                    UserDataStore.setBooleanData("ID_SAVE_CHECKED", false)
                 }
             } else{
                 uiState = AuthUiState.SignIn
@@ -292,8 +291,8 @@ object AuthViewModel : ViewModel() {
             if(UserAuth.reload()) {
                 if (Firebase.auth.currentUser?.isEmailVerified == true) {
                     Log.w("Lim", "이메일 인증 완료. 회원가입 성공")
-                    setUserData("ID", inputEmail)
-                    setUserData("ID_SAVE_CHECKED", "true")
+                    UserDataStore.setStringData("ID", inputEmail)
+                    UserDataStore.setBooleanData("ID_SAVE_CHECKED", true)
                     userEmail = inputEmail
                     idSaveChecked = true
                     uiState = AuthUiState.SignIn
@@ -329,7 +328,7 @@ object AuthViewModel : ViewModel() {
                     if(UserAuth.deleteUser()){
                         userInputChecked = false
                         userDepartAuto = false
-                        setUserData("ID", "")
+                        UserDataStore.setStringData("ID", "")
                         trySignOut()
                     }
                     else{
@@ -549,32 +548,18 @@ object AuthViewModel : ViewModel() {
         }
     }
 
-    //데이터 저장
-    fun setUserData(key: String, value: String){
-        viewModelScope.launch { UserDataStore.setStringData(key, value) }
-    }
-
-    //데이터 읽기
-    fun getUserData(key: String): Flow<String> {
-        return UserDataStore.getStringData(key)
-    }
-
     //USER_DATA datastore에서 아이디 저장 유무 불러오고 체크되어있으면 아이디 불러오기
     fun userIdSaveCheckAndLoad(){
         viewModelScope.launch {
             try {
                 Log.w("Lim", "아이디 저장 데이터 불러오기")
-                getUserData("ID_SAVE_CHECKED").collect() { isChecked ->
-                    Log.w("Lim", "[idSaveLoad] isChecked: $isChecked")
-                    if (isChecked == "true") {
-                        idSaveChecked = true
-                        getUserData("ID").collect() { id ->
-                            Log.w("Lim", "[idSaveLoad] id: $id")
-                            userEmail = id
-                            inputEmail = userEmail
-                        }
-                    }
-
+                val isChecked = UserDataStore.getBooleanData("ID_SAVE_CHECKED")
+                Log.w("Lim", "[idSaveLoad] isChecked: $isChecked")
+                if (isChecked) {
+                    idSaveChecked = true
+                    userEmail = UserDataStore.getStringData("ID")
+                    Log.w("Lim", "[idSaveLoad] id: $userEmail")
+                    inputEmail = userEmail
                 }
             } catch (e: Exception) {
                 Log.w("Lim", "저장된 아이디 불러오기 실패: ", e)
