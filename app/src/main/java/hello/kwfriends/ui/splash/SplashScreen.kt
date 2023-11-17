@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.R
-import hello.kwfriends.datastoreManager.UserDataStore
+import hello.kwfriends.preferenceDatastore.UserDataStore
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel) {

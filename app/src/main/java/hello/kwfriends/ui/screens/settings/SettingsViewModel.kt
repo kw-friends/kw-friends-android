@@ -11,8 +11,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.datastoreManager.UserDataStore
-import hello.kwfriends.firebase.storageManager.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.Routes

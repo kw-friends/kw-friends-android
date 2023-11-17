@@ -1,4 +1,4 @@
-package hello.kwfriends.firebase.firebaseManager
+package hello.kwfriends.firebase.authentication
 
 import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider

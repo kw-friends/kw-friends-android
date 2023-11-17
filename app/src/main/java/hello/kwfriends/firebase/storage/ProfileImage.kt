@@ -1,4 +1,4 @@
-package hello.kwfriends.firebase.storageManager
+package hello.kwfriends.firebase.storage
 
 import android.net.Uri
 import android.util.Log

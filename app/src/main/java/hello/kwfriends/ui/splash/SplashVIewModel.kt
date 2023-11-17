@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.firebase.storageManager.ProfileImage
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.MainActivity
 

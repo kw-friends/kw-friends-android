@@ -1,4 +1,4 @@
-package hello.kwfriends.datastoreManager
+package hello.kwfriends.preferenceDatastore
 
 import android.content.Context
 import android.util.Log

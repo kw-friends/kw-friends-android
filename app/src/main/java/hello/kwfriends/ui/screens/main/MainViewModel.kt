@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import hello.kwfriends.firebase.firestoreManager.ParticipationStatus
-import hello.kwfriends.firebase.firestoreManager.PostDetail
-import hello.kwfriends.firebase.firestoreManager.PostManager
+import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
+import hello.kwfriends.firebase.firestoreDatabase.PostDetail
+import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {

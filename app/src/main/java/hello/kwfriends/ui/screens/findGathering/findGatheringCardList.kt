@@ -36,7 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.firebase.firestoreManager.ParticipationStatus
+import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable

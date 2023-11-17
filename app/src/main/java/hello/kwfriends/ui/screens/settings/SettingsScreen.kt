@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.BuildConfig
-import hello.kwfriends.firebase.storageManager.ProfileImage
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard

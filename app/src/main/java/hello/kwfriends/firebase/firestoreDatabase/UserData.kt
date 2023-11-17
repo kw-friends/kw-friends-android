@@ -1,4 +1,4 @@
-package hello.kwfriends.firebase.firestoreManager
+package hello.kwfriends.firebase.firestoreDatabase
 
 import android.content.ContentValues
 import android.util.Log
@@ -11,7 +11,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 object UserDataManager {
-
     private val fs = Firebase.firestore
 
     //유저 데이터 가져오기

@@ -11,9 +11,9 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.datastoreManager.UserDataStore
-import hello.kwfriends.firebase.firebaseManager.UserAuth
-import hello.kwfriends.firebase.firestoreManager.UserDataManager
+import hello.kwfriends.preferenceDatastore.UserDataStore
+import hello.kwfriends.firebase.authentication.UserAuth
+import hello.kwfriends.firebase.firestoreDatabase.UserDataManager
 import hello.kwfriends.ui.screens.main.Routes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
