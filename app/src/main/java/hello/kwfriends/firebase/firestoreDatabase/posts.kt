@@ -8,7 +8,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.ui.screens.auth.AuthViewModel
-import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import kotlinx.coroutines.tasks.await
 
@@ -39,7 +39,7 @@ object PostManager {
         return querySnapshot.documents.any { it.id == documentId }
     }
 
-    suspend fun getPostRef(viewModel: MainViewModel): List<PostDetail> {
+    suspend fun getPostRef(viewModel: HomeViewModel): List<PostDetail> {
         val postsRes = db.collection("posts").get()
             .addOnSuccessListener { documents ->
                 if (documents != null) {
@@ -136,7 +136,7 @@ object PostManager {
         }
     }
 
-    suspend fun updateParticipationState(target: String, viewModel: MainViewModel) {
+    suspend fun updateParticipationState(target: String, viewModel: HomeViewModel) {
         val getStatus = db.collection("posts").document(target)
             .collection("participants").get()
             .addOnSuccessListener { documentReference ->

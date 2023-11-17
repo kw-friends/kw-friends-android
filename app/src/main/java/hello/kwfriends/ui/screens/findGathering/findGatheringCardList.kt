@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
-import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
 fun GatheringCard(
@@ -49,7 +49,7 @@ fun GatheringCard(
     time: String, //추후 datetime으로 변경,
     description: String,
     postID: String,
-    viewModel: MainViewModel
+    viewModel: HomeViewModel
 ) {
     var descriptionOpened by remember {
         mutableStateOf(false)
@@ -192,7 +192,7 @@ fun GatheringCard(
 
 
 @Composable
-fun FindGatheringCardList(viewModel: MainViewModel) {
+fun FindGatheringCardList(viewModel: HomeViewModel) {
     val posts = viewModel.posts
     viewModel.getPostFromFirestore(viewModel = viewModel)
     LazyColumn {

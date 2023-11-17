@@ -11,8 +11,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import hello.kwfriends.ui.screens.main.MainActivity
-import hello.kwfriends.ui.screens.main.Routes
+import hello.kwfriends.ui.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class) // Ongoing
 @Composable

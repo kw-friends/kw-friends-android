@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.main
+package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
+import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 
@@ -29,7 +30,7 @@ import hello.kwfriends.ui.screens.settings.SettingsViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel,
+    homeViewModel: HomeViewModel,
     settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
@@ -77,7 +78,7 @@ fun MainScreen(
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            FindGatheringCardList(viewModel = mainViewModel)
+            FindGatheringCardList(viewModel = homeViewModel)
         }
     }
 }

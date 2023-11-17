@@ -40,14 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
-import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.home.HomeViewModel
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPostScreen(
-    mainViewModel: MainViewModel,
+    homeViewModel: HomeViewModel,
     postViewModel: NewPostViewModel,
     navigation: NavController
 ) {

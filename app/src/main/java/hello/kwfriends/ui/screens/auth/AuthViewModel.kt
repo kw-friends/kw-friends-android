@@ -14,7 +14,7 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.firestoreDatabase.UserDataManager
-import hello.kwfriends.ui.screens.main.Routes
+import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat

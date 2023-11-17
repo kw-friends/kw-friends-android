@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.main
+package hello.kwfriends.ui.main
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
+import hello.kwfriends.ui.screens.home.MainScreen
+import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostScreen
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
@@ -15,7 +17,7 @@ import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
-    private val mainViewModel: MainViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +31,7 @@ class MainActivity : BaseActivity() {
                 NavHost(navController = navController, startDestination = startDestination) {
                     composable(Routes.HOME_SCREEN) {
                         MainScreen(
-                            mainViewModel = mainViewModel,
+                            homeViewModel = homeViewModel,
                             settingsViewModel = settingsViewModel,
                             navigation = navController
                         )
@@ -45,7 +47,7 @@ class MainActivity : BaseActivity() {
                     }
                     composable(Routes.NEW_POST_SCREEN) {
                         NewPostScreen(
-                            mainViewModel = mainViewModel,
+                            homeViewModel = homeViewModel,
                             postViewModel = NewPostViewModel(),
                             navigation = navController
                         )

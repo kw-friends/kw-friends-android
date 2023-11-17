@@ -8,7 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthViewModel
-import hello.kwfriends.ui.screens.main.MainActivity
+import hello.kwfriends.ui.main.MainActivity
 
 class SplashViewModel : ViewModel() {
 

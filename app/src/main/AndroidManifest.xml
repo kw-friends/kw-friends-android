@@ -30,7 +30,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.screens.main.MainActivity"
+            android:name="hello.kwfriends.ui.main.MainActivity"
             android:exported="false"/>
     </application>
 

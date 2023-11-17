@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.main
+package hello.kwfriends.ui.main
 
 object Routes {
     const val HOME_SCREEN = "HomeScreen"

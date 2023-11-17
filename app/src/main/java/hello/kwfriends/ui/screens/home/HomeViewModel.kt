@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.main
+package hello.kwfriends.ui.screens.home
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -12,7 +12,7 @@ import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, String>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
@@ -33,7 +33,7 @@ class MainViewModel : ViewModel() {
         currentParticipationStatusMap[postID] = count
     }
 
-    fun updateParticipationStatus(postID: String, viewModel: MainViewModel) {
+    fun updateParticipationStatus(postID: String, viewModel: HomeViewModel) {
         viewModelScope.launch {
             if (participationStatusMap[postID] == ParticipationStatus.NOT_PARTICIPATED) {
                 participationStatusMap[postID] = ParticipationStatus.GETTING_IN
@@ -49,7 +49,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getPostFromFirestore(viewModel: MainViewModel) {
+    fun getPostFromFirestore(viewModel: HomeViewModel) {
         Log.d("getPostFromFirestore()", "데이터 가져옴")
         viewModelScope.launch {
             posts = PostManager.getPostRef(viewModel = viewModel)

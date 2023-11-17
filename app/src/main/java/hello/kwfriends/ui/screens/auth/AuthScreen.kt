@@ -49,7 +49,7 @@ import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
 import hello.kwfriends.ui.component.TextfieldStyle1
 import hello.kwfriends.ui.component.TextfieldStyle2
-import hello.kwfriends.ui.screens.main.Routes
+import hello.kwfriends.ui.main.Routes
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
