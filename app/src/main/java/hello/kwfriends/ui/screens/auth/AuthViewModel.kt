@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.datastoreManager.PreferenceDataStore
+import hello.kwfriends.datastoreManager.UserDataStore
 import hello.kwfriends.firebase.firebaseManager.UserAuth
 import hello.kwfriends.firebase.firestoreManager.UserDataManager
 import hello.kwfriends.ui.screens.main.Routes
@@ -73,9 +73,6 @@ object AuthViewModel : ViewModel() {
 
     //아이디 저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
-
-    //USER_DATA datastore 객체 저장 변수
-    var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
     
     var userInfo by mutableStateOf<Map<String, Any>?>(null)
 //-----------------
@@ -554,12 +551,12 @@ object AuthViewModel : ViewModel() {
 
     //데이터 저장
     fun setUserData(key: String, value: String){
-        viewModelScope.launch { preferencesDataStore!!.setStringData(key, value) }
+        viewModelScope.launch { UserDataStore.setStringData(key, value) }
     }
 
     //데이터 읽기
     fun getUserData(key: String): Flow<String> {
-        return preferencesDataStore!!.getStringData(key)
+        return UserDataStore.getStringData(key)
     }
 
     //USER_DATA datastore에서 아이디 저장 유무 불러오고 체크되어있으면 아이디 불러오기

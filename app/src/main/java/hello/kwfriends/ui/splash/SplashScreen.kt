@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.R
+import hello.kwfriends.datastoreManager.UserDataStore
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel) {
@@ -26,6 +27,10 @@ fun SplashScreen(viewModel: SplashViewModel) {
     val alpha = remember {
         Animatable(0f)
     }
+    //UserDataStore 객체 생성
+    try { UserDataStore.pref }
+    catch(e: Exception) { UserDataStore(context = LocalContext.current) }
+
     LaunchedEffect(key1 = true, block = {
         Log.w("Lim", "Splash 시작")
         alpha.animateTo(

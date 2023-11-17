@@ -1,7 +1,6 @@
 package hello.kwfriends.ui.screens.main
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,10 +19,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
@@ -36,11 +33,6 @@ fun MainScreen(
     settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
-    //USER_DATA DataStore 객체 저장
-    if (settingsViewModel.preferencesDataStore == null) {
-        Log.w("Lim", "test")
-        settingsViewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
-    }
     //유저 개인 설정 세팅값 받아오기
     if(!settingsViewModel.userSettingValuesLoaded) {
         settingsViewModel.userSettingValuesLoaded = true

@@ -44,7 +44,6 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
-import hello.kwfriends.datastoreManager.PreferenceDataStore
 import hello.kwfriends.ui.component.ButtonStyle1
 import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
@@ -56,11 +55,6 @@ import hello.kwfriends.ui.screens.main.Routes
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(navigation: NavController) {
-
-    //USER_DATA DataStore 객체 저장
-    if (AuthViewModel.preferencesDataStore == null) {
-        AuthViewModel.preferencesDataStore = PreferenceDataStore(LocalContext.current, "USER_DATA")
-    }
 
     if (AuthViewModel.uiState == AuthUiState.SignIn) {
         if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때

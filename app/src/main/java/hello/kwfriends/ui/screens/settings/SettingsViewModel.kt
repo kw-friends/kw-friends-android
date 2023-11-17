@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.datastoreManager.PreferenceDataStore
+import hello.kwfriends.datastoreManager.UserDataStore
 import hello.kwfriends.firebase.storageManager.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
 import hello.kwfriends.ui.screens.auth.AuthViewModel
@@ -20,8 +20,6 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel: ViewModel() {
 
-    //USER_DATA datastore 객체 저장 변수
-    var preferencesDataStore by mutableStateOf<PreferenceDataStore?>(null)
 
     //유저 설정 불러왔는지 여부
     var userSettingValuesLoaded by mutableStateOf<Boolean>(false)
@@ -35,7 +33,7 @@ class SettingsViewModel: ViewModel() {
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){
         viewModelScope.launch {
-            preferencesDataStore!!.getDataFlow().collect {
+            UserDataStore.getDataFlow().collect {
                 isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")]
                 isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")]
                 //유저 설정 기본값
@@ -48,14 +46,14 @@ class SettingsViewModel: ViewModel() {
     //다크모드 스위치 변경 함수
     fun switchDarkMode(){
         viewModelScope.launch {
-            preferencesDataStore!!.setBooleanData("SETTINGS_DARK_MODE", !isDarkMode!!)
+            UserDataStore.setBooleanData("SETTINGS_DARK_MODE", !isDarkMode!!)
         }
     }
 
     //조용모드 스위치 변경 함수
     fun switchQuietMode(){
         viewModelScope.launch {
-            preferencesDataStore!!.setBooleanData("SETTINGS_QUIET_MODE", !isQuietMode!!)
+            UserDataStore.setBooleanData("SETTINGS_QUIET_MODE", !isQuietMode!!)
         }
     }
 
