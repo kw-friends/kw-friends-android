@@ -35,7 +35,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
         Log.w("Lim", "Splash 시작")
         alpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(1500)
+            animationSpec = tween(1000)
         )
         viewModel.SplashUserCheck(context)
     })
