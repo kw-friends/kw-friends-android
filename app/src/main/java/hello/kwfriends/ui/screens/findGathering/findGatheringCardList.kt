@@ -194,7 +194,6 @@ fun GatheringCard(
 @Composable
 fun FindGatheringCardList(viewModel: HomeViewModel) {
     val posts = viewModel.posts
-    viewModel.getPostFromFirestore(viewModel = viewModel)
     LazyColumn {
         items(posts) { postData ->
             GatheringCard(
