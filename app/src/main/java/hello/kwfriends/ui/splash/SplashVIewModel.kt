@@ -46,7 +46,7 @@ class SplashViewModel : ViewModel() {
             Log.w("Lim", "홈 화면으로 이동")
         }
 
-        processingState = ""
+        processingState = SplashProcessingState.hello
         intent.putExtra("startPoint", startPoint)
         context.startActivity(intent)
     }

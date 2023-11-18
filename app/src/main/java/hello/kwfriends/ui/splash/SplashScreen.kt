@@ -58,14 +58,13 @@ fun SplashScreen(viewModel: SplashViewModel) {
                 .size(102.dp)
                 .alpha(alpha.value)
         )
-        if(viewModel.processingState != "")
         Column(modifier = Modifier
             .fillMaxHeight()
             .align(Alignment.BottomCenter)) {
             Spacer(modifier = Modifier.weight(9f))
             Text(
                 modifier = Modifier.weight(1f),
-                text = viewModel.processingState,
+                text = if(viewModel.processingState != "") viewModel.processingState else "라면 끓이는 중",
                 color = md_theme_light_primaryContainer,
                 style = MaterialTheme.typography.labelLarge
             )
