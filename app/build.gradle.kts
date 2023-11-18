@@ -86,4 +86,5 @@ dependencies {// mode
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-storage")
     implementation("io.coil-kt:coil-compose:2.5.0") //for Coil
+    implementation("androidx.core:core-splashscreen:1.0.1") //for splash screen
 }
