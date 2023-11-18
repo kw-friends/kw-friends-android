@@ -6,8 +6,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -20,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.R
 import hello.kwfriends.preferenceDatastore.UserDataStore
+import hello.kwfriends.ui.theme.md_theme_light_primaryContainer
 
 @Composable
 fun SplashScreen(viewModel: SplashViewModel) {
@@ -37,7 +43,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
             targetValue = 1f,
             animationSpec = tween(1000)
         )
-        viewModel.SplashUserCheck(context)
+        viewModel.splashUserCheck(context)
     })
     Box(
         Modifier
@@ -52,6 +58,19 @@ fun SplashScreen(viewModel: SplashViewModel) {
                 .size(102.dp)
                 .alpha(alpha.value)
         )
+        if(viewModel.processingState != "")
+        Column(modifier = Modifier
+            .fillMaxHeight()
+            .align(Alignment.BottomCenter)) {
+            Spacer(modifier = Modifier.weight(9f))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = viewModel.processingState,
+                color = md_theme_light_primaryContainer,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
     }
+
 }
 
