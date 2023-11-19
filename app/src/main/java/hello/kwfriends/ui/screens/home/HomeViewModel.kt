@@ -19,6 +19,8 @@ class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, String>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
+    //모임 새로고침 상태 저장 변수
+    var isRefreshing by mutableStateOf(false)
 
     fun participationStatusMapInit(postID: String, status: String) {
         participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {
@@ -52,6 +54,15 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun refreshPost() {
+        viewModelScope.launch {
+            isRefreshing = true
+            getPostFromFirestore()
+            isRefreshing = false
+        }
+    }
+
+    //포스트 목록 및 세부 정보 불러오는 함수
     suspend fun getPostFromFirestore(): Boolean {
         Log.d("getPostFromFirestore()", "데이터 가져옴")
         val documents = PostManager.getPostDocuments()
@@ -64,6 +75,7 @@ class HomeViewModel : ViewModel() {
         return false
     }
 
+    //포스트 세부 정보 추출 함수
     suspend fun analysisPost(postsRes: QuerySnapshot): List<PostDetail> {
         return postsRes.documents.map { document ->
             val participantsDetail = getParticipantsDetail(document)
@@ -92,7 +104,5 @@ class HomeViewModel : ViewModel() {
             )
         }
     }
-
-
 
 }

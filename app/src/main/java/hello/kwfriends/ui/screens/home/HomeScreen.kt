@@ -24,10 +24,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,9 +32,6 @@ import androidx.navigation.NavController
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -59,15 +52,10 @@ fun MainScreen(
         homeViewModel.getPostFromFirestore()
     }
     //아래로 당겨서 새로고침
-    var isRefreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
+        refreshing = homeViewModel.isRefreshing,
         onRefresh = {
-            isRefreshing = true
-            CoroutineScope(Dispatchers.IO).launch {
-                homeViewModel.getPostFromFirestore()
-                isRefreshing = false
-            }
+            homeViewModel.refreshPost()
         }
     )
     Scaffold(
@@ -111,10 +99,10 @@ fun MainScreen(
         Box(modifier = Modifier.padding(it).pullRefresh(pullRefreshState)) {
             FindGatheringCardList(viewModel = homeViewModel)
             PullRefreshIndicator(
-                refreshing = isRefreshing,
+                refreshing = homeViewModel.isRefreshing,
                 state = pullRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = if (isRefreshing) Color.Red else Color.Green,
+                backgroundColor = if (homeViewModel.isRefreshing) Color.Red else Color.Green,
             )
         }
     }
