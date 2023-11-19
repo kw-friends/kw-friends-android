@@ -1,12 +1,18 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -18,6 +24,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -25,6 +36,9 @@ import androidx.navigation.NavController
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -40,9 +54,22 @@ fun MainScreen(
         settingsViewModel.userSettingValuesLoaded = true
         settingsViewModel.userSettingValuesLoad()
     }
+    //post 목록 불러오기
     LaunchedEffect(true) {
         homeViewModel.getPostFromFirestore(viewModel = homeViewModel)
     }
+    //아래로 당겨서 새로고침
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            CoroutineScope(Dispatchers.IO).launch {
+                homeViewModel.getPostFromFirestore(viewModel = homeViewModel)
+                isRefreshing = false
+            }
+        }
+    )
     Scaffold(
         topBar = {
             TopAppBar(
@@ -81,8 +108,14 @@ fun MainScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.padding(it)) {
+        Box(modifier = Modifier.padding(it).pullRefresh(pullRefreshState)) {
             FindGatheringCardList(viewModel = homeViewModel)
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = if (isRefreshing) Color.Red else Color.Green,
+            )
         }
     }
 }
