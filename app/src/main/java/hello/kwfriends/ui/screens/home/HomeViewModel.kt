@@ -7,9 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.QuerySnapshot
+import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
+import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -49,10 +52,47 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun getPostFromFirestore(viewModel: HomeViewModel) {
+    suspend fun getPostFromFirestore(): Boolean {
         Log.d("getPostFromFirestore()", "데이터 가져옴")
-        viewModelScope.launch {
-            posts = PostManager.getPostRef(viewModel = viewModel)
+        val documents = PostManager.getPostDocuments()
+        if(documents != null){
+            posts = analysisPost(documents)
+            Log.w("Lim", "게시글 불러오기 성공")
+            return true
+        }
+        Log.w("Lim", "게시글 불러오기 실패(게시글이 없거나 불러오지 못함)")
+        return false
+    }
+
+    suspend fun analysisPost(postsRes: QuerySnapshot): List<PostDetail> {
+        return postsRes.documents.map { document ->
+            val participantsDetail = getParticipantsDetail(document)
+            val participantsCount = participantsDetail.size()
+            val participantStatus =
+                if (PostManager.isDocumentExist(participantsDetail, UserAuth.fa.uid.toString())) {
+                    ParticipationStatus.PARTICIPATED
+                } else {
+                    ParticipationStatus.NOT_PARTICIPATED
+                }
+
+            participationStatusMapInit(document.id, participantStatus)
+            currentParticipationStatusMapInit(document.id, participantsCount)
+
+            PostDetail(
+                gatheringTitle = document.getString("gatheringTitle") ?: "",
+                gatheringPromoter = document.getString("gatheringPromoter") ?: "",
+                gatheringLocation = document.getString("gatheringLocation") ?: "",
+                gatheringTime = document.getString("gatheringTime") ?: "",
+                maximumParticipants = document.getString("maximumParticipants") ?: "",
+                minimumParticipants = document.getString("minimumParticipants") ?: "",
+                currentParticipants = participantsCount.toString(),
+                gatheringDescription = document.getString("gatheringDescription") ?: "",
+                participantStatus = participantStatus,
+                postID = document.id
+            )
         }
     }
+
+
+
 }

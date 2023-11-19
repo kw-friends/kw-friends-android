@@ -56,7 +56,7 @@ fun MainScreen(
     }
     //post 목록 불러오기
     LaunchedEffect(true) {
-        homeViewModel.getPostFromFirestore(viewModel = homeViewModel)
+        homeViewModel.getPostFromFirestore()
     }
     //아래로 당겨서 새로고침
     var isRefreshing by remember { mutableStateOf(false) }
@@ -65,7 +65,7 @@ fun MainScreen(
         onRefresh = {
             isRefreshing = true
             CoroutineScope(Dispatchers.IO).launch {
-                homeViewModel.getPostFromFirestore(viewModel = homeViewModel)
+                homeViewModel.getPostFromFirestore()
                 isRefreshing = false
             }
         }

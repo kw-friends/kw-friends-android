@@ -2,6 +2,7 @@ package hello.kwfriends.firebase.firestoreDatabase
 
 import android.content.ContentValues
 import android.util.Log
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -11,6 +12,8 @@ import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 data class PostDetail(
     val gatheringTitle: String,
@@ -39,48 +42,40 @@ object PostManager {
         return querySnapshot.documents.any { it.id == documentId }
     }
 
-    suspend fun getPostRef(viewModel: HomeViewModel): List<PostDetail> {
-        val postsRes = db.collection("posts").get()
-            .addOnSuccessListener { documents ->
-                if (documents != null) {
-                    Log.i("getDocRef", "게시글 가져옴: ${documents.documents}")
-                } else {
-                    Log.i("getDocRef", "게시글이 비어있어요.")
+    suspend fun getPostDocuments(): QuerySnapshot? {
+        val postsRes = suspendCoroutine<QuerySnapshot?> { continuation ->
+            db.collection("posts").get()
+                .addOnSuccessListener { documents ->
+                    if (documents != null) {
+                        Log.i("getDocRef", "게시글 가져옴: ${documents.documents}")
+                        continuation.resume(documents)
+                    } else {
+                        Log.i("getDocRef", "게시글이 비어있어요.")
+                        continuation.resume(null)
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("detDocRef", "게시글 불러오기 실패: ", exception)
-            }.await()
-
-        return postsRes.documents.map { document ->
-            val participantsDetail = db.collection("posts").document(document.id)
-                .collection("participants").get()
-                .await()
-            val participantsCount = participantsDetail.size()
-            val participantStatus =
-                if (isDocumentExist(participantsDetail, UserAuth.fa.uid.toString())) {
-                    ParticipationStatus.PARTICIPATED
-                } else {
-                    ParticipationStatus.NOT_PARTICIPATED
+                .addOnFailureListener { exception ->
+                    Log.w("detDocRef", "게시글 불러오기 실패: ", exception)
+                    continuation.resume(null)
                 }
-
-            viewModel.participationStatusMapInit(document.id, participantStatus)
-            viewModel.currentParticipationStatusMapInit(document.id, participantsCount)
-
-            PostDetail(
-                gatheringTitle = document.getString("gatheringTitle") ?: "",
-                gatheringPromoter = document.getString("gatheringPromoter") ?: "",
-                gatheringLocation = document.getString("gatheringLocation") ?: "",
-                gatheringTime = document.getString("gatheringTime") ?: "",
-                maximumParticipants = document.getString("maximumParticipants") ?: "",
-                minimumParticipants = document.getString("minimumParticipants") ?: "",
-                currentParticipants = participantsCount.toString(),
-                gatheringDescription = document.getString("gatheringDescription") ?: "",
-                participantStatus = participantStatus,
-                postID = document.id
-            )
         }
+        return postsRes
     }
+
+    suspend fun getParticipantsDetail(documentSnapshot: DocumentSnapshot): QuerySnapshot {
+        val participantsDetail = suspendCoroutine<QuerySnapshot> { continuation ->
+            db.collection("posts").document(documentSnapshot.id)
+                .collection("participants").get()
+                .addOnSuccessListener {
+                    continuation.resume(it)
+                }
+                .addOnFailureListener {
+                    Log.w("detDocRef", "participants 불러오기 실패: ", it)
+                }
+        }
+        return participantsDetail
+    }
+
 
 
     suspend fun uploadPost(
