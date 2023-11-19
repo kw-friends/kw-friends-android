@@ -102,7 +102,6 @@ fun MainScreen(
                 refreshing = homeViewModel.isRefreshing,
                 state = pullRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = if (homeViewModel.isRefreshing) Color.Red else Color.Green,
             )
         }
     }
