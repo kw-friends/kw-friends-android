@@ -24,15 +24,15 @@ data class PostDetail(
     val minimumParticipants: String,
     val currentParticipants: String,
     val gatheringDescription: String,
-    val participantStatus: String,
+    val participantStatus: ParticipationStatus,
     val postID: String
 )
 
-object ParticipationStatus {
-    const val PARTICIPATED = "participated"
-    const val NOT_PARTICIPATED = "not participated"
-    const val GETTING_IN = "getting in"
-    const val GETTING_OUT = "getting out"
+enum class ParticipationStatus {
+    PARTICIPATED,
+    NOT_PARTICIPATED,
+    GETTING_IN,
+    GETTING_OUT
 }
 
 object PostManager {

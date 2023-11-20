@@ -17,12 +17,12 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
-    var participationStatusMap = mutableStateMapOf<String, String>()
+    var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
 
-    fun participationStatusMapInit(postID: String, status: String) {
+    fun participationStatusMapInit(postID: String, status: ParticipationStatus) {
         participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {
             ParticipationStatus.PARTICIPATED
         } else {

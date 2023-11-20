@@ -1,7 +1,6 @@
 package hello.kwfriends.ui.screens.findGathering
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,18 +9,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
+import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
@@ -114,75 +108,13 @@ fun GatheringCard(
                                 style = MaterialTheme.typography.bodySmall,
                             )
                         }
-                        Button(
-                            onClick = {
-                                if (participationStatus == ParticipationStatus.PARTICIPATED
-                                    || participationStatus == ParticipationStatus.NOT_PARTICIPATED
-                                ) {
-                                    viewModel.updateParticipationStatus(
-                                        postID = postID,
-                                        viewModel = viewModel
-                                    )
-                                }
-                            },
-                            enabled =
-                            participationStatus == ParticipationStatus.PARTICIPATED
-                                    || participationStatus == ParticipationStatus.NOT_PARTICIPATED
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .wrapContentWidth()
-                                    .animateContentSize()
-                            ) {
-                                when (participationStatus) {
-                                    ParticipationStatus.PARTICIPATED -> {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = "participated"
-                                            )
-                                            Spacer(modifier = Modifier.size(7.dp))
-                                            Text(
-                                                text = "참가 완료",
-                                                style = MaterialTheme.typography.labelLarge
-                                            )
-                                        }
-                                    }
-
-                                    ParticipationStatus.GETTING_IN -> {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(18.dp),
-                                            strokeWidth = 2.dp
-                                        )
-                                        Spacer(modifier = Modifier.size(7.dp))
-                                        Text(
-                                            text = "참가 중..",
-                                            style = MaterialTheme.typography.labelLarge
-                                        )
-                                    }
-
-                                    ParticipationStatus.GETTING_OUT -> {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(18.dp),
-                                            strokeWidth = 2.dp
-                                        )
-                                        Spacer(modifier = Modifier.size(7.dp))
-                                        Text(
-                                            text = "나가는 중..",
-                                            style = MaterialTheme.typography.labelLarge
-                                        )
-                                    }
-
-                                    else -> { // participationsStatus == ParticipationStatus.NOT_PARTICIPATED
-                                        Text(
-                                            text = "모임 참여",
-                                            style = MaterialTheme.typography.labelLarge
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        EnjoyButton(status = participationStatus,
+                            updateStatus = {
+                                viewModel.updateParticipationStatus(
+                                    postID = postID,
+                                    viewModel = viewModel
+                                )
+                            })
                     }
                 }
             }
