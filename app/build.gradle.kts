@@ -87,4 +87,5 @@ dependencies {// mode
     implementation("com.google.firebase:firebase-storage")
     implementation("io.coil-kt:coil-compose:2.5.0") //for Coil
     implementation("androidx.core:core-splashscreen:1.0.1") //for splash screen
+    implementation("com.google.firebase:firebase-database")
 }
