@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
+import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,7 +100,7 @@ class NewPostViewModel : ViewModel() {
     }
 
 
-    fun uploadGatheringToFirestore() {
+    fun uploadGatheringToFirestore(navigation: NavController) {
         showSnackbar("모임 생성 중...")
 
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
@@ -123,6 +125,7 @@ class NewPostViewModel : ViewModel() {
                     newPostViewModel = this@NewPostViewModel
 
                 )
+                navigation.navigate(Routes.HOME_SCREEN)
                 isUploading = false
             }
         } else {

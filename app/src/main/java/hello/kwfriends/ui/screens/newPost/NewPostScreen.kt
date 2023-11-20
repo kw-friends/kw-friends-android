@@ -198,7 +198,7 @@ fun NewPostScreen(
                             if (!postViewModel.validateGatheringInfo()) {
                                 postViewModel.showSnackbar("모임 정보가 부족합니다.")
                             } else {
-                                postViewModel.uploadGatheringToFirestore()
+                                postViewModel.uploadGatheringToFirestore(navigation)
                             }
                         }
                     },
