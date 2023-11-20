@@ -5,10 +5,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
@@ -45,11 +42,11 @@ fun SplashScreen(viewModel: SplashViewModel) {
         )
         viewModel.splashUserCheck(context)
     })
-    Box(
+    Column(
         Modifier
             .background(color = Color(0xFFE79898))
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
@@ -57,18 +54,14 @@ fun SplashScreen(viewModel: SplashViewModel) {
             modifier = Modifier
                 .size(102.dp)
                 .alpha(alpha.value)
+                .weight(5f)
         )
-        Column(modifier = Modifier
-            .fillMaxHeight()
-            .align(Alignment.BottomCenter)) {
-            Spacer(modifier = Modifier.weight(9f))
-            Text(
-                modifier = Modifier.weight(1f),
-                text = if(viewModel.processingState != "") viewModel.processingState else "라면 끓이는 중",
-                color = md_theme_light_primaryContainer,
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
+        Text(
+            modifier = Modifier.weight(1f),
+            text = if(viewModel.processingState != "") viewModel.processingState else "라면 끓이는 중",
+            color = md_theme_light_primaryContainer,
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 
 }

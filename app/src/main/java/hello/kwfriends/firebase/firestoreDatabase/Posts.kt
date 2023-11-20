@@ -63,6 +63,7 @@ object PostManager {
     }
 
     suspend fun getParticipantsDetail(documentSnapshot: DocumentSnapshot): QuerySnapshot {
+        Log.w("Lim", "participants 불러오기: ${documentSnapshot}")
         val participantsDetail = suspendCoroutine<QuerySnapshot> { continuation ->
             db.collection("posts").document(documentSnapshot.id)
                 .collection("participants").get()
