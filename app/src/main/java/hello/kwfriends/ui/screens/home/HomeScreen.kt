@@ -87,7 +87,7 @@ fun MainScreen(
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                text = { Text(text = "모임 생성하기") },
+                text = { Text(text = "모임 생성") },
                 icon = { Icon(Icons.Default.Add, null) },
                 onClick = {
                     navigation.navigate(Routes.NEW_POST_SCREEN)
