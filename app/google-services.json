@@ -1,8 +1,8 @@
 {
   "project_info": {
     "project_number": "668292225228",
-    "firebase_url": "https://kw-friends-503a5-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "kw-friends-503a5",
+    "firebase_url": "https://kw-friends-503a5-default-rtdb.asia-southeast1.firebasedatabase.app",
     "storage_bucket": "kw-friends-503a5.appspot.com"
   },
   "client": [
