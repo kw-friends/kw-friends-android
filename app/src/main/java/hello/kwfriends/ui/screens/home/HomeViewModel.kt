@@ -9,10 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
 import hello.kwfriends.firebase.authentication.UserAuth
-import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {

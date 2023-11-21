@@ -7,7 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import hello.kwfriends.firebase.firestoreDatabase.PostManager
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail_
+import hello.kwfriends.firebase.realtimeDatabase.Post_
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -114,16 +116,17 @@ class NewPostViewModel : ViewModel() {
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
                 isUploading = true
-                PostManager.uploadPost(
-                    gatheringTitle = gatheringTitle,
-                    gatheringPromoter = gatheringPromoter,
-                    gatheringLocation = gatheringLocation,
-                    gatheringTime = gatheringTime,
-                    maximumParticipants = maximumParticipants,
-                    minimumParticipants = minimumParticipants,
-                    gatheringDescription = gatheringDescription,
-                    newPostViewModel = this@NewPostViewModel
-
+                val result = Post_.upload(
+                    PostDetail_(
+                        gatheringTitle= gatheringTitle,
+                        gatheringPromoter = gatheringPromoter,
+                        gatheringLocation = gatheringLocation,
+                        gatheringTime = gatheringTime,
+                        maximumParticipants = maximumParticipants,
+                        minimumParticipants = minimumParticipants,
+                        gatheringDescription = gatheringDescription,
+                        participantStatus = ParticipationStatus.PARTICIPATED
+                    ).toMap()
                 )
                 navigation.navigate(Routes.HOME_SCREEN)
                 isUploading = false

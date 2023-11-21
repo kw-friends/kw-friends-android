@@ -8,6 +8,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.authentication.UserAuth
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
@@ -28,12 +29,12 @@ data class PostDetail(
     val postID: String
 )
 
-enum class ParticipationStatus {
+/*enum class ParticipationStatus {
     PARTICIPATED,
     NOT_PARTICIPATED,
     GETTING_IN,
     GETTING_OUT
-}
+}*/
 
 object PostManager {
     val db = Firebase.firestore

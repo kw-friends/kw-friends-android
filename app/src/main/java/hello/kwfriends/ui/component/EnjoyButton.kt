@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 
 @Composable
 fun EnjoyButton(
