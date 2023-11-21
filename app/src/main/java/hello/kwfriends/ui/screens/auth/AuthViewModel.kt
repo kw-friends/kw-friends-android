@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.firestoreDatabase.UserDataManager
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.launch
@@ -320,7 +321,7 @@ object AuthViewModel : ViewModel() {
                 //유저 현재 상태 불러오기
                 val lastState: String = UserDataManager.getUserData()?.get("state").toString()
                 //유저 상태 삭제됨으로 변경
-                if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) {
+                if(!UserData.update(mapOf("state" to "deleted"))) {
                     uiState = AuthUiState.SignIn
                 }
                 else {
@@ -334,7 +335,7 @@ object AuthViewModel : ViewModel() {
                     }
                     else{
                         //유저 firestore 상태 롤백
-                        viewModelScope.launch { UserDataManager.mergeSetUserData(mapOf("state" to lastState)) }
+                        viewModelScope.launch { UserData.update(mapOf("state" to lastState)) }
                     }
                     uiState = AuthUiState.SignIn
                 }
@@ -379,7 +380,7 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 데이터 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
+            if(UserData.update(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
             else { uiState = AuthUiState.SignIn }
         }
     }
@@ -394,7 +395,7 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 소속 정보 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
+            if(UserData.update(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
             else {uiState = AuthUiState.SignIn  }
         }
     }
@@ -490,7 +491,7 @@ object AuthViewModel : ViewModel() {
                         }
                     } else {
                         Log.w(ContentValues.TAG, "첫 로그인입니다!")
-                        UserDataManager.mergeSetUserData(
+                        UserData.update(
                             mapOf("state" to "available", "first-login" to FieldValue.serverTimestamp())
                         )
                         Log.w(ContentValues.TAG, "유저 정보가 존재하지 않아 정보 입력창으로 이동합니다.")
