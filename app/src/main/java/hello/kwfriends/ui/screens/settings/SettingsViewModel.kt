@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
@@ -97,5 +98,15 @@ class SettingsViewModel: ViewModel() {
         AuthViewModel.inputMbti = AuthViewModel.userInfo!!["mbti"]!!.toString()
         AuthViewModel.inputGender = AuthViewModel.userInfo!!["gender"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
+    }
+
+    fun test(){
+        val testMap = mapOf(
+            "name" to "lim",
+            "num" to 2023203045
+        )
+        viewModelScope.launch {
+            UserData.update(testMap)
+        }
     }
 }
