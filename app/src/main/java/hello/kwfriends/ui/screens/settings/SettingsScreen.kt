@@ -116,11 +116,6 @@ fun SettingsScreen(
                     description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
                 )
                 SettingsButtonItem(
-                    title = "테스트",
-                    description = "테스트용 버튼",
-                    onClick = { settingsViewModel.test() }
-                )
-                SettingsButtonItem(
                     title = "공지사항",
                     onClick = { }
                 )

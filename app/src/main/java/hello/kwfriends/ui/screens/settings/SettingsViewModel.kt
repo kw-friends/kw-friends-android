@@ -100,15 +100,4 @@ class SettingsViewModel: ViewModel() {
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 
-    fun test(){
-        val testMap = mapOf(
-            "name" to "lim",
-            "num" to 2023203045
-        )
-        viewModelScope.launch {
-//            UserData.update(testMap)
-            val testAny = UserData.get()
-            Log.w("test", "${testAny}")
-        }
-    }
 }
