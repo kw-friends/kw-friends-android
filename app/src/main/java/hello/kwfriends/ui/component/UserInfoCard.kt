@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -58,8 +59,8 @@ fun UserInfoCard(
                 .padding(horizontal = 12.dp)
         ) {
             AsyncImage(
-                model = profileImageUri
-                    ?: R.drawable.profile_default_image, // Use a default image resource
+                model = profileImageUri ?: R.drawable.profile_default_image,
+                placeholder = painterResource(id = R.drawable.profile_default_image),
                 contentDescription = "My profile image",
                 modifier = Modifier
                     .size(70.dp)
