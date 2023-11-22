@@ -10,8 +10,8 @@ import androidx.navigation.NavController
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail_
 import hello.kwfriends.firebase.realtimeDatabase.Post_
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.main.Routes
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ class NewPostViewModel : ViewModel() {
     var gatheringTitle by mutableStateOf("")
     var gatheringTitleStatus by mutableStateOf(false)
 
-    var gatheringPromoter by mutableStateOf(AuthViewModel.userInfo!!["name"].toString())
+    var gatheringPromoter by mutableStateOf(UserData.userInfo!!["name"].toString())
 
     var gatheringTime by mutableStateOf("")
     var gatheringTimeStatus by mutableStateOf(false)
