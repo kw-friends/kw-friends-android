@@ -472,9 +472,16 @@ object AuthViewModel : ViewModel() {
                     userInfo = UserData.get()
                     if (userInfo != null) {
                         if (userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                            trySignOut()
-                            Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
-                            continuation.resume(false)
+                            if(userInfo!!["state"] == null){
+                                Log.w("userInfoCheck", "유저 상태가 null이라 available로 설정하였습니다.")
+                                UserData.update(mapOf("state" to "available"))
+                                continuation.resume(false)
+                            }
+                            else{
+                                trySignOut()
+                                Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
+                                continuation.resume(false)
+                            }
                         } else if (!userInfoFormCheck(userInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserInfo
