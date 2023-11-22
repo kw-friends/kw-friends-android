@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,13 +57,18 @@ import hello.kwfriends.ui.main.Routes
 @Composable
 fun AuthScreen(navigation: NavController) {
 
-    if (AuthViewModel.uiState == AuthUiState.SignIn) {
-        if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
-            if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
-                Log.w("Lim", "로그인 기록 확인")
-                AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
-            } else {
-                AuthViewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+    LaunchedEffect(AuthViewModel.uiState) {
+        if(AuthViewModel.uiState == AuthUiState.SignInSuccess) {
+            AuthViewModel.signInSuccessCheck(navigation)
+        }
+        else if (AuthViewModel.uiState == AuthUiState.SignIn) {
+            if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
+                if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
+                    Log.w("Lim", "로그인 기록 확인")
+                    AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
+                } else {
+                    AuthViewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+                }
             }
         }
     }
@@ -535,12 +541,7 @@ fun AuthScreen(navigation: NavController) {
             }
         }
 
-        is AuthUiState.SignInSuccess -> {
-            //유저 상태 정상인지 확인
-            Log.w("Lim", "유저 정보 정상인지 확인중..")
-            AuthViewModel.signInSuccessCheck(navigation)
-
-        }
+        is AuthUiState.SignInSuccess -> { }
 
         is AuthUiState.DeleteUser -> {
             Box(
