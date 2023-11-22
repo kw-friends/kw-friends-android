@@ -10,6 +10,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -72,6 +73,16 @@ fun MainScreen(
                     containerColor = Color(0xFFE2A39B)
                 ),
                 actions = {
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            modifier = Modifier.size(35.dp)
+                        )
+                    }
                     IconButton(
                         onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
                         modifier = Modifier.padding(end = 8.dp)
