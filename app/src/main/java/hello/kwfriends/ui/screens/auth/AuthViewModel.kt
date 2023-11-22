@@ -13,7 +13,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
-import hello.kwfriends.firebase.firestoreDatabase.UserDataManager
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.main.Routes
@@ -319,7 +318,7 @@ object AuthViewModel : ViewModel() {
             }
             else {
                 //유저 현재 상태 불러오기
-                val lastState: String = UserDataManager.getUserData()?.get("state").toString()
+                val lastState: String = UserData.get()?.get("state").toString()
                 //유저 상태 삭제됨으로 변경
                 if(!UserData.update(mapOf("state" to "deleted"))) {
                     uiState = AuthUiState.SignIn
@@ -349,7 +348,7 @@ object AuthViewModel : ViewModel() {
         //유저 정보 불러오기
         viewModelScope.launch {
             try {
-                userInfo = UserDataManager.getUserData()
+                userInfo = UserData.get()
                 if (userInfo != null) {
                     Log.w(ContentValues.TAG, "Firestore 유저 정보: $userInfo")
                     val tempStdNum = userInfo!!["std-num"].toString() //2023203045
@@ -470,10 +469,10 @@ object AuthViewModel : ViewModel() {
         try {
             val result = suspendCoroutine<Boolean> { continuation ->
                 viewModelScope.launch {
-                    userInfo = UserDataManager.getUserData()
+                    userInfo = UserData.get()
                     if (userInfo != null) {
                         if (userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                            UserAuth.signOut()
+                            trySignOut()
                             Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
                             continuation.resume(false)
                         } else if (!userInfoFormCheck(userInfo!!)) {

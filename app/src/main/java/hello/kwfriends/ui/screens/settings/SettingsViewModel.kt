@@ -106,7 +106,9 @@ class SettingsViewModel: ViewModel() {
             "num" to 2023203045
         )
         viewModelScope.launch {
-            UserData.update(testMap)
+//            UserData.update(testMap)
+            val testAny = UserData.get()
+            Log.w("test", "${testAny}")
         }
     }
 }

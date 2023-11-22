@@ -20,17 +20,33 @@ object UserData {
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(info)
                 .addOnSuccessListener {
+                    Log.w("update", "데이터 업데이트 성공")
                     continuation.resume(true)
                 }
                 .addOnFailureListener {
-                    Log.w("setUserData", "serValue실패: $it")
+                    Log.w("update", "데이터 업데이트 실패: $it")
                     continuation.resume(false)
                 }
         }
         return result
     }
 
-    suspend fun get(){
-
+    suspend fun get(): HashMap<String, Any>?{
+        val result = suspendCoroutine<HashMap<String, Any>?> { continuation ->
+            database.child("users").child(UserAuth.fa.currentUser!!.uid).get()
+                .addOnSuccessListener { dataSnapshot ->
+                    Log.w("get", "데이터 가져오기 성공")
+                    continuation.resume(dataSnapshot.value as HashMap<String, Any>)
+                }
+                .addOnFailureListener {
+                    Log.w("get", "데이터 가져오기 실패")
+                    continuation.resume(null)
+                }
+                .addOnCanceledListener {
+                    Log.w("get", "데이터 가져오기 캔슬")
+                    continuation.resume(null)
+                }
+        }
+        return result
     }
 }
