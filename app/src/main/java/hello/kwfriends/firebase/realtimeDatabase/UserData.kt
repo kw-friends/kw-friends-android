@@ -31,20 +31,20 @@ object UserData {
         return result
     }
 
-    suspend fun get(): HashMap<String, Any>?{
-        val result = suspendCoroutine<HashMap<String, Any>?> { continuation ->
+    suspend fun get(): Map<String, Any>?{
+        val result = suspendCoroutine<Map<String, Any>?> { continuation ->
             database.child("users").child(UserAuth.fa.currentUser!!.uid).get()
                 .addOnSuccessListener { dataSnapshot ->
                     Log.w("get", "데이터 가져오기 성공")
-                    continuation.resume(dataSnapshot.value as HashMap<String, Any>)
+                    continuation.resume(dataSnapshot.value as? Map<String, Any> ?: mapOf("not map" to "not map"))
                 }
                 .addOnFailureListener {
                     Log.w("get", "데이터 가져오기 실패")
-                    continuation.resume(null)
+                    continuation.resume(mapOf("fail" to "fail"))
                 }
                 .addOnCanceledListener {
                     Log.w("get", "데이터 가져오기 캔슬")
-                    continuation.resume(null)
+                    continuation.resume(mapOf("fail" to "fail"))
                 }
         }
         return result
