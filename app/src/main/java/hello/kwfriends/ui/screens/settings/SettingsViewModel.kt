@@ -24,6 +24,9 @@ class SettingsViewModel: ViewModel() {
     //유저 설정 불러왔는지 여부
     var userSettingValuesLoaded by mutableStateOf<Boolean>(false)
 
+    //유저 프로필 불러왔는지 여부
+    var myProfileImiageLoaded by mutableStateOf<Boolean>(false)
+
     //다크모드 여부 저장
     var isDarkMode by mutableStateOf<Boolean?>(true)
 
@@ -59,10 +62,21 @@ class SettingsViewModel: ViewModel() {
 
 
     //자신의 프로필 이미지를 업로드함
-    fun profileImageUpload(uri: Uri){
+    fun myProfileImageUpload(uri: Uri){
         viewModelScope.launch {
             Log.w("Lim", "이미지 업로드 시작")
             ProfileImage.upload(Firebase.auth.currentUser!!.uid, uri)
+        }
+    }
+
+    //나의 프로필 이미지 다운로드
+    fun myProfileImageDownload() {
+        myProfileImiageLoaded = true
+        viewModelScope.launch {
+            Log.w("Lim", "유저 프로필 이미지 불러오는 중")
+            ProfileImage.myImageUri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
+            if(ProfileImage.myImageUri == null){ Log.w("Lim", "유저 프로필 이미지 불러오기 실패") }
+            else{ Log.w("Lim", "유저 프로필 이미지 불러오기 성공") }
         }
     }
 

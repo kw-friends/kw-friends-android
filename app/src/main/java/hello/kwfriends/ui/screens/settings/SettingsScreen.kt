@@ -49,8 +49,11 @@ fun SettingsScreen(
         if (uri != null) {
             Log.w("Lim", "이미지 선택 완료")
             ProfileImage.myImageUri = uri
-            settingsViewModel.profileImageUpload(uri)
+            settingsViewModel.myProfileImageUpload(uri)
         }
+    }
+    if(!settingsViewModel.myProfileImiageLoaded) {
+        settingsViewModel.myProfileImageDownload()
     }
     //USER_DATA DataStore 객체 저장
     Scaffold(
