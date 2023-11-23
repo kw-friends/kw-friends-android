@@ -3,9 +3,12 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -38,8 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.SearchTextField
-import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 
@@ -52,7 +55,7 @@ fun MainScreen(
     navigation: NavController
 ) {
     //유저 개인 설정 세팅값 받아오기
-    if(!settingsViewModel.userSettingValuesLoaded) {
+    if (!settingsViewModel.userSettingValuesLoaded) {
         settingsViewModel.userSettingValuesLoaded = true
         settingsViewModel.userSettingValuesLoad()
     }
@@ -71,7 +74,11 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    if(!homeViewModel.isSearching) {
+                    AnimatedVisibility(
+                        visible = !homeViewModel.isSearching,
+                        enter = fadeIn(),
+                        exit = fadeOut(animationSpec = tween(durationMillis = 100))
+                    ) {
                         Text(
                             text = "내 모임",
                             style = MaterialTheme.typography.titleLarge,
@@ -88,7 +95,7 @@ fun MainScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End,
-                            ) {
+                        ) {
                             if (homeViewModel.isSearching) {
                                 IconButton(
                                     onClick = {
@@ -107,7 +114,7 @@ fun MainScreen(
                                 onValueChange = {},
                                 modifier = Modifier
                                     .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
-                                    .width(if(homeViewModel.isSearching) 290.dp else 0.dp)
+                                    .width(if (homeViewModel.isSearching) 290.dp else 0.dp)
                             )
                         }
                         IconButton(
@@ -149,9 +156,11 @@ fun MainScreen(
             )
         }
     ) {
-        Box(modifier = Modifier
-            .padding(it)
-            .pullRefresh(pullRefreshState)) {
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .pullRefresh(pullRefreshState)
+        ) {
             FindGatheringCardList(viewModel = homeViewModel)
             PullRefreshIndicator(
                 refreshing = homeViewModel.isRefreshing,
