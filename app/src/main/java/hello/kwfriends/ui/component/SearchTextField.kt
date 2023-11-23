@@ -41,6 +41,7 @@ import hello.kwfriends.ui.theme.AppFont
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchTextField(
+    modifier: Modifier = Modifier,
     placeholder: String = "",
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
@@ -51,7 +52,6 @@ fun SearchTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
-    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -72,7 +72,6 @@ fun SearchTextField(
                     .height(IntrinsicSize.Min)
                     .heightIn(min = 48.dp)
             )
-            .padding(horizontal = 10.dp)
             .onFocusChanged {
                 if (it.isFocused && canValueChange) {
                     containerColor = Color(0xFFDADADA)
@@ -112,7 +111,7 @@ fun SearchTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
-                    .clip(RoundedCornerShape(100.dp))
+                    .clip(RoundedCornerShape(30.dp))
                     .background(containerColor)
                     .padding(horizontal = 12.dp),
                 contentAlignment = Alignment.CenterStart

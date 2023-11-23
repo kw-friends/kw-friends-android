@@ -44,7 +44,7 @@ import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
     homeViewModel: HomeViewModel,
@@ -75,7 +75,8 @@ fun MainScreen(
                         Text(
                             text = "내 모임",
                             style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(5.dp)
+                            modifier = Modifier.padding(5.dp),
+                            maxLines = 1
                         )
                     }
                 },
@@ -88,9 +89,11 @@ fun MainScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End,
                             ) {
-                            if(homeViewModel.isSearching) {
+                            if (homeViewModel.isSearching) {
                                 IconButton(
-                                    onClick = { homeViewModel.isSearching = !homeViewModel.isSearching },
+                                    onClick = {
+                                        homeViewModel.isSearching = !homeViewModel.isSearching
+                                    },
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.ArrowBackIosNew,
