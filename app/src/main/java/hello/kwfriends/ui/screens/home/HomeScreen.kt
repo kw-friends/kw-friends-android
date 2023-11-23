@@ -3,13 +3,20 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -30,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import hello.kwfriends.ui.component.SearchTextField
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
@@ -63,26 +71,57 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "KW Friends",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(5.dp)
-                    )
+                    if(!homeViewModel.isSearching) {
+                        Text(
+                            text = "내 모임",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFFE2A39B)
                 ),
                 actions = {
-                    IconButton(
-                        onClick = { },
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            modifier = Modifier.size(35.dp)
-                        )
+                    Box {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End,
+                            ) {
+                            if(homeViewModel.isSearching) {
+                                IconButton(
+                                    onClick = { homeViewModel.isSearching = !homeViewModel.isSearching },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowBackIosNew,
+                                        contentDescription = "Exit",
+                                        modifier = Modifier.size(30.dp)
+                                    )
+                                }
+                            }
+                            SearchTextField(
+                                value = "",
+                                onValueChange = {},
+                                modifier = Modifier
+                                    .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
+                                    .width(if(homeViewModel.isSearching) 290.dp else 0.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = { homeViewModel.isSearching = !homeViewModel.isSearching },
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .align(if (homeViewModel.isSearching) Alignment.CenterEnd else Alignment.Center)
+
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                modifier = Modifier.size(35.dp)
+                            )
+                        }
                     }
+
                     IconButton(
                         onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
                         modifier = Modifier.padding(end = 8.dp)
@@ -107,7 +146,9 @@ fun MainScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.padding(it).pullRefresh(pullRefreshState)) {
+        Box(modifier = Modifier
+            .padding(it)
+            .pullRefresh(pullRefreshState)) {
             FindGatheringCardList(viewModel = homeViewModel)
             PullRefreshIndicator(
                 refreshing = homeViewModel.isRefreshing,

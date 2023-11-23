@@ -21,6 +21,8 @@ class HomeViewModel : ViewModel() {
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
+    //검색 상태 저장 변수
+    var isSearching by mutableStateOf(false)
 
     fun participationStatusMapInit(postID: String, status: ParticipationStatus) {
         participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {

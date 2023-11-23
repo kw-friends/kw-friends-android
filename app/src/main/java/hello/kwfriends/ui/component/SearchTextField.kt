@@ -2,10 +2,8 @@ package hello.kwfriends.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -42,7 +40,7 @@ import hello.kwfriends.ui.theme.AppFont
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun FullTextField(
+fun SearchTextField(
     placeholder: String = "",
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
@@ -52,9 +50,6 @@ fun FullTextField(
     isSingleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
-    externalTitle: String = "",
-    isError: Boolean = false,
-    errorMessage: String = "",
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     modifier: Modifier = Modifier
 ) {
@@ -65,33 +60,6 @@ fun FullTextField(
     var containerColor by remember { mutableStateOf(Color(0x66F1F1F1)) }
     var textColor by remember { mutableStateOf(Color(0xFF000000)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
-
-    if (externalTitle != "" || isError) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
-            modifier = Modifier
-                .height(intrinsicSize = IntrinsicSize.Min)
-                .fillMaxWidth()
-        ) {
-            if (externalTitle != "") {
-                Text(
-                    text = externalTitle,
-                    color = Color(0xFF636363),
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(horizontal = 14.dp)
-                )
-            }
-            if (isError) {
-                Text(
-                    text = errorMessage,
-                    color = Color(0xFFFF0000),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(end = 14.dp)
-                )
-            }
-        }
-    }
 
     BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
@@ -144,7 +112,7 @@ fun FullTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(IntrinsicSize.Min)
-                    .clip(RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(100.dp))
                     .background(containerColor)
                     .padding(horizontal = 12.dp),
                 contentAlignment = Alignment.CenterStart
@@ -165,6 +133,6 @@ fun FullTextField(
 
 @Preview
 @Composable
-fun TextfieldStyle3Preview() {
+fun SearchTextPreview() {
     FullTextField(placeholder = "Preview", value = "", onValueChange = {})
 }
