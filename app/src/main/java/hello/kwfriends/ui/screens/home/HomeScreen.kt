@@ -114,7 +114,7 @@ fun MainScreen(
                             onClick = { homeViewModel.isSearching = !homeViewModel.isSearching },
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .align(if (homeViewModel.isSearching) Alignment.CenterEnd else Alignment.Center)
+                                .align(Alignment.CenterEnd)
 
                         ) {
                             Icon(
