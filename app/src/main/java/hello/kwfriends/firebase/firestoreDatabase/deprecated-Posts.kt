@@ -9,7 +9,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
-import hello.kwfriends.ui.screens.auth.AuthViewModel
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import kotlinx.coroutines.tasks.await
@@ -108,7 +108,7 @@ object PostManager {
                     Log.d(ContentValues.TAG, "모임 생성 성공. ID: ${documentReference.id}")
                     db.collection("posts").document(documentReference.id).collection("participants")
                         .document(UserAuth.fa.uid.toString())
-                        .set(mapOf("name" to AuthViewModel.userInfo!!["name"].toString()))
+                        .set(mapOf("name" to UserData.userInfo!!["name"].toString()))
                         .addOnSuccessListener {
                             Log.d(ContentValues.TAG, "하위 참가자 목록 컬렉션 생성 성공.")
                             newPostViewModel.showSnackbar("모임 생성 성공")
@@ -158,7 +158,7 @@ object PostManager {
         } else {
             db.collection("posts").document(target).collection("participants")
                 .document(UserAuth.fa.uid.toString())
-                .set(mapOf("name" to AuthViewModel.userInfo!!["name"].toString()))
+                .set(mapOf("name" to UserData.userInfo!!["name"].toString()))
                 .addOnSuccessListener { documentReference ->
                     Log.d(ContentValues.TAG, "모임 참여 성공")
                     viewModel.currentParticipationStatusMapUpdate(postID = target, add = 1)

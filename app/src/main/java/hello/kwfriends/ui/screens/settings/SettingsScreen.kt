@@ -29,11 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.BuildConfig
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,10 +86,10 @@ fun SettingsScreen(
         ) {
             UserInfoCard(
                 profileImageUri = ProfileImage.myImageUri,
-                userName = AuthViewModel.userInfo!!["name"]!!.toString(),
-                admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString()
+                userName = UserData.userInfo!!["name"]!!.toString(),
+                admissionYear = UserData.userInfo!!["std-num"]!!.toString()
                     .slice(IntRange(2, 3)),
-                major = AuthViewModel.userInfo!!["department"]!!.toString(),
+                major = UserData.userInfo!!["department"]!!.toString(),
                 navigation = navigation,
                 settingsViewModel = settingsViewModel
             )
@@ -114,11 +114,6 @@ fun SettingsScreen(
                     checked = settingsViewModel.isQuietMode!!,
                     onCheckedChange = { settingsViewModel.switchQuietMode() },
                     description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
-                )
-                SettingsButtonItem(
-                    title = "테스트",
-                    description = "테스트용 버튼",
-                    onClick = { settingsViewModel.test() }
                 )
                 SettingsButtonItem(
                     title = "공지사항",
