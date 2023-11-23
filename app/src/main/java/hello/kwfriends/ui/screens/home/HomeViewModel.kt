@@ -9,14 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
 import hello.kwfriends.firebase.authentication.UserAuth
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail_
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
-    var posts by mutableStateOf<List<PostDetail>>(listOf())
+    var posts by mutableStateOf<List<PostDetail_>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
@@ -76,7 +76,7 @@ class HomeViewModel : ViewModel() {
     }
 
     //포스트 세부 정보 추출 함수
-    suspend fun analysisPost(postsRes: QuerySnapshot): List<PostDetail> {
+    suspend fun analysisPost(postsRes: QuerySnapshot): List<PostDetail_> {
         return postsRes.documents.map { document ->
             val participantsDetail = getParticipantsDetail(document)
             val participantsCount = participantsDetail.size()
@@ -90,17 +90,15 @@ class HomeViewModel : ViewModel() {
             participationStatusMapInit(document.id, participantStatus)
             currentParticipationStatusMapInit(document.id, participantsCount)
 
-            PostDetail(
+            PostDetail_(
                 gatheringTitle = document.getString("gatheringTitle") ?: "",
                 gatheringPromoter = document.getString("gatheringPromoter") ?: "",
                 gatheringLocation = document.getString("gatheringLocation") ?: "",
                 gatheringTime = document.getString("gatheringTime") ?: "",
                 maximumParticipants = document.getString("maximumParticipants") ?: "",
                 minimumParticipants = document.getString("minimumParticipants") ?: "",
-                currentParticipants = participantsCount.toString(),
                 gatheringDescription = document.getString("gatheringDescription") ?: "",
                 participantStatus = participantStatus,
-                postID = document.id
             )
         }
     }

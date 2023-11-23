@@ -2,6 +2,9 @@ package hello.kwfriends.firebase.realtimeDatabase
 
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.authentication.UserAuth
@@ -42,6 +45,67 @@ enum class ParticipationStatus {
 object Post_ {
 
     private var database = Firebase.database.reference
+
+    fun childEventListenerRecycler() {
+        val context = this
+        val childEventListener = object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("childEventListener.onChildAdded", "onChildAdded:" + snapshot.key!!)
+
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("childEventListener.onChildChanged", "onChildChanged: ${snapshot.key}")
+
+                // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so displayed the changed comment.
+//            val newComment = snapshot.getValue<Comment>()
+            val postID = snapshot.key
+
+                // ...
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Log.d("childEventListener.onChildRemoved", "onChildRemoved:" + snapshot.key!!)
+
+                // A comment has changed, use the key to determine if we are displaying this
+                // comment and if so remove it.
+                val postID = snapshot.key
+
+                // ...
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(e: DatabaseError) {
+               Log.d("childEventListener.onCancelled", "onCancelled: $e")
+            }
+        }
+    }
+
+    
+
+    /*fun addPostEventListener(postReference: DatabaseReference) {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Get Post object and use the values to update the UI
+                val post = PostDetail_(
+                    gatheringTitle = dataSnapshot.children("")
+                )
+                // ...
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w("postListener", "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+
+        postReference.addValueEventListener(postListener)
+    }*/
+
 
     suspend fun upload(postData: Map<String, Any>): Boolean {
         val key = database.child("posts").push().key
