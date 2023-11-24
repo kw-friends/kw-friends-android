@@ -95,7 +95,7 @@ fun SearchTextField(
                     .height(IntrinsicSize.Min)
                     .clip(RoundedCornerShape(30.dp))
                     .background(containerColor)
-                    .padding(horizontal = 12.dp),
+                    .padding(start = 13.dp, end = 50.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (value.isEmpty()) {
@@ -114,6 +114,6 @@ fun SearchTextField(
 
 @Preview
 @Composable
-fun SearchTextPreview() {
-    FullTextField(placeholder = "Preview", value = "", onValueChange = {})
+fun BasicTextFieldPreview() {
+    SearchTextField(placeholder = "Preview", value = "", onValueChange = {})
 }
