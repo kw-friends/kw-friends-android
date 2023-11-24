@@ -58,55 +58,62 @@ fun HomeTopAppBar(
             containerColor = Color(0xFFE2A39B)
         ),
         actions = {
-            Box {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    if (isSearching) {
-                        IconButton(
-                            onClick = clickBackButton,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBackIosNew,
-                                contentDescription = "Exit",
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+            ) {
+                if (isSearching) {
+                    IconButton(
+                        onClick = clickBackButton,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Exit",
+                            modifier = Modifier.size(30.dp)
+                        )
                     }
-                    SearchTextField(
-                        value = "",
-                        onValueChange = {},
+                }
+                Box(if(isSearching) Modifier.weight(1f) else Modifier) {
+                    Row(Modifier.align(Alignment.CenterEnd)) {
+                        SearchTextField(
+                            value = "",
+                            onValueChange = {},
+                            enable = isSearching,
+                            modifier = Modifier
+                                .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
+                                .then(
+                                    if(isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
+                                )
+
+                        )
+                    }
+                    IconButton(
+                        onClick = clickSearchButton,
                         modifier = Modifier
-                            .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
-                            .width(if(isSearching) 290.dp else 0.dp)
-                    )
+                            .padding(end = 8.dp)
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            modifier = Modifier.size(35.dp)
+                        )
+                    }
                 }
                 IconButton(
-                    onClick = clickSearchButton,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .align(Alignment.CenterEnd)
-
+                    onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
+                    modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Account",
                         modifier = Modifier.size(35.dp)
                     )
                 }
             }
 
-            IconButton(
-                onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
-                modifier = Modifier.padding(end = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Account",
-                    modifier = Modifier.size(35.dp)
-                )
-            }
+
+
         },
     )
 }

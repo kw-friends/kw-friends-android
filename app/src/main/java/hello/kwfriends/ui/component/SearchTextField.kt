@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,10 +28,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,14 +38,11 @@ import hello.kwfriends.ui.theme.AppFont
 fun SearchTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
-    isPassword: Boolean = false,
-    canValueChange: Boolean = true,
     value: String,
     onValueChange: (String) -> Unit,
+    enable: Boolean = true,
     maxLines: Int = 1,
     isSingleLine: Boolean = true,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    imeAction: ImeAction = ImeAction.Done,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
 ) {
     val focusManager = LocalFocusManager.current
@@ -62,8 +54,8 @@ fun SearchTextField(
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
 
     BasicTextField(value = value,
-        onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
-        enabled = canValueChange,
+        onValueChange = if (enable) onValueChange else { _ -> Unit },
+        enabled = enable,
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
@@ -73,17 +65,13 @@ fun SearchTextField(
                     .heightIn(min = 48.dp)
             )
             .onFocusChanged {
-                if (it.isFocused && canValueChange) {
+                if (it.isFocused) {
                     containerColor = Color(0xFFDADADA)
                     textColor = Color.Black
                     placeholderColor = Color(0xFF4B4B4B)
-                } else if (!it.isFocused && canValueChange) {
+                } else {
                     containerColor = Color(0xFFE9E9E9)
                     textColor = Color(0xFF161616)
-                    placeholderColor = Color(0xFF4B4B4B)
-                } else {
-                    containerColor = Color(0xFFC7C4C4)
-                    textColor = Color(0xFF4B4B4B)
                     placeholderColor = Color(0xFF4B4B4B)
                 }
             },
@@ -94,12 +82,6 @@ fun SearchTextField(
             color = textColor,
             textAlign = TextAlign.Start,
         ),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = if (isPassword) {
-            KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction)
-        } else {
-            KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
-        },
         cursorBrush = SolidColor(Color(0xF1363636)),
         maxLines = maxLines,
         keyboardActions = KeyboardActions(onDone = {
