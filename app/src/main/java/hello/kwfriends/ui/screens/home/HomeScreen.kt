@@ -37,7 +37,7 @@ import hello.kwfriends.ui.screens.settings.SettingsViewModel
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun HomeScreen(
     homeViewModel: HomeViewModel,
     settingsViewModel: SettingsViewModel,
     navigation: NavController

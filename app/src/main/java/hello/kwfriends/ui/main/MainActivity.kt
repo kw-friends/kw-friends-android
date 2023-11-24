@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
-import hello.kwfriends.ui.screens.home.MainScreen
+import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.newPost.NewPostScreen
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
@@ -30,7 +30,7 @@ class MainActivity : BaseActivity() {
 
                 NavHost(navController = navController, startDestination = startDestination) {
                     composable(Routes.HOME_SCREEN) {
-                        MainScreen(
+                        HomeScreen(
                             homeViewModel = homeViewModel,
                             settingsViewModel = settingsViewModel,
                             navigation = navController
