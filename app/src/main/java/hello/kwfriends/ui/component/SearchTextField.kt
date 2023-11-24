@@ -66,7 +66,7 @@ fun SearchTextField(
             )
             .onFocusChanged {
                 if (it.isFocused) {
-                    containerColor = Color(0xFFDADADA)
+                    containerColor = Color(0xFFE9E9E9)
                     textColor = Color.Black
                     placeholderColor = Color(0xFF4B4B4B)
                 } else {
