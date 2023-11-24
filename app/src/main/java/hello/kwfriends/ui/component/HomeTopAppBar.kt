@@ -26,6 +26,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -39,8 +41,9 @@ fun HomeTopAppBar(
     searchText: String,
     setSearchText: (String) -> Unit,
     clickSearchButton: () -> Unit,
-    clickBackButton: () -> Unit
-    ) {
+    clickBackButton: () -> Unit,
+    focusRequester: FocusRequester
+) {
     TopAppBar(
         title = {
             AnimatedVisibility(
@@ -82,7 +85,11 @@ fun HomeTopAppBar(
                             onValueChange = setSearchText,
                             enable = isSearching,
                             modifier = Modifier
-                                .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
+                                .animateContentSize(
+                                    animationSpec = tween(easing = LinearOutSlowInEasing),
+
+                                )
+                                .focusRequester(focusRequester)
                                 .then(
                                     if (isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
                                 )
