@@ -52,7 +52,7 @@ fun HomeTopAppBar(
                 exit = fadeOut(animationSpec = tween(durationMillis = 100))
             ) {
                 Text(
-                    text = "모임 목록",
+                    text = "모임 찾기",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(5.dp),
                     maxLines = 1
