@@ -23,6 +23,20 @@ class HomeViewModel : ViewModel() {
     var isRefreshing by mutableStateOf(false)
     //검색 상태 저장 변수
     var isSearching by mutableStateOf(false)
+    //검색 텍스트 저장 변수
+    var searchContent by mutableStateOf("")
+
+    //검색 텍스트 수정 함수
+    fun setSearchContentText(text: String) { searchContent = text }
+
+    fun onclickSearchButton() {
+        if(isSearching) {
+            /*TODO 검색*/
+        }
+        else {
+            isSearching = true
+        }
+    }
 
     fun participationStatusMapInit(postID: String, status: ParticipationStatus) {
         participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {

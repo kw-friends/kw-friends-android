@@ -57,7 +57,9 @@ fun MainScreen(
             HomeTopAppBar(
                 navigation =  navigation,
                 isSearching = homeViewModel.isSearching,
-                clickSearchButton = { homeViewModel.isSearching = true },
+                searchText = homeViewModel.searchContent,
+                setSearchText = { homeViewModel.setSearchContentText(it) },
+                clickSearchButton = { homeViewModel.onclickSearchButton() },
                 clickBackButton = { homeViewModel.isSearching = false },
             )
         },

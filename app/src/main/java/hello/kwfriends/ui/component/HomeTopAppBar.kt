@@ -36,6 +36,8 @@ import hello.kwfriends.ui.main.Routes
 fun HomeTopAppBar(
     navigation: NavController,
     isSearching: Boolean,
+    searchText: String,
+    setSearchText: (String) -> Unit,
     clickSearchButton: () -> Unit,
     clickBackButton: () -> Unit
     ) {
@@ -76,13 +78,13 @@ fun HomeTopAppBar(
                 Box(if(isSearching) Modifier.weight(1f) else Modifier) {
                     Row(Modifier.align(Alignment.CenterEnd)) {
                         SearchTextField(
-                            value = "",
-                            onValueChange = {},
+                            value = searchText,
+                            onValueChange = setSearchText,
                             enable = isSearching,
                             modifier = Modifier
                                 .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
                                 .then(
-                                    if(isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
+                                    if (isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
                                 )
 
                         )
