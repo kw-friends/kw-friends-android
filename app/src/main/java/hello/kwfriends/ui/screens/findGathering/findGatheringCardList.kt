@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.screens.home.HomeViewModel
 
@@ -124,8 +125,7 @@ fun GatheringCard(
 
 
 @Composable
-fun FindGatheringCardList(viewModel: HomeViewModel) {
-    val posts = viewModel.posts
+fun FindGatheringCardList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
             GatheringCard(

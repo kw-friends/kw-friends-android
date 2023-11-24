@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
+    var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
@@ -27,13 +28,28 @@ class HomeViewModel : ViewModel() {
     var searchContent by mutableStateOf("")
 
     //검색 텍스트 수정 함수
-    fun setSearchContentText(text: String) { searchContent = text }
+    fun setSearchContentText(text: String) {
+        searchContent = text
+        if(isSearching) {
+            searchingPosts = search(posts)
+        }
+    }
+
+    fun search(targetPosts: List<PostDetail>): List<PostDetail> {
+        /* TODO 검색 알고리즘 최적화 */
+        Log.w("Lim", "Searching")
+        val resultPosts = targetPosts.filter { post ->
+            post.gatheringTitle.contains(searchContent, ignoreCase = true) || //제목
+            post.gatheringLocation.contains(searchContent, ignoreCase = true) || //장소
+            post.gatheringTime.contains(searchContent, ignoreCase = true) || //시간
+            post.gatheringDescription.contains(searchContent, ignoreCase = true) || //설명
+            post.participantStatus.toString().contains(searchContent, ignoreCase = true) //상태
+        }
+        return resultPosts
+    }
 
     fun onclickSearchButton() {
-        if(isSearching) {
-            /*TODO 검색*/
-        }
-        else {
+        if(!isSearching) {
             isSearching = true
         }
     }

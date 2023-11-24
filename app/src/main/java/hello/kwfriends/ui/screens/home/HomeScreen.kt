@@ -86,7 +86,12 @@ fun MainScreen(
                 .padding(it)
                 .pullRefresh(pullRefreshState)
         ) {
-            FindGatheringCardList(viewModel = homeViewModel)
+            if(homeViewModel.isSearching) {
+                FindGatheringCardList(homeViewModel.searchingPosts, viewModel = homeViewModel)
+            }
+            else {
+                FindGatheringCardList(homeViewModel.posts, viewModel = homeViewModel)
+            }
             PullRefreshIndicator(
                 refreshing = homeViewModel.isRefreshing,
                 state = pullRefreshState,
