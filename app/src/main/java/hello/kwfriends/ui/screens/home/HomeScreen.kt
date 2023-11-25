@@ -3,6 +3,7 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -59,6 +60,13 @@ fun MainScreen(
     LaunchedEffect(!homeViewModel.isSearching) {
         focusRequester.requestFocus()
     }
+    //뒤로 가기 버튼을 눌렀을 때 실행할 코드
+    BackHandler {
+        if(homeViewModel.isSearching) {
+            homeViewModel.isSearching = false
+        }
+    }
+
     Scaffold(
         //앱 바
         topBar = {
