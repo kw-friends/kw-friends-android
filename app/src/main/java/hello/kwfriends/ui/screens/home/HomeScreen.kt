@@ -3,39 +3,36 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
+import hello.kwfriends.ui.component.HomeTopAppBar
+import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
@@ -43,7 +40,7 @@ fun HomeScreen(
     navigation: NavController
 ) {
     //유저 개인 설정 세팅값 받아오기
-    if(!settingsViewModel.userSettingValuesLoaded) {
+    if (!settingsViewModel.userSettingValuesLoaded) {
         settingsViewModel.userSettingValuesLoaded = true
         settingsViewModel.userSettingValuesLoad()
     }
@@ -58,33 +55,32 @@ fun HomeScreen(
             homeViewModel.refreshPost()
         }
     )
+    //검색창에 대한 포커스
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(!homeViewModel.isSearching) {
+        focusRequester.requestFocus()
+    }
+    //뒤로 가기 버튼을 눌렀을 때 실행할 코드
+    BackHandler {
+        if(homeViewModel.isSearching) {
+            homeViewModel.isSearching = false
+        }
+    }
+
     Scaffold(
+        //앱 바
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "KW Friends",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(5.dp)
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFE2A39B)
-                ),
-                actions = {
-                    IconButton(
-                        onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Account",
-                            modifier = Modifier.size(35.dp)
-                        )
-                    }
-                },
+            HomeTopAppBar(
+                navigation =  navigation,
+                isSearching = homeViewModel.isSearching,
+                searchText = homeViewModel.searchText,
+                setSearchText = { homeViewModel.setSearchContentText(it) },
+                clickSearchButton = { homeViewModel.onclickSearchButton() },
+                clickBackButton = { homeViewModel.isSearching = false },
+                focusRequester = focusRequester,
             )
         },
+        //플로팅 버튼
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 text = { Text(text = "모임 생성") },
@@ -96,8 +92,28 @@ fun HomeScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.padding(it).pullRefresh(pullRefreshState)) {
-            FindGatheringCardList(viewModel = homeViewModel)
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .pullRefresh(pullRefreshState)
+        ) {
+            //검색중인지
+            if(homeViewModel.isSearching) {
+                if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
+                    //검색 결과 없을때 표시할 화면
+                    NoSearchResult(homeViewModel.searchText)
+                }
+                else {
+                    //검색 결과 화면
+                    FindGatheringCardList(homeViewModel.searchingPosts, viewModel = homeViewModel)
+                }
+            }
+            //검색중 아닐때는 모든 모임 목록 표시
+            else {
+                FindGatheringCardList(homeViewModel.posts, viewModel = homeViewModel)
+            }
+
+            //로딩 아이콘
             PullRefreshIndicator(
                 refreshing = homeViewModel.isRefreshing,
                 state = pullRefreshState,

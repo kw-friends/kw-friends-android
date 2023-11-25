@@ -17,10 +17,45 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
+    var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
+    //검색 상태 저장 변수
+    var isSearching by mutableStateOf(false)
+    //검색 텍스트 저장 변수
+    var searchText by mutableStateOf("")
+
+    //검색 텍스트 수정 함수
+    fun setSearchContentText(text: String) {
+        searchText = text
+        if(isSearching) {
+            searchingPosts = search(posts)
+        }
+    }
+
+    fun search(targetPosts: List<PostDetail>): List<PostDetail> {
+        /* TODO 검색 알고리즘 최적화 */
+        Log.w("Lim", "Searching")
+        if(searchText == "") {
+            return listOf()
+        }
+        val resultPosts = targetPosts.filter { post ->
+            post.gatheringTitle.contains(searchText, ignoreCase = true) || //제목
+            post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
+            post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
+            post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
+            post.participantStatus.toString().contains(searchText, ignoreCase = true) //상태
+        }
+        return resultPosts
+    }
+
+    fun onclickSearchButton() {
+        if(!isSearching) {
+            isSearching = true
+        }
+    }
 
     fun participationStatusMapInit(postID: String, status: ParticipationStatus) {
         participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {
