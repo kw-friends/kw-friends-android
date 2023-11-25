@@ -38,6 +38,9 @@ class HomeViewModel : ViewModel() {
     fun search(targetPosts: List<PostDetail>): List<PostDetail> {
         /* TODO 검색 알고리즘 최적화 */
         Log.w("Lim", "Searching")
+        if(searchContent == "") {
+            return listOf()
+        }
         val resultPosts = targetPosts.filter { post ->
             post.gatheringTitle.contains(searchContent, ignoreCase = true) || //제목
             post.gatheringLocation.contains(searchContent, ignoreCase = true) || //장소
