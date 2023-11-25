@@ -3,10 +3,7 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -16,7 +13,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.HomeTopAppBar
+import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
@@ -69,7 +65,7 @@ fun MainScreen(
             HomeTopAppBar(
                 navigation =  navigation,
                 isSearching = homeViewModel.isSearching,
-                searchText = homeViewModel.searchContent,
+                searchText = homeViewModel.searchText,
                 setSearchText = { homeViewModel.setSearchContentText(it) },
                 clickSearchButton = { homeViewModel.onclickSearchButton() },
                 clickBackButton = { homeViewModel.isSearching = false },
@@ -95,26 +91,9 @@ fun MainScreen(
         ) {
             //검색중인지
             if(homeViewModel.isSearching) {
-                if(homeViewModel.searchContent != "" && homeViewModel.searchingPosts.isEmpty()) {
+                if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
                     //검색 결과 없을때 표시할 화면
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Box(modifier = Modifier.weight(1f))
-                        Column(
-                            modifier = Modifier.weight(6f),
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            Text(
-                                text = " \"${homeViewModel.searchContent}\"에 대한 검색 결과가 없습니다",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color.DarkGray,
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                maxLines = 100
-                            )
-                        }
-                    }
+                    NoSearchResult(homeViewModel.searchText)
                 }
                 else {
                     //검색 결과 화면
@@ -125,6 +104,7 @@ fun MainScreen(
             else {
                 FindGatheringCardList(homeViewModel.posts, viewModel = homeViewModel)
             }
+
             //로딩 아이콘
             PullRefreshIndicator(
                 refreshing = homeViewModel.isRefreshing,

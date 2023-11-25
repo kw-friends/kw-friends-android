@@ -25,11 +25,11 @@ class HomeViewModel : ViewModel() {
     //검색 상태 저장 변수
     var isSearching by mutableStateOf(false)
     //검색 텍스트 저장 변수
-    var searchContent by mutableStateOf("")
+    var searchText by mutableStateOf("")
 
     //검색 텍스트 수정 함수
     fun setSearchContentText(text: String) {
-        searchContent = text
+        searchText = text
         if(isSearching) {
             searchingPosts = search(posts)
         }
@@ -38,15 +38,15 @@ class HomeViewModel : ViewModel() {
     fun search(targetPosts: List<PostDetail>): List<PostDetail> {
         /* TODO 검색 알고리즘 최적화 */
         Log.w("Lim", "Searching")
-        if(searchContent == "") {
+        if(searchText == "") {
             return listOf()
         }
         val resultPosts = targetPosts.filter { post ->
-            post.gatheringTitle.contains(searchContent, ignoreCase = true) || //제목
-            post.gatheringLocation.contains(searchContent, ignoreCase = true) || //장소
-            post.gatheringTime.contains(searchContent, ignoreCase = true) || //시간
-            post.gatheringDescription.contains(searchContent, ignoreCase = true) || //설명
-            post.participantStatus.toString().contains(searchContent, ignoreCase = true) //상태
+            post.gatheringTitle.contains(searchText, ignoreCase = true) || //제목
+            post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
+            post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
+            post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
+            post.participantStatus.toString().contains(searchText, ignoreCase = true) //상태
         }
         return resultPosts
     }
