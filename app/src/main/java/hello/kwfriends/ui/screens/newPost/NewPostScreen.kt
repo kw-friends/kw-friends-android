@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.newPost
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -32,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -62,6 +64,9 @@ fun NewPostScreen(
             postViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
         }
     }
+
+    //mutableList 내부 요소 변화를 관잘하고 태그 리스트의 변화에 따라 리컴포즈함
+    val tagList = remember { postViewModel.tagList.toMutableStateList() }
 
     Scaffold(
         topBar = {
@@ -97,7 +102,9 @@ fun NewPostScreen(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).verticalScroll(scrollState)) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .verticalScroll(scrollState)) {
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
                 placeholder = "",
@@ -122,9 +129,8 @@ fun NewPostScreen(
                 isError = !postViewModel.gatheringLocationStatus,
                 errorMessage = "필수 항목",
                 imeAction = ImeAction.Next,
-                externalTitle = "모임 위치",
-
-                )
+                externalTitle = "모임 위치"
+            )
             FullTextField(
                 placeholder = "",
                 value = postViewModel.gatheringTime,
@@ -186,7 +192,7 @@ fun NewPostScreen(
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
                 )
-                AddTags()
+                AddTags(tagList) { tagList.remove(it) }
             }
             Column(
                 modifier = Modifier
@@ -198,7 +204,6 @@ fun NewPostScreen(
                     style = MaterialTheme.typography.labelSmall,
                     color = Color(0xff888888)
                 )
-
                 Button(
                     onClick = {
                         if (!postViewModel.isUploading) {

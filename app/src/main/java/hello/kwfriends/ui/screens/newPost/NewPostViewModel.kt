@@ -37,6 +37,9 @@ class NewPostViewModel : ViewModel() {
     val _snackbarEvent = MutableStateFlow<String?>(null)
     val snackbarEvent: StateFlow<String?> get() = _snackbarEvent
 
+    //태그 저장 변수
+    var tagList by mutableStateOf(mutableListOf<String>("팀원모집", "번개모임", "정기모임"))
+
     fun showSnackbar(message: String) {
         _snackbarEvent.value = message
     }
