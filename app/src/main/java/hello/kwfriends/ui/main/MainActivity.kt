@@ -47,7 +47,6 @@ class MainActivity : BaseActivity() {
                     }
                     composable(Routes.NEW_POST_SCREEN) {
                         NewPostScreen(
-                            homeViewModel = homeViewModel,
                             postViewModel = NewPostViewModel(),
                             navigation = navController
                         )
