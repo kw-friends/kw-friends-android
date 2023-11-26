@@ -1,8 +1,8 @@
 package hello.kwfriends.ui.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddTags(tagList: List<String>, removeTag: (String) -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() } //클릭 시각적 효과 제거하기 위함
     FlowRow {
         for(item in tagList) {
             Row(
@@ -52,10 +54,13 @@ fun AddTags(tagList: List<String>, removeTag: (String) -> Unit) {
                     modifier = Modifier
                         .size(30.dp)
                         .padding(end = 10.dp)
-                        .clickable { removeTag(item) }
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = { removeTag(item) }
+                        )
                 )
             }
-
         }
         Box(
             modifier = Modifier
