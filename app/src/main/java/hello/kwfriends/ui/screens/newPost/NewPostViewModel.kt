@@ -118,18 +118,19 @@ class NewPostViewModel : ViewModel() {
                 isUploading = true
                 val result = Post_.upload(
                     PostDetail_(
-                        gatheringTitle= gatheringTitle,
-                        gatheringPromoter = gatheringPromoter,
+                        gatheringTitle = gatheringTitle,
+                        gatheringPromoterUID = gatheringPromoter,
                         gatheringLocation = gatheringLocation,
                         gatheringTime = gatheringTime,
                         maximumParticipants = maximumParticipants,
                         minimumParticipants = minimumParticipants,
                         gatheringDescription = gatheringDescription,
-                        participantStatus = ParticipationStatus.PARTICIPATED
+                        participantStatus = ParticipationStatus.PARTICIPATED,
+                        postID = "123"
                     ).toMap()
                 )
-                navigation.navigate(Routes.HOME_SCREEN)
                 isUploading = false
+                navigation.navigate(Routes.HOME_SCREEN)
             }
         } else {
             Log.w("NewPostViewModel", "부족한 정보가 있습니다.")

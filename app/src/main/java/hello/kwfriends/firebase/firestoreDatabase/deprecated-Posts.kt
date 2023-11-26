@@ -1,5 +1,6 @@
-package hello.kwfriends.firebase.firestoreDatabase
 
+package hello.kwfriends.firebase.firestoreDatabase
+/*
 import android.content.ContentValues
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
@@ -29,12 +30,14 @@ data class PostDetail(
     val postID: String
 )
 
+*/
 /*enum class ParticipationStatus {
     PARTICIPATED,
     NOT_PARTICIPATED,
     GETTING_IN,
     GETTING_OUT
-}*/
+}*//*
+
 
 object PostManager {
     val db = Firebase.firestore
@@ -133,7 +136,8 @@ object PostManager {
         }
     }
 
-    suspend fun updateParticipationState(target: String, viewModel: HomeViewModel) {
+    */
+/*suspend fun updateParticipationState(target: String, viewModel: HomeViewModel) {
         val getStatus = db.collection("posts").document(target)
             .collection("participants").get()
             .addOnSuccessListener { documentReference ->
@@ -167,7 +171,8 @@ object PostManager {
                     Log.w(ContentValues.TAG, "모임 참여 실패: ", e)
                 }.await()
         }
-    }
+    }*//*
+
 
     suspend fun deletePost(target: String) {
         db.collection("posts").document(target)
@@ -182,4 +187,4 @@ object PostManager {
     }
 
 
-}
+}*/

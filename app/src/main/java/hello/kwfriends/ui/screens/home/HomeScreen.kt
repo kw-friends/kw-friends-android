@@ -49,13 +49,14 @@ fun MainScreen(
     }
     //post 목록 불러오기
     LaunchedEffect(true) {
-        homeViewModel.getPostFromFirestore()
+        homeViewModel.initPostMap()
     }
     //아래로 당겨서 새로고침
     val pullRefreshState = rememberPullRefreshState(
         refreshing = homeViewModel.isRefreshing,
         onRefresh = {
             homeViewModel.refreshPost()
+
         }
     )
     Scaffold(

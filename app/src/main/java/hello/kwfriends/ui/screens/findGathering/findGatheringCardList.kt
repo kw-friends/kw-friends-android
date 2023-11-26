@@ -114,7 +114,8 @@ fun GatheringCard(
                                     postID = postID,
                                     viewModel = viewModel
                                 )
-                            })
+                            }
+                        )
                     }
                 }
             }
@@ -134,7 +135,7 @@ fun FindGatheringCardList(viewModel: HomeViewModel) {
                 minimumParticipants = postData.minimumParticipants,
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
-                promoter = postData.gatheringPromoter,
+                promoter = postData.gatheringPromoterUID,
                 description = postData.gatheringDescription,
                 postID = postData.postID,
                 viewModel = viewModel
