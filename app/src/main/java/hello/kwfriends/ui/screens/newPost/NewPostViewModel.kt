@@ -2,6 +2,7 @@ package hello.kwfriends.ui.screens.newPost
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -38,7 +39,13 @@ class NewPostViewModel : ViewModel() {
     val snackbarEvent: StateFlow<String?> get() = _snackbarEvent
 
     //태그 저장 변수
-    var tagList by mutableStateOf(mutableListOf<String>("팀원모집", "번개모임", "정기모임", "팀원모집", "번개모임", "정기모임", "팀원모집", "번개모임", "정기모임", "팀원모집", "번개모임", "정기모임"))
+    var tagMap = mutableStateMapOf(
+            "팀원 모집" to false,
+            "번개 모임" to false,
+            "정기" to false,
+            "밥" to false,
+            "스터디" to false
+        )
 
     fun showSnackbar(message: String) {
         _snackbarEvent.value = message

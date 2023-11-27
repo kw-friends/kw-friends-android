@@ -67,7 +67,7 @@ fun NewPostScreen(
     }
 
     //mutableList 내부 요소 변화를 관잘하고 태그 리스트의 변화에 따라 리컴포즈함
-    //val tagList = remember { postViewModel.tagList.toMutableStateList() }
+    //val tagMap = remember { postViewModel.tagMap.toMutableMap() }
 
     Scaffold(
         topBar = {
@@ -196,14 +196,14 @@ fun NewPostScreen(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-            FlowRow(modifier = Modifier.padding(horizontal = 14.dp)) {
-                postViewModel.tagList.forEach {
+            FlowRow(modifier = Modifier.padding(start = 14.dp)) {
+                postViewModel.tagMap.forEach {
                     TagChip(
                         modifier = Modifier.padding(4.dp),
-                        text = it,
+                        text = it.key,
                         icon = Icons.Filled.Person,
-                        selected = true,
-                        onClick = {}
+                        selected = it.value,
+                        onClick = { postViewModel.tagMap[it.key] = !it.value }
                     )
                 }
             }
