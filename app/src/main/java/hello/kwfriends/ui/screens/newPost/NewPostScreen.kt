@@ -1,8 +1,9 @@
 package hello.kwfriends.ui.screens.newPost
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,20 +35,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import hello.kwfriends.ui.component.AddTags
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
+import hello.kwfriends.ui.component.TagChip
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun NewPostScreen(
     postViewModel: NewPostViewModel,
@@ -64,9 +65,6 @@ fun NewPostScreen(
             postViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
         }
     }
-
-    //mutableList 내부 요소 변화를 관잘하고 태그 리스트의 변화에 따라 리컴포즈함
-    val tagList = remember { postViewModel.tagList.toMutableStateList() }
 
     Scaffold(
         topBar = {
@@ -102,9 +100,11 @@ fun NewPostScreen(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier
-            .padding(paddingValues)
-            .verticalScroll(scrollState)) {
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .verticalScroll(scrollState)
+        ) {
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
                 placeholder = "",
@@ -192,7 +192,17 @@ fun NewPostScreen(
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
                 )
-                AddTags(tagList) { tagList.remove(it) }
+            }
+            FlowRow(modifier = Modifier.padding(start = 14.dp)) {
+                postViewModel.tagMap.forEach {
+                    TagChip(
+                        modifier = Modifier.padding(4.dp),
+                        text = it.key,
+                        icon = Icons.Filled.Person,
+                        selected = it.value,
+                        onClick = { postViewModel.tagMap[it.key] = !it.value }
+                    )
+                }
             }
             Column(
                 modifier = Modifier

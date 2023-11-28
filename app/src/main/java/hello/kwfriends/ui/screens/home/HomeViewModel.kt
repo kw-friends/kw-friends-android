@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
+import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
@@ -26,6 +27,12 @@ class HomeViewModel : ViewModel() {
     var isSearching by mutableStateOf(false)
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
+    //태그 저장 변수
+    var tagMap = mutableStateMapOf<String, Boolean>().apply {
+        Tags.list.forEach { tag ->
+            this[tag] = false
+        }
+    }
 
     //검색 텍스트 수정 함수
     fun setSearchContentText(text: String) {
@@ -33,6 +40,24 @@ class HomeViewModel : ViewModel() {
         if(isSearching) {
             searchingPosts = search(posts)
         }
+    }
+
+    //필터 함수
+    fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
+        val activityTags = mutableListOf<String>()
+        tagMap.forEach{
+            if(it.value){
+                activityTags.add(it.key)
+            }
+        }
+        Log.w("Lim", "activityTags: $activityTags")
+        val resultPosts = targetPosts.filter { post ->
+            activityTags.all {
+                it in post.gatheringTags
+            }
+        }
+        Log.w("Lim", "filter: $resultPosts")
+        return resultPosts
     }
 
     fun search(targetPosts: List<PostDetail>): List<PostDetail> {
@@ -135,6 +160,7 @@ class HomeViewModel : ViewModel() {
                 currentParticipants = participantsCount.toString(),
                 gatheringDescription = document.getString("gatheringDescription") ?: "",
                 participantStatus = participantStatus,
+                gatheringTags = document.data?.get("gatheringTags") as? List<String> ?: listOf(),
                 postID = document.id
             )
         }

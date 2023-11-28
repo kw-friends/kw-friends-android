@@ -4,11 +4,21 @@ package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -22,17 +32,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
+import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
@@ -66,6 +78,8 @@ fun HomeScreen(
             homeViewModel.isSearching = false
         }
     }
+    //태그 필터 리스트 스크롤 저장 변수
+    val scrollState = rememberScrollState()
 
     Scaffold(
         //앱 바
@@ -92,32 +106,55 @@ fun HomeScreen(
             )
         }
     ) {
-        Box(
-            modifier = Modifier
-                .padding(it)
-                .pullRefresh(pullRefreshState)
+        Box(modifier = Modifier.padding(it)
         ) {
-            //검색중인지
-            if(homeViewModel.isSearching) {
-                if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
-                    //검색 결과 없을때 표시할 화면
-                    NoSearchResult(homeViewModel.searchText)
+            Column(
+                modifier = Modifier.pullRefresh(pullRefreshState)
+            ) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(scrollState)
+                    .background(Color(0xFFE2A39B))
+                ) {
+                    Spacer(Modifier.width(8.dp))
+                    homeViewModel.tagMap.forEach {
+                        TagChip(
+                            modifier = Modifier.padding(4.dp),
+                            text = it.key,
+                            icon = Icons.Filled.Person,
+                            selected = it.value,
+                            onClick = { homeViewModel.tagMap[it.key] = !it.value }
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
                 }
+                //검색중인지
+                if(homeViewModel.isSearching) {
+                    if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
+                        //검색 결과 없을때 표시할 화면
+                        NoSearchResult(homeViewModel.searchText)
+                    }
+                    else {
+                        //검색 결과 화면
+                        FindGatheringCardList(
+                            homeViewModel.filter(homeViewModel.searchingPosts),
+                            viewModel = homeViewModel
+                        )
+                    }
+                }
+                //검색중 아닐때는 모든 모임 목록 표시
                 else {
-                    //검색 결과 화면
-                    FindGatheringCardList(homeViewModel.searchingPosts, viewModel = homeViewModel)
+                    FindGatheringCardList(
+                        homeViewModel.filter(homeViewModel.posts),
+                        viewModel = homeViewModel
+                    )
                 }
             }
-            //검색중 아닐때는 모든 모임 목록 표시
-            else {
-                FindGatheringCardList(homeViewModel.posts, viewModel = homeViewModel)
-            }
-
             //로딩 아이콘
             PullRefreshIndicator(
                 refreshing = homeViewModel.isRefreshing,
                 state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = Modifier.align(Alignment.TopCenter)
             )
         }
     }

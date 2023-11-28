@@ -2,11 +2,13 @@ package hello.kwfriends.ui.screens.newPost
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.auth.AuthViewModel
@@ -38,7 +40,11 @@ class NewPostViewModel : ViewModel() {
     val snackbarEvent: StateFlow<String?> get() = _snackbarEvent
 
     //태그 저장 변수
-    var tagList by mutableStateOf(mutableListOf<String>("팀원모집", "번개모임", "정기모임"))
+    var tagMap = mutableStateMapOf<String, Boolean>().apply {
+        Tags.list.forEach { tag ->
+            this[tag] = false
+        }
+    }
 
     fun showSnackbar(message: String) {
         _snackbarEvent.value = message
@@ -125,8 +131,8 @@ class NewPostViewModel : ViewModel() {
                     maximumParticipants = maximumParticipants,
                     minimumParticipants = minimumParticipants,
                     gatheringDescription = gatheringDescription,
+                    gatheringTags = tagMap.filter { it.value }.map { it.key },
                     newPostViewModel = this@NewPostViewModel
-
                 )
                 navigation.navigate(Routes.HOME_SCREEN)
                 isUploading = false

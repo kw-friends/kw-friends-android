@@ -25,6 +25,7 @@ data class PostDetail(
     val currentParticipants: String,
     val gatheringDescription: String,
     val participantStatus: ParticipationStatus,
+    val gatheringTags: List<String>,
     val postID: String
 )
 
@@ -87,6 +88,7 @@ object PostManager {
         maximumParticipants: String,
         minimumParticipants: String,
         gatheringDescription: String,
+        gatheringTags: List<String>,
         newPostViewModel: NewPostViewModel
     ) {
         val post: HashMap<String, Any> = hashMapOf(
@@ -97,7 +99,8 @@ object PostManager {
             "gatheringTime" to gatheringTime,
             "maximumParticipants" to maximumParticipants,
             "minimumParticipants" to minimumParticipants,
-            "gatheringDescription" to gatheringDescription
+            "gatheringDescription" to gatheringDescription,
+            "gatheringTags" to gatheringTags
         )
 
         try {
