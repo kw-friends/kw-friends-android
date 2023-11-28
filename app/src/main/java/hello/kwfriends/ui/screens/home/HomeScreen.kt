@@ -136,12 +136,18 @@ fun HomeScreen(
                     }
                     else {
                         //검색 결과 화면
-                        FindGatheringCardList(homeViewModel.searchingPosts, viewModel = homeViewModel)
+                        FindGatheringCardList(
+                            homeViewModel.filter(homeViewModel.searchingPosts),
+                            viewModel = homeViewModel
+                        )
                     }
                 }
                 //검색중 아닐때는 모든 모임 목록 표시
                 else {
-                    FindGatheringCardList(homeViewModel.posts, viewModel = homeViewModel)
+                    FindGatheringCardList(
+                        homeViewModel.filter(homeViewModel.posts),
+                        viewModel = homeViewModel
+                    )
                 }
             }
             //로딩 아이콘

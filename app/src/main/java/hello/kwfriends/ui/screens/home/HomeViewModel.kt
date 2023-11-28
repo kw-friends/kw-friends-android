@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
-    var filterPosts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
@@ -43,17 +42,23 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-//    fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
-//        val activityTags = mutableListOf<String>() .apply {
-//            tagMap.forEach{
-//                it.value
-//            }
-//        }
-//        val resultPosts = targetPosts.filter { post ->
-//
-//        }
-//        return resultPosts
-//    }
+    //필터 함수
+    fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
+        val activityTags = mutableListOf<String>()
+        tagMap.forEach{
+            if(it.value){
+                activityTags.add(it.key)
+            }
+        }
+        Log.w("Lim", "activityTags: $activityTags")
+        val resultPosts = targetPosts.filter { post ->
+            activityTags.all {
+                it in post.gatheringTags
+            }
+        }
+        Log.w("Lim", "filter: $resultPosts")
+        return resultPosts
+    }
 
     fun search(targetPosts: List<PostDetail>): List<PostDetail> {
         /* TODO 검색 알고리즘 최적화 */
