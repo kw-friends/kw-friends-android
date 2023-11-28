@@ -98,7 +98,11 @@ fun GatheringCard(
                 Row {
                     tags.forEach {
                         if(it.value) {
-                            Text("#${it.key}", style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                text = "#${it.key}",
+                                modifier = Modifier.padding(end = 4.dp),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
                         }
                     }
                 }
