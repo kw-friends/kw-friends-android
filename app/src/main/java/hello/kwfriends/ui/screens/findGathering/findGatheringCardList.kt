@@ -43,7 +43,7 @@ fun GatheringCard(
     maximumParticipants: String,
     time: String, //추후 datetime으로 변경,
     description: String,
-    tags: Map<String, Boolean>,
+    tags: List<String>,
     postID: String,
     viewModel: HomeViewModel
 ) {
@@ -97,13 +97,11 @@ fun GatheringCard(
                 )
                 Row {
                     tags.forEach {
-                        if(it.value) {
-                            Text(
-                                text = "#${it.key}",
-                                modifier = Modifier.padding(end = 4.dp),
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
+                        Text(
+                            text = "#${it}",
+                            modifier = Modifier.padding(end = 4.dp),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                     }
                 }
                 AnimatedVisibility(descriptionOpened) {

@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.QuerySnapshot
+import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
+    var filterPosts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
     var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
     //모임 새로고침 상태 저장 변수
@@ -26,6 +28,12 @@ class HomeViewModel : ViewModel() {
     var isSearching by mutableStateOf(false)
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
+    //태그 저장 변수
+    var tagMap = mutableStateMapOf<String, Boolean>().apply {
+        Tags.list.forEach { tag ->
+            this[tag] = false
+        }
+    }
 
     //검색 텍스트 수정 함수
     fun setSearchContentText(text: String) {
@@ -34,6 +42,18 @@ class HomeViewModel : ViewModel() {
             searchingPosts = search(posts)
         }
     }
+
+//    fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
+//        val activityTags = mutableListOf<String>() .apply {
+//            tagMap.forEach{
+//                it.value
+//            }
+//        }
+//        val resultPosts = targetPosts.filter { post ->
+//
+//        }
+//        return resultPosts
+//    }
 
     fun search(targetPosts: List<PostDetail>): List<PostDetail> {
         /* TODO 검색 알고리즘 최적화 */
@@ -135,7 +155,7 @@ class HomeViewModel : ViewModel() {
                 currentParticipants = participantsCount.toString(),
                 gatheringDescription = document.getString("gatheringDescription") ?: "",
                 participantStatus = participantStatus,
-                gatheringTags = document.data?.get("gatheringTags") as? Map<String, Boolean> ?: mapOf(),
+                gatheringTags = document.data?.get("gatheringTags") as? List<String> ?: listOf(),
                 postID = document.id
             )
         }

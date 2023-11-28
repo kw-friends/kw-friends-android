@@ -66,9 +66,6 @@ fun NewPostScreen(
         }
     }
 
-    //mutableList 내부 요소 변화를 관잘하고 태그 리스트의 변화에 따라 리컴포즈함
-    //val tagMap = remember { postViewModel.tagMap.toMutableMap() }
-
     Scaffold(
         topBar = {
             TopAppBar(
