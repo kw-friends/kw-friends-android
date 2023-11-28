@@ -25,6 +25,7 @@ data class PostDetail(
     val currentParticipants: String,
     val gatheringDescription: String,
     val participantStatus: ParticipationStatus,
+    val gatheringTags: Map<String, Boolean>,
     val postID: String
 )
 

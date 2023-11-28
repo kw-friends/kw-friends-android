@@ -43,6 +43,7 @@ fun GatheringCard(
     maximumParticipants: String,
     time: String, //추후 datetime으로 변경,
     description: String,
+    tags: Map<String, Boolean>,
     postID: String,
     viewModel: HomeViewModel
 ) {
@@ -94,6 +95,13 @@ fun GatheringCard(
                         .padding(end = 2.dp),
                     style = MaterialTheme.typography.bodySmall
                 )
+                Row {
+                    tags.forEach {
+                        if(it.value) {
+                            Text("#${it.key}", style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                }
                 AnimatedVisibility(descriptionOpened) {
                     Divider(
                         color = Color(0xFF353535),
@@ -136,6 +144,7 @@ fun FindGatheringCardList(posts: List<PostDetail>, viewModel: HomeViewModel) {
                 time = postData.gatheringTime,
                 promoter = postData.gatheringPromoter,
                 description = postData.gatheringDescription,
+                tags = postData.gatheringTags,
                 postID = postData.postID,
                 viewModel = viewModel
 

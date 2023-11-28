@@ -135,6 +135,7 @@ class HomeViewModel : ViewModel() {
                 currentParticipants = participantsCount.toString(),
                 gatheringDescription = document.getString("gatheringDescription") ?: "",
                 participantStatus = participantStatus,
+                gatheringTags = document.data?.get("gatheringTags") as? Map<String, Boolean> ?: mapOf(),
                 postID = document.id
             )
         }
