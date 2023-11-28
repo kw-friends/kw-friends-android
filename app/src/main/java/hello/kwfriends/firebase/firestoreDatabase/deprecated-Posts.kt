@@ -87,6 +87,7 @@ object PostManager {
         maximumParticipants: String,
         minimumParticipants: String,
         gatheringDescription: String,
+        gatheringTags: Map<String, Boolean>,
         newPostViewModel: NewPostViewModel
     ) {
         val post: HashMap<String, Any> = hashMapOf(
@@ -97,7 +98,8 @@ object PostManager {
             "gatheringTime" to gatheringTime,
             "maximumParticipants" to maximumParticipants,
             "minimumParticipants" to minimumParticipants,
-            "gatheringDescription" to gatheringDescription
+            "gatheringDescription" to gatheringDescription,
+            "gatheringTags" to gatheringTags
         )
 
         try {

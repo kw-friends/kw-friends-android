@@ -132,8 +132,8 @@ class NewPostViewModel : ViewModel() {
                     maximumParticipants = maximumParticipants,
                     minimumParticipants = minimumParticipants,
                     gatheringDescription = gatheringDescription,
+                    gatheringTags = tagMap,
                     newPostViewModel = this@NewPostViewModel
-
                 )
                 navigation.navigate(Routes.HOME_SCREEN)
                 isUploading = false
