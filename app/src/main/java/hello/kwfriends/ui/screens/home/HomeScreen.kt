@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
@@ -34,7 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import hello.kwfriends.ui.component.CheckboxStyle2
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.component.TagChip
@@ -106,6 +110,55 @@ fun HomeScreen(
             )
         }
     ) {
+        if(homeViewModel.reportDialogState.first) {
+            AlertDialog(
+                title = { Text(text = "신고하기", fontSize = 20.sp) },
+                text = {
+                    Column {
+                        repeat(3) {
+                            CheckboxStyle2(
+                                modifier = Modifier.padding(2.dp),
+                                text = "부적절한 닉네임",
+                                textColor = Color.Black,
+                                fontSize = 17.sp,
+                                checkBoxSize = 17.dp,
+                                checked = false,
+                                onClicked = {}
+                            )
+                            CheckboxStyle2(
+                                modifier = Modifier.padding(2.dp),
+                                text = "부적절한 게시글",
+                                textColor = Color.Black,
+                                fontSize = 17.sp,
+                                checkBoxSize = 17.dp,
+                                checked = false,
+                                onClicked = {}
+                            )
+                            CheckboxStyle2(
+                                modifier = Modifier.padding(2.dp),
+                                text = "부적절한 행동",
+                                textColor = Color.Black,
+                                fontSize = 17.sp,
+                                checkBoxSize = 17.dp,
+                                checked = false,
+                                onClicked = {}
+                            )
+                        }
+                    }
+                },
+                onDismissRequest = { homeViewModel.reportDialogState = false to null },
+                confirmButton = {
+                    TextButton(onClick = { homeViewModel.report() }) {
+                        Text(text = "신고")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { homeViewModel.reportDialogState = false to null }) {
+                        Text(text = "취소")
+                    }
+                }
+            )
+        }
         Column(modifier = Modifier.padding(it)) {
             Row(modifier = Modifier
                 .fillMaxWidth()

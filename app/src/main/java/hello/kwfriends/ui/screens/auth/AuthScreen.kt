@@ -142,6 +142,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "아이디 저장",
+                            textColor = Color(0xFFF1F1F1),
                             checked = AuthViewModel.idSaveChecked,
                             onCheckedChange = {
                                 AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked
@@ -293,6 +294,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "이용약관 및 개인정보 처리방침에 동의합니다.",
+                            textColor = Color(0xFFF1F1F1),
                             checked = true,
                             onCheckedChange = { },
                             onTextClicked = { }
@@ -461,6 +463,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "남자",
+                            textColor = Color(0xFFF1F1F1),
                             checked = AuthViewModel.inputGender == "male",
                             onCheckedChange = { AuthViewModel.inputGender = "male" },
                             onTextClicked = { AuthViewModel.inputGender = "male" }
@@ -468,6 +471,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(17.dp))
                         CheckboxStyle1(
                             text = "여자",
+                            textColor = Color(0xFFF1F1F1),
                             checked = AuthViewModel.inputGender == "female",
                             onCheckedChange = { AuthViewModel.inputGender = "female" },
                             onTextClicked = { AuthViewModel.inputGender = "female" }
@@ -475,7 +479,8 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(17.dp))
                         CheckboxStyle1(
                             text = "기타",
-                            AuthViewModel.inputGender == "etc",
+                            textColor = Color(0xFFF1F1F1),
+                            checked = AuthViewModel.inputGender == "etc",
                             onCheckedChange = { AuthViewModel.inputGender = "etc" },
                             onTextClicked = { AuthViewModel.inputGender = "etc" }
                         )

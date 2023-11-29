@@ -84,6 +84,7 @@ fun GatheringCard(
                     DropdownMenuItem(
                         text = { Text("신고") },
                         onClick = {
+                            expanded = false
                             viewModel.reportDialogState = true to postID
                         },
                         leadingIcon = {
