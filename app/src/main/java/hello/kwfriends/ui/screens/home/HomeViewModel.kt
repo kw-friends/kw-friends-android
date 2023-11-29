@@ -33,6 +33,8 @@ class HomeViewModel : ViewModel() {
             this[tag] = false
         }
     }
+    //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
+    var reportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
     //검색 텍스트 수정 함수
     fun setSearchContentText(text: String) {
@@ -40,6 +42,10 @@ class HomeViewModel : ViewModel() {
         if(isSearching) {
             searchingPosts = search(posts)
         }
+    }
+
+    fun report(postID: String) {
+
     }
 
     //필터 함수
