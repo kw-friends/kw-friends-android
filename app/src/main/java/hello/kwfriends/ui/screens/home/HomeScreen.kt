@@ -106,56 +106,59 @@ fun HomeScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.padding(it)
-        ) {
-            Column(
-                modifier = Modifier.pullRefresh(pullRefreshState)
+        Column(modifier = Modifier.padding(it)) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(scrollState)
+                .background(Color(0xFFE2A39B))
             ) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(scrollState)
-                    .background(Color(0xFFE2A39B))
-                ) {
-                    Spacer(Modifier.width(8.dp))
-                    homeViewModel.tagMap.forEach {
-                        TagChip(
-                            modifier = Modifier.padding(4.dp),
-                            text = it.key,
-                            icon = Icons.Filled.Person,
-                            selected = it.value,
-                            onClick = { homeViewModel.tagMap[it.key] = !it.value }
-                        )
-                    }
-                    Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(8.dp))
+                homeViewModel.tagMap.forEach {
+                    TagChip(
+                        modifier = Modifier.padding(4.dp),
+                        text = it.key,
+                        icon = Icons.Filled.Person,
+                        selected = it.value,
+                        onClick = { homeViewModel.tagMap[it.key] = !it.value }
+                    )
                 }
-                //검색중인지
-                if(homeViewModel.isSearching) {
-                    if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
-                        //검색 결과 없을때 표시할 화면
-                        NoSearchResult(homeViewModel.searchText)
+                Spacer(Modifier.width(8.dp))
+            }
+            Box {
+                Column(
+                    modifier = Modifier.pullRefresh(pullRefreshState)
+                ) {
+
+                    //검색중인지
+                    if(homeViewModel.isSearching) {
+                        if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
+                            //검색 결과 없을때 표시할 화면
+                            NoSearchResult(homeViewModel.searchText)
+                        }
+                        else {
+                            //검색 결과 화면
+                            FindGatheringCardList(
+                                homeViewModel.filter(homeViewModel.searchingPosts),
+                                viewModel = homeViewModel
+                            )
+                        }
                     }
+                    //검색중 아닐때는 모든 모임 목록 표시
                     else {
-                        //검색 결과 화면
                         FindGatheringCardList(
-                            homeViewModel.filter(homeViewModel.searchingPosts),
+                            homeViewModel.filter(homeViewModel.posts),
                             viewModel = homeViewModel
                         )
                     }
                 }
-                //검색중 아닐때는 모든 모임 목록 표시
-                else {
-                    FindGatheringCardList(
-                        homeViewModel.filter(homeViewModel.posts),
-                        viewModel = homeViewModel
-                    )
-                }
+                //로딩 아이콘
+                PullRefreshIndicator(
+                    refreshing = homeViewModel.isRefreshing,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
             }
-            //로딩 아이콘
-            PullRefreshIndicator(
-                refreshing = homeViewModel.isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
+
     }
 }
