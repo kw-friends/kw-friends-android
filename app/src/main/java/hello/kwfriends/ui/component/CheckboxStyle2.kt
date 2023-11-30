@@ -37,7 +37,7 @@ fun CheckboxStyle2(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.clickable { onClicked }
+        modifier = modifier.clickable { onClicked() }
     ) {
         Box {
             Spacer(
@@ -48,11 +48,11 @@ fun CheckboxStyle2(
             )
             Checkbox(
                 checked = checked,
-                onCheckedChange = {},
+                onCheckedChange = { },
                 colors = CheckboxDefaults.colors(
                     uncheckedColor = Color.Transparent,
                     checkedColor = Color.Transparent,
-                    checkmarkColor = Color(0xFF1F1F1F)
+                    checkmarkColor = Color.Red
                 ),
                 modifier = Modifier
                     .size(checkBoxSize)

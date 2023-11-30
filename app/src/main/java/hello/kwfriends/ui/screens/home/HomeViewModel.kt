@@ -28,13 +28,31 @@ class HomeViewModel : ViewModel() {
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
     //태그 저장 변수
-    var tagMap = mutableStateMapOf<String, Boolean>().apply {
+    var filterTagMap = mutableStateMapOf<String, Boolean>().apply {
         Tags.list.forEach { tag ->
             this[tag] = false
         }
     }
     //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
     var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
+    //신고 텍스트 리스트
+    val reportTextList by mutableStateOf(
+        listOf(
+            "게시판 성격에 부적절함",
+            "낚시/놀람/도배",
+            "음란물/불건전한 만남 및 대화",
+            "불쾌감을 주는 사용자",
+            "정당/정치인 비하 및 선거운동",
+            "유출/사칭/사기",
+            "상업적 광고 및 판매",
+            "욕설/비하"
+        )
+    )
+    var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
+
+    fun initReportChoice() {
+        reportChoice = mutableListOf()
+    }
 
     //검색 텍스트 수정 함수
     fun setSearchContentText(text: String) {
@@ -51,18 +69,16 @@ class HomeViewModel : ViewModel() {
     //필터 함수
     fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
         val activityTags = mutableListOf<String>()
-        tagMap.forEach{
+        filterTagMap.forEach{
             if(it.value){
                 activityTags.add(it.key)
             }
         }
-        Log.w("Lim", "activityTags: $activityTags")
         val resultPosts = targetPosts.filter { post ->
             activityTags.all {
                 it in post.gatheringTags
             }
         }
-        Log.w("Lim", "filter: $resultPosts")
         return resultPosts
     }
 

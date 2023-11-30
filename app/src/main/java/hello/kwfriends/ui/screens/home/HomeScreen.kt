@@ -3,6 +3,7 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -109,39 +110,33 @@ fun HomeScreen(
                 modifier = Modifier.padding(bottom = 35.dp)
             )
         }
-    ) {
+    ) { paddingValues ->
         if(homeViewModel.reportDialogState.first) {
+            homeViewModel.initReportChoice()
             AlertDialog(
-                title = { Text(text = "신고하기", fontSize = 20.sp) },
+                modifier = Modifier
+                    .padding(5.dp)
+                    .fillMaxWidth(),
+                title = { Text(text = "신고 사유 선택", fontSize = 20.sp) },
                 text = {
                     Column {
-                        repeat(3) {
+                        for(reportText in homeViewModel.reportTextList) {
                             CheckboxStyle2(
-                                modifier = Modifier.padding(2.dp),
-                                text = "부적절한 닉네임",
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                text = reportText,
                                 textColor = Color.Black,
                                 fontSize = 17.sp,
                                 checkBoxSize = 17.dp,
-                                checked = false,
-                                onClicked = {}
-                            )
-                            CheckboxStyle2(
-                                modifier = Modifier.padding(2.dp),
-                                text = "부적절한 게시글",
-                                textColor = Color.Black,
-                                fontSize = 17.sp,
-                                checkBoxSize = 17.dp,
-                                checked = false,
-                                onClicked = {}
-                            )
-                            CheckboxStyle2(
-                                modifier = Modifier.padding(2.dp),
-                                text = "부적절한 행동",
-                                textColor = Color.Black,
-                                fontSize = 17.sp,
-                                checkBoxSize = 17.dp,
-                                checked = false,
-                                onClicked = {}
+                                checked = reportText in homeViewModel.reportChoice,
+                                onClicked = {
+                                    if(reportText in homeViewModel.reportChoice) {
+                                        homeViewModel.reportChoice = ArrayList(homeViewModel.reportChoice).apply { remove(reportText) }
+                                    }
+                                    else {
+                                        homeViewModel.reportChoice = ArrayList(homeViewModel.reportChoice).apply { add(reportText) }
+                                    }
+                                    Log.w("Lim", "reportChoice: ${homeViewModel.reportChoice}")
+                                }
                             )
                         }
                     }
@@ -159,20 +154,20 @@ fun HomeScreen(
                 }
             )
         }
-        Column(modifier = Modifier.padding(it)) {
+        Column(modifier = Modifier.padding(paddingValues)) {
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(scrollState)
                 .background(Color(0xFFE2A39B))
             ) {
                 Spacer(Modifier.width(8.dp))
-                homeViewModel.tagMap.forEach {
+                homeViewModel.filterTagMap.forEach {
                     TagChip(
                         modifier = Modifier.padding(4.dp),
                         text = it.key,
                         icon = Icons.Filled.Person,
                         selected = it.value,
-                        onClick = { homeViewModel.tagMap[it.key] = !it.value }
+                        onClick = { homeViewModel.filterTagMap[it.key] = !it.value }
                     )
                 }
                 Spacer(Modifier.width(8.dp))

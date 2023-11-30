@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.outlined.Details
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -87,12 +86,12 @@ fun GatheringCard(
                             expanded = false
                             viewModel.reportDialogState = true to postID
                         },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Outlined.Details,
-                                contentDescription = null
-                            )
-                        },
+//                        leadingIcon = {
+//                            Icon(
+//                                Icons.Outlined.Details,
+//                                contentDescription = null
+//                            )
+//                        },
                         //trailingIcon = { Text("F11", textAlign = TextAlign.Center) }
                     )
                 }
