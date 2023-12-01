@@ -3,7 +3,6 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -115,7 +114,6 @@ fun HomeScreen(
             homeViewModel.initReportChoice()
             AlertDialog(
                 modifier = Modifier
-                    .padding(5.dp)
                     .fillMaxWidth(),
                 title = { Text(text = "신고 사유 선택", fontSize = 20.sp) },
                 text = {
@@ -135,7 +133,6 @@ fun HomeScreen(
                                     else {
                                         homeViewModel.reportChoice = ArrayList(homeViewModel.reportChoice).apply { add(reportText) }
                                     }
-                                    Log.w("Lim", "reportChoice: ${homeViewModel.reportChoice}")
                                 }
                             )
                         }

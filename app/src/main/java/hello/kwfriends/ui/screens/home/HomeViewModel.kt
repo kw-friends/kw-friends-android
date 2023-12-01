@@ -14,6 +14,7 @@ import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
+import hello.kwfriends.realtimeDatabase.Report
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -63,7 +64,13 @@ class HomeViewModel : ViewModel() {
     }
 
     fun report() {
-
+        viewModelScope.launch {
+            Report.report(
+                postID = reportDialogState.second!!,
+                reporterID = UserAuth.fa.currentUser!!.uid,
+                reason = reportChoice
+            )
+        }
     }
 
     //필터 함수
