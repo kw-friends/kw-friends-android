@@ -15,9 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
@@ -36,11 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import hello.kwfriends.ui.component.CheckboxStyle2
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
+import hello.kwfriends.ui.component.ReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
@@ -112,44 +109,7 @@ fun HomeScreen(
     ) { paddingValues ->
         if(homeViewModel.reportDialogState.first) {
             homeViewModel.initReportChoice()
-            AlertDialog(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                title = { Text(text = "신고 사유 선택", fontSize = 20.sp) },
-                text = {
-                    Column {
-                        for(reportText in homeViewModel.reportTextList) {
-                            CheckboxStyle2(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                text = reportText,
-                                textColor = Color.Black,
-                                fontSize = 17.sp,
-                                checkBoxSize = 17.dp,
-                                checked = reportText in homeViewModel.reportChoice,
-                                onClicked = {
-                                    if(reportText in homeViewModel.reportChoice) {
-                                        homeViewModel.reportChoice = ArrayList(homeViewModel.reportChoice).apply { remove(reportText) }
-                                    }
-                                    else {
-                                        homeViewModel.reportChoice = ArrayList(homeViewModel.reportChoice).apply { add(reportText) }
-                                    }
-                                }
-                            )
-                        }
-                    }
-                },
-                onDismissRequest = { homeViewModel.reportDialogState = false to null },
-                confirmButton = {
-                    TextButton(onClick = { homeViewModel.report() }) {
-                        Text(text = "신고")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { homeViewModel.reportDialogState = false to null }) {
-                        Text(text = "취소")
-                    }
-                }
-            )
+            ReportDialog(homeViewModel = homeViewModel)
         }
         Column(modifier = Modifier.padding(paddingValues)) {
             Row(modifier = Modifier
