@@ -65,11 +65,13 @@ class HomeViewModel : ViewModel() {
 
     fun report() {
         viewModelScope.launch {
+            reportDialogState = false to reportDialogState.second
             Report.report(
                 postID = reportDialogState.second!!,
                 reporterID = UserAuth.fa.currentUser!!.uid,
                 reason = reportChoice
             )
+            reportDialogState = false to null
         }
     }
 
