@@ -2,7 +2,6 @@ package hello.kwfriends.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
@@ -23,7 +22,8 @@ fun ReportDialog(homeViewModel: HomeViewModel) {
             Column {
                 for(reportText in homeViewModel.reportTextList) {
                     CheckboxStyle2(
-                        modifier = Modifier.padding(vertical = 8.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        clickablePadding = 8.dp,
                         text = reportText,
                         textColor = Color.Black,
                         fontSize = 17.sp,

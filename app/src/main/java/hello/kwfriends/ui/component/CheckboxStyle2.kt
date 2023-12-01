@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CheckboxStyle2(
     modifier: Modifier = Modifier,
+    clickablePadding: Dp = 0.dp,
     text: String,
     textColor: Color,
     fontSize: TextUnit = 15.sp,
@@ -37,7 +39,7 @@ fun CheckboxStyle2(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.clickable { onClicked() }
+        modifier = modifier.clickable { onClicked() }.padding(vertical = clickablePadding)
     ) {
         Box {
             Spacer(
@@ -48,7 +50,7 @@ fun CheckboxStyle2(
             )
             Checkbox(
                 checked = checked,
-                onCheckedChange = { },
+                onCheckedChange = { onClicked() },
                 colors = CheckboxDefaults.colors(
                     uncheckedColor = Color.Transparent,
                     checkedColor = Color.Transparent,
