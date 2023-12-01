@@ -107,10 +107,12 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
+        //신고 다이얼로그
         if(homeViewModel.reportDialogState.first) {
             homeViewModel.initReportChoice()
             ReportDialog(homeViewModel = homeViewModel)
         }
+        //태그
         Column(modifier = Modifier.padding(paddingValues)) {
             Row(modifier = Modifier
                 .fillMaxWidth()
@@ -133,7 +135,6 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier.pullRefresh(pullRefreshState)
                 ) {
-
                     //검색중인지
                     if(homeViewModel.isSearching) {
                         if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {

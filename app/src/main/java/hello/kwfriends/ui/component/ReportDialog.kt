@@ -43,7 +43,10 @@ fun ReportDialog(homeViewModel: HomeViewModel) {
         },
         onDismissRequest = { homeViewModel.reportDialogState = false to null },
         confirmButton = {
-            TextButton(onClick = { homeViewModel.report() }) {
+            TextButton(
+                onClick = { homeViewModel.report() },
+                enabled = homeViewModel.reportChoice.isNotEmpty(),
+            ) {
                 Text(text = "신고")
             }
         },
