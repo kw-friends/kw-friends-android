@@ -47,7 +47,7 @@ fun ReportDialog(homeViewModel: HomeViewModel) {
                 onClick = { homeViewModel.report() },
                 enabled = homeViewModel.reportChoice.isNotEmpty(),
             ) {
-                Text(text = "신고")
+                Text(text = "신고", color = if(homeViewModel.reportChoice.isEmpty()) Color.Gray else Color.Black )
             }
         },
         dismissButton = {
