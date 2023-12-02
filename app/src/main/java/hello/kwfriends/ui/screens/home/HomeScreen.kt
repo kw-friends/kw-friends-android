@@ -33,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.component.ReportDialog
@@ -42,6 +44,7 @@ import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
+import hello.kwfriends.ui.theme.KWFriendsTheme
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -166,5 +169,14 @@ fun HomeScreen(
             }
         }
 
+    }
+}
+
+@Preview
+@Composable
+fun testPreview(){
+    val navController = rememberNavController()
+    KWFriendsTheme {
+        HomeScreen(homeViewModel = HomeViewModel(), settingsViewModel = SettingsViewModel(), navigation = navController)
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,8 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.screens.home.HomeViewModel
@@ -168,24 +172,95 @@ fun GatheringCard(
     }
 }
 
+@Composable
+fun GathergingListItem(
+    title: String,
+    minimumParticipants: String,
+    maximumParticipants: String,
+    time: String, //추후 datetime으로 변경,
+    description: String,
+    tags: List<String>,
+    postID: String,
+    viewModel: HomeViewModel
+) {
+    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postID]
+    Column {
+        ListItem(
+            headlineContent = {
+                Column(Modifier.padding(vertical = 7.dp)) {
+                    Text(title, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default)
+                    Text(description, maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                    Text(time, maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
+                }
+            },
+            trailingContent = { Text("$currentParticipationStatus/$maximumParticipants") },
+        )
+        Divider(
+            modifier = Modifier.padding(horizontal = 5.dp),
+            color = Color.Gray,
+            thickness = 0.5.dp,
+        )
+    }
+}
+@Preview
+@Composable
+fun GathergingListItemPreview() {
+    FindGatheringCardList(listOf(PostDetail(
+        gatheringTitle = "Preview",
+        minimumParticipants = "Preview",
+        maximumParticipants = "Preview",
+        gatheringTime = "Preview",
+        gatheringDescription = "Preview",
+        gatheringTags = listOf("Preview"),
+        gatheringLocation = "",
+        gatheringPromoter = "",
+        currentParticipants = "",
+        participantStatus = ParticipationStatus.PARTICIPATED,
+        postID = "Preview",
+    )),
+        viewModel = HomeViewModel()
+    )
+//    GathergingListItem(
+//        title = "Preview",
+//        minimumParticipants = "Preview",
+//        maximumParticipants = "Preview",
+//        time = "Preview",
+//        description = "Preview",
+//        tags = listOf("Preview"),
+//        postID = "Preview",
+//        viewModel = HomeViewModel()
+//    )
+
+}
+
 
 @Composable
 fun FindGatheringCardList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
-            GatheringCard(
+            GathergingListItem(
                 title = postData.gatheringTitle,
-                location = postData.gatheringLocation,
                 minimumParticipants = postData.minimumParticipants,
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
-                promoter = postData.gatheringPromoter,
                 description = postData.gatheringDescription,
                 tags = postData.gatheringTags,
                 postID = postData.postID,
                 viewModel = viewModel
-
             )
+//            GatheringCard(
+//                title = postData.gatheringTitle,
+//                location = postData.gatheringLocation,
+//                minimumParticipants = postData.minimumParticipants,
+//                maximumParticipants = postData.maximumParticipants,
+//                time = postData.gatheringTime,
+//                promoter = postData.gatheringPromoter,
+//                description = postData.gatheringDescription,
+//                tags = postData.gatheringTags,
+//                postID = postData.postID,
+//                viewModel = viewModel
+//
+//            )
         }
     }
 }
