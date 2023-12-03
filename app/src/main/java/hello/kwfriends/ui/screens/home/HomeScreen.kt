@@ -15,26 +15,37 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -116,31 +127,89 @@ fun HomeScreen(
         }
     ) { paddingValues ->
         //포스트 정보 다이얼로그
-        //여백 없애는 법 -> https://stackoverflow.com/questions/65243956/jetpack-compose-fullscreen-dialog
         if (homeViewModel.postDialogState.first && homeViewModel.postDialogState.second != null) {
+            var menuExpanded by remember { mutableStateOf(false) }
             Dialog(
                 onDismissRequest = { homeViewModel.postDialogState = false to null },
                 properties = DialogProperties(
                     usePlatformDefaultWidth = false
                 )
             ) {
-                Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
-                    Column {
-                        Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "")
-                        Text(text = homeViewModel.postDialogState.second?.gatheringDescription ?: "")
-                        Text(text = homeViewModel.postDialogState.second?.gatheringLocation ?: "")
-                        Text(text = homeViewModel.postDialogState.second?.gatheringTime ?: "")
-                        Text(text = "${homeViewModel.postDialogState.second?.gatheringTags ?: listOf()}")
-                        Button(onClick = { homeViewModel.postDialogState = false to null }) {
-                            Text("돌아가기")
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                ) {
+                    IconButton(
+                        modifier = Modifier.align(Alignment.TopStart),
+                        onClick = { homeViewModel.postDialogState = false to null }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "back button"
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.TopEnd)
+                    ) {
+                        IconButton(
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            onClick = { menuExpanded = true }
+                        ) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "post menu")
                         }
-                        EnjoyButton(status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
-                            updateStatus = {
-                                homeViewModel.updateParticipationStatus(
-                                    postID = homeViewModel.postDialogState.second?.postID ?: "",
-                                    viewModel = homeViewModel
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("신고") },
+                                onClick = {
+                                    menuExpanded = false
+                                    homeViewModel.reportDialogState =
+                                        true to homeViewModel.postDialogState.second?.postID
+                                },
+//                        leadingIcon = {
+//                            Icon(
+//                                Icons.Outlined.Details,
+//                                contentDescription = null
+//                            )
+//                        },
+                                //trailingIcon = { Text("F11", textAlign = TextAlign.Center) }
+                            )
+                        }
+                    }
+                    EnjoyButton(
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 50.dp),
+                        status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
+                        updateStatus = {
+                            homeViewModel.updateParticipationStatus(
+                                postID = homeViewModel.postDialogState.second?.postID ?: "",
+                                viewModel = homeViewModel
+                            )
+                        }
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 50.dp, horizontal = 25.dp)
+                    ) {
+                        Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "", style = MaterialTheme.typography.headlineSmall, fontFamily = FontFamily.Default, fontWeight = FontWeight(600))
+                        Text(
+                            text = homeViewModel.postDialogState.second?.gatheringDescription ?: "", style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default
+                        )
+                        //Text(text = homeViewModel.postDialogState.second?.gatheringLocation ?: "")
+                        //Text(text = homeViewModel.postDialogState.second?.gatheringTime ?: "")
+                        Row(modifier = Modifier.padding(top = 10.dp)) {
+                            homeViewModel.postDialogState.second?.gatheringTags?.forEach {
+                                Text(
+                                    text = "#${it}",
+                                    modifier = Modifier.padding(end = 4.dp),
+                                    style = MaterialTheme.typography.bodySmall,
                                 )
-                            })
+                            }
+                        }
                     }
                 }
             }
