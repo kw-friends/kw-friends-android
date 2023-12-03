@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.findGathering
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -21,31 +22,29 @@ import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
 fun GathergingListItem(
-    title: String,
-    maximumParticipants: String,
-    description: String,
-    tags: List<String>,
-    postID: String,
+    postDetail: PostDetail,
     viewModel: HomeViewModel
 ) {
-    //val participationStatus = viewModel.participationStatusMap[postID]
-    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postID]
+    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postDetail.postID]
     Column {
         ListItem(
+            modifier = Modifier.clickable {
+                viewModel.postDialogState = true to postDetail
+            },
             headlineContent = {
                 Column(Modifier.padding(vertical = 7.dp)) {
-                    Text(title, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default)
-                    Text(description, maxLines = 2, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                    Text(postDetail.gatheringTitle, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default)
+                    Text(postDetail.gatheringDescription, maxLines = 2, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
                     Row {
                         Text(text = "n분전", maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
-                        if(tags.isNotEmpty()) Text(" | ",  style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
-                        tags.forEach { 
+                        if(postDetail.gatheringTags.isNotEmpty()) Text(" | ",  style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                        postDetail.gatheringTags.forEach {
                             Text(text = "#$it ", style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
                         }
                     }
                 }
             },
-            trailingContent = { Text("$currentParticipationStatus/$maximumParticipants") },
+            trailingContent = { Text("$currentParticipationStatus/${postDetail.maximumParticipants}") },
         )
         Divider(
             modifier = Modifier.padding(horizontal = 5.dp),
@@ -80,11 +79,7 @@ fun FindGatheringCardList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
             GathergingListItem(
-                title = postData.gatheringTitle,
-                maximumParticipants = postData.maximumParticipants,
-                description = postData.gatheringDescription,
-                tags = postData.gatheringTags,
-                postID = postData.postID,
+                postDetail = postData,
                 viewModel = viewModel
             )
         }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -35,8 +37,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.component.ReportDialog
@@ -110,6 +114,31 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
+        //포스트 정보 다이얼로그
+        //여백 없애는 법 -> https://stackoverflow.com/questions/65243956/jetpack-compose-fullscreen-dialog
+        if (homeViewModel.postDialogState.first && homeViewModel.postDialogState.second != null) {
+            Dialog(onDismissRequest = { homeViewModel.postDialogState = false to null }) {
+                Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+                    Column {
+                        Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "")
+                        Text(text = homeViewModel.postDialogState.second?.gatheringDescription ?: "")
+                        Text(text = homeViewModel.postDialogState.second?.gatheringLocation ?: "")
+                        Text(text = homeViewModel.postDialogState.second?.gatheringTime ?: "")
+                        Text(text = "${homeViewModel.postDialogState.second?.gatheringTags ?: listOf()}")
+                        Button(onClick = { homeViewModel.postDialogState = false to null }) {
+                            Text("돌아가기")
+                        }
+                        EnjoyButton(status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
+                            updateStatus = {
+                                homeViewModel.updateParticipationStatus(
+                                    postID = homeViewModel.postDialogState.second?.postID ?: "",
+                                    viewModel = homeViewModel
+                                )
+                            })
+                    }
+                }
+            }
+        }
         //신고 다이얼로그
         if(homeViewModel.reportDialogState.first) {
             homeViewModel.initReportChoice()
@@ -174,7 +203,7 @@ fun HomeScreen(
 
 @Preview
 @Composable
-fun testPreview(){
+fun HomeScreenPreview(){
     val navController = rememberNavController()
     KWFriendsTheme {
         HomeScreen(homeViewModel = HomeViewModel(), settingsViewModel = SettingsViewModel(), navigation = navController)
