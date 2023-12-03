@@ -29,8 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +57,7 @@ fun HomeTopAppBar(
                     text = "모임 찾기",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(5.dp),
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         },
@@ -88,7 +90,7 @@ fun HomeTopAppBar(
                                 .animateContentSize(
                                     animationSpec = tween(easing = LinearOutSlowInEasing),
 
-                                )
+                                    )
                                 .focusRequester(focusRequester)
                                 .then(
                                     if (isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
@@ -124,5 +126,20 @@ fun HomeTopAppBar(
 
 
         },
+    )
+}
+
+@Preview
+@Composable
+fun HomeTopAppBarPreview() {
+    val navController = rememberNavController()
+    HomeTopAppBar(
+        navigation = navController,
+        isSearching = false,
+        searchText = "Preview",
+        setSearchText = { },
+        clickSearchButton = { },
+        clickBackButton = { },
+        focusRequester = FocusRequester()
     )
 }
