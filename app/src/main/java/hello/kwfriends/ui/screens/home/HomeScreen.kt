@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.component.EnjoyButton
@@ -117,7 +118,12 @@ fun HomeScreen(
         //포스트 정보 다이얼로그
         //여백 없애는 법 -> https://stackoverflow.com/questions/65243956/jetpack-compose-fullscreen-dialog
         if (homeViewModel.postDialogState.first && homeViewModel.postDialogState.second != null) {
-            Dialog(onDismissRequest = { homeViewModel.postDialogState = false to null }) {
+            Dialog(
+                onDismissRequest = { homeViewModel.postDialogState = false to null },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false
+                )
+            ) {
                 Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
                     Column {
                         Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "")
