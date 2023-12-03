@@ -46,7 +46,7 @@ import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.component.ReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.main.Routes
-import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
+import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
@@ -175,7 +175,7 @@ fun HomeScreen(
                         }
                         else {
                             //검색 결과 화면
-                            FindGatheringCardList(
+                            FindGatheringItemList(
                                 homeViewModel.filter(homeViewModel.searchingPosts),
                                 viewModel = homeViewModel
                             )
@@ -183,7 +183,7 @@ fun HomeScreen(
                     }
                     //검색중 아닐때는 모든 모임 목록 표시
                     else {
-                        FindGatheringCardList(
+                        FindGatheringItemList(
                             homeViewModel.filter(homeViewModel.posts),
                             viewModel = homeViewModel
                         )
