@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -140,7 +139,6 @@ fun HomeScreen(
         //포스트 정보 다이얼로그
         if (homeViewModel.postDialogState.first && homeViewModel.postDialogState.second != null) {
             var menuExpanded by remember { mutableStateOf(false) }
-            val scrollState = rememberScrollState()
             Dialog(
                 onDismissRequest = { homeViewModel.postDialogState = false to null },
                 properties = DialogProperties(
@@ -148,7 +146,6 @@ fun HomeScreen(
                 )
             ) {
                 Box(modifier = Modifier
-                    .verticalScroll(scrollState)
                     .fillMaxSize()
                     .background(Color.White)
                 ) {
