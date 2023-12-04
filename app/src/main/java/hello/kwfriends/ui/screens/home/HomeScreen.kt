@@ -193,9 +193,9 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(vertical = 50.dp, horizontal = 25.dp)
+                            .padding(vertical = 60.dp, horizontal = 15.dp)
                     ) {
-                        Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "", style = MaterialTheme.typography.headlineSmall, fontFamily = FontFamily.Default, fontWeight = FontWeight(600))
+                        Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "", style = MaterialTheme.typography.titleMedium, fontFamily = FontFamily.Default, fontWeight = FontWeight(600))
                         Text(
                             text = homeViewModel.postDialogState.second?.gatheringDescription ?: "", style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default
                         )
