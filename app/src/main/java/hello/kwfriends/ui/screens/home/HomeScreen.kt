@@ -232,9 +232,7 @@ fun HomeScreen(
                         Text(
                             text = homeViewModel.postDialogState.second?.gatheringDescription ?: "", style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default
                         )
-                        //Text(text = homeViewModel.postDialogState.second?.gatheringLocation ?: "")
-                        //Text(text = homeViewModel.postDialogState.second?.gatheringTime ?: "")
-                        Row(modifier = Modifier.padding(top = 10.dp)) {
+                        Row(modifier = Modifier.padding(top = 20.dp)) {
                             homeViewModel.postDialogState.second?.gatheringTags?.forEach {
                                 Text(
                                     text = "#${it}",
