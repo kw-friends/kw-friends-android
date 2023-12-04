@@ -109,7 +109,8 @@ class HomeViewModel : ViewModel() {
             post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
             post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
             post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
-            post.participantStatus.toString().contains(searchText, ignoreCase = true) //상태
+            post.participantStatus.toString().contains(searchText, ignoreCase = true) || //상태
+            post.gatheringTags.toString().contains(searchText, ignoreCase = true)
         }
         return resultPosts
     }
