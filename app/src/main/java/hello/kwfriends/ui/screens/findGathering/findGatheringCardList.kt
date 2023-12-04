@@ -35,7 +35,7 @@ fun GathergingListItem(
             headlineContent = {
                 Column(Modifier.padding(vertical = 7.dp)) {
                     Text(postDetail.gatheringTitle, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, fontWeight = FontWeight(500))
-                    Text(postDetail.gatheringDescription, maxLines = 2, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                    Text(postDetail.gatheringDescription.replace("\n\n", "\n"), maxLines = 2, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, color = Color.DarkGray)
                     Row(modifier = Modifier.padding(top = 4.dp)) {
                         Text(text = "n분전", maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
                         if(postDetail.gatheringTags.isNotEmpty()) Text(" | ",  style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
