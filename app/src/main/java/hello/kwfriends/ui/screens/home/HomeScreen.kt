@@ -149,22 +149,30 @@ fun HomeScreen(
                     .fillMaxSize()
                     .background(Color.White)
                 ) {
-                    IconButton(
+                    //top start
+                    Row(
                         modifier = Modifier.align(Alignment.TopStart),
-                        onClick = { homeViewModel.postDialogState = false to null }
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = "back button"
-                        )
+                        IconButton(
+                            onClick = { homeViewModel.postDialogState = false to null }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = "back button"
+                            )
+                        }
+                        Text(text = "모임 찾기", style = MaterialTheme.typography.titleMedium, fontFamily = FontFamily.Default)
                     }
+
+                    //top end
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .align(Alignment.TopEnd)
                             .wrapContentSize(Alignment.TopEnd)
                     ) {
                         IconButton(
-                            modifier = Modifier.align(Alignment.TopEnd),
                             onClick = { menuExpanded = true }
                         ) {
                             Icon(Icons.Default.MoreVert, contentDescription = "post menu")
@@ -193,10 +201,34 @@ fun HomeScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(vertical = 60.dp, horizontal = 15.dp)
+                            .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
                     ) {
-                        //탑
+                        //top
+                        Row {
+                            AsyncImage(
+                                model = R.drawable.test_image,
+                                placeholder = painterResource(id = R.drawable.profile_default_image),
+                                contentDescription = "My profile image",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = "파티장",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontFamily = FontFamily.Default,
+                                    fontWeight = FontWeight(500)
+                                )
+                                Spacer(modifier = Modifier.height(3.dp))
+                                Text(text = "n분전", maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
+                            }
+                        }
+                        Spacer(Modifier.height(15.dp))
                         Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "", style = MaterialTheme.typography.titleMedium, fontFamily = FontFamily.Default, fontWeight = FontWeight(600))
+                        Spacer(Modifier.height(15.dp))
                         Text(
                             text = homeViewModel.postDialogState.second?.gatheringDescription ?: "", style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default
                         )
@@ -211,7 +243,8 @@ fun HomeScreen(
                                 )
                             }
                         }
-                        //바텀
+
+                        //bottom
                         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
                             Divider(
                                 modifier = Modifier.padding(vertical = 20.dp),
@@ -229,13 +262,15 @@ fun HomeScreen(
                                 Row {
                                     //참여자 목록
                                     repeat(homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID] ?:0) {
-                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.padding(end = 15.dp)
+                                        ) {
                                             AsyncImage(
                                                 model = R.drawable.test_image,
                                                 placeholder = painterResource(id = R.drawable.profile_default_image),
                                                 contentDescription = "My profile image",
                                                 modifier = Modifier
-                                                    .padding(end = 15.dp)
                                                     .size(50.dp)
                                                     .clip(CircleShape),
                                                 contentScale = ContentScale.Crop,
