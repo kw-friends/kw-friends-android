@@ -238,6 +238,7 @@ fun HomeScreen(
                                     text = "#${it}",
                                     modifier = Modifier.padding(end = 4.dp),
                                     style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
                                 )
                             }
                         }
