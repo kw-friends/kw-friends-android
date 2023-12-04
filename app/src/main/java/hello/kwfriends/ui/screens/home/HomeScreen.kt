@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -13,10 +14,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -27,6 +31,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -42,8 +47,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +60,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import hello.kwfriends.R
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
@@ -180,21 +190,12 @@ fun HomeScreen(
                             )
                         }
                     }
-                    EnjoyButton(
-                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 50.dp),
-                        status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
-                        updateStatus = {
-                            homeViewModel.updateParticipationStatus(
-                                postID = homeViewModel.postDialogState.second?.postID ?: "",
-                                viewModel = homeViewModel
-                            )
-                        }
-                    )
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(vertical = 60.dp, horizontal = 15.dp)
                     ) {
+                        //탑
                         Text(text = homeViewModel.postDialogState.second?.gatheringTitle ?: "", style = MaterialTheme.typography.titleMedium, fontFamily = FontFamily.Default, fontWeight = FontWeight(600))
                         Text(
                             text = homeViewModel.postDialogState.second?.gatheringDescription ?: "", style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default
@@ -209,6 +210,60 @@ fun HomeScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                 )
                             }
+                        }
+                        //바텀
+                        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
+                            Divider(
+                                modifier = Modifier.padding(vertical = 20.dp),
+                                color = Color.Gray,
+                                thickness = 0.5.dp,
+                            )
+                            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
+                                Text(
+                                    text = "참여 인원  ${homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID]}/${homeViewModel.postDialogState.second?.maximumParticipants}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = FontFamily.Default,
+                                    fontWeight = FontWeight(400)
+                                )
+                                Spacer(Modifier.height(15.dp))
+                                Row {
+                                    //참여자 목록
+                                    repeat(homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID] ?:0) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            AsyncImage(
+                                                model = R.drawable.test_image,
+                                                placeholder = painterResource(id = R.drawable.profile_default_image),
+                                                contentDescription = "My profile image",
+                                                modifier = Modifier
+                                                    .padding(end = 15.dp)
+                                                    .size(50.dp)
+                                                    .clip(CircleShape),
+                                                contentScale = ContentScale.Crop,
+                                            )
+                                            Spacer(modifier = Modifier.height(5.dp))
+                                            Text(
+                                                text = "참여자${it+1}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                fontFamily = FontFamily.Default,
+                                            )
+                                        }
+
+                                    }
+                                }
+                            }
+                            Spacer(Modifier.height(30.dp))
+                            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                                EnjoyButton(
+                                    status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
+                                    updateStatus = {
+                                        homeViewModel.updateParticipationStatus(
+                                            postID = homeViewModel.postDialogState.second?.postID ?: "",
+                                            viewModel = homeViewModel
+                                        )
+                                    }
+                                )
+                            }
+
                         }
                     }
                 }
