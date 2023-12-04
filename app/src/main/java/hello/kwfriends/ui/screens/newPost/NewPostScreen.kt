@@ -129,8 +129,9 @@ fun NewPostScreen(
                 isSingleLine = false,
                 maxLines = 6,
                 imeAction = ImeAction.Default,
-                isError = !postViewModel.gatheringTitleStatus,
-                externalTitle = "모임 설명"
+                isError = !postViewModel.gatheringDescriptionStatus,
+                externalTitle = "모임 설명",
+                errorMessage = "필수 항목",
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
