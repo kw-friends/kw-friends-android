@@ -108,6 +108,13 @@ fun NewPostScreen(
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
                 placeholder = "",
+                value = postViewModel.gatheringPromoter,
+                canValueChange = false,
+                onValueChange = {},
+                externalTitle = "모임 주최자"
+            )
+            FullTextField(
+                placeholder = "",
                 value = postViewModel.gatheringTitle,
                 onValueChange = { postViewModel.gatheringTitleChange(it) },
                 imeAction = ImeAction.Next,
@@ -117,36 +124,13 @@ fun NewPostScreen(
             )
             FullTextField(
                 placeholder = "",
-                value = postViewModel.gatheringPromoter,
-                canValueChange = false,
-                onValueChange = {},
-                externalTitle = "모임 주최자"
-            )
-            FullTextField(
-                placeholder = "",
-                value = postViewModel.gatheringLocation,
-                onValueChange = { postViewModel.gatheringLocationChange(it) },
-                isError = !postViewModel.gatheringLocationStatus,
-                errorMessage = "필수 항목",
-                imeAction = ImeAction.Next,
-                externalTitle = "모임 위치"
-            )
-            FullTextField(
-                placeholder = "",
-                value = postViewModel.gatheringTime,
-                onValueChange = { postViewModel.gatheringTimeChange(it) },
-                isError = !postViewModel.gatheringTimeStatus,
-                errorMessage = "필수 항목",
-                imeAction = ImeAction.Next,
-                externalTitle = "모임 시간"
-            )
-            FullTextField(
                 value = postViewModel.gatheringDescription,
                 onValueChange = { postViewModel.gatheringDescriptionChange(it) },
                 isSingleLine = false,
                 maxLines = 6,
                 imeAction = ImeAction.Default,
-                externalTitle = "모임 설명 (선택 사항)"
+                isError = !postViewModel.gatheringTitleStatus,
+                externalTitle = "모임 설명"
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -156,14 +140,14 @@ fun NewPostScreen(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "모임 인원",
+                    text = "최대 인원",
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(horizontal = 14.dp)
                 )
                 if (!postViewModel.participantsRangeValidation) {
                     Text(
-                        text = "2명 이상, 100명 이하의 인원 수를 확인해 주세요.",
+                        text = "2명 이상, 100명 이하의 인원 수를 입력해 주세요.",
                         color = Color(0xFFFF0000),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(end = 14.dp)
@@ -174,12 +158,6 @@ fun NewPostScreen(
                 modifier = Modifier.padding(horizontal = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SingleTextField(
-                    value = postViewModel.minimumParticipants,
-                    onValueChange = { postViewModel.minimumParticipantsChange(min = it) },
-                    imeAction = ImeAction.Next
-                )
-                Text(text = " ~ ", style = MaterialTheme.typography.labelLarge)
                 SingleTextField(
                     value = postViewModel.maximumParticipants,
                     onValueChange = { postViewModel.maximumParticipantsChange(max = it) },
