@@ -6,65 +6,41 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
-import hello.kwfriends.R
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
+import hello.kwfriends.ui.component.PostInfoDialog
 import hello.kwfriends.ui.component.ReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.main.Routes
@@ -137,206 +113,26 @@ fun HomeScreen(
         }
     ) { paddingValues ->
         //포스트 정보 다이얼로그
-        if (homeViewModel.postDialogState.first && homeViewModel.postDialogState.second != null) {
-            var menuExpanded by remember { mutableStateOf(false) }
-            Box() {
-                Dialog(
-                    onDismissRequest = { homeViewModel.postDialogState = false to null },
-                    properties = DialogProperties(
-                        usePlatformDefaultWidth = false
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White)
-                    ) {
-                        //top start
-                        Row(
-                            modifier = Modifier.align(Alignment.TopStart),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = { homeViewModel.postDialogState = false to null }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowBackIosNew,
-                                    contentDescription = "back button"
-                                )
-                            }
-                            Text(
-                                text = "모임 찾기",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontFamily = FontFamily.Default
-                            )
-                        }
-
-                        //top end
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .align(Alignment.TopEnd)
-                                .wrapContentSize(Alignment.TopEnd)
-                        ) {
-                            IconButton(
-                                onClick = { menuExpanded = true }
-                            ) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "post menu")
-                            }
-                            DropdownMenu(
-                                expanded = menuExpanded,
-                                onDismissRequest = { menuExpanded = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("신고") },
-                                    onClick = {
-                                        menuExpanded = false
-                                        homeViewModel.reportDialogState =
-                                            true to homeViewModel.postDialogState.second?.postID
-                                    },
-//                        leadingIcon = {
-//                            Icon(
-//                                Icons.Outlined.Details,
-//                                contentDescription = null
-//                            )
-//                        },
-                                    //trailingIcon = { Text("F11", textAlign = TextAlign.Center) }
-                                )
-                            }
-                        }
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
-                        ) {
-                            //top
-                            Row {
-                                AsyncImage(
-                                    model = R.drawable.test_image,
-                                    placeholder = painterResource(id = R.drawable.profile_default_image),
-                                    contentDescription = "My profile image",
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop,
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Column {
-                                    Text(
-                                        text = "파티장",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontFamily = FontFamily.Default,
-                                        fontWeight = FontWeight(500)
-                                    )
-                                    Spacer(modifier = Modifier.height(3.dp))
-                                    Text(
-                                        text = "n분전",
-                                        maxLines = 1,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = FontFamily.Default,
-                                        color = Color.Gray
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.height(15.dp))
-                            Text(
-                                text = homeViewModel.postDialogState.second?.gatheringTitle ?: "",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontFamily = FontFamily.Default,
-                                fontWeight = FontWeight(600)
-                            )
-                            Spacer(Modifier.height(15.dp))
-                            Text(
-                                text = homeViewModel.postDialogState.second?.gatheringDescription
-                                    ?: "",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontFamily = FontFamily.Default
-                            )
-                            Row(modifier = Modifier.padding(top = 20.dp)) {
-                                homeViewModel.postDialogState.second?.gatheringTags?.forEach {
-                                    Text(
-                                        text = "#${it}",
-                                        modifier = Modifier.padding(end = 4.dp),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color.Gray
-                                    )
-                                }
-                            }
-
-                            //bottom
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Bottom
-                            ) {
-                                Divider(
-                                    modifier = Modifier.padding(vertical = 20.dp),
-                                    color = Color.Gray,
-                                    thickness = 0.5.dp,
-                                )
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalAlignment = Alignment.Start
-                                ) {
-                                    Text(
-                                        text = "참여 인원  ${homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID]}/${homeViewModel.postDialogState.second?.maximumParticipants}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = FontFamily.Default,
-                                        fontWeight = FontWeight(400)
-                                    )
-                                    Spacer(Modifier.height(15.dp))
-                                    Row {
-                                        //참여자 목록
-                                        repeat(
-                                            homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID]
-                                                ?: 0
-                                        ) {
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                modifier = Modifier.padding(end = 15.dp)
-                                            ) {
-                                                AsyncImage(
-                                                    model = R.drawable.test_image,
-                                                    placeholder = painterResource(id = R.drawable.profile_default_image),
-                                                    contentDescription = "My profile image",
-                                                    modifier = Modifier
-                                                        .size(50.dp)
-                                                        .clip(CircleShape),
-                                                    contentScale = ContentScale.Crop,
-                                                )
-                                                Spacer(modifier = Modifier.height(5.dp))
-                                                Text(
-                                                    text = "참여자${it + 1}",
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    fontFamily = FontFamily.Default,
-                                                )
-                                            }
-
-                                        }
-                                    }
-                                }
-                                Spacer(Modifier.height(30.dp))
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    EnjoyButton(
-                                        status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
-                                        updateStatus = {
-                                            homeViewModel.updateParticipationStatus(
-                                                postID = homeViewModel.postDialogState.second?.postID
-                                                    ?: "",
-                                                viewModel = homeViewModel
-                                            )
-                                        }
-                                    )
-                                }
-
-                            }
-                        }
+        PostInfoDialog(
+            state = homeViewModel.postDialogState.first,
+            postDetail = homeViewModel.postDialogState.second,
+            participantsCount = homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID] ?: -1,
+            onDismiss = { homeViewModel.postDialogState = false to null },
+            onReport = {
+                homeViewModel.reportDialogState = true to homeViewModel.postDialogState.second?.postID
+            },
+            enjoyButton = {
+                EnjoyButton(
+                    status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
+                    updateStatus = {
+                        homeViewModel.updateParticipationStatus(
+                            postID = homeViewModel.postDialogState.second?.postID ?: "",
+                            viewModel = homeViewModel
+                        )
                     }
-                }
+                )
             }
-        }
+        )
         //신고 다이얼로그
         if(homeViewModel.reportDialogState.first) {
             homeViewModel.initReportChoice()
