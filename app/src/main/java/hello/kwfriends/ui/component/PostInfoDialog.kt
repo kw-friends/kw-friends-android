@@ -82,7 +82,7 @@ fun PostInfoDialog(
                             )
                         }
                         Text(
-                            text = "모임 찾기",
+                            text = "모임 상세정보",
                             style = MaterialTheme.typography.titleMedium,
                             fontFamily = FontFamily.Default
                         )

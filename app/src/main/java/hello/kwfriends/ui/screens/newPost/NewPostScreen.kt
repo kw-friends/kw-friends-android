@@ -1,12 +1,15 @@
 package hello.kwfriends.ui.screens.newPost
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -47,11 +52,11 @@ import hello.kwfriends.ui.component.TagChip
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NewPostScreen(
     postViewModel: NewPostViewModel,
-    navigation: NavController
+    onDismiss: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -65,44 +70,40 @@ fun NewPostScreen(
             postViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
         }
     }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "새 모임 생성",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFE2A39B)
-                ),
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navigation.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Go to HomeScreen",
-                            modifier = Modifier.size(35.dp)
-                        )
-                    }
-                }
-            )
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) { data ->
-                // custom snackbar with the custom border
-                Snackbar(
-                    actionOnNewLine = true,
-                    snackbarData = data
+    SnackbarHost(snackbarHostState) { data ->
+        // custom snackbar with the custom border
+        Snackbar(
+            actionOnNewLine = true,
+            snackbarData = data
+        )
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        //top start
+        Row(
+            modifier = Modifier.align(Alignment.TopStart),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material.IconButton(
+                onClick = onDismiss
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = "back button"
                 )
             }
+            Text(
+                text = "새 모임 생성",
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Default
+            )
         }
-    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(top = 40.dp)
                 .verticalScroll(scrollState)
         ) {
             Spacer(modifier = Modifier.size(10.dp))
@@ -199,7 +200,7 @@ fun NewPostScreen(
                             if (!postViewModel.validateGatheringInfo()) {
                                 postViewModel.showSnackbar("모임 정보가 부족합니다.")
                             } else {
-                                postViewModel.uploadGatheringToFirestore(navigation)
+                                postViewModel.uploadGatheringToFirestore(onDismiss)
                             }
                         }
                     },

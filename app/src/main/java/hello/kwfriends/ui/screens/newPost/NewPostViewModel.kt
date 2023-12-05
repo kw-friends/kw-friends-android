@@ -92,7 +92,7 @@ class NewPostViewModel : ViewModel() {
     }
 
 
-    fun uploadGatheringToFirestore(navigation: NavController) {
+    fun uploadGatheringToFirestore(end: () -> Unit) {
         showSnackbar("모임 생성 중...")
 
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
@@ -115,7 +115,7 @@ class NewPostViewModel : ViewModel() {
                     gatheringTags = tagMap.filter { it.value }.map { it.key },
                     newPostViewModel = this@NewPostViewModel
                 )
-                navigation.navigate(Routes.HOME_SCREEN)
+                end()
                 isUploading = false
             }
         } else {

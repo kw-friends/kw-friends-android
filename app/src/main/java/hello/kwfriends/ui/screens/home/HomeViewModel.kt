@@ -34,6 +34,8 @@ class HomeViewModel : ViewModel() {
             this[tag] = false
         }
     }
+    //포스트 생성 다이얼로그 보이기 여부
+    var newPostDialogState by mutableStateOf<Boolean>(false)
     //포스트 다이얼로그 보이기 여부 및 포스트 uid
     var postDialogState by mutableStateOf<Pair<Boolean, PostDetail?>>(false to null)
     //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid

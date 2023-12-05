@@ -18,6 +18,7 @@ import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
+    private val newPostViewModel: NewPostViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.HOME_SCREEN) {
                         HomeScreen(
                             homeViewModel = homeViewModel,
+                            newPostViewModel = newPostViewModel,
                             settingsViewModel = settingsViewModel,
                             navigation = navController
                         )
@@ -44,12 +46,6 @@ class MainActivity : BaseActivity() {
                     }
                     composable(Routes.AUTH_SCREEN) {
                         AuthScreen(navigation = navController)
-                    }
-                    composable(Routes.NEW_POST_SCREEN) {
-                        NewPostScreen(
-                            postViewModel = NewPostViewModel(),
-                            navigation = navController
-                        )
                     }
                 }
             }
