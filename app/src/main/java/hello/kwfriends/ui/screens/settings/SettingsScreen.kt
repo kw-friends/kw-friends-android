@@ -33,6 +33,7 @@ import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
+import hello.kwfriends.ui.main.Routes
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +72,7 @@ fun SettingsScreen(
                 ),
                 navigationIcon = {
                     IconButton(
-                        onClick = { navigation.popBackStack() },
+                        onClick = { navigation.navigate(Routes.HOME_SCREEN) },
                         modifier = Modifier.padding(end = 8.dp)
                     ) {
                         Icon(
