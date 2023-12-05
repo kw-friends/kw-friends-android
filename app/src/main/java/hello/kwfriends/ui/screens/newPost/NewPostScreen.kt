@@ -18,22 +18,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,7 +39,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
@@ -55,19 +48,19 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NewPostScreen(
-    postViewModel: NewPostViewModel,
+    newPostViewModel: NewPostViewModel,
     onDismiss: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val snackbarMessage by postViewModel.snackbarEvent.collectAsState()
+    val snackbarMessage by newPostViewModel.snackbarEvent.collectAsState()
 
     snackbarMessage?.let { message ->
         snackbarHostState.currentSnackbarData?.dismiss() // running snackbar 종료
         scope.launch {
             snackbarHostState.showSnackbar(message) // snackbar 표시
-            postViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
+            newPostViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
         }
     }
     SnackbarHost(snackbarHostState) { data ->
@@ -109,28 +102,28 @@ fun NewPostScreen(
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
                 placeholder = "",
-                value = postViewModel.gatheringPromoter,
+                value = newPostViewModel.gatheringPromoter,
                 canValueChange = false,
                 onValueChange = {},
                 externalTitle = "모임 주최자"
             )
             FullTextField(
                 placeholder = "",
-                value = postViewModel.gatheringTitle,
-                onValueChange = { postViewModel.gatheringTitleChange(it) },
+                value = newPostViewModel.gatheringTitle,
+                onValueChange = { newPostViewModel.gatheringTitleChange(it) },
                 imeAction = ImeAction.Next,
-                isError = !postViewModel.gatheringTitleStatus,
+                isError = !newPostViewModel.gatheringTitleStatus,
                 externalTitle = "모임 제목",
                 errorMessage = "필수 항목",
             )
             FullTextField(
                 placeholder = "",
-                value = postViewModel.gatheringDescription,
-                onValueChange = { postViewModel.gatheringDescriptionChange(it) },
+                value = newPostViewModel.gatheringDescription,
+                onValueChange = { newPostViewModel.gatheringDescriptionChange(it) },
                 isSingleLine = false,
                 maxLines = 6,
                 imeAction = ImeAction.Default,
-                isError = !postViewModel.gatheringDescriptionStatus,
+                isError = !newPostViewModel.gatheringDescriptionStatus,
                 externalTitle = "모임 설명",
                 errorMessage = "필수 항목",
             )
@@ -147,7 +140,7 @@ fun NewPostScreen(
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(horizontal = 14.dp)
                 )
-                if (!postViewModel.participantsRangeValidation) {
+                if (!newPostViewModel.participantsRangeValidation) {
                     Text(
                         text = "2명 이상, 100명 이하의 인원 수를 입력해 주세요.",
                         color = Color(0xFFFF0000),
@@ -161,8 +154,8 @@ fun NewPostScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SingleTextField(
-                    value = postViewModel.maximumParticipants,
-                    onValueChange = { postViewModel.maximumParticipantsChange(max = it) },
+                    value = newPostViewModel.maximumParticipants,
+                    onValueChange = { newPostViewModel.maximumParticipantsChange(max = it) },
                     imeAction = ImeAction.Done
                 )
             }
@@ -174,13 +167,13 @@ fun NewPostScreen(
                 )
             }
             FlowRow(modifier = Modifier.padding(start = 14.dp)) {
-                postViewModel.tagMap.forEach {
+                newPostViewModel.tagMap.forEach {
                     TagChip(
                         modifier = Modifier.padding(4.dp),
                         text = it.key,
                         icon = Icons.Filled.Person,
                         selected = it.value,
-                        onClick = { postViewModel.tagMap[it.key] = !it.value }
+                        onClick = { newPostViewModel.tagMap[it.key] = !it.value }
                     )
                 }
             }
@@ -196,11 +189,11 @@ fun NewPostScreen(
                 )
                 Button(
                     onClick = {
-                        if (!postViewModel.isUploading) {
-                            if (!postViewModel.validateGatheringInfo()) {
-                                postViewModel.showSnackbar("모임 정보가 부족합니다.")
+                        if (!newPostViewModel.isUploading) {
+                            if (!newPostViewModel.validateGatheringInfo()) {
+                                newPostViewModel.showSnackbar("모임 정보가 부족합니다.")
                             } else {
-                                postViewModel.uploadGatheringToFirestore(onDismiss)
+                                newPostViewModel.uploadGatheringToFirestore(onDismiss)
                             }
                         }
                     },
@@ -208,7 +201,7 @@ fun NewPostScreen(
                         .width(IntrinsicSize.Max)
                         .align(Alignment.End)
                 ) {
-                    if (!postViewModel.isUploading) {
+                    if (!newPostViewModel.isUploading) {
                         Text(text = "모임 만들기", style = MaterialTheme.typography.labelLarge)
                     } else {
                         Row(verticalAlignment = Alignment.CenterVertically) {
