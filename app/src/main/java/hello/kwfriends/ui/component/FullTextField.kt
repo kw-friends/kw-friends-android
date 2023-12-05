@@ -43,6 +43,7 @@ import hello.kwfriends.ui.theme.AppFont
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FullTextField(
+    modifier: Modifier = Modifier,
     placeholder: String = "",
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
@@ -56,7 +57,6 @@ fun FullTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     style: TextStyle = MaterialTheme.typography.bodyMedium,
-    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -104,7 +104,6 @@ fun FullTextField(
                     .height(IntrinsicSize.Min)
                     .heightIn(min = 48.dp)
             )
-            .padding(horizontal = 10.dp)
             .onFocusChanged {
                 if (it.isFocused && canValueChange) {
                     containerColor = Color(0xFFDADADA)

@@ -101,6 +101,7 @@ fun NewPostScreen(
         ) {
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
+                modifier = Modifier.padding(horizontal = 14.dp),
                 placeholder = "",
                 value = newPostViewModel.gatheringPromoter,
                 canValueChange = false,
@@ -108,6 +109,7 @@ fun NewPostScreen(
                 externalTitle = "모임 주최자"
             )
             FullTextField(
+                modifier = Modifier.padding(horizontal = 14.dp),
                 placeholder = "",
                 value = newPostViewModel.gatheringTitle,
                 onValueChange = { newPostViewModel.gatheringTitleChange(it) },
@@ -117,6 +119,7 @@ fun NewPostScreen(
                 errorMessage = "필수 항목",
             )
             FullTextField(
+                modifier = Modifier.padding(horizontal = 14.dp),
                 placeholder = "",
                 value = newPostViewModel.gatheringDescription,
                 onValueChange = { newPostViewModel.gatheringDescriptionChange(it) },
@@ -149,16 +152,12 @@ fun NewPostScreen(
                     )
                 }
             }
-            Row(
+            SingleTextField(
                 modifier = Modifier.padding(horizontal = 14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SingleTextField(
-                    value = newPostViewModel.maximumParticipants,
-                    onValueChange = { newPostViewModel.maximumParticipantsChange(max = it) },
-                    imeAction = ImeAction.Done
-                )
-            }
+                value = newPostViewModel.maximumParticipants,
+                onValueChange = { newPostViewModel.maximumParticipantsChange(max = it) },
+                imeAction = ImeAction.Done
+            )
             Column(modifier = Modifier.padding(horizontal = 14.dp)) {
                 Text(
                     text = "모임 태그",

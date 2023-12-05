@@ -39,6 +39,7 @@ import hello.kwfriends.ui.theme.AppFont
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SingleTextField(
+    modifier: Modifier = Modifier,
     placeholder: String = "",
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
@@ -60,7 +61,7 @@ fun SingleTextField(
     BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         enabled = canValueChange,
-        modifier = Modifier
+        modifier = modifier
             .height(48.dp)
             .width(72.dp)
             .onFocusChanged {
