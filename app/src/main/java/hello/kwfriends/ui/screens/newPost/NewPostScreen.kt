@@ -168,7 +168,7 @@ fun NewPostScreen(
             FlowRow(modifier = Modifier.padding(start = 14.dp)) {
                 newPostViewModel.tagMap.forEach {
                     TagChip(
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
                         icon = Icons.Filled.Person,
                         selected = it.value,
