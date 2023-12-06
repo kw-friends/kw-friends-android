@@ -38,9 +38,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
-import hello.kwfriends.ui.component.NewPostDialog
+import hello.kwfriends.ui.component.NewPostPopup
 import hello.kwfriends.ui.component.NoSearchResult
-import hello.kwfriends.ui.component.PostInfoDialog
+import hello.kwfriends.ui.component.PostInfoPopup
 import hello.kwfriends.ui.component.ReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
@@ -107,27 +107,27 @@ fun HomeScreen(
                 text = { Text(text = "모임 생성") },
                 icon = { Icon(Icons.Default.Add, null) },
                 onClick = {
-                    homeViewModel.newPostDialogState = true
+                    homeViewModel.newPostPopupState = true
                 },
                 modifier = Modifier.padding(bottom = 35.dp)
             )
         }
     ) { paddingValues ->
         //포스트 정보 다이얼로그
-        PostInfoDialog(
-            state = homeViewModel.postDialogState.first,
-            postDetail = homeViewModel.postDialogState.second,
-            participantsCount = homeViewModel.currentParticipationStatusMap[homeViewModel.postDialogState.second?.postID] ?: -1,
-            onDismiss = { homeViewModel.postDialogState = false to null },
+        PostInfoPopup(
+            state = homeViewModel.postPopupState.first,
+            postDetail = homeViewModel.postPopupState.second,
+            participantsCount = homeViewModel.currentParticipationStatusMap[homeViewModel.postPopupState.second?.postID] ?: -1,
+            onDismiss = { homeViewModel.postPopupState = false to null },
             onReport = {
-                homeViewModel.reportDialogState = true to homeViewModel.postDialogState.second?.postID
+                homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID
             },
             enjoyButton = {
                 EnjoyButton(
-                    status = homeViewModel.participationStatusMap[homeViewModel.postDialogState.second?.postID],
+                    status = homeViewModel.participationStatusMap[homeViewModel.postPopupState.second?.postID],
                     updateStatus = {
                         homeViewModel.updateParticipationStatus(
-                            postID = homeViewModel.postDialogState.second?.postID ?: "",
+                            postID = homeViewModel.postPopupState.second?.postID ?: "",
                             viewModel = homeViewModel
                         )
                     }
@@ -135,9 +135,9 @@ fun HomeScreen(
             }
         )
         //모임 생성 다이얼로그
-        NewPostDialog(
-            state = homeViewModel.newPostDialogState,
-            onDismiss = { homeViewModel.newPostDialogState = false },
+        NewPostPopup(
+            state = homeViewModel.newPostPopupState,
+            onDismiss = { homeViewModel.newPostPopupState = false },
             newPostViewModel = newPostViewModel
         )
         //신고 다이얼로그

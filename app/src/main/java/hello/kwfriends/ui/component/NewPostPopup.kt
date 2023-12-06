@@ -1,23 +1,19 @@
 package hello.kwfriends.ui.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Popup
 import hello.kwfriends.ui.screens.newPost.NewPostScreen
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 
 @Composable
-fun NewPostDialog(
+fun NewPostPopup(
     state: Boolean,
     onDismiss: () -> Unit,
     newPostViewModel: NewPostViewModel
 ) {
     if(state) {
-        Dialog(
+        Popup(
             onDismissRequest = onDismiss,
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false
-            )
         ) {
             NewPostScreen(
                 newPostViewModel = newPostViewModel,

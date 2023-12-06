@@ -38,14 +38,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Popup
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 
 @Composable
-fun PostInfoDialog(
+fun PostInfoPopup(
     state: Boolean,
     postDetail: PostDetail?,
     participantsCount: Int,
@@ -57,11 +56,8 @@ fun PostInfoDialog(
         var menuExpanded by remember { mutableStateOf(false) }
 
         Box {
-            Dialog(
+            Popup(
                 onDismissRequest = onDismiss,
-                properties = DialogProperties(
-                    usePlatformDefaultWidth = false
-                )
             ) {
                 Box(
                     modifier = Modifier

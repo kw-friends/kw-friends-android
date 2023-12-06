@@ -30,7 +30,7 @@ fun GathergingListItem(
     Column {
         ListItem(
             modifier = Modifier.clickable {
-                viewModel.postDialogState = true to postDetail
+                viewModel.postPopupState = true to postDetail
             },
             headlineContent = {
                 Column(Modifier.padding(vertical = 7.dp)) {
