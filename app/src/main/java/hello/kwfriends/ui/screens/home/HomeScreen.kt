@@ -4,7 +4,6 @@ package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,12 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NewPostPopup
@@ -89,20 +86,20 @@ fun HomeScreen(
     //태그 필터 리스트 스크롤 저장 변수
     val scrollState = rememberScrollState()
     //상황에 따른 stateBar 색상 조정
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(key1 = homeViewModel.newPostPopupState, key2 = homeViewModel.postPopupState.first) {
-        if(homeViewModel.newPostPopupState || homeViewModel.postPopupState.first) {
-            systemUiController.setStatusBarColor(
-                color = Color.White
-            )
-        }
-        else {
-            systemUiController.setStatusBarColor(
-                color = Color(0xFFE2A39B)
-            )
-
-        }
-    }
+//    val systemUiController = rememberSystemUiController()
+//    LaunchedEffect(key1 = homeViewModel.newPostPopupState, key2 = homeViewModel.postPopupState.first) {
+//        if(homeViewModel.newPostPopupState || homeViewModel.postPopupState.first) {
+//            systemUiController.setStatusBarColor(
+//                color = Color.White
+//            )
+//        }
+//        else {
+//            systemUiController.setStatusBarColor(
+//                color = Color(0xFFE2A39B)
+//            )
+//
+//        }
+//    }
 
     Scaffold(
         //앱 바
@@ -166,7 +163,7 @@ fun HomeScreen(
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(scrollState)
-                .background(Color(0xFFE2A39B))
+//                .background(Color(0xFFE2A39B))
             ) {
                 Spacer(Modifier.width(8.dp))
                 homeViewModel.filterTagMap.forEach {
@@ -182,7 +179,8 @@ fun HomeScreen(
             }
             Box {
                 Column(
-                    modifier = Modifier.pullRefresh(pullRefreshState)
+                    modifier = Modifier
+                        .pullRefresh(pullRefreshState)
                 ) {
                     //검색중인지
                     if(homeViewModel.isSearching) {
