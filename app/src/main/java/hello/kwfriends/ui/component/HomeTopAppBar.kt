@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,6 +48,7 @@ fun HomeTopAppBar(
     focusRequester: FocusRequester
 ) {
     TopAppBar(
+        modifier = Modifier.height(40.dp),
         title = {
             AnimatedVisibility(
                 visible = !isSearching,
@@ -55,6 +58,7 @@ fun HomeTopAppBar(
                 Text(
                     text = "모임 찾기",
                     style = MaterialTheme.typography.titleLarge,
+                    fontFamily = FontFamily.Default,
                     modifier = Modifier.padding(5.dp),
                     maxLines = 1,
                 )
