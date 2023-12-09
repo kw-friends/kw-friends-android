@@ -50,7 +50,6 @@ import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
 import hello.kwfriends.ui.component.TextfieldStyle1
 import hello.kwfriends.ui.component.TextfieldStyle2
-import hello.kwfriends.ui.main.Routes
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -115,9 +114,6 @@ fun AuthScreen(navigation: NavController) {
                         contentDescription = "앱 로고",
                         modifier = Modifier
                             .size(102.dp)
-                            .clickable {
-                                navigation.navigate(Routes.HOME_SCREEN)
-                            }
                     )
                     Spacer(modifier = Modifier.height(80.dp))
                     TextfieldStyle1(
