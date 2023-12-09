@@ -73,7 +73,7 @@ fun NewPostScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color(0xFFFFFBFF))
     ) {
         //top start
         Row(
