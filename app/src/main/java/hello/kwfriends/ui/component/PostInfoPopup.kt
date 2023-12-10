@@ -94,7 +94,7 @@ fun PostInfoPopup(
                         IconButton(
                             onClick = { menuExpanded = true }
                         ) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "post menu")
+                            Icon(Icons.Default.MoreVert, contentDescription = "report menu")
                         }
                         DropdownMenu(
                             expanded = menuExpanded,

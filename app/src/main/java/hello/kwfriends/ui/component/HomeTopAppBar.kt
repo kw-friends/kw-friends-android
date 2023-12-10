@@ -8,7 +8,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,20 +50,23 @@ fun HomeTopAppBar(
     focusRequester: FocusRequester
 ) {
     TopAppBar(
-        modifier = Modifier.height(40.dp),
+        modifier = Modifier
+            .padding(top = 10.dp)
+            .height(40.dp),
         title = {
-            AnimatedVisibility(
-                visible = !isSearching,
-                enter = fadeIn(),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100))
-            ) {
-                Text(
-                    text = "모임 찾기",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontFamily = FontFamily.Default,
-                    modifier = Modifier.padding(5.dp),
-                    maxLines = 1,
-                )
+            Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                AnimatedVisibility(
+                    visible = !isSearching,
+                    enter = fadeIn(),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 100))
+                ) {
+                    Text(
+                        text = "모임 찾기",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontFamily = FontFamily.Default,
+                        maxLines = 1,
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -79,7 +84,7 @@ fun HomeTopAppBar(
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Exit",
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(25.dp)
                         )
                     }
                 }
@@ -104,13 +109,12 @@ fun HomeTopAppBar(
                     IconButton(
                         onClick = clickSearchButton,
                         modifier = Modifier
-                            .padding(end = 8.dp)
                             .align(Alignment.CenterEnd)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            modifier = Modifier.size(35.dp)
+                            modifier = Modifier.size(30.dp)
                         )
                     }
                 }
@@ -121,7 +125,7 @@ fun HomeTopAppBar(
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Account",
-                        modifier = Modifier.size(35.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
