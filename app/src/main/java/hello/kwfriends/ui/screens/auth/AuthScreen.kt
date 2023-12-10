@@ -78,7 +78,11 @@ fun AuthScreen(navigation: NavController) {
     }
     when (AuthViewModel.uiState) {
         is AuthUiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
+            ) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(size = 64.dp)
