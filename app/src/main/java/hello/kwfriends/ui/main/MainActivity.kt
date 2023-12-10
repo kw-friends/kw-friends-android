@@ -3,6 +3,8 @@ package hello.kwfriends.ui.main
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -34,9 +36,10 @@ class MainActivity : BaseActivity() {
                 val useDarkIcons = MaterialTheme.colors.isLight
                 val statusBarColor = remember { mutableStateOf(Color(0xFFFFFBFF)) }
 
+                //상태바 색상 설정
                 LaunchedEffect(statusBarColor.value) {
                     systemUiController.setStatusBarColor(
-                        color = statusBarColor.value, // 여기에 원하는 색상을 설정하세요
+                        color = statusBarColor.value,
                         darkIcons = useDarkIcons
                     )
                 }
@@ -45,7 +48,12 @@ class MainActivity : BaseActivity() {
                 val startPoint = intent.getStringExtra("startPoint")
                 val startDestination = if(startPoint == "auth") Routes.AUTH_SCREEN else Routes.HOME_SCREEN
 
-                NavHost(navController = navController, startDestination = startDestination) {
+                NavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    enterTransition = {EnterTransition.None },
+                    exitTransition = {ExitTransition.None }
+                ) {
                     composable(Routes.HOME_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         HomeScreen(
