@@ -84,7 +84,7 @@ fun SettingsScreen(
             }
             Column(
                 modifier = Modifier
-                    .padding(top = 50.dp, start = 10.dp, end = 10.dp)
+                    .padding(top = 60.dp, start = 10.dp, end = 10.dp)
                     .verticalScroll(scrollState)
             ) {
                 UserInfoCard(
@@ -96,6 +96,7 @@ fun SettingsScreen(
                     navigation = navigation,
                     settingsViewModel = settingsViewModel
                 )
+                Spacer(modifier = Modifier.height(10.dp))
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
