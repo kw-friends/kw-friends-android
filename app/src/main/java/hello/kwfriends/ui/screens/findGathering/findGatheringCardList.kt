@@ -47,11 +47,6 @@ fun GathergingListItem(
             },
             trailingContent = { Text("$currentParticipationStatus/${postDetail.maximumParticipants}") },
         )
-        Divider(
-            modifier = Modifier.padding(horizontal = 5.dp),
-            color = Color.Gray,
-            thickness = 0.5.dp,
-        )
     }
 }
 
@@ -63,6 +58,11 @@ fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
             GathergingListItem(
                 postDetail = postData,
                 viewModel = viewModel
+            )
+            Divider(
+                modifier = Modifier.padding(horizontal = 5.dp),
+                color = Color.LightGray,
+                thickness = 0.5.dp,
             )
         }
     }

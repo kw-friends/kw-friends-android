@@ -64,7 +64,7 @@ class MainActivity : BaseActivity() {
                         )
                     }
                     composable(Routes.SETTINGS_SCREEN) {
-                        statusBarColor.value = Color(0xFFE2A39B)
+                        statusBarColor.value = Color(0xFFFFFBFF)
                         SettingsScreen(
                             settingsViewModel= settingsViewModel,
                             navigation = navController

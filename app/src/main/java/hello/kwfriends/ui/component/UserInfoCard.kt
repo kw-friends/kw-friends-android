@@ -30,8 +30,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
@@ -47,7 +49,7 @@ fun UserInfoCard(
 ) {
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(bottomEnd = 24.dp, bottomStart = 24.dp))
+            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomEnd = 24.dp, bottomStart = 24.dp))
             .background(Color(0xFFE2A39B))
     ) {
         Row(
@@ -113,4 +115,18 @@ fun UserInfoCard(
 
         }
     }
+}
+
+@Preview
+@Composable
+fun UserInfoCardPreview() {
+    val navController = rememberNavController()
+    UserInfoCard(
+        profileImageUri = null,
+        userName = "Preview",
+        admissionYear = "23",
+        major = "소프트웨어학부",
+        navigation = navController,
+        settingsViewModel = SettingsViewModel()
+    )
 }
