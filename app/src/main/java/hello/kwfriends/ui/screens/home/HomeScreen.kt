@@ -82,6 +82,12 @@ fun HomeScreen(
         if(homeViewModel.isSearching) {
             homeViewModel.isSearching = false
         }
+        else if(homeViewModel.newPostPopupState) {
+            homeViewModel.newPostPopupState = false
+        }
+        else if(homeViewModel.postPopupState.first) {
+            homeViewModel.postPopupState = false to null
+        }
     }
     //태그 필터 리스트 스크롤 저장 변수
     val scrollState = rememberScrollState()

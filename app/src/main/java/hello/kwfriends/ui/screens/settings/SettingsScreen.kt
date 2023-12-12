@@ -44,9 +44,9 @@ fun SettingsScreen(
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
+    //이미지 선택
     val launcher = rememberLauncherForActivityResult(
-        contract =
-        ActivityResultContracts.PickVisualMedia()
+        contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
             Log.w("Lim", "이미지 선택 완료")
@@ -54,6 +54,7 @@ fun SettingsScreen(
             settingsViewModel.myProfileImageUpload(uri)
         }
     }
+    //프로필 이미지 로드
     if(!settingsViewModel.myProfileImiageLoaded) {
         settingsViewModel.myProfileImageDownload()
     }
