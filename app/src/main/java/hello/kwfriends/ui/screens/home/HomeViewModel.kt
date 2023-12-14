@@ -14,6 +14,7 @@ import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.firebase.firestoreDatabase.PostManager
 import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
+import hello.kwfriends.realtimeDatabase.Report
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -28,13 +29,42 @@ class HomeViewModel : ViewModel() {
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
     //태그 저장 변수
-    var tagMap = mutableStateMapOf<String, Boolean>().apply {
+    var filterTagMap = mutableStateMapOf<String, Boolean>().apply {
         Tags.list.forEach { tag ->
             this[tag] = false
         }
     }
+    //포스트 생성 다이얼로그 보이기 여부
+    var newPostPopupState by mutableStateOf<Boolean>(false)
+    //포스트 다이얼로그 보이기 여부 및 포스트 uid
+    var postPopupState by mutableStateOf<Pair<Boolean, PostDetail?>>(false to null)
+    //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
+    var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
+    //신고 텍스트 리스트
+    val reportTextList by mutableStateOf(
+        listOf(
+            "게시판 성격에 부적절함",
+            "낚시/놀람/도배",
+            "음란물/불건전한 만남 및 대화",
+            "불쾌감을 주는 사용자",
+            "정당/정치인 비하 및 선거운동",
+            "유출/사칭/사기",
+            "상업적 광고 및 판매",
+            "욕설/비하"
+        )
+    )
+    var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
+
+    fun initReportChoice() {
+        reportChoice = mutableListOf()
+    }
 
     //검색 텍스트 수정 함수
+    /*
+    TODO 1. 신고시 post에 신고자 uid 리스트 추가
+    TODO 2. 신고수 일정 이상 되면 알림 or 숨기기
+    TODO 3. 신고 한번만 할 수 있도록 하기(신고 버튼 오른쪽에 체크표시)
+    */
     fun setSearchContentText(text: String) {
         searchText = text
         if(isSearching) {
@@ -42,21 +72,31 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun report() {
+        viewModelScope.launch {
+            reportDialogState = false to reportDialogState.second
+            Report.report(
+                postID = reportDialogState.second!!,
+                reporterID = UserAuth.fa.currentUser!!.uid,
+                reason = reportChoice
+            )
+            reportDialogState = false to null
+        }
+    }
+
     //필터 함수
     fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
         val activityTags = mutableListOf<String>()
-        tagMap.forEach{
+        filterTagMap.forEach{
             if(it.value){
                 activityTags.add(it.key)
             }
         }
-        Log.w("Lim", "activityTags: $activityTags")
         val resultPosts = targetPosts.filter { post ->
             activityTags.all {
                 it in post.gatheringTags
             }
         }
-        Log.w("Lim", "filter: $resultPosts")
         return resultPosts
     }
 
@@ -71,7 +111,8 @@ class HomeViewModel : ViewModel() {
             post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
             post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
             post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
-            post.participantStatus.toString().contains(searchText, ignoreCase = true) //상태
+            post.participantStatus.toString().contains(searchText, ignoreCase = true) || //상태
+            post.gatheringTags.toString().contains(searchText, ignoreCase = true)
         }
         return resultPosts
     }

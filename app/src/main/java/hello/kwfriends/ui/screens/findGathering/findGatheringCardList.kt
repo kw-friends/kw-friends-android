@@ -1,156 +1,89 @@
 package hello.kwfriends.ui.screens.findGathering
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
-import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
-fun GatheringCard(
-    title: String,
-    location: String,
-    promoter: String,
-    minimumParticipants: String,
-    maximumParticipants: String,
-    time: String, //추후 datetime으로 변경,
-    description: String,
-    tags: List<String>,
-    postID: String,
+fun GathergingListItem(
+    postDetail: PostDetail,
     viewModel: HomeViewModel
 ) {
-    var descriptionOpened by remember {
-        mutableStateOf(false)
-    }
-
-    val participationStatus = viewModel.participationStatusMap[postID]
-    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postID]
-
-    Card(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .clickable(onClick = { descriptionOpened = !descriptionOpened })
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.padding(horizontal = 12.dp)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight(600)
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.width(width = 4.dp))
-                    Text(text = location, style = MaterialTheme.typography.bodyMedium)
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Schedule,
-                        contentDescription = null,
-                    )
-                    Spacer(modifier = Modifier.width(width = 4.dp))
-                    Text(text = time, style = MaterialTheme.typography.bodyMedium)
-                }
-                Text(
-                    text = "최대 ${maximumParticipants}명 중 ${currentParticipationStatus}명 참여\n" +
-                            "최소 인원: $minimumParticipants\n" +
-                            "주최자: $promoter",
-                    modifier = Modifier
-                        .padding(end = 2.dp),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Row {
-                    tags.forEach {
-                        Text(
-                            text = "#${it}",
-                            modifier = Modifier.padding(end = 4.dp),
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                }
-                AnimatedVisibility(descriptionOpened) {
-                    Divider(
-                        color = Color(0xFF353535),
-                        thickness = 0.5.dp
-                    )
-                    Column(
-                        modifier = Modifier.padding(bottom = 12.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        if (description != "") {
-                            Text(
-                                text = description,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
+    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postDetail.postID]
+    Column {
+        ListItem(
+            modifier = Modifier.clickable {
+                viewModel.postPopupState = true to postDetail
+            },
+            headlineContent = {
+                Column(Modifier.padding(vertical = 7.dp)) {
+                    Text(postDetail.gatheringTitle, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, fontWeight = FontWeight(500))
+                    Text(postDetail.gatheringDescription.replace("\n\n", "\n"), maxLines = 2, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                    Row(modifier = Modifier.padding(top = 4.dp)) {
+                        Text(text = "n분전", maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
+                        if(postDetail.gatheringTags.isNotEmpty()) Text(" | ",  style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                        postDetail.gatheringTags.forEach {
+                            Text(text = "#$it ", style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
                         }
-                        EnjoyButton(status = participationStatus,
-                            updateStatus = {
-                                viewModel.updateParticipationStatus(
-                                    postID = postID,
-                                    viewModel = viewModel
-                                )
-                            })
                     }
                 }
-            }
-        }
+            },
+            trailingContent = { Text("$currentParticipationStatus/${postDetail.maximumParticipants}") },
+        )
     }
 }
 
 
 @Composable
-fun FindGatheringCardList(posts: List<PostDetail>, viewModel: HomeViewModel) {
+fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
-            GatheringCard(
-                title = postData.gatheringTitle,
-                location = postData.gatheringLocation,
-                minimumParticipants = postData.minimumParticipants,
-                maximumParticipants = postData.maximumParticipants,
-                time = postData.gatheringTime,
-                promoter = postData.gatheringPromoter,
-                description = postData.gatheringDescription,
-                tags = postData.gatheringTags,
-                postID = postData.postID,
+            GathergingListItem(
+                postDetail = postData,
                 viewModel = viewModel
-
+            )
+            Divider(
+                modifier = Modifier.padding(horizontal = 5.dp),
+                color = Color.LightGray,
+                thickness = 0.5.dp,
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun GathergingItemListPreview() {
+    FindGatheringItemList(listOf(PostDetail(
+        gatheringTitle = "Preview",
+        minimumParticipants = "Preview",
+        maximumParticipants = "Preview",
+        gatheringTime = "Preview",
+        gatheringDescription = "Preview",
+        gatheringTags = listOf("Preview"),
+        gatheringLocation = "",
+        gatheringPromoter = "",
+        currentParticipants = "",
+        participantStatus = ParticipationStatus.PARTICIPATED,
+        postID = "Preview",
+    )),
+        viewModel = HomeViewModel()
+    )
 }

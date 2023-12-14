@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsButtonItem(
+    modifier: Modifier = Modifier,
     title: String,
     onClick: () -> Unit,
     description: String = "",
@@ -32,17 +33,15 @@ fun SettingsButtonItem(
 ) {
     if(isUpperLine) {
         Divider(
-            color = Color(0xFF353535),
+            color = Color.LightGray,
             thickness = 0.5.dp,
-            modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
             .clickable { onClick() }
             .clip(shape = AbsoluteRoundedCornerShape(10.dp))
     ) {

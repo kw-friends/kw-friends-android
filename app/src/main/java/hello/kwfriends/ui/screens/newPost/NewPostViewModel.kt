@@ -23,16 +23,14 @@ class NewPostViewModel : ViewModel() {
     var gatheringPromoter by mutableStateOf(AuthViewModel.userInfo!!["name"].toString())
 
     var gatheringTime by mutableStateOf("")
-    var gatheringTimeStatus by mutableStateOf(false)
 
     var gatheringLocation by mutableStateOf("")
-    var gatheringLocationStatus by mutableStateOf(false)
 
     var maximumParticipants by mutableStateOf("")
-    var minimumParticipants by mutableStateOf("")
     var participantsRangeValidation by mutableStateOf(false)
 
     var gatheringDescription by mutableStateOf("")
+    var gatheringDescriptionStatus by mutableStateOf(false)
 
     var isUploading by mutableStateOf(false)
     var uploadResult by mutableStateOf(true)
@@ -58,10 +56,10 @@ class NewPostViewModel : ViewModel() {
     fun checkParticipantsRange(
         min: String,
         max: String
-    ): Boolean { // mix와 max가 2 이상, 100 이하이고, min < max인지를 확인
+    ): Boolean { // min이 1이상, max가 2 이상, 100 이하이고, min < max인지를 확인
         return try {
             Log.i("checkParticipantsRange", "true")
-            min.toInt() < max.toInt() && min.toInt() in 2..100 && max.toInt() in 2..100
+            min.toInt() < max.toInt() && min.toInt() in 1..100 && max.toInt() in 2..100
         } catch (e: NumberFormatException) {
             Log.i("checkParticipantsRange", "false")
             false
@@ -73,34 +71,19 @@ class NewPostViewModel : ViewModel() {
         gatheringTitleStatus = isStrHasData(text)
     }
 
-    fun gatheringTimeChange(text: String) {
-        gatheringTime = text
-        gatheringTimeStatus = isStrHasData(text)
-    }
-
-    fun gatheringLocationChange(text: String) {
-        gatheringLocation = text
-        gatheringLocationStatus = isStrHasData(text)
-    }
-
     fun gatheringDescriptionChange(text: String) {
         gatheringDescription = text
+        gatheringDescriptionStatus = isStrHasData(text)
     }
 
-    fun maximumParticipantsChange(min: String = minimumParticipants, max: String) {
+    fun maximumParticipantsChange(max: String) {
         maximumParticipants = max
-        participantsRangeValidation = checkParticipantsRange(min, max)
-    }
-
-    fun minimumParticipantsChange(min: String, max: String = maximumParticipants) {
-        minimumParticipants = min
-        participantsRangeValidation = checkParticipantsRange(min, max)
+        participantsRangeValidation = checkParticipantsRange("1", max)
     }
 
     fun validateGatheringInfo(): Boolean {
         return (gatheringTitleStatus &&
-                gatheringLocationStatus &&
-                gatheringTimeStatus &&
+                gatheringDescriptionStatus &&
                 participantsRangeValidation)
     }
 
@@ -109,14 +92,12 @@ class NewPostViewModel : ViewModel() {
     }
 
 
-    fun uploadGatheringToFirestore(navigation: NavController) {
+    fun uploadGatheringToFirestore(end: () -> Unit) {
         showSnackbar("모임 생성 중...")
 
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
         Log.w("NewPostViewModel", "gatheringTitle = $gatheringTitleStatus")
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
-        Log.w("NewPostViewModel", "gatheringLocation = $gatheringLocationStatus")
-        Log.w("NewPostViewModel", "gatheringTime = $gatheringTimeStatus")
         Log.w("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
 
@@ -129,12 +110,12 @@ class NewPostViewModel : ViewModel() {
                     gatheringLocation = gatheringLocation,
                     gatheringTime = gatheringTime,
                     maximumParticipants = maximumParticipants,
-                    minimumParticipants = minimumParticipants,
+                    minimumParticipants = "1",
                     gatheringDescription = gatheringDescription,
                     gatheringTags = tagMap.filter { it.value }.map { it.key },
                     newPostViewModel = this@NewPostViewModel
                 )
-                navigation.navigate(Routes.HOME_SCREEN)
+                end()
                 isUploading = false
             }
         } else {

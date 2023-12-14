@@ -4,11 +4,9 @@ package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,22 +30,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
+import hello.kwfriends.ui.component.NewPostPopup
 import hello.kwfriends.ui.component.NoSearchResult
+import hello.kwfriends.ui.component.PostInfoPopup
+import hello.kwfriends.ui.component.ReportDialog
 import hello.kwfriends.ui.component.TagChip
-import hello.kwfriends.ui.main.Routes
-import hello.kwfriends.ui.screens.findGathering.FindGatheringCardList
+import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
+import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
+import hello.kwfriends.ui.theme.KWFriendsTheme
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
+    newPostViewModel: NewPostViewModel,
     settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
@@ -77,9 +82,30 @@ fun HomeScreen(
         if(homeViewModel.isSearching) {
             homeViewModel.isSearching = false
         }
+        else if(homeViewModel.newPostPopupState) {
+            homeViewModel.newPostPopupState = false
+        }
+        else if(homeViewModel.postPopupState.first) {
+            homeViewModel.postPopupState = false to null
+        }
     }
     //태그 필터 리스트 스크롤 저장 변수
     val scrollState = rememberScrollState()
+    //상황에 따른 stateBar 색상 조정
+//    val systemUiController = rememberSystemUiController()
+//    LaunchedEffect(key1 = homeViewModel.newPostPopupState, key2 = homeViewModel.postPopupState.first) {
+//        if(homeViewModel.newPostPopupState || homeViewModel.postPopupState.first) {
+//            systemUiController.setStatusBarColor(
+//                color = Color.White
+//            )
+//        }
+//        else {
+//            systemUiController.setStatusBarColor(
+//                color = Color(0xFFE2A39B)
+//            )
+//
+//        }
+//    }
 
     Scaffold(
         //앱 바
@@ -100,35 +126,68 @@ fun HomeScreen(
                 text = { Text(text = "모임 생성") },
                 icon = { Icon(Icons.Default.Add, null) },
                 onClick = {
-                    navigation.navigate(Routes.NEW_POST_SCREEN)
+                    homeViewModel.newPostPopupState = true
                 },
                 modifier = Modifier.padding(bottom = 35.dp)
             )
         }
-    ) {
-        Column(modifier = Modifier.padding(it)) {
+    ) { paddingValues ->
+        //포스트 정보 다이얼로그
+        PostInfoPopup(
+            state = homeViewModel.postPopupState.first,
+            postDetail = homeViewModel.postPopupState.second,
+            participantsCount = homeViewModel.currentParticipationStatusMap[homeViewModel.postPopupState.second?.postID] ?: -1,
+            onDismiss = { homeViewModel.postPopupState = false to null },
+            onReport = {
+                homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID
+            },
+            enjoyButton = {
+                EnjoyButton(
+                    status = homeViewModel.participationStatusMap[homeViewModel.postPopupState.second?.postID],
+                    updateStatus = {
+                        homeViewModel.updateParticipationStatus(
+                            postID = homeViewModel.postPopupState.second?.postID ?: "",
+                            viewModel = homeViewModel
+                        )
+                    }
+                )
+            }
+        )
+        //모임 생성 다이얼로그
+        NewPostPopup(
+            state = homeViewModel.newPostPopupState,
+            onDismiss = { homeViewModel.newPostPopupState = false },
+            newPostViewModel = newPostViewModel
+        )
+        //신고 다이얼로그
+        if(homeViewModel.reportDialogState.first) {
+            homeViewModel.initReportChoice()
+            ReportDialog(homeViewModel = homeViewModel)
+        }
+        //태그
+        Column(modifier = Modifier.padding(paddingValues)) {
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(scrollState)
-                .background(Color(0xFFE2A39B))
+//                .background(Color(0xFFE2A39B))
             ) {
                 Spacer(Modifier.width(8.dp))
-                homeViewModel.tagMap.forEach {
+                homeViewModel.filterTagMap.forEach {
                     TagChip(
                         modifier = Modifier.padding(4.dp),
                         text = it.key,
                         icon = Icons.Filled.Person,
                         selected = it.value,
-                        onClick = { homeViewModel.tagMap[it.key] = !it.value }
+                        onClick = { homeViewModel.filterTagMap[it.key] = !it.value }
                     )
                 }
                 Spacer(Modifier.width(8.dp))
             }
             Box {
                 Column(
-                    modifier = Modifier.pullRefresh(pullRefreshState)
+                    modifier = Modifier
+                        .pullRefresh(pullRefreshState)
                 ) {
-
                     //검색중인지
                     if(homeViewModel.isSearching) {
                         if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
@@ -137,7 +196,7 @@ fun HomeScreen(
                         }
                         else {
                             //검색 결과 화면
-                            FindGatheringCardList(
+                            FindGatheringItemList(
                                 homeViewModel.filter(homeViewModel.searchingPosts),
                                 viewModel = homeViewModel
                             )
@@ -145,7 +204,7 @@ fun HomeScreen(
                     }
                     //검색중 아닐때는 모든 모임 목록 표시
                     else {
-                        FindGatheringCardList(
+                        FindGatheringItemList(
                             homeViewModel.filter(homeViewModel.posts),
                             viewModel = homeViewModel
                         )
@@ -160,5 +219,14 @@ fun HomeScreen(
             }
         }
 
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview(){
+    val navController = rememberNavController()
+    KWFriendsTheme {
+        HomeScreen(homeViewModel = HomeViewModel(), newPostViewModel = NewPostViewModel(), settingsViewModel = SettingsViewModel(), navigation = navController)
     }
 }
