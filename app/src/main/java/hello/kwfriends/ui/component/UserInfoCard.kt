@@ -94,9 +94,9 @@ fun UserInfoCard(
         ) {
             Text(text = major, style = MaterialTheme.typography.labelSmall, fontFamily = FontFamily.Default)
             Divider(
-                color = Color.DarkGray,
+                color = Color.LightGray,
                 modifier = Modifier
-                    .height(18.dp)
+                    .height(10.dp)
                     .padding(horizontal = 6.dp)
                     .width(1.dp)
             )
