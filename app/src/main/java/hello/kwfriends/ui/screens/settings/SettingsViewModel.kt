@@ -109,7 +109,6 @@ class SettingsViewModel: ViewModel() {
         AuthViewModel.inputStdNum = AuthViewModel.userInfo!!["std-num"]!!.toString()
         AuthViewModel.inputName = AuthViewModel.userInfo!!["name"]!!.toString()
         AuthViewModel.inputMbti = AuthViewModel.userInfo!!["mbti"]!!.toString()
-        AuthViewModel.inputGender = AuthViewModel.userInfo!!["gender"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 }

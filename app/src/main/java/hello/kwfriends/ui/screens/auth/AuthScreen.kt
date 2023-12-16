@@ -481,34 +481,7 @@ fun AuthScreen(navigation: NavController) {
                         value = AuthViewModel.inputMbti,
                         onValueChange = { AuthViewModel.setInputMbtiText(it) }
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Spacer(modifier = Modifier.width(7.dp))
-                        CheckboxStyle1(
-                            text = "남자",
-                            textColor = Color(0xFFF1F1F1),
-                            checked = AuthViewModel.inputGender == "male",
-                            onCheckedChange = { AuthViewModel.inputGender = "male" },
-                            onTextClicked = { AuthViewModel.inputGender = "male" }
-                        )
-                        Spacer(modifier = Modifier.width(17.dp))
-                        CheckboxStyle1(
-                            text = "여자",
-                            textColor = Color(0xFFF1F1F1),
-                            checked = AuthViewModel.inputGender == "female",
-                            onCheckedChange = { AuthViewModel.inputGender = "female" },
-                            onTextClicked = { AuthViewModel.inputGender = "female" }
-                        )
-                        Spacer(modifier = Modifier.width(17.dp))
-                        CheckboxStyle1(
-                            text = "기타",
-                            textColor = Color(0xFFF1F1F1),
-                            checked = AuthViewModel.inputGender == "etc",
-                            onCheckedChange = { AuthViewModel.inputGender = "etc" },
-                            onTextClicked = { AuthViewModel.inputGender = "etc" }
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(38.dp))
+                    Spacer(modifier = Modifier.height(50.dp))
                     ButtonStyle1(
                         text = "완료",
                         onClick = { AuthViewModel.trySaveUserInfo() }

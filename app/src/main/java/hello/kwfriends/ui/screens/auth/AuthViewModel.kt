@@ -87,7 +87,6 @@ object AuthViewModel : ViewModel() {
     var inputMbti by mutableStateOf("")
     var inputCollege by mutableStateOf("")
     var inputDepartment by mutableStateOf("")
-    var inputGender by mutableStateOf("male")
     fun setInputEmailText(text: String) { inputEmail = text }
     fun setInputPasswordText(text: String) { inputPassword = text }
     fun setInputPasswordConfirmText(text: String) { inputPasswordConfirm = text }
@@ -126,10 +125,10 @@ object AuthViewModel : ViewModel() {
     //가능한 최대 입학년도 갱신(업데이트) 함수
     fun updateMaxStdNum() {
         val currentDate = SimpleDateFormat("yyyy-MM").format(System.currentTimeMillis())
-        if (currentDate.slice(IntRange(5, 6)).toInt() >= 11) {
-            maxAdmissionYear = currentDate.slice(IntRange(0, 3)).toInt() + 1
+        maxAdmissionYear = if (currentDate.slice(IntRange(5, 6)).toInt() >= 11) {
+            currentDate.slice(IntRange(0, 3)).toInt() + 1
         } else {
-            maxAdmissionYear = currentDate.slice(IntRange(0, 3)).toInt()
+            currentDate.slice(IntRange(0, 3)).toInt()
         }
         Log.w("Lim", "최대 입학년도가 ${maxAdmissionYear}년으로 설정되었습니다.")
     }
@@ -373,7 +372,6 @@ object AuthViewModel : ViewModel() {
             "name" to inputName,
             "mbti" to inputMbti.lowercase(),
             "std-num" to inputStdNum,
-            "gender" to inputGender
         )
         if (!userInfoFormCheck(tempUserInfo)) { return } //userInfo 형식 체크
         uiState = AuthUiState.Loading
@@ -406,7 +404,6 @@ object AuthViewModel : ViewModel() {
         val name = tempUserInfo["name"].toString()
         val mbti = tempUserInfo["mbti"].toString()
         val stdNum = tempUserInfo["std-num"].toString()
-        val gender = tempUserInfo["gender"].toString()
         if (name == "") {
             Log.w("Lim", "유저 이름 입력 안됨.")
             return false
@@ -440,10 +437,6 @@ object AuthViewModel : ViewModel() {
                 stdNum.slice(IntRange(5, 6))) != true
         ) {
             Log.w("Lim", "${stdNum.slice(IntRange(5, 6))}는 확인되지 않은 학과 번호입니다.")
-        }
-        if(gender != "male" && gender != "female" && gender != "etc"){
-            Log.w("Lim", "성별이 male, female, etc 중 하나가 아님.")
-            return false
         }
         return true
     }
