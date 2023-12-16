@@ -38,7 +38,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
@@ -52,181 +51,178 @@ fun PostInfoScreen(
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
-    Popup(
-        onDismissRequest = onDismiss,
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFFFBFF))
     ) {
+        //top start
+        Row(
+            modifier = Modifier.align(Alignment.TopStart),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = onDismiss
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = "back button"
+                )
+            }
+            Text(
+                text = "모임 상세정보",
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Default
+            )
+        }
+
+        //top end
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFFFFBFF))
+                .align(Alignment.TopEnd)
+                .wrapContentSize(Alignment.TopEnd)
         ) {
-            //top start
-            Row(
-                modifier = Modifier.align(Alignment.TopStart),
-                verticalAlignment = Alignment.CenterVertically
+            IconButton(
+                onClick = { menuExpanded = true }
             ) {
-                IconButton(
-                    onClick = onDismiss
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "back button"
-                    )
-                }
-                Text(
-                    text = "모임 상세정보",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontFamily = FontFamily.Default
-                )
+                Icon(Icons.Default.MoreVert, contentDescription = "report menu")
             }
-
-            //top end
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.TopEnd)
-                    .wrapContentSize(Alignment.TopEnd)
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false }
             ) {
-                IconButton(
-                    onClick = { menuExpanded = true }
-                ) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "report menu")
-                }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("신고") },
-                        onClick = {
-                            menuExpanded = false
-                            onReport()
-                        },
+                DropdownMenuItem(
+                    text = { Text("신고") },
+                    onClick = {
+                        menuExpanded = false
+                        onReport()
+                    },
 //                        leadingIcon = {
 //                            Icon(
 //                                Icons.Outlined.Details,
 //                                contentDescription = null
 //                            )
 //                        },
-                        //trailingIcon = { Text("F11", textAlign = TextAlign.Center) }
+                    //trailingIcon = { Text("F11", textAlign = TextAlign.Center) }
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
+        ) {
+            //top
+            Row {
+                AsyncImage(
+                    model = R.drawable.test_image,
+                    placeholder = painterResource(id = R.drawable.profile_default_image),
+                    contentDescription = "My profile image",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Column {
+                    Text(
+                        text = "파티장",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight(500)
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = "n분전",
+                        maxLines = 1,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
+                        color = Color.Gray
                     )
                 }
             }
+            Spacer(Modifier.height(15.dp))
+            Text(
+                text = postDetail.gatheringTitle,
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight(600)
+            )
+            Spacer(Modifier.height(15.dp))
+            Text(
+                text = postDetail.gatheringDescription,
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily.Default
+            )
+            Row(modifier = Modifier.padding(top = 20.dp)) {
+                postDetail.gatheringTags.forEach {
+                    Text(
+                        text = "#${it}",
+                        modifier = Modifier.padding(end = 4.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            //bottom
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Bottom
             ) {
-                //top
-                Row {
-                    AsyncImage(
-                        model = R.drawable.test_image,
-                        placeholder = painterResource(id = R.drawable.profile_default_image),
-                        contentDescription = "My profile image",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop,
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column {
-                        Text(
-                            text = "파티장",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight(500)
-                        )
-                        Spacer(modifier = Modifier.height(3.dp))
-                        Text(
-                            text = "n분전",
-                            maxLines = 1,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Default,
-                            color = Color.Gray
-                        )
-                    }
-                }
-                Spacer(Modifier.height(15.dp))
-                Text(
-                    text = postDetail.gatheringTitle,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(600)
+                Divider(
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    color = Color.Gray,
+                    thickness = 0.5.dp,
                 )
-                Spacer(Modifier.height(15.dp))
-                Text(
-                    text = postDetail.gatheringDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = FontFamily.Default
-                )
-                Row(modifier = Modifier.padding(top = 20.dp)) {
-                    postDetail.gatheringTags.forEach {
-                        Text(
-                            text = "#${it}",
-                            modifier = Modifier.padding(end = 4.dp),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
-                    }
-                }
-
-                //bottom
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Bottom
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Divider(
-                        modifier = Modifier.padding(vertical = 20.dp),
-                        color = Color.Gray,
-                        thickness = 0.5.dp,
+                    Text(
+                        text = "참여 인원  $participantsCount/${postDetail.maximumParticipants}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight(400)
                     )
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = "참여 인원  $participantsCount/${postDetail.maximumParticipants}",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight(400)
-                        )
-                        Spacer(Modifier.height(15.dp))
-                        Row {
-                            //참여자 목록
-                            repeat(participantsCount) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.padding(end = 15.dp)
-                                ) {
-                                    AsyncImage(
-                                        model = R.drawable.test_image,
-                                        placeholder = painterResource(id = R.drawable.profile_default_image),
-                                        contentDescription = "My profile image",
-                                        modifier = Modifier
-                                            .size(50.dp)
-                                            .clip(CircleShape),
-                                        contentScale = ContentScale.Crop,
-                                    )
-                                    Spacer(modifier = Modifier.height(5.dp))
-                                    Text(
-                                        text = "참여자${it + 1}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = FontFamily.Default,
-                                    )
-                                }
-
+                    Spacer(Modifier.height(15.dp))
+                    Row {
+                        //참여자 목록
+                        repeat(participantsCount) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(end = 15.dp)
+                            ) {
+                                AsyncImage(
+                                    model = R.drawable.test_image,
+                                    placeholder = painterResource(id = R.drawable.profile_default_image),
+                                    contentDescription = "My profile image",
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .clip(CircleShape),
+                                    contentScale = ContentScale.Crop,
+                                )
+                                Spacer(modifier = Modifier.height(5.dp))
+                                Text(
+                                    text = "참여자${it + 1}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = FontFamily.Default,
+                                )
                             }
+
                         }
                     }
-                    Spacer(Modifier.height(30.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        enjoyButton()
-                    }
-
                 }
+                Spacer(Modifier.height(30.dp))
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    enjoyButton()
+                }
+
             }
         }
     }

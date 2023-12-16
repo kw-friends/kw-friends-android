@@ -1,6 +1,8 @@
 package hello.kwfriends.ui.component
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.window.Popup
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.ui.screens.postInfo.PostInfoScreen
 
@@ -14,12 +16,19 @@ fun PostInfoPopup(
     enjoyButton: @Composable () -> Unit
 ) {
     if (state && postDetail != null) {
-        PostInfoScreen(
-            postDetail = postDetail,
-            participantsCount = participantsCount,
-            onDismiss = onDismiss,
-            onReport = onReport,
-            enjoyButton = enjoyButton
-        )
+        Popup(
+            onDismissRequest = onDismiss
+        ) {
+            BackHandler {
+                onDismiss()
+            }
+            PostInfoScreen(
+                postDetail = postDetail,
+                participantsCount = participantsCount,
+                onDismiss = onDismiss,
+                onReport = onReport,
+                enjoyButton = enjoyButton
+            )
+        }
     }
 }
