@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Divider
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -42,20 +44,25 @@ fun SettingsButtonItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(15.dp))
             .clickable { onClick() }
-            .clip(shape = AbsoluteRoundedCornerShape(10.dp))
+            .padding(horizontal = 10.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(vertical = 15.dp)
+        ) {
             Column(Modifier.weight(10F)) {
                 Box{
-                    Text(text = title, style = MaterialTheme.typography.titleMedium,)
+                    Text(text = title, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default)
                     if (description != "") {
                         Text(
                             text = description,
                             style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily.Default,
                             color = Color.DarkGray,
                             modifier = Modifier
-                                .padding(top = 30.dp)
+                                .padding(top = 23.dp)
                                 .widthIn(max = 220.dp)
                         )
                     }
@@ -64,8 +71,8 @@ fun SettingsButtonItem(
             Icon(
                 imageVector = Icons.Default.ArrowForwardIos,
                 contentDescription = null,
-                modifier = Modifier.padding(end = 8.dp),
-                tint = Color.DarkGray
+                modifier = Modifier.size(20.dp),
+                tint = Color.Gray
             )
         }
     }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Divider
@@ -16,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,18 +40,19 @@ fun SettingsSwitchItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 70.dp)
+            .padding(horizontal = 10.dp)
     ) {
         Column {
-            Box {
-                Text(text = title, style = MaterialTheme.typography.titleMedium, lineHeight = 1.sp)
+            Box(modifier = Modifier.padding(vertical = 15.dp)) {
+                Text(text = title, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default, lineHeight = 1.sp)
                 if (description != "") {
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
                         color = Color.DarkGray,
                         modifier = Modifier
-                            .padding(top = 30.dp)
+                            .padding(top = 23.dp)
                             .widthIn(max = 220.dp)
                     )
                 }
