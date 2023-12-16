@@ -105,21 +105,6 @@ fun HomeScreen(
     }
     //태그 필터 리스트 스크롤 저장 변수
     val scrollState = rememberScrollState()
-    //상황에 따른 stateBar 색상 조정
-//    val systemUiController = rememberSystemUiController()
-//    LaunchedEffect(key1 = homeViewModel.newPostPopupState, key2 = homeViewModel.postPopupState.first) {
-//        if(homeViewModel.newPostPopupState || homeViewModel.postPopupState.first) {
-//            systemUiController.setStatusBarColor(
-//                color = Color.White
-//            )
-//        }
-//        else {
-//            systemUiController.setStatusBarColor(
-//                color = Color(0xFFE2A39B)
-//            )
-//
-//        }
-//    }
 
     Scaffold(
         //앱 바
