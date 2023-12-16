@@ -50,7 +50,7 @@ fun GatheringCard(
     }
 
     val participationStatus = viewModel.participationStatusMap[postID]
-    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postID]
+    val currentParticipationStatus = viewModel.participantsCountMap[postID]
 
     Card(
         modifier = Modifier
@@ -135,11 +135,10 @@ fun FindGatheringCardList(viewModel: HomeViewModel) {
                 minimumParticipants = postData.minimumParticipants,
                 maximumParticipants = postData.maximumParticipants,
                 time = postData.gatheringTime,
-                promoter = postData.gatheringPromoterUID,
+                promoter = postData.gatheringPromoter,
                 description = postData.gatheringDescription,
                 postID = postData.postID,
                 viewModel = viewModel
-
             )
         }
     }

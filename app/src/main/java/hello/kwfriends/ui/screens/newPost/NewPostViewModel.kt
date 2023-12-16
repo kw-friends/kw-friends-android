@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
-import hello.kwfriends.firebase.realtimeDatabase.PostDetail_
-import hello.kwfriends.firebase.realtimeDatabase.Post_
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -116,8 +116,8 @@ class NewPostViewModel : ViewModel() {
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
                 isUploading = true
-                val result = Post_.upload(
-                    PostDetail_(
+                val result = Post.upload(
+                    PostDetail(
                         gatheringTitle = gatheringTitle,
                         gatheringPromoterUID = gatheringPromoter,
                         gatheringLocation = gatheringLocation,
@@ -125,7 +125,7 @@ class NewPostViewModel : ViewModel() {
                         maximumParticipants = maximumParticipants,
                         minimumParticipants = minimumParticipants,
                         gatheringDescription = gatheringDescription,
-                        participantStatus = ParticipationStatus.PARTICIPATED,
+                        myParticipantStatus = ParticipationStatus.PARTICIPATED,
                         postID = "123"
                     ).toMap()
                 )
