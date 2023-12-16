@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -170,12 +169,11 @@ fun HomeScreen(
                 .horizontalScroll(scrollState)
 //                .background(Color(0xFFE2A39B))
             ) {
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(12.dp))
                 homeViewModel.filterTagMap.forEach {
                     TagChip(
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
-                        icon = Icons.Filled.Person,
                         selected = it.value,
                         onClick = { homeViewModel.filterTagMap[it.key] = !it.value }
                     )

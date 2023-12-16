@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -174,7 +173,6 @@ fun NewPostScreen(
                     TagChip(
                         modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
-                        icon = Icons.Filled.Person,
                         selected = it.value,
                         onClick = { newPostViewModel.tagMap[it.key] = !it.value }
                     )
