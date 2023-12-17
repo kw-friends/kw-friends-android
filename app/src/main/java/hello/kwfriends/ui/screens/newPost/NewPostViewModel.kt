@@ -12,8 +12,6 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.Tags.Tags
-import hello.kwfriends.firebase.firestoreDatabase.PostManager
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
