@@ -5,7 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,42 +13,51 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CheckboxStyle1(
+fun CheckboxStyle2(
+    modifier: Modifier = Modifier,
+    clickablePadding: Dp = 0.dp,
     text: String,
     textColor: Color,
+    fontSize: TextUnit = 15.sp,
+    checkBoxSize: Dp = 15.dp,
     checked: Boolean,
-    onCheckedChange: ((Boolean) -> Unit)?,
-    onTextClicked: () -> Unit
+    onClicked: () -> Unit
 ) {
-    Row {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.clickable { onClicked() }.padding(vertical = clickablePadding)
+    ) {
         Box {
             Spacer(
                 modifier = Modifier
                     .clip(RoundedCornerShape(3.dp))
-                    .size(15.dp)
+                    .size(checkBoxSize)
                     .background(Color(0xFFF1F1F1))
             )
             Checkbox(
                 checked = checked,
-                onCheckedChange = onCheckedChange,
+                onCheckedChange = { onClicked() },
                 colors = CheckboxDefaults.colors(
                     uncheckedColor = Color.Transparent,
                     checkedColor = Color.Transparent,
-                    checkmarkColor = Color(0xFF1F1F1F)
+                    checkmarkColor = Color.Red
                 ),
                 modifier = Modifier
-                    .width(15.dp)
-                    .height(15.dp)
+                    .size(checkBoxSize)
             )
         }
         Spacer(modifier = Modifier.width(5.dp))
@@ -57,9 +66,9 @@ fun CheckboxStyle1(
             color = textColor,
             style = TextStyle(
                 fontWeight = FontWeight(300),
-                fontSize = 11.sp
+                fontSize = fontSize,
             ),
-            modifier = Modifier.clickable(onClick = onTextClicked)
+            textAlign = TextAlign.Center
         )
     }
 
@@ -67,6 +76,6 @@ fun CheckboxStyle1(
 
 @Preview
 @Composable
-fun CheckboxStyle1Preview() {
+fun CheckboxStyle2Preview() {
     CheckboxStyle1("Preview", Color(0xFFF1F1F1), true, {}, {})
 }

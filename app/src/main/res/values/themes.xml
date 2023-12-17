@@ -2,7 +2,8 @@
 <resources>
 
     <style name="Theme.KWFriends" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/KWFriendTopBarColor</item>
+        <item name="android:statusBarColor">#FFFFFBFF</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
     <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">#FFE79898</item>

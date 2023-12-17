@@ -15,7 +15,7 @@ object ProfileImage {
     val profileImageRef = storage.reference.child("profiles")
     var myImageUri by mutableStateOf<Uri?>(null)
 
-    //uri값을 받아 자신의 프로필 이미지로 firebase storage에 업로드
+    //특정 uid의 프로필 이미지를 업로드
     suspend fun upload(uid: String, imageUri: Uri?): Boolean {
         if(imageUri == null){
             Log.w("Lim", "이미지 uri가 null이라 업로드에 실패했습니다.")

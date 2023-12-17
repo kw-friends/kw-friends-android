@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SettingsSwitchItem(
+    modifier: Modifier = Modifier,
     title: String,
     checked: Boolean,
     onCheckedChange:  ((Boolean) -> Unit)?,
@@ -30,17 +31,15 @@ fun SettingsSwitchItem(
 ) {
     if(isUpperLine){
         Divider(
-            color = Color(0xFF353535),
+            color = Color.LightGray,
             thickness = 0.5.dp,
-            modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
             .heightIn(min = 70.dp)
     ) {
         Column {

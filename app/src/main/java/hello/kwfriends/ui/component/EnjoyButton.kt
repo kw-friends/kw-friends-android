@@ -20,10 +20,12 @@ import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 
 @Composable
 fun EnjoyButton(
+    modifier: Modifier = Modifier,
     status: ParticipationStatus?,
     updateStatus: () -> Unit
 ) {
     Button(
+        modifier = modifier,
         onClick = {
             if (status == ParticipationStatus.PARTICIPATED
                 || status == ParticipationStatus.NOT_PARTICIPATED

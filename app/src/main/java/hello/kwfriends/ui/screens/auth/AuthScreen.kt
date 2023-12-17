@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,20 +50,24 @@ import hello.kwfriends.ui.component.CheckboxStyle1
 import hello.kwfriends.ui.component.TextStyle1
 import hello.kwfriends.ui.component.TextfieldStyle1
 import hello.kwfriends.ui.component.TextfieldStyle2
-import hello.kwfriends.ui.main.Routes
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AuthScreen(navigation: NavController) {
 
-    if (AuthViewModel.uiState == AuthUiState.SignIn) {
-        if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
-            if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
-                Log.w("Lim", "로그인 기록 확인")
-                AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
-            } else {
-                AuthViewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+    LaunchedEffect(AuthViewModel.uiState) {
+        if(AuthViewModel.uiState == AuthUiState.SignInSuccess) {
+            AuthViewModel.signInSuccessCheck(navigation)
+        }
+        else if (AuthViewModel.uiState == AuthUiState.SignIn) {
+            if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
+                if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
+                    Log.w("Lim", "로그인 기록 확인")
+                    AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
+                } else {
+                    AuthViewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
+                }
             }
         }
     }
@@ -73,7 +78,11 @@ fun AuthScreen(navigation: NavController) {
     }
     when (AuthViewModel.uiState) {
         is AuthUiState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFFE79898))
+            ) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(size = 64.dp)
@@ -109,9 +118,6 @@ fun AuthScreen(navigation: NavController) {
                         contentDescription = "앱 로고",
                         modifier = Modifier
                             .size(102.dp)
-                            .clickable {
-                                navigation.navigate(Routes.HOME_SCREEN)
-                            }
                     )
                     Spacer(modifier = Modifier.height(80.dp))
                     TextfieldStyle1(
@@ -136,6 +142,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "아이디 저장",
+                            textColor = Color(0xFFF1F1F1),
                             checked = AuthViewModel.idSaveChecked,
                             onCheckedChange = {
                                 AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked
@@ -287,6 +294,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "이용약관 및 개인정보 처리방침에 동의합니다.",
+                            textColor = Color(0xFFF1F1F1),
                             checked = true,
                             onCheckedChange = { },
                             onTextClicked = { }
@@ -455,6 +463,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(7.dp))
                         CheckboxStyle1(
                             text = "남자",
+                            textColor = Color(0xFFF1F1F1),
                             checked = AuthViewModel.inputGender == "male",
                             onCheckedChange = { AuthViewModel.inputGender = "male" },
                             onTextClicked = { AuthViewModel.inputGender = "male" }
@@ -462,6 +471,7 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(17.dp))
                         CheckboxStyle1(
                             text = "여자",
+                            textColor = Color(0xFFF1F1F1),
                             checked = AuthViewModel.inputGender == "female",
                             onCheckedChange = { AuthViewModel.inputGender = "female" },
                             onTextClicked = { AuthViewModel.inputGender = "female" }
@@ -469,7 +479,8 @@ fun AuthScreen(navigation: NavController) {
                         Spacer(modifier = Modifier.width(17.dp))
                         CheckboxStyle1(
                             text = "기타",
-                            AuthViewModel.inputGender == "etc",
+                            textColor = Color(0xFFF1F1F1),
+                            checked = AuthViewModel.inputGender == "etc",
                             onCheckedChange = { AuthViewModel.inputGender = "etc" },
                             onTextClicked = { AuthViewModel.inputGender = "etc" }
                         )
@@ -535,12 +546,7 @@ fun AuthScreen(navigation: NavController) {
             }
         }
 
-        is AuthUiState.SignInSuccess -> {
-            //유저 상태 정상인지 확인
-            Log.w("Lim", "유저 정보 정상인지 확인중..")
-            AuthViewModel.signInSuccessCheck(navigation)
-
-        }
+        is AuthUiState.SignInSuccess -> { }
 
         is AuthUiState.DeleteUser -> {
             Box(
