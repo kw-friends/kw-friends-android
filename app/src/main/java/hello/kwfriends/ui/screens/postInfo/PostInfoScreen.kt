@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,13 +43,17 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.ui.screens.home.HomeViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
-    participantsCount: Int,
     onDismiss: () -> Unit,
     onReport: () -> Unit,
+    homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -116,10 +122,11 @@ fun PostInfoScreen(
         ) {
             //top
             Row {
+                homeViewModel.downlodUri(postDetail.gatheringPromoterUID)
                 AsyncImage(
-                    model = R.drawable.test_image,
+                    model = homeViewModel.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
                     placeholder = painterResource(id = R.drawable.profile_default_image),
-                    contentDescription = "My profile image",
+                    contentDescription = "gathering promoter's profile image",
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape),
@@ -133,9 +140,8 @@ fun PostInfoScreen(
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(500)
                     )
-                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = "n분전",
+                        text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
                         maxLines = 1,
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Default,
@@ -156,12 +162,13 @@ fun PostInfoScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 fontFamily = FontFamily.Default
             )
-            Row(modifier = Modifier.padding(top = 20.dp)) {
+            FlowRow(modifier = Modifier.padding(top = 20.dp)) {
                 postDetail.gatheringTags.forEach {
                     Text(
                         text = "#${it}",
                         modifier = Modifier.padding(end = 4.dp),
                         style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
                         color = Color.Gray
                     )
                 }
@@ -195,10 +202,11 @@ fun PostInfoScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.padding(end = 15.dp)
                             ) {
+                                homeViewModel.downlodUri(it.key)
                                 AsyncImage(
-                                    model = R.drawable.test_image,
+                                    model = homeViewModel.usersUriMap[it.key] ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
-                                    contentDescription = "My profile image",
+                                    contentDescription = "gathering participant's profile image",
                                     modifier = Modifier
                                         .size(50.dp)
                                         .clip(CircleShape),
@@ -206,7 +214,7 @@ fun PostInfoScreen(
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
-                                    text = it.key,
+                                    text = it.value.toString(),
                                     style = MaterialTheme.typography.bodySmall,
                                     fontFamily = FontFamily.Default,
                                 )

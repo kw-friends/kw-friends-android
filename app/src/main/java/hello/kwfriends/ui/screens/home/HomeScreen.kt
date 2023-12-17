@@ -134,11 +134,11 @@ fun HomeScreen(
         PostInfoPopup(
             state = homeViewModel.postPopupState.first,
             postDetail = homeViewModel.postPopupState.second,
-            participantsCount = homeViewModel.postPopupState.second?.participants?.size?:-1,
             onDismiss = { homeViewModel.postPopupState = false to null },
             onReport = {
                 homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID
             },
+            homeViewModel = homeViewModel,
             enjoyButton = {
                 EnjoyButton(
                     status = homeViewModel.participationStatusMap[homeViewModel.postPopupState.second?.postID],

@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.home
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -16,6 +17,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.Report
+import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -56,6 +58,8 @@ class HomeViewModel : ViewModel() {
         )
     )
     var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
+
+    var usersUriMap by mutableStateOf<MutableMap<String, Uri?>>(mutableMapOf())
 
     fun initReportChoice() {
         reportChoice = mutableListOf()
@@ -190,5 +194,13 @@ class HomeViewModel : ViewModel() {
         posts = Post.initPostData()
         Log.w("getPostFromFirestore", "게시글 불러옴")
         return false
+    }
+
+    fun downlodUri(uid: String) {
+        viewModelScope.launch {
+            usersUriMap = usersUriMap.toMutableMap().apply {
+                this[uid] = ProfileImage.getDownloadUrl(uid)
+            }
+        }
     }
 }

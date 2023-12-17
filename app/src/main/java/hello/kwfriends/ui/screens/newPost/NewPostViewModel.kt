@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.ServerValue
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Post
@@ -127,6 +128,7 @@ class NewPostViewModel : ViewModel() {
                         maximumParticipants = maximumParticipants,
                         gatheringDescription = gatheringDescription,
                         myParticipantStatus = ParticipationStatus.PARTICIPATED,
+                        timestamp = ServerValue.TIMESTAMP.toString(),
                         gatheringTags = tagMap.filter { it.value }.map { it.key },
                     ).toMap()
                 )
