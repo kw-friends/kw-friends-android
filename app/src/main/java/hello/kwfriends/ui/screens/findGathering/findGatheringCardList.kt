@@ -1,7 +1,10 @@
 package hello.kwfriends.ui.screens.findGathering
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +29,7 @@ import hello.kwfriends.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GathergingListItem(
     postDetail: PostDetail,
@@ -44,25 +48,28 @@ fun GathergingListItem(
                         modifier = Modifier.padding(top = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
-                            maxLines = 1,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Default,
-                            color = Color.Gray
-                        )
-                        if(postDetail.gatheringTags.isNotEmpty()) {
-                            Divider(
-                                color = Color.LightGray,
-                                modifier = Modifier
-                                    .height(10.dp)
-                                    .padding(horizontal = 6.dp)
-                                    .width(1.dp)
+                        FlowRow(verticalArrangement = Arrangement.Center) {
+                            Text(
+                                text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
+                                maxLines = 1,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = FontFamily.Default,
+                                color = Color.Gray
                             )
+                            if(postDetail.gatheringTags.isNotEmpty()) {
+                                Divider(
+                                    color = Color.LightGray,
+                                    modifier = Modifier
+                                        .padding(start = 6.dp, end = 6.dp, top = 3.dp)
+                                        .height(10.dp)
+                                        .width(1.dp)
+                                )
+                            }
+                            postDetail.gatheringTags.forEach {
+                                Text(text = "#$it ", style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
+                            }
                         }
-                        postDetail.gatheringTags.forEach {
-                            Text(text = "#$it ", style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
-                        }
+
                     }
                 }
             },

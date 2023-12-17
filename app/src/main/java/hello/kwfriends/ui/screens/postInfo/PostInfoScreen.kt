@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +45,7 @@ import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
@@ -156,12 +159,13 @@ fun PostInfoScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 fontFamily = FontFamily.Default
             )
-            Row(modifier = Modifier.padding(top = 20.dp)) {
+            FlowRow(modifier = Modifier.padding(top = 20.dp)) {
                 postDetail.gatheringTags.forEach {
                     Text(
                         text = "#${it}",
                         modifier = Modifier.padding(end = 4.dp),
                         style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
                         color = Color.Gray
                     )
                 }
