@@ -2,6 +2,7 @@ package hello.kwfriends.ui.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import androidx.compose.ui.window.Popup
 import hello.kwfriends.firebase.firestoreDatabase.PostDetail
 import hello.kwfriends.ui.screens.postInfo.PostInfoScreen

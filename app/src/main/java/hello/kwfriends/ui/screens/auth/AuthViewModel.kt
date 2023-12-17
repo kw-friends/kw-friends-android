@@ -9,11 +9,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FieldValue
+import com.google.firebase.database.ServerValue
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
-import hello.kwfriends.firebase.firestoreDatabase.UserDataManager
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.launch
@@ -73,8 +73,6 @@ object AuthViewModel : ViewModel() {
 
     //아이디 저장 체크 여부
     var idSaveChecked by mutableStateOf<Boolean>(false)
-    
-    var userInfo by mutableStateOf<Map<String, Any>?>(null)
 //-----------------
 
 
@@ -317,9 +315,9 @@ object AuthViewModel : ViewModel() {
             }
             else {
                 //유저 현재 상태 불러오기
-                val lastState: String = UserDataManager.getUserData()?.get("state").toString()
+                val lastState: String = UserData.userInfo?.get("state").toString()
                 //유저 상태 삭제됨으로 변경
-                if(!UserDataManager.mergeSetUserData(mapOf("state" to "deleted"))) {
+                if(!UserData.update(mapOf("state" to "deleted"))) {
                     uiState = AuthUiState.SignIn
                 }
                 else {
@@ -333,7 +331,7 @@ object AuthViewModel : ViewModel() {
                     }
                     else{
                         //유저 firestore 상태 롤백
-                        viewModelScope.launch { UserDataManager.mergeSetUserData(mapOf("state" to lastState)) }
+                        viewModelScope.launch { UserData.update(mapOf("state" to lastState)) }
                     }
                     uiState = AuthUiState.SignIn
                 }
@@ -347,10 +345,9 @@ object AuthViewModel : ViewModel() {
         //유저 정보 불러오기
         viewModelScope.launch {
             try {
-                userInfo = UserDataManager.getUserData()
-                if (userInfo != null) {
-                    Log.w(ContentValues.TAG, "Firestore 유저 정보: $userInfo")
-                    val tempStdNum = userInfo!!["std-num"].toString() //2023203045
+                if (UserData.userInfo != null) {
+                    Log.w(ContentValues.TAG, "Firestore 유저 정보: $UserData.userInfo")
+                    val tempStdNum = UserData.userInfo!!["std-num"].toString() //2023203045
                     inputCollege = collegeList[tempStdNum[4]] ?: ""
                     inputDepartment = departmentList[collegeList[tempStdNum[4]]]
                         ?.get(tempStdNum.slice(IntRange(5, 6))) ?: ""
@@ -377,7 +374,7 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 데이터 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
+            if(UserData.update(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
             else { uiState = AuthUiState.SignIn }
         }
     }
@@ -392,7 +389,7 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 소속 정보 저장
         viewModelScope.launch {
-            if(UserDataManager.mergeSetUserData(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
+            if(UserData.update(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
             else {uiState = AuthUiState.SignIn  }
         }
     }
@@ -462,17 +459,23 @@ object AuthViewModel : ViewModel() {
         try {
             val result = suspendCoroutine<Boolean> { continuation ->
                 viewModelScope.launch {
-                    userInfo = UserDataManager.getUserData()
-                    if (userInfo != null) {
-                        if (userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                            UserAuth.signOut()
-                            Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
-                            continuation.resume(false)
-                        } else if (!userInfoFormCheck(userInfo!!)) {
+                    if (UserData.userInfo != null) {
+                        if (UserData.userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
+                            if(UserData.userInfo!!["state"] == null){
+                                Log.w("userInfoCheck", "유저 상태가 null이라 available로 설정하였습니다.")
+                                UserData.update(mapOf("state" to "available"))
+                                continuation.resume(false)
+                            }
+                            else{
+                                trySignOut()
+                                Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
+                                continuation.resume(false)
+                            }
+                        } else if (!userInfoFormCheck(UserData.userInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserInfo
                             continuation.resume(false)
-                        } else if (!userInfoDepartmentCheck(userInfo!!)) {
+                        } else if (!userInfoDepartmentCheck(UserData.userInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 소속 정보 비정상. 소속 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserDepartment
                             continuation.resume(false)
@@ -483,8 +486,8 @@ object AuthViewModel : ViewModel() {
                         }
                     } else {
                         Log.w(ContentValues.TAG, "첫 로그인입니다!")
-                        UserDataManager.mergeSetUserData(
-                            mapOf("state" to "available", "first-login" to FieldValue.serverTimestamp())
+                        UserData.update(
+                            mapOf("state" to "available", "first-login" to ServerValue.TIMESTAMP)
                         )
                         Log.w(ContentValues.TAG, "유저 정보가 존재하지 않아 정보 입력창으로 이동합니다.")
                         uiState = AuthUiState.InputUserInfo

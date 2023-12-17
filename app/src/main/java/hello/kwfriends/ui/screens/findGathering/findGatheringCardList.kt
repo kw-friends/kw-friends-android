@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
@@ -29,7 +29,6 @@ fun GathergingListItem(
     postDetail: PostDetail,
     viewModel: HomeViewModel
 ) {
-    val currentParticipationStatus = viewModel.currentParticipationStatusMap[postDetail.postID]
     Column {
         ListItem(
             modifier = Modifier.clickable {
@@ -59,7 +58,7 @@ fun GathergingListItem(
                     }
                 }
             },
-            trailingContent = { Text("$currentParticipationStatus/${postDetail.maximumParticipants}") },
+            trailingContent = { Text("${postDetail.participants.size}/${postDetail.maximumParticipants}") },
         )
     }
 }
@@ -94,8 +93,8 @@ fun GathergingItemListPreview() {
         gatheringTags = listOf("Preview"),
         gatheringLocation = "",
         gatheringPromoter = "",
-        currentParticipants = "",
-        participantStatus = ParticipationStatus.PARTICIPATED,
+        participants = emptyMap(),
+        myParticipantStatus = ParticipationStatus.PARTICIPATED,
         postID = "Preview",
     )),
         viewModel = HomeViewModel()

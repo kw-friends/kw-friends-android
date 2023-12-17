@@ -67,7 +67,7 @@ fun HomeScreen(
     }
     //post 목록 불러오기
     LaunchedEffect(true) {
-        homeViewModel.getPostFromFirestore()
+        homeViewModel.initPostMap()
     }
     //아래로 당겨서 새로고침
     val pullRefreshState = rememberPullRefreshState(
@@ -134,7 +134,7 @@ fun HomeScreen(
         PostInfoPopup(
             state = homeViewModel.postPopupState.first,
             postDetail = homeViewModel.postPopupState.second,
-            participantsCount = homeViewModel.currentParticipationStatusMap[homeViewModel.postPopupState.second?.postID] ?: -1,
+            participantsCount = homeViewModel.postPopupState.second?.participants?.size?:-1,
             onDismiss = { homeViewModel.postPopupState = false to null },
             onReport = {
                 homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID

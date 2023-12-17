@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hello.kwfriends.R
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 
 @Composable
 fun PostInfoScreen(

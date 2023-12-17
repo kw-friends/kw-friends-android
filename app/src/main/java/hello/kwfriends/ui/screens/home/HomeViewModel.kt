@@ -7,21 +7,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.Action
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.Post
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
-import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
-import hello.kwfriends.firebase.firestoreDatabase.PostManager
-import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
-import hello.kwfriends.realtimeDatabase.Report
+import hello.kwfriends.firebase.realtimeDatabase.Report
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
     var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
-    var currentParticipationStatusMap = mutableStateMapOf<String, Int>()
+    var participantsCountMap = mutableStateMapOf<String, Int>()
+
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
     //검색 상태 저장 변수
@@ -111,7 +113,6 @@ class HomeViewModel : ViewModel() {
             post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
             post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
             post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
-            post.participantStatus.toString().contains(searchText, ignoreCase = true) || //상태
             post.gatheringTags.toString().contains(searchText, ignoreCase = true)
         }
         return resultPosts
@@ -123,33 +124,54 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun participationStatusMapInit(postID: String, status: ParticipationStatus) {
-        participationStatusMap[postID] = if (status == ParticipationStatus.PARTICIPATED) {
-            ParticipationStatus.PARTICIPATED
-        } else {
-            ParticipationStatus.NOT_PARTICIPATED
+    private val uid = Firebase.auth.currentUser!!.uid
+
+    fun initPostMap() {
+        viewModelScope.launch {
+            posts = Post.initPostData()
+            Log.d("initPostMap", "post set to ${posts}")
+
+            for (post in posts) {
+                participationStatusMap[post.postID] = if (uid in post.participants.keys) {
+                    ParticipationStatus.PARTICIPATED
+                } else {
+                    ParticipationStatus.NOT_PARTICIPATED
+                }
+
+                participantsCountMap[post.postID] = post.participants.count()
+            }
         }
     }
 
-    fun currentParticipationStatusMapUpdate(postID: String, add: Int) {
-        currentParticipationStatusMap[postID] = currentParticipationStatusMap[postID]!! + add
-    }
-
-    fun currentParticipationStatusMapInit(postID: String, count: Int) {
-        currentParticipationStatusMap[postID] = count
-    }
-
     fun updateParticipationStatus(postID: String, viewModel: HomeViewModel) {
+        val postDetail = posts.find { it.postID == postID }
+        Log.d("updateParticipationStatus", "myParticipantStatus of $postID is ${postDetail?.myParticipantStatus}")
         viewModelScope.launch {
-            if (participationStatusMap[postID] == ParticipationStatus.NOT_PARTICIPATED) {
+            if (postDetail?.myParticipantStatus == ParticipationStatus.NOT_PARTICIPATED) {
                 participationStatusMap[postID] = ParticipationStatus.GETTING_IN
-                PostManager.updateParticipationState(target = postID, viewModel = viewModel).also {
+                val result =
+                    Post.updateParticipationStatus(postID = postID, action = Action.ADD)
+                if (result) {
+                    val updatedPostDetail = postDetail.copy(myParticipantStatus = ParticipationStatus.PARTICIPATED)
+                    posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
+
                     participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
-                }
-            } else {
-                participationStatusMap[postID] = ParticipationStatus.GETTING_OUT
-                PostManager.updateParticipationState(target = postID, viewModel = viewModel).also {
+                    participantsCountMap[postID] = participantsCountMap[postID]!! + 1
+                } else {
                     participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
+                }
+            } else { // postDetail?.myParticipantStatus == ParticipationStatus.PARTICIPATED
+                participationStatusMap[postID] = ParticipationStatus.GETTING_OUT
+                val result =
+                    Post.updateParticipationStatus(postID = postID, action = Action.DELETE)
+                if (result) {
+                    val updatedPostDetail = postDetail!!.copy(myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED)
+                    posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
+
+                    participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
+                    participantsCountMap[postID] = participantsCountMap[postID]!! - 1
+                } else {
+                    participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
                 }
             }
         }
@@ -158,53 +180,15 @@ class HomeViewModel : ViewModel() {
     fun refreshPost() {
         viewModelScope.launch {
             isRefreshing = true
-            getPostFromFirestore()
+            posts = Post.initPostData()
             isRefreshing = false
         }
     }
 
     //포스트 목록 및 세부 정보 불러오는 함수
     suspend fun getPostFromFirestore(): Boolean {
-        Log.d("getPostFromFirestore()", "데이터 가져옴")
-        val documents = PostManager.getPostDocuments()
-        if(documents != null){
-            posts = analysisPost(documents)
-            Log.w("Lim", "게시글 불러오기 성공")
-            return true
-        }
-        Log.w("Lim", "게시글 불러오기 실패(게시글이 없거나 불러오지 못함)")
+        posts = Post.initPostData()
+        Log.w("getPostFromFirestore", "게시글 불러옴")
         return false
     }
-
-    //포스트 세부 정보 추출 함수
-    suspend fun analysisPost(postsRes: QuerySnapshot): List<PostDetail> {
-        return postsRes.documents.map { document ->
-            val participantsDetail = getParticipantsDetail(document)
-            val participantsCount = participantsDetail.size()
-            val participantStatus =
-                if (PostManager.isDocumentExist(participantsDetail, UserAuth.fa.uid.toString())) {
-                    ParticipationStatus.PARTICIPATED
-                } else {
-                    ParticipationStatus.NOT_PARTICIPATED
-                }
-
-            participationStatusMapInit(document.id, participantStatus)
-            currentParticipationStatusMapInit(document.id, participantsCount)
-
-            PostDetail(
-                gatheringTitle = document.getString("gatheringTitle") ?: "",
-                gatheringPromoter = document.getString("gatheringPromoter") ?: "",
-                gatheringLocation = document.getString("gatheringLocation") ?: "",
-                gatheringTime = document.getString("gatheringTime") ?: "",
-                maximumParticipants = document.getString("maximumParticipants") ?: "",
-                minimumParticipants = document.getString("minimumParticipants") ?: "",
-                currentParticipants = participantsCount.toString(),
-                gatheringDescription = document.getString("gatheringDescription") ?: "",
-                participantStatus = participantStatus,
-                gatheringTags = document.data?.get("gatheringTags") as? List<String> ?: listOf(),
-                postID = document.id
-            )
-        }
-    }
-
 }

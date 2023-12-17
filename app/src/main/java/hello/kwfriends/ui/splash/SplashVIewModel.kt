@@ -7,6 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.main.MainActivity
 
@@ -22,11 +26,14 @@ class SplashViewModel : ViewModel() {
         if(AuthViewModel.userAuthAvailableCheck()){
             Log.w("Lim", "유저 인증 유효성 검사 성공")
             processingState = SplashProcessingState.infoCheck
-            if(AuthViewModel.userInfoCheck()) {
-                Log.w("Lim", "정보 입력 검사 성공")
-                startPoint = "home"
+            UserData.addListener()
+            if(UserData.get()) {
+                if(AuthViewModel.userInfoCheck()) {
+                    Log.w("Lim", "정보 입력 검사 성공")
+                    startPoint = "home"
+                }
+                else{ Log.w("Lim", "정보 입력 검사 실패") }
             }
-            else{ Log.w("Lim", "정보 입력 검사 실패") }
         }
         else{ Log.w("Lim", "유저 인증 유효성 검사 실패") }
 
