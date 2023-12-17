@@ -2,6 +2,7 @@ package hello.kwfriends.firebase.realtimeDatabase
 
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -20,7 +21,7 @@ data class PostDetail(
     var myParticipantStatus: ParticipationStatus = ParticipationStatus.NOT_PARTICIPATED,
     var postID: String = "",
     val gatheringTags: List<String> = emptyList(),
-    val participants: Map<String, Boolean> = emptyMap()
+    val participants: Map<String, Boolean> = emptyMap(),
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(
@@ -32,7 +33,8 @@ data class PostDetail(
             "maximumParticipants" to maximumParticipants,
             "minimumParticipants" to minimumParticipants,
             "gatheringDescription" to gatheringDescription,
-            "gatheringTags" to gatheringTags
+            "gatheringTags" to gatheringTags,
+            "timeStamp" to ServerValue.TIMESTAMP
         )
     }
 }
