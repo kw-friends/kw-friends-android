@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -78,6 +80,7 @@ fun AuthScreen(navigation: NavController) {
     }
     when (AuthViewModel.uiState) {
         is AuthUiState.Loading -> {
+            BackHandler {} //로딩 중 뒤로가기 불가능
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -95,6 +98,20 @@ fun AuthScreen(navigation: NavController) {
         }
 
         is AuthUiState.SignIn -> {
+            //두번눌러서 앱 종료
+            val context = LocalContext.current
+            var backPressedTime = 0L
+            val startMain = remember { Intent(Intent.ACTION_MAIN) }
+            startMain.addCategory(Intent.CATEGORY_HOME)
+            startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            BackHandler {
+                if(System.currentTimeMillis() - backPressedTime <= 2000L) {
+                    context.startActivity(startMain) // 앱 종료
+                } else {
+                    Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+                }
+                backPressedTime = System.currentTimeMillis()
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -194,6 +211,9 @@ fun AuthScreen(navigation: NavController) {
         }
 
         is AuthUiState.FindPassword -> {
+            BackHandler {
+                AuthViewModel.signInSuccessCheck(navigation)
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -242,6 +262,9 @@ fun AuthScreen(navigation: NavController) {
         }
 
         is AuthUiState.Register -> {
+            BackHandler {
+                AuthViewModel.changeLoginView()
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -458,34 +481,7 @@ fun AuthScreen(navigation: NavController) {
                         value = AuthViewModel.inputMbti,
                         onValueChange = { AuthViewModel.setInputMbtiText(it) }
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Spacer(modifier = Modifier.width(7.dp))
-                        CheckboxStyle1(
-                            text = "남자",
-                            textColor = Color(0xFFF1F1F1),
-                            checked = AuthViewModel.inputGender == "male",
-                            onCheckedChange = { AuthViewModel.inputGender = "male" },
-                            onTextClicked = { AuthViewModel.inputGender = "male" }
-                        )
-                        Spacer(modifier = Modifier.width(17.dp))
-                        CheckboxStyle1(
-                            text = "여자",
-                            textColor = Color(0xFFF1F1F1),
-                            checked = AuthViewModel.inputGender == "female",
-                            onCheckedChange = { AuthViewModel.inputGender = "female" },
-                            onTextClicked = { AuthViewModel.inputGender = "female" }
-                        )
-                        Spacer(modifier = Modifier.width(17.dp))
-                        CheckboxStyle1(
-                            text = "기타",
-                            textColor = Color(0xFFF1F1F1),
-                            checked = AuthViewModel.inputGender == "etc",
-                            onCheckedChange = { AuthViewModel.inputGender = "etc" },
-                            onTextClicked = { AuthViewModel.inputGender = "etc" }
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(38.dp))
+                    Spacer(modifier = Modifier.height(50.dp))
                     ButtonStyle1(
                         text = "완료",
                         onClick = { AuthViewModel.trySaveUserInfo() }
@@ -549,6 +545,9 @@ fun AuthScreen(navigation: NavController) {
         is AuthUiState.SignInSuccess -> { }
 
         is AuthUiState.DeleteUser -> {
+            BackHandler {
+                AuthViewModel.signInSuccessCheck(navigation)
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -599,11 +598,7 @@ fun AuthScreen(navigation: NavController) {
                         Text(
                             text = "돌아가기",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable {
-                                //navigation.navigate(Routes.HOME_SCREEN)
-                                //AuthViewModel.uiState = AuthUiState.SignInSuccess
-                                AuthViewModel.signInSuccessCheck(navigation)
-                            }
+                            modifier = Modifier.clickable { AuthViewModel.signInSuccessCheck(navigation) }
                         )
                     }
                 }

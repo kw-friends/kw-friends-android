@@ -20,7 +20,7 @@ class NewPostViewModel : ViewModel() {
     var gatheringTitle by mutableStateOf("")
     var gatheringTitleStatus by mutableStateOf(false)
 
-    var gatheringPromoter by mutableStateOf(UserData.userInfo!!["name"].toString())
+    var gatheringPromoter by mutableStateOf("")
 
     var gatheringTime by mutableStateOf("")
 
@@ -38,11 +38,7 @@ class NewPostViewModel : ViewModel() {
     val snackbarEvent: StateFlow<String?> get() = _snackbarEvent
 
     //태그 저장 변수
-    var tagMap = mutableStateMapOf<String, Boolean>().apply {
-        Tags.list.forEach { tag ->
-            this[tag] = false
-        }
-    }
+    var tagMap = mutableStateMapOf<String, Boolean>()
 
     fun showSnackbar(message: String) {
         _snackbarEvent.value = message
@@ -91,6 +87,22 @@ class NewPostViewModel : ViewModel() {
         uploadResult = result
     }
 
+    fun initInput() {
+        gatheringPromoter = UserData.userInfo!!["name"].toString()
+        gatheringTitle = ""
+        gatheringTitleStatus = false
+        gatheringTime = ""
+        gatheringLocation = ""
+        gatheringDescription = ""
+        gatheringDescriptionStatus = false
+        maximumParticipants = ""
+        participantsRangeValidation = false
+        tagMap = mutableStateMapOf<String, Boolean>().apply {
+            Tags.list.forEach { tag ->
+                this[tag] = false
+            }
+        }
+    }
 
     fun uploadGatheringToFirestore(end: () -> Unit) {
         showSnackbar("모임 생성 중...")

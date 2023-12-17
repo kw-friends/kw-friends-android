@@ -98,10 +98,7 @@ fun SettingsScreen(
                     settingsViewModel = settingsViewModel
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                ) {
+                Column {
                     Spacer(modifier = Modifier.height(4.dp))
                     SettingsButtonItem(
                         title = "프로필 이미지 선택",
@@ -137,7 +134,6 @@ fun SettingsScreen(
                     )
                     SettingsButtonItem(
                         title = "비밀번호 재설정",
-
                         onClick = { settingsViewModel.mainFindPassword(navigation) }
                     )
                     SettingsButtonItem(

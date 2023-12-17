@@ -19,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -29,6 +28,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -69,6 +69,9 @@ fun NewPostScreen(
             actionOnNewLine = true,
             snackbarData = data
         )
+    }
+    LaunchedEffect(true) {
+        newPostViewModel.initInput()
     }
     Box(
         modifier = Modifier
@@ -170,7 +173,6 @@ fun NewPostScreen(
                     TagChip(
                         modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
-                        icon = Icons.Filled.Person,
                         selected = it.value,
                         onClick = { newPostViewModel.tagMap[it.key] = !it.value }
                     )

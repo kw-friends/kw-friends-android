@@ -3,6 +3,8 @@
 package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -16,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -56,6 +58,8 @@ fun HomeScreen(
     settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
+    val context = LocalContext.current
+
     //유저 개인 설정 세팅값 받아오기
     if (!settingsViewModel.userSettingValuesLoaded) {
         settingsViewModel.userSettingValuesLoaded = true
@@ -77,35 +81,29 @@ fun HomeScreen(
     LaunchedEffect(!homeViewModel.isSearching) {
         focusRequester.requestFocus()
     }
+    //두번눌러서 앱 종료에 필요한 코드
+    var backPressedTime = 0L
+    val startMain = remember { Intent(Intent.ACTION_MAIN) }
+    startMain.addCategory(Intent.CATEGORY_HOME)
+    startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     //뒤로 가기 버튼을 눌렀을 때 실행할 코드
     BackHandler {
+        //검색 취소
         if(homeViewModel.isSearching) {
             homeViewModel.isSearching = false
         }
-        else if(homeViewModel.newPostPopupState) {
-            homeViewModel.newPostPopupState = false
-        }
-        else if(homeViewModel.postPopupState.first) {
-            homeViewModel.postPopupState = false to null
+        //두번눌러서 앱 종료
+        else {
+            if(System.currentTimeMillis() - backPressedTime <= 2000L) {
+                context.startActivity(startMain) // 앱 종료
+            } else {
+                Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+            }
+            backPressedTime = System.currentTimeMillis()
         }
     }
     //태그 필터 리스트 스크롤 저장 변수
     val scrollState = rememberScrollState()
-    //상황에 따른 stateBar 색상 조정
-//    val systemUiController = rememberSystemUiController()
-//    LaunchedEffect(key1 = homeViewModel.newPostPopupState, key2 = homeViewModel.postPopupState.first) {
-//        if(homeViewModel.newPostPopupState || homeViewModel.postPopupState.first) {
-//            systemUiController.setStatusBarColor(
-//                color = Color.White
-//            )
-//        }
-//        else {
-//            systemUiController.setStatusBarColor(
-//                color = Color(0xFFE2A39B)
-//            )
-//
-//        }
-//    }
 
     Scaffold(
         //앱 바
@@ -171,12 +169,11 @@ fun HomeScreen(
                 .horizontalScroll(scrollState)
 //                .background(Color(0xFFE2A39B))
             ) {
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(12.dp))
                 homeViewModel.filterTagMap.forEach {
                     TagChip(
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
-                        icon = Icons.Filled.Person,
                         selected = it.value,
                         onClick = { homeViewModel.filterTagMap[it.key] = !it.value }
                     )
