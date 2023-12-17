@@ -85,10 +85,6 @@ class NewPostViewModel : ViewModel() {
                 participantsRangeValidation)
     }
 
-    fun uploadResultUpdate(result: Boolean) {
-        uploadResult = result
-    }
-
     fun initInput() {
         gatheringPromoter = UserData.userInfo!!["name"].toString()
         gatheringTitle = ""
