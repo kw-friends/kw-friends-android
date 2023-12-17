@@ -180,7 +180,7 @@ class HomeViewModel : ViewModel() {
     fun refreshPost() {
         viewModelScope.launch {
             isRefreshing = true
-            Post.initPostData()
+            posts = Post.initPostData()
             isRefreshing = false
         }
     }

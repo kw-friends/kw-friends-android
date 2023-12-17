@@ -70,7 +70,6 @@ fun HomeScreen(
         refreshing = homeViewModel.isRefreshing,
         onRefresh = {
             homeViewModel.refreshPost()
-
         }
     )
     //검색창에 대한 포커스

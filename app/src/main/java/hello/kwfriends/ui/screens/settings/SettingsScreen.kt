@@ -36,7 +36,6 @@ import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.main.Routes
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,10 +90,10 @@ fun SettingsScreen(
             ) {
                 UserInfoCard(
                     profileImageUri = ProfileImage.myImageUri,
-                    userName = AuthViewModel.userInfo!!["name"]!!.toString(),
-                    admissionYear = AuthViewModel.userInfo!!["std-num"]!!.toString()
+                    userName = UserData.userInfo!!["name"]!!.toString(),
+                    admissionYear = UserData.userInfo!!["std-num"]!!.toString()
                         .slice(IntRange(2, 3)),
-                    major = AuthViewModel.userInfo!!["department"]!!.toString(),
+                    major = UserData.userInfo!!["department"]!!.toString(),
                     navigation = navigation,
                     settingsViewModel = settingsViewModel
                 )
