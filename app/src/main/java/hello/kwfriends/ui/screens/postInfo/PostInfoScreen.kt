@@ -128,7 +128,7 @@ fun PostInfoScreen(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "파티장",
+                        text = postDetail.gatheringPromoter,
                         style = MaterialTheme.typography.titleSmall,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(500)
@@ -182,7 +182,7 @@ fun PostInfoScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "참여 인원  $participantsCount/${postDetail.maximumParticipants}",
+                        text = "참여 인원  ${postDetail.participants.size}/${postDetail.maximumParticipants}",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(400)
@@ -190,7 +190,7 @@ fun PostInfoScreen(
                     Spacer(Modifier.height(15.dp))
                     Row {
                         //참여자 목록
-                        repeat(participantsCount) {
+                        postDetail.participants.forEach {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.padding(end = 15.dp)
@@ -206,7 +206,7 @@ fun PostInfoScreen(
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
-                                    text = "참여자${it + 1}",
+                                    text = it.key,
                                     style = MaterialTheme.typography.bodySmall,
                                     fontFamily = FontFamily.Default,
                                 )
