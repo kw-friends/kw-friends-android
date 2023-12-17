@@ -2,7 +2,6 @@ package hello.kwfriends.firebase.realtimeDatabase
 
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -20,8 +19,9 @@ data class PostDetail(
     val gatheringDescription: String = "",
     var myParticipantStatus: ParticipationStatus = ParticipationStatus.NOT_PARTICIPATED,
     var postID: String = "",
+    var timestamp: String = "",
     val gatheringTags: List<String> = emptyList(),
-    val participants: Map<String, Boolean> = emptyMap(),
+    val participants: Map<String, Any> = emptyMap(),
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(
@@ -34,7 +34,7 @@ data class PostDetail(
             "minimumParticipants" to minimumParticipants,
             "gatheringDescription" to gatheringDescription,
             "gatheringTags" to gatheringTags,
-            "timeStamp" to ServerValue.TIMESTAMP
+            "timestamp" to timestamp
         )
     }
 }
@@ -73,7 +73,7 @@ object Post {
                 postDetail.postID = postID
 
                 val participants =
-                    postSnapshot.child("participants").value as? Map<String, Boolean> ?: emptyMap()
+                    postSnapshot.child("participants").value as? Map<String, String> ?: emptyMap()
                 postDetail.myParticipantStatus = if (uid in participants) {
                     ParticipationStatus.PARTICIPATED
                 } else {
