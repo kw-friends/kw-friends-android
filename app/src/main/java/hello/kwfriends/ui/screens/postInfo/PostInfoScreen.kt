@@ -134,7 +134,6 @@ fun PostInfoScreen(
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(500)
                     )
-                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = "n분전",
                         maxLines = 1,
