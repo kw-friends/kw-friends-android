@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.firebase.authentication.UserAuth
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -27,7 +26,7 @@ data class PostDetail(
         return mapOf(
             "gatheringTitle" to gatheringTitle,
             "gatheringPromoter" to gatheringPromoter,
-            "gatheringPromoterUID" to UserAuth.fa.uid.toString(),
+            "gatheringPromoterUID" to gatheringPromoterUID,
             "gatheringLocation" to gatheringLocation,
             "gatheringTime" to gatheringTime,
             "maximumParticipants" to maximumParticipants,

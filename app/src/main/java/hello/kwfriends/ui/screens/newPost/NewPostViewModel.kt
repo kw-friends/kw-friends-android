@@ -12,6 +12,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.Tags.Tags
+import hello.kwfriends.firebase.authentication.UserAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -119,7 +120,8 @@ class NewPostViewModel : ViewModel() {
                 val result = Post.upload(
                     PostDetail(
                         gatheringTitle = gatheringTitle,
-                        gatheringPromoterUID = gatheringPromoter,
+                        gatheringPromoter = gatheringPromoter,
+                        gatheringPromoterUID = UserAuth.fa.uid.toString(),
                         gatheringLocation = gatheringLocation,
                         gatheringTime = gatheringTime,
                         maximumParticipants = maximumParticipants,
