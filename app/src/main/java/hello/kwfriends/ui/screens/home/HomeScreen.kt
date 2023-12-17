@@ -134,7 +134,7 @@ fun HomeScreen(
         PostInfoPopup(
             state = homeViewModel.postPopupState.first,
             postDetail = homeViewModel.postPopupState.second,
-            participantsCount = homeViewModel.postPopupState.second?.participants?.size?:-1,
+            participantsCountMap = homeViewModel.participantsCountMap,
             onDismiss = { homeViewModel.postPopupState = false to null },
             onReport = {
                 homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID

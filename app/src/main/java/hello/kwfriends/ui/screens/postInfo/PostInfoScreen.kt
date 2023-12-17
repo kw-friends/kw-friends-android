@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +46,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
-    participantsCount: Int,
+    participantsCountMap: SnapshotStateMap<String, Int>,
     onDismiss: () -> Unit,
     onReport: () -> Unit,
     enjoyButton: @Composable () -> Unit
@@ -182,7 +183,7 @@ fun PostInfoScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "참여 인원  ${postDetail.participants.size}/${postDetail.maximumParticipants}",
+                        text = "참여 인원  ${participantsCountMap[postDetail.postID]}/${postDetail.maximumParticipants}",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(400)
