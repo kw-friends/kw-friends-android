@@ -122,12 +122,9 @@ object Post {
         postID: String,
         action: Action
     ): Boolean {
-        val postHashMap = hashMapOf<String, Any>(
-            "/posts/$postID/participants/${uid}" to true,
-        )
         val result = suspendCoroutine<Boolean> { continuation ->
             if (action == Action.ADD) {
-                database.updateChildren(postHashMap)
+                database.child("/posts/$postID/participants/$uid").setValue(true)
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 참여 성공")
                         continuation.resume(true)
