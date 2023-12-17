@@ -206,7 +206,7 @@ fun PostInfoScreen(
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
-                                    text = it.key,
+                                    text = it.value.toString(),
                                     style = MaterialTheme.typography.bodySmall,
                                     fontFamily = FontFamily.Default,
                                 )
