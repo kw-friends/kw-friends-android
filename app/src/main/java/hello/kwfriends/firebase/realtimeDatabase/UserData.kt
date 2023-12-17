@@ -57,8 +57,8 @@ object UserData {
         return result
     }
 
-    //유저 정보 한번만 가져와서 userInfo에 저장하는 함수
-    suspend fun get(): Boolean{
+    //내 정보 한번만 가져와서 userInfo에 저장하는 함수
+    suspend fun getMyData(): Boolean{
         val result = suspendCoroutine<Boolean> { continuation ->
             database.child("users").child(UserAuth.fa.currentUser!!.uid).get()
                 .addOnSuccessListener { dataSnapshot ->
@@ -73,6 +73,27 @@ object UserData {
                 .addOnCanceledListener {
                     Log.w("get", "데이터 가져오기 캔슬")
                     continuation.resume(false)
+                }
+        }
+        return result
+    }
+
+    //유저 정보 한번만 가져와서 반환하는 함수
+    suspend fun get(uid: String): Map<String, Any>?{
+        val result = suspendCoroutine<Map<String, Any>?> { continuation ->
+            database.child("users").child(uid).get()
+                .addOnSuccessListener { dataSnapshot ->
+                    val data = dataSnapshot.getValue<Map<String, Any>>()
+                    Log.w("get", "데이터 가져오기 성공 $data")
+                    continuation.resume(data)
+                }
+                .addOnFailureListener {
+                    Log.w("get", "데이터 가져오기 실패")
+                    continuation.resume(null)
+                }
+                .addOnCanceledListener {
+                    Log.w("get", "데이터 가져오기 캔슬")
+                    continuation.resume(null)
                 }
         }
         return result
