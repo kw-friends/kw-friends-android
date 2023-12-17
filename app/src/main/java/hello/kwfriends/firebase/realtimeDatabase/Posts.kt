@@ -34,7 +34,7 @@ data class PostDetail(
             "minimumParticipants" to minimumParticipants,
             "gatheringDescription" to gatheringDescription,
             "gatheringTags" to gatheringTags,
-            "timeStamp" to ServerValue.TIMESTAMP
+            "timestamp" to ServerValue.TIMESTAMP
         )
     }
 }
