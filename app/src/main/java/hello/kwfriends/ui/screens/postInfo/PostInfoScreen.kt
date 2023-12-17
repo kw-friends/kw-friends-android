@@ -41,13 +41,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
-    participantsCount: Int,
     onDismiss: () -> Unit,
     onReport: () -> Unit,
+    homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -117,7 +118,7 @@ fun PostInfoScreen(
             //top
             Row {
                 AsyncImage(
-                    model = R.drawable.test_image,
+                    model = homeViewModel.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
                     placeholder = painterResource(id = R.drawable.profile_default_image),
                     contentDescription = "My profile image",
                     modifier = Modifier
@@ -195,8 +196,9 @@ fun PostInfoScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.padding(end = 15.dp)
                             ) {
+                                homeViewModel.downlodUri(it.key)
                                 AsyncImage(
-                                    model = R.drawable.test_image,
+                                    model = homeViewModel.usersUriMap[it.key] ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
                                     contentDescription = "My profile image",
                                     modifier = Modifier
