@@ -1,7 +1,7 @@
 package hello.kwfriends.ui.component
 
 import androidx.compose.runtime.Composable
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.screens.postInfo.PostInfoScreen
 
 @Composable

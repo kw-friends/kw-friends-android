@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import coil.compose.AsyncImage
 import hello.kwfriends.R
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 
 @Composable
 fun PostInfoScreen(

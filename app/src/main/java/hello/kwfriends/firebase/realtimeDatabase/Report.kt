@@ -1,4 +1,4 @@
-package hello.kwfriends.realtimeDatabase
+package hello.kwfriends.firebase.realtimeDatabase
 
 import android.util.Log
 import com.google.firebase.database.ServerValue

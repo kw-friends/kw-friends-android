@@ -7,11 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
+import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.Post
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.Tags.Tags
-import hello.kwfriends.firebase.firestoreDatabase.PostManager
-import hello.kwfriends.ui.main.Routes
-import hello.kwfriends.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ class NewPostViewModel : ViewModel() {
     var gatheringTitle by mutableStateOf("")
     var gatheringTitleStatus by mutableStateOf(false)
 
-    var gatheringPromoter by mutableStateOf(AuthViewModel.userInfo!!["name"].toString())
+    var gatheringPromoter by mutableStateOf(UserData.userInfo!!["name"].toString())
 
     var gatheringTime by mutableStateOf("")
 
@@ -104,16 +104,18 @@ class NewPostViewModel : ViewModel() {
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
                 isUploading = true
-                PostManager.uploadPost(
-                    gatheringTitle = gatheringTitle,
-                    gatheringPromoter = gatheringPromoter,
-                    gatheringLocation = gatheringLocation,
-                    gatheringTime = gatheringTime,
-                    maximumParticipants = maximumParticipants,
-                    minimumParticipants = "1",
-                    gatheringDescription = gatheringDescription,
-                    gatheringTags = tagMap.filter { it.value }.map { it.key },
-                    newPostViewModel = this@NewPostViewModel
+                val result = Post.upload(
+                    PostDetail(
+                        gatheringTitle = gatheringTitle,
+                        gatheringPromoterUID = gatheringPromoter,
+                        gatheringLocation = gatheringLocation,
+                        gatheringTime = gatheringTime,
+                        maximumParticipants = maximumParticipants,
+                        gatheringDescription = gatheringDescription,
+                        myParticipantStatus = ParticipationStatus.PARTICIPATED,
+                        gatheringTags = tagMap.filter { it.value }.map { it.key },
+                        postID = "123"
+                    ).toMap()
                 )
                 end()
                 isUploading = false

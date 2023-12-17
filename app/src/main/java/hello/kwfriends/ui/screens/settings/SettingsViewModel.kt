@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
@@ -106,10 +107,11 @@ class SettingsViewModel: ViewModel() {
         Log.w("Lim", "SettingsScreen: 정보 수정")
         AuthViewModel.userInputChecked = false
         AuthViewModel.uiState = AuthUiState.InputUserInfo
-        AuthViewModel.inputStdNum = AuthViewModel.userInfo!!["std-num"]!!.toString()
-        AuthViewModel.inputName = AuthViewModel.userInfo!!["name"]!!.toString()
-        AuthViewModel.inputMbti = AuthViewModel.userInfo!!["mbti"]!!.toString()
-        AuthViewModel.inputGender = AuthViewModel.userInfo!!["gender"]!!.toString()
+        AuthViewModel.inputStdNum = UserData.userInfo!!["std-num"]!!.toString()
+        AuthViewModel.inputName = UserData.userInfo!!["name"]!!.toString()
+        AuthViewModel.inputMbti = UserData.userInfo!!["mbti"]!!.toString()
+        AuthViewModel.inputGender = UserData.userInfo!!["gender"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
+
 }
