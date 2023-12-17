@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.screens.home.HomeViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun GathergingListItem(
@@ -42,7 +44,13 @@ fun GathergingListItem(
                         modifier = Modifier.padding(top = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "n분전", maxLines = 1, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
+                        Text(
+                            text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily.Default,
+                            color = Color.Gray
+                        )
                         if(postDetail.gatheringTags.isNotEmpty()) {
                             Divider(
                                 color = Color.LightGray,

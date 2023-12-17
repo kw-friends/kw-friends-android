@@ -42,6 +42,8 @@ import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.screens.home.HomeViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun PostInfoScreen(
@@ -117,10 +119,11 @@ fun PostInfoScreen(
         ) {
             //top
             Row {
+                homeViewModel.downlodUri(postDetail.gatheringPromoterUID)
                 AsyncImage(
                     model = homeViewModel.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
                     placeholder = painterResource(id = R.drawable.profile_default_image),
-                    contentDescription = "My profile image",
+                    contentDescription = "gathering promoter's profile image",
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape),
@@ -136,7 +139,7 @@ fun PostInfoScreen(
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = "n분전",
+                        text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
                         maxLines = 1,
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Default,
@@ -200,7 +203,7 @@ fun PostInfoScreen(
                                 AsyncImage(
                                     model = homeViewModel.usersUriMap[it.key] ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
-                                    contentDescription = "My profile image",
+                                    contentDescription = "gathering participant's profile image",
                                     modifier = Modifier
                                         .size(50.dp)
                                         .clip(CircleShape),
