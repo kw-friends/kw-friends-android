@@ -126,7 +126,6 @@ class NewPostViewModel : ViewModel() {
                         gatheringDescription = gatheringDescription,
                         myParticipantStatus = ParticipationStatus.PARTICIPATED,
                         gatheringTags = tagMap.filter { it.value }.map { it.key },
-                        postID = "123"
                     ).toMap()
                 )
                 end()
