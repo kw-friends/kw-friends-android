@@ -32,7 +32,8 @@ data class PostDetail(
             "gatheringTime" to gatheringTime,
             "maximumParticipants" to maximumParticipants,
             "minimumParticipants" to minimumParticipants,
-            "gatheringDescription" to gatheringDescription
+            "gatheringDescription" to gatheringDescription,
+            "gatheringTags" to gatheringTags
         )
     }
 }
