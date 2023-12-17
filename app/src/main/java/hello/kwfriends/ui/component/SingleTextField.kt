@@ -3,6 +3,7 @@ package hello.kwfriends.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -49,6 +50,7 @@ fun SingleTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
+    fullWidth: Boolean = false
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -63,7 +65,6 @@ fun SingleTextField(
         enabled = canValueChange,
         modifier = modifier
             .height(48.dp)
-            .width(72.dp)
             .onFocusChanged {
                 if (it.isFocused && canValueChange) {
                     containerColor = Color(0xFFDADADA)
@@ -78,7 +79,13 @@ fun SingleTextField(
                     textColor = Color(0xFF4B4B4B)
                     placeholderColor = Color(0xFF4B4B4B)
                 }
-            },
+            }.then(
+                if (fullWidth) {
+                    Modifier.fillMaxWidth()
+                } else {
+                    Modifier.width(72.dp)
+                }
+            ),
         interactionSource = interactionSource,
         singleLine = isSingleLine,
         textStyle = TextStyle(
