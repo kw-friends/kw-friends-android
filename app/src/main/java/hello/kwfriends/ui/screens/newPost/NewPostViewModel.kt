@@ -7,14 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.Tags.Tags
-import hello.kwfriends.firebase.firestoreDatabase.PostManager
-import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -101,8 +98,6 @@ class NewPostViewModel : ViewModel() {
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
         Log.w("NewPostViewModel", "gatheringTitle = $gatheringTitleStatus")
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
-        Log.w("NewPostViewModel", "gatheringLocation = $gatheringLocationStatus")
-        Log.w("NewPostViewModel", "gatheringTime = $gatheringTimeStatus")
         Log.w("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
 
@@ -116,9 +111,9 @@ class NewPostViewModel : ViewModel() {
                         gatheringLocation = gatheringLocation,
                         gatheringTime = gatheringTime,
                         maximumParticipants = maximumParticipants,
-                        minimumParticipants = minimumParticipants,
                         gatheringDescription = gatheringDescription,
                         myParticipantStatus = ParticipationStatus.PARTICIPATED,
+                        gatheringTags = tagMap.filter { it.value }.map { it.key },
                         postID = "123"
                     ).toMap()
                 )

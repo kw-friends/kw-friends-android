@@ -13,15 +13,9 @@ import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
-import hello.kwfriends.firebase.realtimeDatabase.UserData
-import com.google.firebase.firestore.QuerySnapshot
 import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
-import hello.kwfriends.firebase.firestoreDatabase.ParticipationStatus
-import hello.kwfriends.firebase.firestoreDatabase.PostDetail
-import hello.kwfriends.firebase.firestoreDatabase.PostManager
-import hello.kwfriends.firebase.firestoreDatabase.PostManager.getParticipantsDetail
-import hello.kwfriends.realtimeDatabase.Report
+import hello.kwfriends.firebase.realtimeDatabase.Report
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -119,7 +113,6 @@ class HomeViewModel : ViewModel() {
             post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
             post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
             post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
-            post.participantStatus.toString().contains(searchText, ignoreCase = true) || //상태
             post.gatheringTags.toString().contains(searchText, ignoreCase = true)
         }
         return resultPosts

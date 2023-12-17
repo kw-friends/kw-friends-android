@@ -20,6 +20,7 @@ data class PostDetail(
     val gatheringDescription: String = "",
     var myParticipantStatus: ParticipationStatus = ParticipationStatus.NOT_PARTICIPATED,
     var postID: String = "",
+    val gatheringTags: List<String> = emptyList(),
     val participants: Map<String, Boolean> = emptyMap()
 ) {
     fun toMap(): Map<String, Any> {
