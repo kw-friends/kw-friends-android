@@ -137,7 +137,6 @@ fun PostInfoScreen(
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(500)
                     )
-                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
                         maxLines = 1,
