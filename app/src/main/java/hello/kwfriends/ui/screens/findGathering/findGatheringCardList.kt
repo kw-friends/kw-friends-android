@@ -101,7 +101,6 @@ fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
 fun GathergingItemListPreview() {
     FindGatheringItemList(listOf(PostDetail(
         gatheringTitle = "Preview",
-        minimumParticipants = "Preview",
         maximumParticipants = "Preview",
         gatheringTime = "Preview",
         gatheringDescription = "Preview",
