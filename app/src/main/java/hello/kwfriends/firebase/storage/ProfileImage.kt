@@ -43,14 +43,16 @@ object ProfileImage {
 
     //특정 uid의 프로필 이미지를 다운로드하여 uri를 반환
     suspend fun getDownloadUrl(uid: String): Uri? {
+        Log.w("getDownloadUrl", "${uid}의 프로필 이미지 불러오는 중")
         val uidImageRef = storage.reference.child("profiles/${uid}")
         val result = suspendCoroutine<Uri?> { continuation ->
             uidImageRef.downloadUrl
                 .addOnSuccessListener { uri ->
-                continuation.resume(uri)
+                    continuation.resume(uri)
+                    Log.w("getDownloadUrl", "${uid}의 프로필 이미지 불러오기 성공")
                 }.addOnFailureListener {
                     continuation.resume(null)
-                    Log.w("ProfileImage.getDownloadUrl", "Uri가져오기 실패:", it)
+                    Log.w("ProfileImage.getDownloadUrl", "${uid}의 Uri가져오기 실패")
                 }
         }
         return result

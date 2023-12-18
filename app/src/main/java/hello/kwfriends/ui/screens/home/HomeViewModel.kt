@@ -198,9 +198,11 @@ class HomeViewModel : ViewModel() {
 
     fun downlodUri(uid: String) {
         viewModelScope.launch {
+            val uri = ProfileImage.getDownloadUrl(uid)
             usersUriMap = usersUriMap.toMutableMap().apply {
-                this[uid] = ProfileImage.getDownloadUrl(uid)
+                this[uid] = uri
             }
+            Log.w("Lim", "유저 이미지 목록 : $usersUriMap")
         }
     }
 }

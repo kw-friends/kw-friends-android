@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,12 @@ fun PostInfoScreen(
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(true) {
+        postDetail.participants.forEach {
+            homeViewModel.downlodUri(it.key)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -122,7 +129,6 @@ fun PostInfoScreen(
         ) {
             //top
             Row {
-                homeViewModel.downlodUri(postDetail.gatheringPromoterUID)
                 AsyncImage(
                     model = homeViewModel.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
                     placeholder = painterResource(id = R.drawable.profile_default_image),
@@ -202,7 +208,6 @@ fun PostInfoScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.padding(end = 15.dp)
                             ) {
-                                homeViewModel.downlodUri(it.key)
                                 AsyncImage(
                                     model = homeViewModel.usersUriMap[it.key] ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
