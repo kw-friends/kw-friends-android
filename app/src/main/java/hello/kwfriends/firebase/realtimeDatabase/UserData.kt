@@ -1,6 +1,5 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -15,6 +14,7 @@ import kotlin.coroutines.suspendCoroutine
 object UserData {
     var database = Firebase.database.reference
     var userInfo: Map<String, Any>? = null
+    var dataListenerAdded: Boolean = false
 
 
     val userInfoListener = object: ValueEventListener {
@@ -24,13 +24,27 @@ object UserData {
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-            Log.w(TAG, "loadUserInfo:onCancelled", databaseError.toException())
+            Log.w("userInfoListener", "유저 정보 불러오기 Cancelled", databaseError.toException())
         }
     }
 
     //유저 정보 리스너 추가 함수
     fun addListener(){
+        dataListenerAdded = true
+        Log.w("UserData", "유저 정보 리스너 추가")
         database.child("users").child(UserAuth.fa.currentUser!!.uid).addValueEventListener(userInfoListener)
+    }
+
+    //유저 정보 리스너 제거 함수
+    fun removeListener() {
+        UserData.dataListenerAdded = false
+        Log.w("UserData", "유저 정보 리스너 제거")
+        try {
+            database.child("users").child(UserAuth.fa.currentUser!!.uid).removeEventListener(userInfoListener)
+        }
+        catch (e: Exception) {
+            Log.w("UserData", "유저 정보 리스너 제거 실패:", e)
+        }
     }
 
     //맵을 updateChildren에 이용하기 위해 key에 경로를 추가해주는 함수

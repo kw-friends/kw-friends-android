@@ -22,8 +22,8 @@ class SplashViewModel : ViewModel() {
         processingState = SplashProcessingState.auth
         if(AuthViewModel.userAuthAvailableCheck()){
             Log.w("Lim", "유저 인증 유효성 검사 성공")
-            processingState = SplashProcessingState.infoCheck
             UserData.addListener()
+            processingState = SplashProcessingState.infoCheck
             if(UserData.getMyData()) {
                 if(AuthViewModel.userInfoCheck()) {
                     Log.w("Lim", "정보 입력 검사 성공")

@@ -65,9 +65,10 @@ fun AuthScreen(navigation: NavController) {
         else if (AuthViewModel.uiState == AuthUiState.SignIn) {
             if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
                 if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
-                    Log.w("Lim", "로그인 기록 확인")
+                    Log.w("Lim", "로그인 및 이메일 인증 기록 확인. 이후 화면으로 이동")
                     AuthViewModel.uiState = AuthUiState.SignInSuccess // 이메일 인증 완료된 계정
                 } else {
+                    Log.w("Lim", "이메일 인증 화면으로 이동")
                     AuthViewModel.uiState = AuthUiState.RequestEmailVerify // 이메일 인증 안된 계정
                 }
             }

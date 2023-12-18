@@ -50,6 +50,7 @@ object ProfileImage {
                 continuation.resume(uri)
                 }.addOnFailureListener {
                     continuation.resume(null)
+                    Log.w("ProfileImage.getDownloadUrl", "Uri가져오기 실패:", it)
                 }
         }
         return result
