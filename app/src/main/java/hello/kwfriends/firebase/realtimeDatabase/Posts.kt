@@ -15,7 +15,6 @@ data class PostDetail(
     val gatheringLocation: String = "",
     val gatheringTime: String = "",
     val maximumParticipants: String = "",
-    val minimumParticipants: String = "",
     val gatheringDescription: String = "",
     var myParticipantStatus: ParticipationStatus = ParticipationStatus.NOT_PARTICIPATED,
     var postID: String = "",
@@ -31,7 +30,6 @@ data class PostDetail(
             "gatheringLocation" to gatheringLocation,
             "gatheringTime" to gatheringTime,
             "maximumParticipants" to maximumParticipants,
-            "minimumParticipants" to minimumParticipants,
             "gatheringDescription" to gatheringDescription,
             "gatheringTags" to gatheringTags,
             "timestamp" to timestamp
