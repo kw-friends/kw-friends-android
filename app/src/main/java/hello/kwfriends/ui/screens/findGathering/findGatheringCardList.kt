@@ -50,7 +50,7 @@ fun GathergingListItem(
                     ) {
                         FlowRow(verticalArrangement = Arrangement.Center) {
                             Text(
-                                text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp.toLong()),
+                                text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp),
                                 maxLines = 1,
                                 style = MaterialTheme.typography.bodySmall,
                                 fontFamily = FontFamily.Default,
