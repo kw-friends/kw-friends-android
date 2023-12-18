@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.screens.home
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -58,8 +57,6 @@ class HomeViewModel : ViewModel() {
         )
     )
     var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
-
-    var usersUriMap by mutableStateOf<MutableMap<String, Uri?>>(mutableMapOf())
 
     fun initReportChoice() {
         reportChoice = mutableListOf()
@@ -199,10 +196,7 @@ class HomeViewModel : ViewModel() {
     fun downlodUri(uid: String) {
         viewModelScope.launch {
             val uri = ProfileImage.getDownloadUrl(uid)
-            usersUriMap = usersUriMap.toMutableMap().apply {
-                this[uid] = uri
-            }
-            Log.w("Lim", "유저 이미지 목록 : $usersUriMap")
+            ProfileImage.updateUsersUriMap(uid, uri)
         }
     }
 }

@@ -75,8 +75,11 @@ class SettingsViewModel: ViewModel() {
         myProfileImiageLoaded = true
         viewModelScope.launch {
             Log.w("Lim", "유저 프로필 이미지 불러오는 중")
-            ProfileImage.myImageUri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
-            if(ProfileImage.myImageUri == null){ Log.w("Lim", "유저 프로필 이미지 불러오기 실패") }
+            val uri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
+            ProfileImage.updateUsersUriMap(Firebase.auth.currentUser!!.uid, uri)
+            if(ProfileImage.usersUriMap[Firebase.auth.currentUser!!.uid] == null) {
+                Log.w("Lim", "유저 프로필 이미지 불러오기 실패")
+            }
             else{ Log.w("Lim", "유저 프로필 이미지 불러오기 성공") }
         }
     }

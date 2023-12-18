@@ -13,7 +13,13 @@ import kotlin.coroutines.suspendCoroutine
 object ProfileImage {
     val storage = Firebase.storage
     val profileImageRef = storage.reference.child("profiles")
-    var myImageUri by mutableStateOf<Uri?>(null)
+    var usersUriMap by mutableStateOf<MutableMap<String, Uri?>>(mutableMapOf())
+
+    fun updateUsersUriMap(uid: String, uri: Uri?) {
+        usersUriMap = usersUriMap.toMutableMap().apply {
+            this[uid] = uri
+        }
+    }
 
     //특정 uid의 프로필 이미지를 업로드
     suspend fun upload(uid: String, imageUri: Uri?): Boolean {

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -130,7 +131,7 @@ fun PostInfoScreen(
             //top
             Row {
                 AsyncImage(
-                    model = homeViewModel.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
+                    model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
                     placeholder = painterResource(id = R.drawable.profile_default_image),
                     contentDescription = "gathering promoter's profile image",
                     modifier = Modifier
@@ -209,7 +210,7 @@ fun PostInfoScreen(
                                 modifier = Modifier.padding(end = 15.dp)
                             ) {
                                 AsyncImage(
-                                    model = homeViewModel.usersUriMap[it.key] ?: R.drawable.profile_default_image,
+                                    model = ProfileImage.usersUriMap[it.key] ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
                                     contentDescription = "gathering participant's profile image",
                                     modifier = Modifier
