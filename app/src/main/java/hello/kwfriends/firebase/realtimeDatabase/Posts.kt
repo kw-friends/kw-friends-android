@@ -22,7 +22,7 @@ data class PostDetail(
     val gatheringDescription: String = "",
     var myParticipantStatus: ParticipationStatus = ParticipationStatus.NOT_PARTICIPATED,
     var postID: String = "",
-    var timestamp: String = "",
+    var timestamp: Any = "",
     val gatheringTags: List<String> = emptyList(),
     val participants: Map<String, Any> = emptyMap(),
 ) {

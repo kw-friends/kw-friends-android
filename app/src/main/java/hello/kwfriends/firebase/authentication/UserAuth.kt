@@ -23,10 +23,10 @@ object UserAuth {
                     if (task.isSuccessful) {
                         Log.w("Lim", "로그인 시도 성공")
                         if (Firebase.auth.currentUser?.isEmailVerified!!) {
-                            Log.w("Lim", "로그인 성공!")
+                            Log.w("Lim", "로그인 성공! 이메일 인증 된 계정")
                             continuation.resume(true)
                         } else {
-                            Log.w("Lim", "로그인 실패")
+                            Log.w("Lim", "로그인 실패: 이메일 인증 안됨")
                             continuation.resume(false)
                         }
                     } else {

@@ -124,7 +124,7 @@ class NewPostViewModel : ViewModel() {
                         maximumParticipants = maximumParticipants,
                         gatheringDescription = gatheringDescription,
                         myParticipantStatus = ParticipationStatus.PARTICIPATED,
-                        timestamp = ServerValue.TIMESTAMP.toString(),
+                        timestamp = ServerValue.TIMESTAMP,
                         gatheringTags = tagMap.filter { it.value }.map { it.key },
                     ).toMap()
                 )

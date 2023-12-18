@@ -14,7 +14,6 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.UserData
-import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -156,9 +155,12 @@ object AuthViewModel : ViewModel() {
         viewModelScope.launch {
             if(UserAuth.createUser(inputEmail, inputPassword)){
                 trySendAuthEmail()
+                uiState = AuthUiState.RequestEmailVerify
+            }
+            else {
+                uiState = AuthUiState.SignIn
             }
         }
-        uiState = AuthUiState.SignIn
     }
 
     //입력한 이메일 형식 확인 함수
@@ -270,16 +272,15 @@ object AuthViewModel : ViewModel() {
         idSaveLoaded = false
         userInputChecked = false
         userAuthChecked = false
+        UserData.removeListener()
         uiState = AuthUiState.SignIn
     }
 
     //인증 이메일 전송 시도 함수
     fun trySendAuthEmail() {
-        uiState = AuthUiState.Loading
         if (Firebase.auth.currentUser?.email != null) {
             viewModelScope.launch { UserAuth.sendAuthEmail() }
         } else Log.w("Lim", "이메일이 등록되지 않아 인증메일을 전송할 수 없습니다.")
-        uiState = AuthUiState.SignIn
     }
 
     //이메일 인증 확인 시도 함수
@@ -311,7 +312,7 @@ object AuthViewModel : ViewModel() {
         //재로그인
         viewModelScope.launch {
             if(!UserAuth.signIn(email, inputPassword)) {
-                uiState = AuthUiState.SignIn
+                Log.w("tryDeleteUser()", "회원탈퇴 실패: 재로그인 실패")
             }
             else {
                 //유저 현재 상태 불러오기
@@ -327,6 +328,7 @@ object AuthViewModel : ViewModel() {
                         userInputChecked = false
                         userDepartAuto = false
                         UserDataStore.setStringData("ID", "")
+                        UserData.removeListener()
                         trySignOut()
                     }
                     else{
@@ -345,6 +347,7 @@ object AuthViewModel : ViewModel() {
         //유저 정보 불러오기
         viewModelScope.launch {
             try {
+                UserData.getMyData()
                 if (UserData.userInfo != null) {
                     Log.w(ContentValues.TAG, "firebase 유저 정보: $UserData.userInfo")
                     val tempStdNum = UserData.userInfo!!["std-num"].toString() //2023203045
@@ -459,6 +462,7 @@ object AuthViewModel : ViewModel() {
         try {
             val result = suspendCoroutine<Boolean> { continuation ->
                 viewModelScope.launch {
+                    UserData.getMyData()
                     if (UserData.userInfo != null) {
                         if (UserData.userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
                             if(UserData.userInfo!!["state"] == null){
@@ -585,10 +589,8 @@ object AuthViewModel : ViewModel() {
             if(userAuthChecked && userInputChecked) {
                 Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
                 inputPassword = ""
+                if(!UserData.dataListenerAdded) UserData.addListener()
                 navigation.navigate(Routes.HOME_SCREEN)
-                ProfileImage.myImageUri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
-                if(ProfileImage.myImageUri == null){ Log.w("Lim", "유저 프로필 이미지 불러오기 실패") }
-                else{ Log.w("Lim", "유저 프로필 이미지 불러오기 성공") }
             }
         }
     }
