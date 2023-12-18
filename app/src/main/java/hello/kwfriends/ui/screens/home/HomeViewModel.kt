@@ -10,12 +10,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.Tags.Tags
+import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
-import hello.kwfriends.Tags.Tags
-import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
@@ -28,22 +28,29 @@ class HomeViewModel : ViewModel() {
 
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
+
     //검색 상태 저장 변수
     var isSearching by mutableStateOf(false)
+
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
+
     //태그 저장 변수
     var filterTagMap = mutableStateMapOf<String, Boolean>().apply {
         Tags.list.forEach { tag ->
             this[tag] = false
         }
     }
+
     //포스트 생성 다이얼로그 보이기 여부
     var newPostPopupState by mutableStateOf<Boolean>(false)
+
     //포스트 다이얼로그 보이기 여부 및 포스트 uid
     var postPopupState by mutableStateOf<Pair<Boolean, PostDetail?>>(false to null)
+
     //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
     var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
+
     //신고 텍스트 리스트
     val reportTextList by mutableStateOf(
         listOf(
@@ -73,7 +80,7 @@ class HomeViewModel : ViewModel() {
     */
     fun setSearchContentText(text: String) {
         searchText = text
-        if(isSearching) {
+        if (isSearching) {
             searchingPosts = search(posts)
         }
     }
@@ -93,8 +100,8 @@ class HomeViewModel : ViewModel() {
     //필터 함수
     fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
         val activityTags = mutableListOf<String>()
-        filterTagMap.forEach{
-            if(it.value){
+        filterTagMap.forEach {
+            if (it.value) {
                 activityTags.add(it.key)
             }
         }
@@ -109,21 +116,21 @@ class HomeViewModel : ViewModel() {
     fun search(targetPosts: List<PostDetail>): List<PostDetail> {
         /* TODO 검색 알고리즘 최적화 */
         Log.w("Lim", "Searching")
-        if(searchText == "") {
+        if (searchText == "") {
             return listOf()
         }
         val resultPosts = targetPosts.filter { post ->
             post.gatheringTitle.contains(searchText, ignoreCase = true) || //제목
-            post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
-            post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
-            post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
-            post.gatheringTags.toString().contains(searchText, ignoreCase = true)
+                    post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
+                    post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
+                    post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
+                    post.gatheringTags.toString().contains(searchText, ignoreCase = true)
         }
         return resultPosts
     }
 
     fun onclickSearchButton() {
-        if(!isSearching) {
+        if (!isSearching) {
             isSearching = true
         }
     }
@@ -136,27 +143,35 @@ class HomeViewModel : ViewModel() {
             Log.d("initPostMap", "post set to ${posts}")
 
             for (post in posts) {
+                participantsCountMap[post.postID] = post.participants.count()
                 participationStatusMap[post.postID] = if (uid in post.participants.keys) {
                     ParticipationStatus.PARTICIPATED
+                } else if ((participantsCountMap[post.postID]
+                        ?: 1) >= post.maximumParticipants.toInt()
+                ) {
+                    ParticipationStatus.MAXED_OUT
                 } else {
                     ParticipationStatus.NOT_PARTICIPATED
                 }
-
-                participantsCountMap[post.postID] = post.participants.count()
             }
         }
     }
 
     fun updateParticipationStatus(postID: String, viewModel: HomeViewModel) {
         val postDetail = posts.find { it.postID == postID }
-        Log.d("updateParticipationStatus", "myParticipantStatus of $postID is ${postDetail?.myParticipantStatus}")
+
+        Log.d(
+            "updateParticipationStatus",
+            "myParticipantStatus of $postID is ${postDetail?.myParticipantStatus}"
+        )
         viewModelScope.launch {
             if (postDetail?.myParticipantStatus == ParticipationStatus.NOT_PARTICIPATED) {
                 participationStatusMap[postID] = ParticipationStatus.GETTING_IN
                 val result =
                     Post.updateParticipationStatus(postID = postID, action = Action.ADD)
                 if (result) {
-                    val updatedPostDetail = postDetail.copy(myParticipantStatus = ParticipationStatus.PARTICIPATED)
+                    val updatedPostDetail =
+                        postDetail.copy(myParticipantStatus = ParticipationStatus.PARTICIPATED)
                     posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
 
                     participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
@@ -169,7 +184,8 @@ class HomeViewModel : ViewModel() {
                 val result =
                     Post.updateParticipationStatus(postID = postID, action = Action.DELETE)
                 if (result) {
-                    val updatedPostDetail = postDetail!!.copy(myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED)
+                    val updatedPostDetail =
+                        postDetail!!.copy(myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED)
                     posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
 
                     participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
@@ -185,6 +201,8 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             isRefreshing = true
             posts = Post.initPostData()
+            initPostMap()
+            initReportChoice()
             isRefreshing = false
         }
     }
