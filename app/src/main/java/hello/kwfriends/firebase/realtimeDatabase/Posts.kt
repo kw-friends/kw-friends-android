@@ -1,7 +1,12 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -52,11 +57,40 @@ enum class Action {
 
 object Post {
 
-    private var database = Firebase.database.reference
+    private var database = Firebase.database
     private val uid = Firebase.auth.currentUser!!.uid
+    val postReference = database.getReference("posts")
+    val postListener = object : ChildEventListener {
+        override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            Log.d(TAG, "onChildAdded:" + dataSnapshot.key!!)
+        }
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+//            val post = dataSnapshot.getValue<Post>()
+            Log.w("postListener.onDataChange", "postData changed")
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+            Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
+        }
+
+        override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+            Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            Log.w("postListener.onCancelled", "loadPost:onCancelled", databaseError.toException())
+        }
+    }
+
+    fun setPostListener() {
+        postReference.addChildEventListener(postListener)
+        Log.d("setPostListener", "setPostListener 시작")
+    }
+
 
     suspend fun initPostData(): MutableList<PostDetail> {
-        val posts = database.child("posts").get()
+        val posts = database.reference.child("posts").get()
             .addOnSuccessListener {
                 Log.d("initPostData", "모임 데이터 가져오기 성공 $it")
             }
@@ -89,13 +123,13 @@ object Post {
 
 
     suspend fun upload(postData: Map<String, Any>) {
-        val key = database.child("posts").push().key
+        val key = database.reference.child("posts").push().key
         val postHashMap = hashMapOf<String, Any>(
             "/posts/$key" to postData,
         )
 
         val result = suspendCoroutine<Boolean> { continuation ->
-            database.updateChildren(postHashMap)
+            database.reference.updateChildren(postHashMap)
                 .addOnSuccessListener {
                     Log.d("uploadPost", "모임 생성 성공")
                     continuation.resume(true)
@@ -108,7 +142,7 @@ object Post {
             val participantsListMap = hashMapOf<String, Any>(
                 "/posts/$key/participants/${uid}" to UserData.userInfo!!["name"].toString(),
             )
-            database.updateChildren(participantsListMap)
+            database.reference.updateChildren(participantsListMap)
                 .addOnSuccessListener {
                     Log.d("uploadPost", "참여 목록 생성 성공")
                 }.addOnFailureListener { e ->
@@ -123,7 +157,7 @@ object Post {
     ): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
             if (action == Action.ADD) {
-                database.child("/posts/$postID/participants/$uid")
+                database.reference.child("/posts/$postID/participants/$uid")
                     .setValue(UserData.userInfo!!["name"].toString())
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 참여 성공")
@@ -134,7 +168,7 @@ object Post {
                         continuation.resume(false)
                     }
             } else {
-                database.child("/posts/$postID/participants/$uid").setValue(null)
+                database.reference.child("/posts/$postID/participants/$uid").setValue(null)
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 퇴장 성공")
                         continuation.resume(true)

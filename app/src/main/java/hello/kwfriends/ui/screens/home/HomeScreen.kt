@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NewPostPopup
@@ -68,6 +69,7 @@ fun HomeScreen(
     //post 목록 불러오기
     LaunchedEffect(true) {
         homeViewModel.initPostMap()
+        Post.setPostListener()
     }
     //아래로 당겨서 새로고침
     val pullRefreshState = rememberPullRefreshState(
