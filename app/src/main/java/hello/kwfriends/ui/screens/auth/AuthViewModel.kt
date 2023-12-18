@@ -54,7 +54,7 @@ object AuthViewModel : ViewModel() {
 //-----------------
 
 //한 번만 실행 -----
-    //firestore 유저 정보 검사 여부
+    //firebase 유저 정보 검사 여부
     var userInputChecked by mutableStateOf<Boolean>(false)
 
     //firebase 유저 인증 검사 여부
@@ -330,7 +330,7 @@ object AuthViewModel : ViewModel() {
                         trySignOut()
                     }
                     else{
-                        //유저 firestore 상태 롤백
+                        //유저 firebase 상태 롤백
                         viewModelScope.launch { UserData.update(mapOf("state" to lastState)) }
                     }
                     uiState = AuthUiState.SignIn
@@ -346,7 +346,7 @@ object AuthViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 if (UserData.userInfo != null) {
-                    Log.w(ContentValues.TAG, "Firestore 유저 정보: $UserData.userInfo")
+                    Log.w(ContentValues.TAG, "firebase 유저 정보: $UserData.userInfo")
                     val tempStdNum = UserData.userInfo!!["std-num"].toString() //2023203045
                     inputCollege = collegeList[tempStdNum[4]] ?: ""
                     inputDepartment = departmentList[collegeList[tempStdNum[4]]]
