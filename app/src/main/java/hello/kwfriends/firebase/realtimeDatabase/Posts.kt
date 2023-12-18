@@ -43,7 +43,8 @@ enum class ParticipationStatus {
     PARTICIPATED,
     NOT_PARTICIPATED,
     GETTING_IN,
-    GETTING_OUT
+    GETTING_OUT,
+    MAXED_OUT
 }
 
 enum class Action {
@@ -124,7 +125,8 @@ object Post {
     ): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
             if (action == Action.ADD) {
-                database.child("/posts/$postID/participants/$uid").setValue(UserData.userInfo!!["name"].toString())
+                database.child("/posts/$postID/participants/$uid")
+                    .setValue(UserData.userInfo!!["name"].toString())
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 참여 성공")
                         continuation.resume(true)
@@ -148,7 +150,6 @@ object Post {
         }
         return if (result) {
             Log.d("updateParticipationStatus", "$postID 참여 상태 업데이트 성공: $action")
-
             true
         } else {
             Log.d("updateParticipationStatus", "$postID 참여 상태 업데이트 실패: $action")
