@@ -141,6 +141,7 @@ fun HomeScreen(
             onReport = {
                 homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID
             },
+            homeViewModel = homeViewModel,
             enjoyButton = {
                 EnjoyButton(
                     status = homeViewModel.participationStatusMap[homeViewModel.postPopupState.second?.postID],

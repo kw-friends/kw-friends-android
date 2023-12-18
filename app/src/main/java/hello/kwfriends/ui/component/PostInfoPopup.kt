@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import androidx.compose.ui.window.Popup
+import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.postInfo.PostInfoScreen
 
 @Composable
@@ -14,6 +15,7 @@ fun PostInfoPopup(
     onDismiss: () -> Unit,
     participantsCountMap: SnapshotStateMap<String, Int>,
     onReport: () -> Unit,
+    homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
     if (state && postDetail != null) {
@@ -28,6 +30,7 @@ fun PostInfoPopup(
                 participantsCountMap = participantsCountMap,
                 onDismiss = onDismiss,
                 onReport = onReport,
+                homeViewModel = homeViewModel,
                 enjoyButton = enjoyButton
             )
         }
