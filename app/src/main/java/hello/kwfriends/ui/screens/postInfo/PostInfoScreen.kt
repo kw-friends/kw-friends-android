@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.postInfo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -59,6 +61,7 @@ fun PostInfoScreen(
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(true) {
         postDetail.participants.forEach {
@@ -202,7 +205,10 @@ fun PostInfoScreen(
                         fontWeight = FontWeight(400)
                     )
                     Spacer(Modifier.height(15.dp))
-                    Row {
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(scrollState)
+                    ) {
                         //참여자 목록
                         postDetail.participants.forEach {
                             Column(
