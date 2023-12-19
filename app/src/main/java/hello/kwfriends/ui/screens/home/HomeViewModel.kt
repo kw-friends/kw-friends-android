@@ -74,12 +74,9 @@ class HomeViewModel : ViewModel() {
         reportChoice = mutableListOf()
     }
 
-    fun initPostListener() {
+    // post 리스너 설정
+    init {
         Post.setPostListener(viewModel = this, action = Action.ADD)
-    }
-
-    fun removePostListener() {
-        Post.setPostListener(viewModel = this, action = Action.DELETE)
     }
 
     //검색 텍스트 수정 함수
@@ -158,11 +155,26 @@ class HomeViewModel : ViewModel() {
             ParticipationStatus.NOT_PARTICIPATED
         }
         participationStatusMap[postData.postID] = postData.myParticipantStatus
-
-        /*val participants = postData.participants as? Map<String, String> ?: emptyMap()
-        postData.participants = participants*/
+        postData.participants = postData.participants.toMutableMap().apply {
+            put(postData.gatheringPromoterUID, "user") // TODO: UID - true 형식으로 변경
+        }
 
         posts += postData
+        Log.d(
+            "postAdded",
+            "postID: ${postData.postID}, postData.postID: ${postData.postID}, ${participationStatusMap.toMap()}, ${participantsCountMap.toMap()}, ${posts}"
+        )
+    }
+
+    fun postRemoved(postData: PostDetail, postID: String) {
+        participationStatusMap.remove(postID)
+        participantsCountMap.remove(postID)
+        posts = posts.filter { it.postID != postID }
+        Log.d(
+            "postRemoved",
+            "postID: ${postID}, ${participationStatusMap.toMap()}, ${participantsCountMap.toMap()}, ${posts}"
+        )
+
     }
 
     fun initPostMap() {

@@ -1,6 +1,5 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
@@ -25,7 +24,7 @@ data class PostDetail(
     var postID: String = "",
     var timestamp: Any = "",
     val gatheringTags: List<String> = emptyList(),
-    val participants: Map<String, Any> = emptyMap(),
+    var participants: Map<String, Any> = emptyMap(),
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(
@@ -64,7 +63,10 @@ object Post {
         val postReference = database.getReference("posts")
         val postListener = object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                Log.d(TAG, "onChildAdded:${dataSnapshot.value}")
+                Log.d(
+                    "postListener.onChildAdded",
+                    "onChildAdded:${dataSnapshot.value}, postID: ${dataSnapshot.key!!}"
+                )
                 val postDetail = dataSnapshot.getValue(PostDetail::class.java) ?: return
                 viewModel?.postAdded(postData = postDetail, postID = dataSnapshot.key ?: return)
             }
@@ -75,11 +77,16 @@ object Post {
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
+                Log.d(
+                    "postListener.onChildRemoved",
+                    "onChildRemoved:${dataSnapshot.value!!}, postID: ${dataSnapshot.key!!}"
+                )
+                val postDetail = dataSnapshot.getValue(PostDetail::class.java) ?: return
+                viewModel?.postRemoved(postData = postDetail, postID = dataSnapshot.key!!)
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
+                Log.d("postListener.onChildMoved", "onChildMoved:" + dataSnapshot.key!!)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
