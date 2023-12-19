@@ -266,13 +266,13 @@ object AuthViewModel : ViewModel() {
     //로그아웃 함수
     fun trySignOut() {
         uiState = AuthUiState.Loading
+        UserData.removeListener()
         UserAuth.signOut()
         inputEmail = ""
         inputPassword = ""
         idSaveLoaded = false
         userInputChecked = false
         userAuthChecked = false
-        UserData.removeListener()
         uiState = AuthUiState.SignIn
     }
 
