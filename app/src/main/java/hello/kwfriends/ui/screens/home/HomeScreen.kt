@@ -65,10 +65,6 @@ fun HomeScreen(
         settingsViewModel.userSettingValuesLoaded = true
         settingsViewModel.userSettingValuesLoad()
     }
-    //post 목록 불러오기
-    LaunchedEffect(true) {
-        homeViewModel.initPostListener()
-    }
     //아래로 당겨서 새로고침
     val pullRefreshState = rememberPullRefreshState(
         refreshing = homeViewModel.isRefreshing,
