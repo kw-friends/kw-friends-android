@@ -91,7 +91,7 @@ class NewPostViewModel : ViewModel() {
     }
 
     fun initInput() {
-        gatheringPromoter = UserData.userInfo!!["name"].toString()
+        gatheringPromoter = UserData.myInfo!!["name"].toString()
         gatheringTitle = ""
         gatheringTitleStatus = false
         gatheringTime = ""

@@ -110,9 +110,9 @@ class SettingsViewModel: ViewModel() {
         Log.w("Lim", "SettingsScreen: 정보 수정")
         AuthViewModel.userInputChecked = false
         AuthViewModel.uiState = AuthUiState.InputUserInfo
-        AuthViewModel.inputStdNum = UserData.userInfo!!["std-num"]!!.toString()
-        AuthViewModel.inputName = UserData.userInfo!!["name"]!!.toString()
-        AuthViewModel.inputMbti = UserData.userInfo!!["mbti"]!!.toString()
+        AuthViewModel.inputStdNum = UserData.myInfo!!["std-num"]!!.toString()
+        AuthViewModel.inputName = UserData.myInfo!!["name"]!!.toString()
+        AuthViewModel.inputMbti = UserData.myInfo!!["mbti"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 }

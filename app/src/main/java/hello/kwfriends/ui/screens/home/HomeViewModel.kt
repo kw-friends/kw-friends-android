@@ -16,6 +16,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.Report
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
 
@@ -197,6 +198,12 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             val uri = ProfileImage.getDownloadUrl(uid)
             ProfileImage.updateUsersUriMap(uid, uri)
+        }
+    }
+    fun downlodData(uid: String) {
+        viewModelScope.launch {
+            val data = UserData.get(uid)
+            UserData.updateUsersDataMap(uid, data)
         }
     }
 }

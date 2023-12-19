@@ -91,10 +91,10 @@ fun SettingsScreen(
             ) {
                 UserInfoCard(
                     profileImageUri = ProfileImage.usersUriMap[UserAuth.fa.currentUser?.uid],
-                    userName = UserData.userInfo!!["name"]!!.toString(),
-                    admissionYear = UserData.userInfo!!["std-num"]!!.toString()
+                    userName = UserData.myInfo!!["name"]!!.toString(),
+                    admissionYear = UserData.myInfo!!["std-num"]!!.toString()
                         .slice(IntRange(2, 3)),
-                    major = UserData.userInfo!!["department"]!!.toString(),
+                    major = UserData.myInfo!!["department"]!!.toString(),
                     navigation = navigation,
                     settingsViewModel = settingsViewModel
                 )

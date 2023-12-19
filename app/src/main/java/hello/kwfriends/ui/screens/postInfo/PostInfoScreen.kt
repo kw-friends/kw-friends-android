@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
@@ -66,6 +67,7 @@ fun PostInfoScreen(
     LaunchedEffect(true) {
         postDetail.participants.forEach {
             homeViewModel.downlodUri(it.key)
+            homeViewModel.downlodData(it.key)
         }
     }
 
@@ -226,7 +228,7 @@ fun PostInfoScreen(
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
-                                    text = it.value.toString(),
+                                    text = UserData.usersDataMap[it.key]?.get("name")?.toString() ?: "unknown",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontFamily = FontFamily.Default,
                                 )
