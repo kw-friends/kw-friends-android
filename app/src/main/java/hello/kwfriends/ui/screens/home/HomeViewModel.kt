@@ -68,8 +68,18 @@ class HomeViewModel : ViewModel() {
 
     var usersUriMap by mutableStateOf<MutableMap<String, Uri?>>(mutableMapOf())
 
+    private val uid = Firebase.auth.currentUser!!.uid
+
     fun initReportChoice() {
         reportChoice = mutableListOf()
+    }
+
+    fun initPostListener() {
+        Post.setPostListener(viewModel = this, action = Action.ADD)
+    }
+
+    fun removePostListener() {
+        Post.setPostListener(viewModel = this, action = Action.DELETE)
     }
 
     //검색 텍스트 수정 함수
@@ -135,7 +145,25 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private val uid = Firebase.auth.currentUser!!.uid
+    fun postAdded(postData: PostDetail, postID: String) {
+        postData.postID = postID
+        participantsCountMap[postData.postID] = postData.participants.count()
+        postData.myParticipantStatus = if (uid in postData.participants.keys) {
+            ParticipationStatus.PARTICIPATED
+        } else if ((participantsCountMap[postData.postID]
+                ?: 1) >= postData.maximumParticipants.toInt()
+        ) {
+            ParticipationStatus.MAXED_OUT
+        } else {
+            ParticipationStatus.NOT_PARTICIPATED
+        }
+        participationStatusMap[postData.postID] = postData.myParticipantStatus
+
+        /*val participants = postData.participants as? Map<String, String> ?: emptyMap()
+        postData.participants = participants*/
+
+        posts += postData
+    }
 
     fun initPostMap() {
         viewModelScope.launch {
@@ -143,7 +171,7 @@ class HomeViewModel : ViewModel() {
             Log.d("initPostMap", "post set to ${posts}")
 
             for (post in posts) {
-                participantsCountMap[post.postID] = post.participants.count()
+
                 participationStatusMap[post.postID] = if (uid in post.participants.keys) {
                     ParticipationStatus.PARTICIPATED
                 } else if ((participantsCountMap[post.postID]

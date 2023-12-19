@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.ui.screens.home.HomeViewModel
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -58,33 +59,45 @@ object Post {
 
     private var database = Firebase.database
     private val uid = Firebase.auth.currentUser!!.uid
-    val postReference = database.getReference("posts")
-    val postListener = object : ChildEventListener {
-        override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-            Log.d(TAG, "onChildAdded:" + dataSnapshot.key!!)
-        }
 
-        override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+    fun setPostListener(viewModel: HomeViewModel?, action: Action) {
+        val postReference = database.getReference("posts")
+        val postListener = object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                Log.d(TAG, "onChildAdded:${dataSnapshot.value}")
+                val postDetail = dataSnapshot.getValue(PostDetail::class.java) ?: return
+                viewModel?.postAdded(postData = postDetail, postID = dataSnapshot.key ?: return)
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
 //            val post = dataSnapshot.getValue<Post>()
-            Log.w("postListener.onDataChange", "postData changed")
+                Log.w("postListener.onDataChange", "postData changed")
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(
+                    "postListener.onCancelled",
+                    "loadPost:onCancelled",
+                    databaseError.toException()
+                )
+            }
+        }
+        if (action == Action.ADD) {
+            postReference.addChildEventListener(postListener)
+            Log.d("setPostListener", "setPostListener 시작")
+        } else { // action == Action.DELETE
+            postReference.removeEventListener(postListener)
+            Log.d("setPostListener", "setPostListener 종료")
         }
 
-        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-            Log.d(TAG, "onChildRemoved:" + dataSnapshot.key!!)
-        }
-
-        override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-            Log.d(TAG, "onChildMoved:" + dataSnapshot.key!!)
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            Log.w("postListener.onCancelled", "loadPost:onCancelled", databaseError.toException())
-        }
-    }
-
-    fun setPostListener() {
-        postReference.addChildEventListener(postListener)
-        Log.d("setPostListener", "setPostListener 시작")
     }
 
 
