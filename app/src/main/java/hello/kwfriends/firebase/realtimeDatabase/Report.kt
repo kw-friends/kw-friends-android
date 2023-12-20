@@ -12,14 +12,16 @@ object Report {
 
 
     suspend fun report(postID: String, reporterID: String, reason: List<String>): Boolean {
+        val key = database.child("reports").push().key
         val reportMap = mapOf(
-            "postID" to postID,
-            "reporterID" to reporterID,
-            "reason" to reason,
-            "timestamp" to ServerValue.TIMESTAMP
+            "reports/$key/postID" to postID,
+            "reports/$key/reporterID" to reporterID,
+            "reports/$key/reason" to reason,
+            "reports/$key/timestamp" to ServerValue.TIMESTAMP,
+            "posts/$postID/reporters/$reporterID" to true
         )
         val result = suspendCoroutine<Boolean> { continuation ->
-            database.child("reports").push().setValue(reportMap)
+            database.updateChildren(reportMap)
                 .addOnSuccessListener {
                     Log.w("Report.report()", "신고 업로드 성공")
                     continuation.resume(true)
