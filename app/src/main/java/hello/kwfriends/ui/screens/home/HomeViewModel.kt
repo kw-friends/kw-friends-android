@@ -66,8 +66,6 @@ class HomeViewModel : ViewModel() {
     )
     var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
 
-    var usersUriMap by mutableStateOf<MutableMap<String, Uri?>>(mutableMapOf())
-
     private val uid = Firebase.auth.currentUser!!.uid
 
     fun initReportChoice() {

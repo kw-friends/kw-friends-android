@@ -43,9 +43,9 @@ object UserAuth {
 
     //로그아웃 함수
     fun signOut() {
-        Post.setPostListener(viewModel = null, Action.DELETE).also {
+        Post.setPostListener(viewModel = null, Action.DELETE)
+        UserData.removeListener().also {
             fa.signOut()
-            UserData.removeListener()
             Log.w("Lim", "로그아웃")
         }
 
