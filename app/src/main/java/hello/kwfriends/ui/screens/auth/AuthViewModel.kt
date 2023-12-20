@@ -266,7 +266,6 @@ object AuthViewModel : ViewModel() {
     //로그아웃 함수
     fun trySignOut() {
         uiState = AuthUiState.Loading
-        UserData.removeListener()
         UserAuth.signOut()
         inputEmail = ""
         inputPassword = ""
@@ -328,7 +327,6 @@ object AuthViewModel : ViewModel() {
                         userInputChecked = false
                         userDepartAuto = false
                         UserDataStore.setStringData("ID", "")
-                        UserData.removeListener()
                         trySignOut()
                     }
                     else{

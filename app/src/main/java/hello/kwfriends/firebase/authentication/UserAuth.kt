@@ -6,6 +6,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.Post
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -44,6 +45,7 @@ object UserAuth {
     fun signOut() {
         Post.setPostListener(viewModel = null, Action.DELETE).also {
             fa.signOut()
+            UserData.removeListener()
             Log.w("Lim", "로그아웃")
         }
 
