@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.BuildConfig
+import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.SettingsButtonItem
@@ -50,7 +51,7 @@ fun SettingsScreen(
     ) { uri: Uri? ->
         if (uri != null) {
             Log.w("Lim", "이미지 선택 완료")
-            ProfileImage.myImageUri = uri
+            ProfileImage.updateUsersUriMap(UserAuth.fa.currentUser?.uid ?: "", uri)
             settingsViewModel.myProfileImageUpload(uri)
         }
     }
@@ -89,11 +90,11 @@ fun SettingsScreen(
                     .verticalScroll(scrollState)
             ) {
                 UserInfoCard(
-                    profileImageUri = ProfileImage.myImageUri,
-                    userName = UserData.userInfo!!["name"]!!.toString(),
-                    admissionYear = UserData.userInfo!!["std-num"]!!.toString()
+                    profileImageUri = ProfileImage.usersUriMap[UserAuth.fa.currentUser?.uid],
+                    userName = UserData.myInfo!!["name"]!!.toString(),
+                    admissionYear = UserData.myInfo!!["std-num"]!!.toString()
                         .slice(IntRange(2, 3)),
-                    major = UserData.userInfo!!["department"]!!.toString(),
+                    major = UserData.myInfo!!["department"]!!.toString(),
                     navigation = navigation,
                     settingsViewModel = settingsViewModel
                 )

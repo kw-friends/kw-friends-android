@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.postInfo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -59,6 +64,14 @@ fun PostInfoScreen(
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(true) {
+        postDetail.participants.forEach {
+            homeViewModel.downlodUri(it.key)
+            homeViewModel.downlodData(it.key)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -124,9 +137,8 @@ fun PostInfoScreen(
         ) {
             //top
             Row {
-                homeViewModel.downlodUri(postDetail.gatheringPromoterUID)
                 AsyncImage(
-                    model = homeViewModel.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
+                    model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID] ?: R.drawable.profile_default_image,
                     placeholder = painterResource(id = R.drawable.profile_default_image),
                     contentDescription = "gathering promoter's profile image",
                     modifier = Modifier
@@ -197,16 +209,18 @@ fun PostInfoScreen(
                         fontWeight = FontWeight(400)
                     )
                     Spacer(Modifier.height(15.dp))
-                    Row {
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(scrollState)
+                    ) {
                         //참여자 목록
                         postDetail.participants.forEach {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.padding(end = 15.dp)
                             ) {
-                                homeViewModel.downlodUri(it.key)
                                 AsyncImage(
-                                    model = homeViewModel.usersUriMap[it.key] ?: R.drawable.profile_default_image,
+                                    model = ProfileImage.usersUriMap[it.key] ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
                                     contentDescription = "gathering participant's profile image",
                                     modifier = Modifier
