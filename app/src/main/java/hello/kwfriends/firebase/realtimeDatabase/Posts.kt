@@ -72,8 +72,12 @@ object Post {
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-//            val post = dataSnapshot.getValue<Post>()
-                Log.w("postListener.onDataChange", "postData changed")
+                Log.d(
+                    "postListener.onDataChanged",
+                    "onDataChanged, ${dataSnapshot.key}, ${dataSnapshot.value}, $previousChildName"
+                )
+                val postDetail = dataSnapshot.getValue(PostDetail::class.java) ?: return
+                viewModel?.postChanged(postData = postDetail, postID = dataSnapshot.key ?: return)
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
@@ -159,7 +163,7 @@ object Post {
         }
         if (result) {
             val participantsListMap = hashMapOf<String, Any>(
-                "/posts/$key/participants/${uid}" to UserData.userInfo!!["name"].toString(),
+                "/posts/$key/participants/${uid}" to true,
             )
             database.reference.updateChildren(participantsListMap)
                 .addOnSuccessListener {
@@ -177,7 +181,7 @@ object Post {
         val result = suspendCoroutine<Boolean> { continuation ->
             if (action == Action.ADD) {
                 database.reference.child("/posts/$postID/participants/$uid")
-                    .setValue(UserData.userInfo!!["name"].toString())
+                    .setValue(true)
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 참여 성공")
                         continuation.resume(true)

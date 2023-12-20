@@ -155,11 +155,17 @@ class HomeViewModel : ViewModel() {
             ParticipationStatus.NOT_PARTICIPATED
         }
         participationStatusMap[postData.postID] = postData.myParticipantStatus
-        postData.participants = postData.participants.toMutableMap().apply {
-            put(postData.gatheringPromoterUID, "user") // TODO: UID - true 형식으로 변경
-        }
 
         posts += postData
+        Log.d(
+            "postAdded",
+            "${postData.participants.count()}, ${participantsCountMap[postData.postID]}"
+        )
+        Log.d(
+            "postAdded",
+            "${postData.myParticipantStatus}, ${participationStatusMap[postData.postID]}"
+        )
+        Log.d("postAdded", "${postData.participants.toMap()}")
         Log.d("postAdded", "postID: ${postData.postID}")
     }
 
@@ -168,7 +174,28 @@ class HomeViewModel : ViewModel() {
         participantsCountMap.remove(postID)
         posts = posts.filter { it.postID != postID }
         Log.d("postRemoved", "postID: ${postID}")
+    }
 
+    fun postChanged(postData: PostDetail, postID: String) {
+        Log.d("postChanged", "$postData")
+        postData.postID = postID
+        participantsCountMap[postID] = postData.participants.count()
+        postData.myParticipantStatus = if (uid in postData.participants.keys) {
+            ParticipationStatus.PARTICIPATED
+        } else if ((participantsCountMap[postData.postID]
+                ?: 1) >= postData.maximumParticipants.toInt()
+        ) {
+            ParticipationStatus.MAXED_OUT
+        } else {
+            ParticipationStatus.NOT_PARTICIPATED
+        }
+        participationStatusMap[postData.postID] = postData.myParticipantStatus
+        postData.participants = postData.participants.toMutableMap().apply {
+            put(postData.gatheringPromoterUID, true)
+        }
+        posts = posts.filter { it.postID != postID }
+        posts += postData
+        Log.d("postChanged", "postID: ${postData.postID}")
     }
 
     fun initPostMap() {
@@ -177,7 +204,6 @@ class HomeViewModel : ViewModel() {
             Log.d("initPostMap", "post set to ${posts}")
 
             for (post in posts) {
-
                 participationStatusMap[post.postID] = if (uid in post.participants.keys) {
                     ParticipationStatus.PARTICIPATED
                 } else if ((participantsCountMap[post.postID]
@@ -209,7 +235,8 @@ class HomeViewModel : ViewModel() {
                     posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
 
                     participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
-                    participantsCountMap[postID] = participantsCountMap[postID]!! + 1
+//                    participantsCountMap[postID] = participantsCountMap[postID]!! + 1
+//                    Log.d("updateParticipationStatus", "+1")
                 } else {
                     participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
                 }
@@ -223,7 +250,8 @@ class HomeViewModel : ViewModel() {
                     posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
 
                     participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
-                    participantsCountMap[postID] = participantsCountMap[postID]!! - 1
+//                    participantsCountMap[postID] = participantsCountMap[postID]!! - 1
+//                    Log.d("updateParticipationStatus", "-1")
                 } else {
                     participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
                 }
@@ -239,13 +267,6 @@ class HomeViewModel : ViewModel() {
             initReportChoice()
             isRefreshing = false
         }
-    }
-
-    //포스트 목록 및 세부 정보 불러오는 함수
-    suspend fun getPostFromFirestore(): Boolean {
-        posts = Post.initPostData()
-        Log.w("getPostFromFirestore", "게시글 불러옴")
-        return false
     }
 
     fun downlodUri(uid: String) {

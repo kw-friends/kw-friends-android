@@ -216,7 +216,7 @@ fun PostInfoScreen(
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
-                                    text = it.value.toString(),
+                                    text = it.value.toString(), // TODO: User 닉네임으로 표시
                                     style = MaterialTheme.typography.bodySmall,
                                     fontFamily = FontFamily.Default,
                                 )
