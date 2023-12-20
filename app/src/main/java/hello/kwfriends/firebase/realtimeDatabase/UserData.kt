@@ -1,6 +1,9 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -13,14 +16,21 @@ import kotlin.coroutines.suspendCoroutine
 
 object UserData {
     var database = Firebase.database.reference
-    var userInfo: Map<String, Any>? = null
+    var myInfo: Map<String, Any>? = null
     var dataListenerAdded: Boolean = false
+    var usersDataMap by mutableStateOf<MutableMap<String, Map<String, Any>?>>(mutableMapOf())
+
+    fun updateUsersDataMap(uid: String, data: Map<String, Any>?) {
+        usersDataMap = usersDataMap.toMutableMap().apply {
+            this[uid] = data
+        }
+    }
 
 
     val userInfoListener = object: ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            userInfo = dataSnapshot.getValue<Map<String, Any>>()
-            Log.w("userInfoListener", "유저 정보 변경 감지됨 $userInfo")
+            myInfo = dataSnapshot.getValue<Map<String, Any>>()
+            Log.w("userInfoListener", "유저 정보 변경 감지됨 $myInfo")
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
@@ -76,8 +86,8 @@ object UserData {
         val result = suspendCoroutine<Boolean> { continuation ->
             database.child("users").child(UserAuth.fa.currentUser!!.uid).get()
                 .addOnSuccessListener { dataSnapshot ->
-                    userInfo = dataSnapshot.getValue<Map<String, Any>>()
-                    Log.w("get", "데이터 가져오기 성공 $userInfo")
+                    myInfo = dataSnapshot.getValue<Map<String, Any>>()
+                    Log.w("get", "데이터 가져오기 성공 $myInfo")
                     continuation.resume(true)
                 }
                 .addOnFailureListener {

@@ -174,7 +174,7 @@ fun NewPostScreen(
                         modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
                         selected = it.value,
-                        onClick = { newPostViewModel.tagMap[it.key] = !it.value }
+                        onClick = { newPostViewModel.updateTagMap(it.key) }
                     )
                 }
             }

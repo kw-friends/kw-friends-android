@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.screens.home
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -17,6 +16,7 @@ import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
 
@@ -271,9 +271,14 @@ class HomeViewModel : ViewModel() {
 
     fun downlodUri(uid: String) {
         viewModelScope.launch {
-            usersUriMap = usersUriMap.toMutableMap().apply {
-                this[uid] = ProfileImage.getDownloadUrl(uid)
-            }
+            val uri = ProfileImage.getDownloadUrl(uid)
+            ProfileImage.updateUsersUriMap(uid, uri)
+        }
+    }
+    fun downlodData(uid: String) {
+        viewModelScope.launch {
+            val data = UserData.get(uid)
+            UserData.updateUsersDataMap(uid, data)
         }
     }
 }

@@ -75,8 +75,11 @@ class SettingsViewModel: ViewModel() {
         myProfileImiageLoaded = true
         viewModelScope.launch {
             Log.w("Lim", "유저 프로필 이미지 불러오는 중")
-            ProfileImage.myImageUri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
-            if(ProfileImage.myImageUri == null){ Log.w("Lim", "유저 프로필 이미지 불러오기 실패") }
+            val uri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
+            ProfileImage.updateUsersUriMap(Firebase.auth.currentUser!!.uid, uri)
+            if(ProfileImage.usersUriMap[Firebase.auth.currentUser!!.uid] == null) {
+                Log.w("Lim", "유저 프로필 이미지 불러오기 실패")
+            }
             else{ Log.w("Lim", "유저 프로필 이미지 불러오기 성공") }
         }
     }
@@ -107,9 +110,9 @@ class SettingsViewModel: ViewModel() {
         Log.w("Lim", "SettingsScreen: 정보 수정")
         AuthViewModel.userInputChecked = false
         AuthViewModel.uiState = AuthUiState.InputUserInfo
-        AuthViewModel.inputStdNum = UserData.userInfo!!["std-num"]!!.toString()
-        AuthViewModel.inputName = UserData.userInfo!!["name"]!!.toString()
-        AuthViewModel.inputMbti = UserData.userInfo!!["mbti"]!!.toString()
+        AuthViewModel.inputStdNum = UserData.myInfo!!["std-num"]!!.toString()
+        AuthViewModel.inputName = UserData.myInfo!!["name"]!!.toString()
+        AuthViewModel.inputMbti = UserData.myInfo!!["mbti"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 }

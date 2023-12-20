@@ -315,7 +315,7 @@ object AuthViewModel : ViewModel() {
             }
             else {
                 //유저 현재 상태 불러오기
-                val lastState: String = UserData.userInfo?.get("state").toString()
+                val lastState: String = UserData.myInfo?.get("state").toString()
                 //유저 상태 삭제됨으로 변경
                 if(!UserData.update(mapOf("state" to "deleted"))) {
                     uiState = AuthUiState.SignIn
@@ -346,9 +346,9 @@ object AuthViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 UserData.getMyData()
-                if (UserData.userInfo != null) {
+                if (UserData.myInfo != null) {
                     Log.w(ContentValues.TAG, "firebase 유저 정보: $UserData.userInfo")
-                    val tempStdNum = UserData.userInfo!!["std-num"].toString() //2023203045
+                    val tempStdNum = UserData.myInfo!!["std-num"].toString() //2023203045
                     inputCollege = collegeList[tempStdNum[4]] ?: ""
                     inputDepartment = departmentList[collegeList[tempStdNum[4]]]
                         ?.get(tempStdNum.slice(IntRange(5, 6))) ?: ""
@@ -461,9 +461,9 @@ object AuthViewModel : ViewModel() {
             val result = suspendCoroutine<Boolean> { continuation ->
                 viewModelScope.launch {
                     UserData.getMyData()
-                    if (UserData.userInfo != null) {
-                        if (UserData.userInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
-                            if(UserData.userInfo!!["state"] == null){
+                    if (UserData.myInfo != null) {
+                        if (UserData.myInfo!!["state"] != "available") { // 유저 상태 available 아니면 로그아웃
+                            if(UserData.myInfo!!["state"] == null){
                                 Log.w("userInfoCheck", "유저 상태가 null이라 available로 설정하였습니다.")
                                 UserData.update(mapOf("state" to "available"))
                                 continuation.resume(false)
@@ -473,11 +473,11 @@ object AuthViewModel : ViewModel() {
                                 Log.w(ContentValues.TAG, "유저 상태가 available이 아니라 로그아웃되었습니다.")
                                 continuation.resume(false)
                             }
-                        } else if (!userInfoFormCheck(UserData.userInfo!!)) {
+                        } else if (!userInfoFormCheck(UserData.myInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 정보 비정상. 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserInfo
                             continuation.resume(false)
-                        } else if (!userInfoDepartmentCheck(UserData.userInfo!!)) {
+                        } else if (!userInfoDepartmentCheck(UserData.myInfo!!)) {
                             Log.w(ContentValues.TAG, "유저 소속 정보 비정상. 소속 정보 입력 화면으로 이동.")
                             uiState = AuthUiState.InputUserDepartment
                             continuation.resume(false)
