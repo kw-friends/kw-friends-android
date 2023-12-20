@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,8 +35,8 @@ fun EnjoyButton(
             }
         },
         enabled =
-        status == ParticipationStatus.PARTICIPATED
-                || status == ParticipationStatus.NOT_PARTICIPATED
+        (status == ParticipationStatus.PARTICIPATED || status == ParticipationStatus.NOT_PARTICIPATED) && status != ParticipationStatus.MAXED_OUT
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -76,6 +77,18 @@ fun EnjoyButton(
                     Spacer(modifier = Modifier.size(7.dp))
                     Text(
                         text = "나가는 중..",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                ParticipationStatus.MAXED_OUT -> {
+                    Icon(
+                        imageVector = Icons.Default.Block,
+                        contentDescription = "Maxed out"
+                    )
+                    Spacer(modifier = Modifier.size(7.dp))
+                    Text(
+                        text = "인원 가득 참",
                         style = MaterialTheme.typography.labelLarge
                     )
                 }

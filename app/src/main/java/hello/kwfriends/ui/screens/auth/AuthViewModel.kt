@@ -272,7 +272,6 @@ object AuthViewModel : ViewModel() {
         idSaveLoaded = false
         userInputChecked = false
         userAuthChecked = false
-        UserData.removeListener()
         uiState = AuthUiState.SignIn
     }
 
@@ -328,7 +327,6 @@ object AuthViewModel : ViewModel() {
                         userInputChecked = false
                         userDepartAuto = false
                         UserDataStore.setStringData("ID", "")
-                        UserData.removeListener()
                         trySignOut()
                     }
                     else{

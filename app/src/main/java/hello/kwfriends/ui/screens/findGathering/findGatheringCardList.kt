@@ -42,21 +42,34 @@ fun GathergingListItem(
             },
             headlineContent = {
                 Column(Modifier.padding(vertical = 7.dp)) {
-                    Text(postDetail.gatheringTitle, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, fontWeight = FontWeight(500))
-                    Text(postDetail.gatheringDescription.replace("\n\n", "\n"), maxLines = 2, style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default, color = Color.DarkGray)
+                    Text(
+                        postDetail.gatheringTitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight(500)
+                    )
+                    Text(
+                        postDetail.gatheringDescription.replace("\n\n", "\n"),
+                        maxLines = 2,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = FontFamily.Default,
+                        color = Color.DarkGray
+                    )
                     Row(
                         modifier = Modifier.padding(top = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         FlowRow(verticalArrangement = Arrangement.Center) {
                             Text(
-                                text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(postDetail.timestamp),
+                                text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(
+                                    postDetail.timestamp
+                                ),
                                 maxLines = 1,
                                 style = MaterialTheme.typography.bodySmall,
                                 fontFamily = FontFamily.Default,
                                 color = Color.Gray
                             )
-                            if(postDetail.gatheringTags.isNotEmpty()) {
+                            if (postDetail.gatheringTags.isNotEmpty()) {
                                 Divider(
                                     color = Color.LightGray,
                                     modifier = Modifier
@@ -66,14 +79,19 @@ fun GathergingListItem(
                                 )
                             }
                             postDetail.gatheringTags.forEach {
-                                Text(text = "#$it ", style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Default, color = Color.Gray)
+                                Text(
+                                    text = "#$it ",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = FontFamily.Default,
+                                    color = Color.Gray
+                                )
                             }
                         }
 
                     }
                 }
             },
-            trailingContent = { Text("${postDetail.participants.size}/${postDetail.maximumParticipants}") },
+            trailingContent = { Text("${viewModel.participantsCountMap[postDetail.postID]}/${postDetail.maximumParticipants}") },
         )
     }
 }
@@ -99,19 +117,21 @@ fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
 @Preview
 @Composable
 fun GathergingItemListPreview() {
-    FindGatheringItemList(listOf(PostDetail(
-        gatheringTitle = "Preview",
-        minimumParticipants = "Preview",
-        maximumParticipants = "Preview",
-        gatheringTime = "Preview",
-        gatheringDescription = "Preview",
-        gatheringTags = listOf("Preview"),
-        gatheringLocation = "",
-        gatheringPromoter = "",
-        participants = emptyMap(),
-        myParticipantStatus = ParticipationStatus.PARTICIPATED,
-        postID = "Preview",
-    )),
+    FindGatheringItemList(
+        listOf(
+            PostDetail(
+                gatheringTitle = "Preview",
+                maximumParticipants = "Preview",
+                gatheringTime = "Preview",
+                gatheringDescription = "Preview",
+                gatheringTags = listOf("Preview"),
+                gatheringLocation = "",
+                gatheringPromoter = "",
+                participants = emptyMap(),
+                myParticipantStatus = ParticipationStatus.PARTICIPATED,
+                postID = "Preview",
+            )
+        ),
         viewModel = HomeViewModel()
     )
 }

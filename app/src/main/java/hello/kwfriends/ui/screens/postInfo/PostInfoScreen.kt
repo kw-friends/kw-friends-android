@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +57,7 @@ import java.util.Locale
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
+    participantsCountMap: SnapshotStateMap<String, Int>,
     onDismiss: () -> Unit,
     onReport: () -> Unit,
     homeViewModel: HomeViewModel,
@@ -201,7 +203,7 @@ fun PostInfoScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "참여 인원  ${postDetail.participants.size}/${postDetail.maximumParticipants}",
+                        text = "참여 인원  ${participantsCountMap[postDetail.postID]}/${postDetail.maximumParticipants}",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(400)
@@ -228,7 +230,8 @@ fun PostInfoScreen(
                                 )
                                 Spacer(modifier = Modifier.height(5.dp))
                                 Text(
-                                    text = UserData.usersDataMap[it.key]?.get("name")?.toString() ?: "unknown",
+                                    text = UserData.usersDataMap[it.key]?.get("name")?.toString()
+                                        ?: "unknown",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontFamily = FontFamily.Default,
                                 )

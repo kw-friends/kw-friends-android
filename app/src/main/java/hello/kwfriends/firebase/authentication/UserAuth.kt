@@ -4,6 +4,9 @@ import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.Action
+import hello.kwfriends.firebase.realtimeDatabase.Post
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -40,12 +43,16 @@ object UserAuth {
 
     //로그아웃 함수
     fun signOut() {
-        fa.signOut()
-        Log.w("Lim", "로그아웃")
+        Post.setPostListener(viewModel = null, Action.DELETE)
+        UserData.removeListener().also {
+            fa.signOut()
+            Log.w("Lim", "로그아웃")
+        }
+
     }
 
     //유저 생성(이메일, 비밀번호 firebase auth에 등록)
-    suspend fun createUser(email: String, password: String): Boolean{
+    suspend fun createUser(email: String, password: String): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
             fa.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->

@@ -65,10 +65,6 @@ fun HomeScreen(
         settingsViewModel.userSettingValuesLoaded = true
         settingsViewModel.userSettingValuesLoad()
     }
-    //post 목록 불러오기
-    LaunchedEffect(true) {
-        homeViewModel.initPostMap()
-    }
     //아래로 당겨서 새로고침
     val pullRefreshState = rememberPullRefreshState(
         refreshing = homeViewModel.isRefreshing,
@@ -89,12 +85,12 @@ fun HomeScreen(
     //뒤로 가기 버튼을 눌렀을 때 실행할 코드
     BackHandler {
         //검색 취소
-        if(homeViewModel.isSearching) {
+        if (homeViewModel.isSearching) {
             homeViewModel.isSearching = false
         }
         //두번눌러서 앱 종료
         else {
-            if(System.currentTimeMillis() - backPressedTime <= 2000L) {
+            if (System.currentTimeMillis() - backPressedTime <= 2000L) {
                 context.startActivity(startMain) // 앱 종료
             } else {
                 Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
@@ -109,7 +105,7 @@ fun HomeScreen(
         //앱 바
         topBar = {
             HomeTopAppBar(
-                navigation =  navigation,
+                navigation = navigation,
                 isSearching = homeViewModel.isSearching,
                 searchText = homeViewModel.searchText,
                 setSearchText = { homeViewModel.setSearchContentText(it) },
@@ -134,9 +130,11 @@ fun HomeScreen(
         PostInfoPopup(
             state = homeViewModel.postPopupState.first,
             postDetail = homeViewModel.postPopupState.second,
+            participantsCountMap = homeViewModel.participantsCountMap,
             onDismiss = { homeViewModel.postPopupState = false to null },
             onReport = {
-                homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second?.postID
+                homeViewModel.reportDialogState =
+                    true to homeViewModel.postPopupState.second?.postID
             },
             homeViewModel = homeViewModel,
             enjoyButton = {
@@ -158,15 +156,16 @@ fun HomeScreen(
             newPostViewModel = newPostViewModel
         )
         //신고 다이얼로그
-        if(homeViewModel.reportDialogState.first) {
+        if (homeViewModel.reportDialogState.first) {
             homeViewModel.initReportChoice()
             ReportDialog(homeViewModel = homeViewModel)
         }
         //태그
         Column(modifier = Modifier.padding(paddingValues)) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(scrollState)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(scrollState)
 //                .background(Color(0xFFE2A39B))
             ) {
                 Spacer(Modifier.width(12.dp))
@@ -186,12 +185,11 @@ fun HomeScreen(
                         .pullRefresh(pullRefreshState)
                 ) {
                     //검색중인지
-                    if(homeViewModel.isSearching) {
-                        if(homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
+                    if (homeViewModel.isSearching) {
+                        if (homeViewModel.searchText != "" && homeViewModel.searchingPosts.isEmpty()) {
                             //검색 결과 없을때 표시할 화면
                             NoSearchResult(homeViewModel.searchText)
-                        }
-                        else {
+                        } else {
                             //검색 결과 화면
                             FindGatheringItemList(
                                 homeViewModel.filter(homeViewModel.searchingPosts),
@@ -221,9 +219,14 @@ fun HomeScreen(
 
 @Preview
 @Composable
-fun HomeScreenPreview(){
+fun HomeScreenPreview() {
     val navController = rememberNavController()
     KWFriendsTheme {
-        HomeScreen(homeViewModel = HomeViewModel(), newPostViewModel = NewPostViewModel(), settingsViewModel = SettingsViewModel(), navigation = navController)
+        HomeScreen(
+            homeViewModel = HomeViewModel(),
+            newPostViewModel = NewPostViewModel(),
+            settingsViewModel = SettingsViewModel(),
+            navigation = navController
+        )
     }
 }
