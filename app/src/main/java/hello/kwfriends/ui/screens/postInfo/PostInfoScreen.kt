@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -45,6 +46,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
@@ -116,17 +119,20 @@ fun PostInfoScreen(
             ) {
                 DropdownMenuItem(
                     text = { Text("신고") },
+                    enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid),
                     onClick = {
                         menuExpanded = false
                         onReport()
                     },
-//                        leadingIcon = {
-//                            Icon(
-//                                Icons.Outlined.Details,
-//                                contentDescription = null
-//                            )
-//                        },
-                    //trailingIcon = { Text("F11", textAlign = TextAlign.Center) }
+                    trailingIcon = {
+                        if(postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid)) {
+                            Icon(
+                                Icons.Default.Check,
+                                tint = Color.Gray,
+                                contentDescription = "check icon"
+                            )
+                        }
+                    }
                 )
             }
         }

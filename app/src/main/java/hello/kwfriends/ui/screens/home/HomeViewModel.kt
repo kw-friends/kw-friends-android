@@ -79,9 +79,9 @@ class HomeViewModel : ViewModel() {
 
     //검색 텍스트 수정 함수
     /*
-    TODO 1. 신고시 post에 신고자 uid 리스트 추가
+    TODO 1. 신고시 post에 신고자 uid 리스트 추가 - 완료
     TODO 2. 신고수 일정 이상 되면 알림 or 숨기기
-    TODO 3. 신고 한번만 할 수 있도록 하기(신고 버튼 오른쪽에 체크표시)
+    TODO 3. 신고 한번만 할 수 있도록 하기(신고 버튼 오른쪽에 체크표시) - 완료
     */
     fun setSearchContentText(text: String) {
         searchText = text

@@ -24,6 +24,7 @@ data class PostDetail(
     var postID: String = "",
     var timestamp: Any = "",
     val gatheringTags: List<String> = emptyList(),
+    var reporters: Map<String, Any> = emptyMap(),
     var participants: Map<String, Any> = emptyMap(),
 ) {
     fun toMap(): Map<String, Any> {
