@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.main.MainActivity
@@ -22,6 +23,7 @@ class SplashViewModel : ViewModel() {
         processingState = SplashProcessingState.auth
         if(AuthViewModel.userAuthAvailableCheck()){
             Log.w("Lim", "유저 인증 유효성 검사 성공")
+            ServerData.addListener()
             UserData.addListener()
             processingState = SplashProcessingState.infoCheck
             if(UserData.getMyData()) {

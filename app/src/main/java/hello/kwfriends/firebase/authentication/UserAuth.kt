@@ -6,6 +6,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.Post
+import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -44,11 +45,11 @@ object UserAuth {
     //로그아웃 함수
     fun signOut() {
         Post.setPostListener(viewModel = null, Action.DELETE)
+        ServerData.removeListener()
         UserData.removeListener().also {
             fa.signOut()
             Log.w("Lim", "로그아웃")
         }
-
     }
 
     //유저 생성(이메일, 비밀번호 firebase auth에 등록)

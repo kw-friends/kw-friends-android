@@ -13,6 +13,7 @@ import com.google.firebase.database.ServerValue
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
+import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.launch
@@ -588,6 +589,7 @@ object AuthViewModel : ViewModel() {
                 Log.w("Lim", "인증 갱신 및 정보 입력 확인 완료, 이후 화면으로 이동.")
                 inputPassword = ""
                 if(!UserData.dataListenerAdded) UserData.addListener()
+                if(!ServerData.dataListenerAdded) ServerData.addListener()
                 navigation.navigate(Routes.HOME_SCREEN)
             }
         }

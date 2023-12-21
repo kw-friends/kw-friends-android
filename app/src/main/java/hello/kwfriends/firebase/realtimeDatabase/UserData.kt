@@ -47,7 +47,7 @@ object UserData {
 
     //유저 정보 리스너 제거 함수
     fun removeListener() {
-        UserData.dataListenerAdded = false
+        dataListenerAdded = false
         Log.w("UserData", "유저 정보 리스너 제거")
         try {
             database.child("users").child(UserAuth.fa.currentUser!!.uid).removeEventListener(userInfoListener)
