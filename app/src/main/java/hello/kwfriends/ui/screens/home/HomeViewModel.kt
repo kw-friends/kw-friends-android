@@ -183,11 +183,7 @@ class HomeViewModel : ViewModel() {
             ParticipationStatus.NOT_PARTICIPATED
         }
         participationStatusMap[postData.postID] = postData.myParticipantStatus
-        postData.participants = postData.participants.toMutableMap().apply {
-            put(postData.gatheringPromoterUID, true)
-        }
-        posts = posts.filter { it.postID != postID }
-        posts += postData
+        posts = posts.map { if (it.postID == postID) postData else it }
         Log.d("postChanged", "postID: ${postData.postID}")
         Log.d("postChanged", "posts: ${posts}")
     }
