@@ -60,7 +60,6 @@ import java.util.Locale
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
-    participantsCountMap: SnapshotStateMap<String, Int>,
     onDismiss: () -> Unit,
     onReport: () -> Unit,
     homeViewModel: HomeViewModel,

@@ -92,7 +92,7 @@ fun GathergingListItem(
                     }
                 }
             },
-            trailingContent = { Text("${viewModel.participantsCountMap[postDetail.postID]}/${postDetail.maximumParticipants}") },
+            trailingContent = { Text("${postDetail.participants.count()}/${postDetail.maximumParticipants}") },
         )
     }
 }

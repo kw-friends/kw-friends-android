@@ -23,8 +23,6 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
-    var participationStatusMap = mutableStateMapOf<String, ParticipationStatus>()
-    var participantsCountMap = mutableStateMapOf<String, Int>()
 
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
@@ -137,34 +135,28 @@ class HomeViewModel : ViewModel() {
 
     fun postAdded(postData: PostDetail, postID: String) {
         postData.postID = postID
-        participantsCountMap[postData.postID] = postData.participants.count()
         postData.myParticipantStatus = if (uid in postData.participants.keys) {
             ParticipationStatus.PARTICIPATED
-        } else if ((participantsCountMap[postData.postID]
-                ?: 1) >= postData.maximumParticipants.toInt()
-        ) {
+        } else if (postData.participants.count() >= postData.maximumParticipants.toInt()) {
             ParticipationStatus.MAXED_OUT
         } else {
             ParticipationStatus.NOT_PARTICIPATED
         }
-        participationStatusMap[postData.postID] = postData.myParticipantStatus
 
         posts += postData
         Log.d(
             "postAdded",
-            "${postData.participants.count()}, ${participantsCountMap[postData.postID]}"
+            "${postData.participants.count()}}"
         )
         Log.d(
             "postAdded",
-            "${postData.myParticipantStatus}, ${participationStatusMap[postData.postID]}"
+            "${postData.myParticipantStatus}}"
         )
         Log.d("postAdded", "${postData.participants.toMap()}")
         Log.d("postAdded", "postID: ${postData.postID}")
     }
 
     fun postRemoved(postData: PostDetail, postID: String) {
-        participationStatusMap.remove(postID)
-        participantsCountMap.remove(postID)
         posts = posts.filter { it.postID != postID }
         Log.d("postRemoved", "postID: ${postID}")
     }
@@ -172,17 +164,13 @@ class HomeViewModel : ViewModel() {
     fun postChanged(postData: PostDetail, postID: String) {
         Log.d("postChanged", "$postData")
         postData.postID = postID
-        participantsCountMap[postID] = postData.participants.count()
         postData.myParticipantStatus = if (uid in postData.participants.keys) {
             ParticipationStatus.PARTICIPATED
-        } else if ((participantsCountMap[postData.postID]
-                ?: 1) >= postData.maximumParticipants.toInt()
-        ) {
+        } else if (postData.participants.count() >= postData.maximumParticipants.toInt()) {
             ParticipationStatus.MAXED_OUT
         } else {
             ParticipationStatus.NOT_PARTICIPATED
         }
-        participationStatusMap[postData.postID] = postData.myParticipantStatus
         posts = posts.map { if (it.postID == postID) postData else it }
         Log.d("postChanged", "postID: ${postData.postID}")
         Log.d("postChanged", "posts: ${posts}")
@@ -194,11 +182,9 @@ class HomeViewModel : ViewModel() {
             Log.d("initPostMap", "post set to ${posts}")
 
             for (post in posts) {
-                participationStatusMap[post.postID] = if (uid in post.participants.keys) {
+                if (uid in post.participants.keys) {
                     ParticipationStatus.PARTICIPATED
-                } else if ((participantsCountMap[post.postID]
-                        ?: 1) >= post.maximumParticipants.toInt()
-                ) {
+                } else if (post.participants.count() >= post.maximumParticipants.toInt()) {
                     ParticipationStatus.MAXED_OUT
                 } else {
                     ParticipationStatus.NOT_PARTICIPATED
@@ -215,30 +201,32 @@ class HomeViewModel : ViewModel() {
             "myParticipantStatus of $postID is ${postDetail?.myParticipantStatus}"
         )
         viewModelScope.launch {
+            // 참여 신청
             if (postDetail?.myParticipantStatus == ParticipationStatus.NOT_PARTICIPATED) {
-                participationStatusMap[postID] = ParticipationStatus.GETTING_IN
+                postDetail.myParticipantStatus = ParticipationStatus.GETTING_IN
+
                 val result =
                     Post.updateParticipationStatus(postID = postID, action = Action.ADD)
                 if (result) {
-                    participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
-//                    participantsCountMap[postID] = participantsCountMap[postID]!! + 1
-//                    Log.d("updateParticipationStatus", "+1")
+                    postDetail.myParticipantStatus = ParticipationStatus.PARTICIPATED
                 } else {
-                    participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
+                    postDetail.myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED
                 }
-            } else { // postDetail?.myParticipantStatus == ParticipationStatus.PARTICIPATED
-                participationStatusMap[postID] = ParticipationStatus.GETTING_OUT
+                return@launch
+            }
+
+            // 참여 취소
+            if (postDetail?.myParticipantStatus == ParticipationStatus.PARTICIPATED) {
+                postDetail.myParticipantStatus = ParticipationStatus.GETTING_OUT
+
                 val result =
                     Post.updateParticipationStatus(postID = postID, action = Action.DELETE)
                 if (result) {
-
-
-                    participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
-//                    participantsCountMap[postID] = participantsCountMap[postID]!! - 1
-//                    Log.d("updateParticipationStatus", "-1")
+                    postDetail.myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED
                 } else {
-                    participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
+                    postDetail.myParticipantStatus = ParticipationStatus.PARTICIPATED
                 }
+                return@launch
             }
         }
     }
@@ -259,6 +247,7 @@ class HomeViewModel : ViewModel() {
             ProfileImage.updateUsersUriMap(uid, uri)
         }
     }
+
     fun downlodData(uid: String) {
         viewModelScope.launch {
             val data = UserData.get(uid)

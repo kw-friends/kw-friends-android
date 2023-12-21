@@ -18,24 +18,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 
 @Composable
 fun EnjoyButton(
     modifier: Modifier = Modifier,
-    status: ParticipationStatus?,
+    postDetail: PostDetail?,
     updateStatus: () -> Unit
 ) {
+    val participationStatus = postDetail?.myParticipantStatus
+
     Button(
         modifier = modifier,
         onClick = {
-            if (status == ParticipationStatus.PARTICIPATED
-                || status == ParticipationStatus.NOT_PARTICIPATED
+            if (
+                participationStatus == ParticipationStatus.PARTICIPATED ||
+                participationStatus == ParticipationStatus.NOT_PARTICIPATED
             ) {
                 updateStatus()
             }
         },
-        enabled =
-        (status == ParticipationStatus.PARTICIPATED || status == ParticipationStatus.NOT_PARTICIPATED) && status != ParticipationStatus.MAXED_OUT
+        enabled = (participationStatus == ParticipationStatus.PARTICIPATED ||
+                participationStatus == ParticipationStatus.NOT_PARTICIPATED) &&
+                participationStatus != ParticipationStatus.MAXED_OUT
 
     ) {
         Row(
@@ -44,7 +49,7 @@ fun EnjoyButton(
                 .wrapContentWidth()
                 .animateContentSize()
         ) {
-            when (status) {
+            when (participationStatus) {
                 ParticipationStatus.PARTICIPATED -> {
                     Icon(
                         imageVector = Icons.Default.Check,

@@ -13,7 +13,6 @@ fun PostInfoPopup(
     state: Boolean,
     postDetail: PostDetail?,
     onDismiss: () -> Unit,
-    participantsCountMap: SnapshotStateMap<String, Int>,
     onReport: () -> Unit,
     homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
@@ -27,7 +26,6 @@ fun PostInfoPopup(
             }
             PostInfoScreen(
                 postDetail = postDetail,
-                participantsCountMap = participantsCountMap,
                 onDismiss = onDismiss,
                 onReport = onReport,
                 homeViewModel = homeViewModel,
