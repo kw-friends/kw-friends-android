@@ -101,15 +101,17 @@ fun GathergingListItem(
 fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
-            GathergingListItem(
-                postDetail = postData,
-                viewModel = viewModel
-            )
-            Divider(
-                modifier = Modifier.padding(horizontal = 5.dp),
-                color = Color.LightGray,
-                thickness = 0.5.dp,
-            )
+            if(postData.reporters.size < 5) { //신고 5개 이상이면 숨기기
+                GathergingListItem(
+                    postDetail = postData,
+                    viewModel = viewModel
+                )
+                Divider(
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    color = Color.LightGray,
+                    thickness = 0.5.dp,
+                )
+            }
         }
     }
 }
