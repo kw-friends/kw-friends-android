@@ -209,7 +209,7 @@ fun PostInfoScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "참여 인원  ${participantsCountMap[postDetail.postID]}/${postDetail.maximumParticipants}",
+                        text = "참여 인원  ${postDetail.participants.size}/${postDetail.maximumParticipants}",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(400)

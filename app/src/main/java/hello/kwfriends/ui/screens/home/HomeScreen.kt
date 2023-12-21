@@ -129,20 +129,20 @@ fun HomeScreen(
         //포스트 정보 다이얼로그
         PostInfoPopup(
             state = homeViewModel.postPopupState.first,
-            postDetail = homeViewModel.postPopupState.second,
+            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second },
             participantsCountMap = homeViewModel.participantsCountMap,
-            onDismiss = { homeViewModel.postPopupState = false to null },
+            onDismiss = { homeViewModel.postPopupState = false to "" },
             onReport = {
                 homeViewModel.reportDialogState =
-                    true to homeViewModel.postPopupState.second?.postID
+                    true to homeViewModel.postPopupState.second
             },
             homeViewModel = homeViewModel,
             enjoyButton = {
                 EnjoyButton(
-                    status = homeViewModel.participationStatusMap[homeViewModel.postPopupState.second?.postID],
+                    status = homeViewModel.participationStatusMap[homeViewModel.postPopupState.second],
                     updateStatus = {
                         homeViewModel.updateParticipationStatus(
-                            postID = homeViewModel.postPopupState.second?.postID ?: "",
+                            postID = homeViewModel.postPopupState.second,
                             viewModel = homeViewModel
                         )
                     }

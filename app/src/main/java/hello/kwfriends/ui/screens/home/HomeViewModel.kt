@@ -46,7 +46,7 @@ class HomeViewModel : ViewModel() {
     var newPostPopupState by mutableStateOf<Boolean>(false)
 
     //포스트 다이얼로그 보이기 여부 및 포스트 uid
-    var postPopupState by mutableStateOf<Pair<Boolean, PostDetail?>>(false to null)
+    var postPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
     //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
     var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
@@ -189,6 +189,7 @@ class HomeViewModel : ViewModel() {
         posts = posts.filter { it.postID != postID }
         posts += postData
         Log.d("postChanged", "postID: ${postData.postID}")
+        Log.d("postChanged", "posts: ${posts}")
     }
 
     fun initPostMap() {
@@ -223,10 +224,6 @@ class HomeViewModel : ViewModel() {
                 val result =
                     Post.updateParticipationStatus(postID = postID, action = Action.ADD)
                 if (result) {
-                    val updatedPostDetail =
-                        postDetail.copy(myParticipantStatus = ParticipationStatus.PARTICIPATED)
-                    posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
-
                     participationStatusMap[postID] = ParticipationStatus.PARTICIPATED
 //                    participantsCountMap[postID] = participantsCountMap[postID]!! + 1
 //                    Log.d("updateParticipationStatus", "+1")
@@ -238,9 +235,7 @@ class HomeViewModel : ViewModel() {
                 val result =
                     Post.updateParticipationStatus(postID = postID, action = Action.DELETE)
                 if (result) {
-                    val updatedPostDetail =
-                        postDetail!!.copy(myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED)
-                    posts = posts.map { if (it.postID == postID) updatedPostDetail else it }
+
 
                     participationStatusMap[postID] = ParticipationStatus.NOT_PARTICIPATED
 //                    participantsCountMap[postID] = participantsCountMap[postID]!! - 1
