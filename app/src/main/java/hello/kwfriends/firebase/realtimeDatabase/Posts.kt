@@ -130,10 +130,12 @@ object Post {
             if (postDetail != null) {
                 postDetail.postID = postID
 
-                val participants =
-                    postSnapshot.child("participants").value as? Map<String, String> ?: emptyMap()
-                postDetail.myParticipantStatus = if (uid in participants) {
+                postDetail.myParticipantStatus = if (postDetail.gatheringPromoterUID == uid) {
+                    ParticipationStatus.MY_GATHERING
+                } else if (uid in postDetail.participants.keys) {
                     ParticipationStatus.PARTICIPATED
+                } else if (postDetail.participants.count() >= postDetail.maximumParticipants.toInt()) {
+                    ParticipationStatus.MAXED_OUT
                 } else {
                     ParticipationStatus.NOT_PARTICIPATED
                 }
