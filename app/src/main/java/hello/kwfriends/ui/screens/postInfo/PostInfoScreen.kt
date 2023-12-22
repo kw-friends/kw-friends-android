@@ -68,7 +68,7 @@ fun PostInfoScreen(
     var menuExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
-    var previousParticipants = remember { mutableStateOf<MutableList<String>>(mutableListOf()) }
+    val previousParticipants = remember { mutableStateOf<MutableList<String>>(mutableListOf()) }
 
     //모임 참가한 유저들 이미지 및 데이터 가져오기
     LaunchedEffect(postDetail.participants) {
@@ -160,7 +160,8 @@ fun PostInfoScreen(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = postDetail.gatheringPromoter,
+                        text = UserData.usersDataMap[postDetail.gatheringPromoterUID]?.get("name")
+                            ?.toString() ?: "unknown",
                         style = MaterialTheme.typography.titleSmall,
                         fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(500)
