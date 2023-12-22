@@ -2,6 +2,7 @@ package hello.kwfriends.ui.screens.postInfo
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -154,7 +155,8 @@ fun PostInfoScreen(
                     contentDescription = "gathering promoter's profile image",
                     modifier = Modifier
                         .size(50.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .border(0.5.dp, Color.Gray, CircleShape),
                     contentScale = ContentScale.Crop,
                 )
                 Spacer(modifier = Modifier.width(10.dp))
@@ -241,7 +243,8 @@ fun PostInfoScreen(
                                         contentDescription = "gathering participant's profile image",
                                         modifier = Modifier
                                             .size(50.dp)
-                                            .clip(CircleShape),
+                                            .clip(CircleShape)
+                                            .border(0.5.dp, Color.Gray, CircleShape),
                                         contentScale = ContentScale.Crop,
                                     )
                                     Spacer(modifier = Modifier.height(5.dp))

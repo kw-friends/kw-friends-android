@@ -71,7 +71,8 @@ fun UserInfoCard(
                 modifier = Modifier
                     .size(70.dp)
                     .padding(4.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .border(0.5.dp, Color.Gray, CircleShape),
                 contentScale = ContentScale.Crop,
             )
             Text(
