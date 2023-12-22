@@ -67,13 +67,17 @@ fun PostInfoScreen(
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-    val uid = Firebase.auth.currentUser!!.uid
 
-    LaunchedEffect(true) {
-        postDetail.participants.forEach {
-            homeViewModel.downlodUri(it.key)
-            homeViewModel.downlodData(it.key)
+    var previousParticipants = remember { mutableStateOf<MutableList<String>>(mutableListOf()) }
+
+    //모임 참가한 유저들 이미지 및 데이터 가져오기
+    LaunchedEffect(postDetail.participants) {
+        val newParticipations = postDetail.participants.keys - previousParticipants.value
+        newParticipations.forEach {
+            homeViewModel.downlodUri(it)
+            homeViewModel.downlodData(it)
         }
+        previousParticipants.value.addAll(postDetail.participants.keys)
     }
 
     Box(
