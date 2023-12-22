@@ -3,6 +3,7 @@ package hello.kwfriends.ui.screens.postInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -45,6 +47,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.firebase.auth.ktx.auth
@@ -234,7 +238,10 @@ fun PostInfoScreen(
                             postDetail.participants.forEach {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier.padding(end = 15.dp)
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .clickable { homeViewModel.userInfoPopupState = true to it.key }
+                                        .padding(vertical = 5.dp, horizontal = 2.dp)
                                 ) {
                                     AsyncImage(
                                         model = ProfileImage.usersUriMap[it.key]
@@ -249,8 +256,12 @@ fun PostInfoScreen(
                                     )
                                     Spacer(modifier = Modifier.height(5.dp))
                                     Text(
+                                        modifier = Modifier.width(60.dp),
                                         text = UserData.usersDataMap[it.key]?.get("name")
                                             ?.toString() ?: "unknown",
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        textAlign = TextAlign.Center,
                                         style = MaterialTheme.typography.bodySmall,
                                         fontFamily = FontFamily.Default,
                                     )

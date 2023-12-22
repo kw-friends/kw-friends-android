@@ -40,13 +40,16 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    //포스트 생성 다이얼로그 보이기 여부
+    //포스트 생성 팝업 보이기 여부
     var newPostPopupState by mutableStateOf<Boolean>(false)
 
-    //포스트 다이얼로그 보이기 여부 및 포스트 uid
+    //포스트 팝업 보이기 여부 및 포스트 uid
     var postPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
+    //포스트 팝업 보이기 여부 및 포스트 uid
+    var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    //신고 팝업 보이기 여부 및 신고 대상 포스트 uid
     var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
 
     //신고 텍스트 리스트

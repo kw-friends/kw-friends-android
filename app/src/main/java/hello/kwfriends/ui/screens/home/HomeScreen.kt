@@ -6,15 +6,21 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -23,6 +29,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,12 +37,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import hello.kwfriends.R
+import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NewPostPopup
@@ -155,9 +173,57 @@ fun HomeScreen(
             newPostViewModel = newPostViewModel
         )
         //신고 다이얼로그
-        if (homeViewModel.reportDialogState.first) {
-            homeViewModel.initReportChoice()
-            ReportDialog(homeViewModel = homeViewModel)
+        ReportDialog(
+            homeViewModel.reportDialogState.first,
+            homeViewModel = homeViewModel
+        )
+        if(homeViewModel.userInfoPopupState.first) {
+            Popup(
+                alignment = Alignment.Center,
+                onDismissRequest = { homeViewModel.userInfoPopupState = false to "" },
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.White)
+                        .border(1.dp, Color.Gray, RoundedCornerShape(10.dp))
+                        .padding(vertical = 16.dp, horizontal = 20.dp)
+                ) {
+                    AsyncImage(
+                        model = ProfileImage.usersUriMap[homeViewModel.userInfoPopupState.second]
+                            ?: R.drawable.profile_default_image,
+                        placeholder = painterResource(id = R.drawable.profile_default_image),
+                        contentDescription = "gathering participant's profile image",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .border(0.5.dp, Color.Gray, CircleShape),
+                        contentScale = ContentScale.Crop,
+                    )
+                    Spacer(modifier = Modifier.width(15.dp))
+                    Column {
+                        Text(
+                            text = UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("name")?.toString() ?: "",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontFamily = FontFamily.Default,
+                        )
+                        Text(
+                            text = UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("department")?.toString() + " "
+                                    + (UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("std-num")?.toString()?.slice(2..3) ?: "") + "학번",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = FontFamily.Default,
+                        )
+                        Text(
+                            text = "mbti: " + UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("mbti")?.toString(),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = FontFamily.Default,
+                        )
+                    }
+                }
+            }
         }
         //태그
         Column(modifier = Modifier.padding(paddingValues)) {
