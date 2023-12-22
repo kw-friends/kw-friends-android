@@ -32,7 +32,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun GathergingListItem(
+fun GatheringListItem(
     postDetail: PostDetail,
     viewModel: HomeViewModel
 ) {
@@ -102,24 +102,27 @@ fun GathergingListItem(
 fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
-            if(postData.reporters.size < ServerData.data?.get("hideReportCount").toString().toInt()) { //신고 n개 이상이면 숨기기
-                GathergingListItem(
+            if (postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
+                    .toInt()
+            ) { //신고 n개 이상이면 숨기기
+                GatheringListItem(
                     postDetail = postData,
                     viewModel = viewModel
                 )
-                Divider(
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    color = Color.LightGray,
-                    thickness = 0.5.dp,
-                )
             }
+            Divider(
+                modifier = Modifier.padding(horizontal = 5.dp),
+                color = Color.LightGray,
+                thickness = 0.5.dp,
+            )
         }
+
     }
 }
 
 @Preview
 @Composable
-fun GathergingItemListPreview() {
+fun GatheringItemListPreview() {
     FindGatheringItemList(
         listOf(
             PostDetail(
