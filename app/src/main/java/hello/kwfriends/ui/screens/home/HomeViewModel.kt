@@ -62,6 +62,8 @@ class HomeViewModel : ViewModel() {
             "욕설/비하"
         )
     )
+
+    //신고 선택 리스트
     var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
 
     private val uid = Firebase.auth.currentUser!!.uid
