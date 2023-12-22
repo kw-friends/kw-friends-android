@@ -135,7 +135,9 @@ class HomeViewModel : ViewModel() {
 
     fun postAdded(postData: PostDetail, postID: String) {
         postData.postID = postID
-        postData.myParticipantStatus = if (uid in postData.participants.keys) {
+        postData.myParticipantStatus = if (postData.gatheringPromoterUID == uid) {
+            ParticipationStatus.MY_GATHERING
+        } else if (uid in postData.participants.keys) {
             ParticipationStatus.PARTICIPATED
         } else if (postData.participants.count() >= postData.maximumParticipants.toInt()) {
             ParticipationStatus.MAXED_OUT
@@ -164,7 +166,9 @@ class HomeViewModel : ViewModel() {
     fun postChanged(postData: PostDetail, postID: String) {
         Log.d("postChanged", "$postData")
         postData.postID = postID
-        postData.myParticipantStatus = if (uid in postData.participants.keys) {
+        postData.myParticipantStatus = if (postData.gatheringPromoterUID == uid) {
+            ParticipationStatus.MY_GATHERING
+        } else if (uid in postData.participants.keys) {
             ParticipationStatus.PARTICIPATED
         } else if (postData.participants.count() >= postData.maximumParticipants.toInt()) {
             ParticipationStatus.MAXED_OUT

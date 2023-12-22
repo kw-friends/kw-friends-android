@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -40,7 +41,8 @@ fun EnjoyButton(
         },
         enabled = (participationStatus == ParticipationStatus.PARTICIPATED ||
                 participationStatus == ParticipationStatus.NOT_PARTICIPATED) &&
-                participationStatus != ParticipationStatus.MAXED_OUT
+                participationStatus != ParticipationStatus.MAXED_OUT &&
+                participationStatus != ParticipationStatus.MY_GATHERING
 
     ) {
         Row(
@@ -98,7 +100,19 @@ fun EnjoyButton(
                     )
                 }
 
-                else -> { // participationsStatus == ParticipationStatus.NOT_PARTICIPATED
+                ParticipationStatus.MY_GATHERING -> {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "Maxed out"
+                    )
+                    Spacer(modifier = Modifier.size(7.dp))
+                    Text(
+                        text = "내가 생성한 모임",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+
+                else -> { // participationStatus == ParticipationStatus.NOT_PARTICIPATED
                     Text(
                         text = "모임 참여",
                         style = MaterialTheme.typography.labelLarge

@@ -47,7 +47,8 @@ enum class ParticipationStatus {
     NOT_PARTICIPATED,
     GETTING_IN,
     GETTING_OUT,
-    MAXED_OUT
+    MAXED_OUT,
+    MY_GATHERING
 }
 
 enum class Action {

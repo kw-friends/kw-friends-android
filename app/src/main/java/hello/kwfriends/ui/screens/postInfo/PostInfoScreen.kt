@@ -67,6 +67,7 @@ fun PostInfoScreen(
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    val uid = Firebase.auth.currentUser!!.uid
 
     LaunchedEffect(true) {
         postDetail.participants.forEach {
@@ -245,6 +246,12 @@ fun PostInfoScreen(
                                         style = MaterialTheme.typography.bodySmall,
                                         fontFamily = FontFamily.Default,
                                     )
+                                    if (it.key == postDetail.gatheringPromoterUID)
+                                        Text(
+                                            text = "모임 주최자",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontFamily = FontFamily.Default,
+                                        )
                                 }
                             }
                         }
