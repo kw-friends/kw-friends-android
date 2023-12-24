@@ -151,7 +151,18 @@ fun PostInfoScreen(
                 .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
         ) {
             //top
-            Row {
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable {
+                        if(homeViewModel.userInfoPopupState.second == postDetail.gatheringPromoterUID) {
+                            homeViewModel.userInfoPopupState = false to ""
+                        }
+                        else {
+                            homeViewModel.userInfoPopupState = true to postDetail.gatheringPromoterUID
+                        }
+                }
+            ) {
                 AsyncImage(
                     model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]
                         ?: R.drawable.profile_default_image,
@@ -240,7 +251,14 @@ fun PostInfoScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
-                                        .clickable { homeViewModel.userInfoPopupState = true to it.key }
+                                        .clickable {
+                                            if(homeViewModel.userInfoPopupState.second == it.key) {
+                                                homeViewModel.userInfoPopupState = false to ""
+                                            }
+                                            else {
+                                                homeViewModel.userInfoPopupState = true to it.key
+                                            }
+                                        }
                                         .padding(vertical = 5.dp, horizontal = 2.dp)
                                 ) {
                                     AsyncImage(
