@@ -22,8 +22,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -202,12 +205,19 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(15.dp))
                     Column {
-                        Text(
-                            text = UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("name")?.toString() ?: "",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontFamily = FontFamily.Default,
-                        )
+                        Row {
+                            Text(
+                                text = UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("name")?.toString() ?: "",
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontFamily = FontFamily.Default,
+                            )
+                            Icon(
+                                imageVector = Icons.Default.Report,
+                                contentDescription = "report button",
+                                modifier = Modifier.size(15.dp)
+                            )
+                        }
                         Text(
                             text = UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("department")?.toString() + " "
                                     + (UserData.usersDataMap[homeViewModel.userInfoPopupState.second]?.get("std-num")?.toString()?.slice(2..3) ?: "") + "학번",
