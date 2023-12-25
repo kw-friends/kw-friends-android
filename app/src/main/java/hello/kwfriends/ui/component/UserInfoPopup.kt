@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import coil.compose.AsyncImage
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
@@ -87,30 +89,24 @@ fun UserInfoPopup(
                     onDismissRequest = { menuExpanded = false },
                     offset = DpOffset(buttonPosition.x.dp, buttonPosition.y.dp + 50.dp)
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("신고") },
-                        enabled = true,
-                        onClick = {
-                            menuExpanded = false
-                        },
-                    )
-                    if(uid in UserDataStore.userIgnoreList) {
+                    if(uid != Firebase.auth.currentUser!!.uid) {
                         DropdownMenuItem(
-                            text = { Text("차단 해제") },
+                            text = { Text("신고") },
                             enabled = true,
                             onClick = {
                                 menuExpanded = false
-                                removeUserIgnore()
                             },
                         )
-                    }
-                    else {
                         DropdownMenuItem(
-                            text = { Text("차단") },
+                            text = {
+                                if(uid in UserDataStore.userIgnoreList) Text("차단 해제")
+                                else Text("차단")
+                            },
                             enabled = true,
                             onClick = {
                                 menuExpanded = false
-                                addUserIgnore()
+                                if(uid in UserDataStore.userIgnoreList) removeUserIgnore()
+                                else addUserIgnore()
                             },
                         )
                     }

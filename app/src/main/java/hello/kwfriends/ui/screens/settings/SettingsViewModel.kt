@@ -21,15 +21,14 @@ import hello.kwfriends.ui.main.Routes
 import kotlinx.coroutines.launch
 
 class SettingsViewModel: ViewModel() {
-
-
     //유저 설정 불러왔는지 여부
     var userSettingValuesLoaded by mutableStateOf<Boolean>(false)
 
     //유저 프로필 불러왔는지 여부
     var myProfileImiageLoaded by mutableStateOf<Boolean>(false)
 
-
+    //유저 차단 목록 팝업 보이기 여부
+    var userIgnoreListPopup by mutableStateOf<Boolean>(false)
 
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){
@@ -112,5 +111,30 @@ class SettingsViewModel: ViewModel() {
         AuthViewModel.inputName = UserData.myInfo!!["name"]!!.toString()
         AuthViewModel.inputMbti = UserData.myInfo!!["mbti"]!!.toString()
         navigation.navigate(Routes.AUTH_SCREEN)
+    }
+
+    //유저 프로필 이미지 저장
+    fun downlodUri(uid: String) {
+        viewModelScope.launch {
+            val uri = ProfileImage.getDownloadUrl(uid)
+            ProfileImage.updateUsersUriMap(uid, uri)
+        }
+    }
+
+    //유저 정보 저장
+    fun downlodData(uid: String) {
+        viewModelScope.launch {
+            val data = UserData.get(uid)
+            UserData.updateUsersDataMap(uid, data)
+        }
+    }
+
+    //유저 차단 제거
+    fun removeUserIgnore(uid: String) {
+        viewModelScope.launch {
+            UserDataStore.userIgnoreList -= uid
+            UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
+            Log.w("removeUserIgnore", "유저($uid) 차단해제")
+        }
     }
 }
