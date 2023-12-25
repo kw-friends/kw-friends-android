@@ -30,6 +30,9 @@ class SettingsViewModel: ViewModel() {
     //유저 차단 목록 팝업 보이기 여부
     var userIgnoreListPopup by mutableStateOf<Boolean>(false)
 
+    //포스트 팝업 보이기 여부 및 포스트 uid
+    var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){
         viewModelScope.launch {
@@ -126,6 +129,15 @@ class SettingsViewModel: ViewModel() {
         viewModelScope.launch {
             val data = UserData.get(uid)
             UserData.updateUsersDataMap(uid, data)
+        }
+    }
+
+    //유저 차단 추가
+    fun addUserIgnore(uid: String) {
+        viewModelScope.launch {
+            UserDataStore.userIgnoreList += uid
+            UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
+            Log.w("addUserIgnore", "유저($uid) 차단")
         }
     }
 

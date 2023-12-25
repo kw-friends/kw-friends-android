@@ -54,6 +54,7 @@ import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
+import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +75,10 @@ fun SettingsScreen(
         }
     }
     BackHandler {
-        if(settingsViewModel.userIgnoreListPopup) {
+        if (settingsViewModel.userInfoPopupState.first) {
+            settingsViewModel.userInfoPopupState = false to ""
+        }
+        else if(settingsViewModel.userIgnoreListPopup) {
             settingsViewModel.userIgnoreListPopup = false
         }
         else {
@@ -85,6 +89,14 @@ fun SettingsScreen(
     if(!settingsViewModel.myProfileImiageLoaded) {
         settingsViewModel.myProfileImageDownload()
     }
+    //유저 정보 팝업
+    UserInfoPopup(
+        state = settingsViewModel.userInfoPopupState.first,
+        uid = settingsViewModel.userInfoPopupState.second,
+        addUserIgnore = { settingsViewModel.addUserIgnore(settingsViewModel.userInfoPopupState.second) },
+        removeUserIgnore = { settingsViewModel.removeUserIgnore(settingsViewModel.userInfoPopupState.second) },
+        onDismiss = { settingsViewModel.userInfoPopupState = false to "" }
+    )
     if(settingsViewModel.userIgnoreListPopup) {
         LaunchedEffect(true) {
             UserDataStore.userIgnoreList.forEach {
@@ -136,6 +148,8 @@ fun SettingsScreen(
                             Row(
                                 modifier = Modifier
                                     .align(Alignment.CenterStart)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .clickable { settingsViewModel.userInfoPopupState = true to uid }
                             ) {
                                 AsyncImage(
                                     model = ProfileImage.usersUriMap[uid]
@@ -160,6 +174,7 @@ fun SettingsScreen(
                             Text(text = "차단 해제",
                                 Modifier
                                     .align(Alignment.CenterEnd)
+                                    .clip(RoundedCornerShape(10.dp))
                                     .clickable { settingsViewModel.removeUserIgnore(uid) }
                             )
                         }

@@ -47,7 +47,7 @@ class HomeViewModel : ViewModel() {
     //포스트 팝업 보이기 여부 및 포스트 uid
     var postPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    //포스트 팝업 보이기 여부 및 포스트 uid
+    //유저 정보 팝업 보이기 여부 및 포스트 uid
     var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
     //신고 팝업 보이기 여부 및 신고 대상 포스트 uid
