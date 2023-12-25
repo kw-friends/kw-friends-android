@@ -155,13 +155,8 @@ fun PostInfoScreen(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                        if(homeViewModel.userInfoPopupState.second == postDetail.gatheringPromoterUID) {
-                            homeViewModel.userInfoPopupState = false to ""
-                        }
-                        else {
-                            homeViewModel.userInfoPopupState = true to postDetail.gatheringPromoterUID
-                        }
-                }
+                        homeViewModel.userInfoPopupState = true to postDetail.gatheringPromoterUID
+                    }
             ) {
                 AsyncImage(
                     model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]
@@ -252,12 +247,7 @@ fun PostInfoScreen(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
                                         .clickable {
-                                            if(homeViewModel.userInfoPopupState.second == it.key) {
-                                                homeViewModel.userInfoPopupState = false to ""
-                                            }
-                                            else {
-                                                homeViewModel.userInfoPopupState = true to it.key
-                                            }
+                                            homeViewModel.userInfoPopupState = true to it.key
                                         }
                                         .padding(vertical = 5.dp, horizontal = 2.dp)
                                 ) {
