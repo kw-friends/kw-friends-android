@@ -18,6 +18,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -71,13 +72,31 @@ class HomeViewModel : ViewModel() {
 
     private val uid = Firebase.auth.currentUser!!.uid
 
+    // post 리스너 설정
+    init {
+        Post.setPostListener(viewModel = this, action = Action.ADD)
+    }
+
     fun initReportChoice() {
         reportChoice = mutableListOf()
     }
 
-    // post 리스너 설정
-    init {
-        Post.setPostListener(viewModel = this, action = Action.ADD)
+    //유저 차단 추가
+    fun addUserIgnore(uid: String) {
+        viewModelScope.launch {
+            UserDataStore.userIgnoreList += uid
+            UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
+            Log.w("addUserIgnore", "유저($uid) 차단")
+        }
+    }
+
+    //유저 차단 제거
+    fun removeUserIgnore(uid: String) {
+        viewModelScope.launch {
+            UserDataStore.userIgnoreList -= uid
+            UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
+            Log.w("removeUserIgnore", "유저($uid) 차단해제")
+        }
     }
 
     //검색 텍스트 수정 함수

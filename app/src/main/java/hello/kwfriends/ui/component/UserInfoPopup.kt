@@ -43,11 +43,14 @@ import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
 
 @Composable
 fun UserInfoPopup(
     state: Boolean,
     uid: String,
+    addUserIgnore: () -> Unit,
+    removeUserIgnore: () -> Unit,
     onDismiss: () -> Unit
 ) {
     if(state) {
@@ -91,13 +94,26 @@ fun UserInfoPopup(
                             menuExpanded = false
                         },
                     )
-                    DropdownMenuItem(
-                        text = { Text("차단") },
-                        enabled = true,
-                        onClick = {
-                            menuExpanded = false
-                        },
-                    )
+                    if(uid in UserDataStore.userIgnoreList) {
+                        DropdownMenuItem(
+                            text = { Text("차단 해제") },
+                            enabled = true,
+                            onClick = {
+                                menuExpanded = false
+                                removeUserIgnore()
+                            },
+                        )
+                    }
+                    else {
+                        DropdownMenuItem(
+                            text = { Text("차단") },
+                            enabled = true,
+                            onClick = {
+                                menuExpanded = false
+                                addUserIgnore()
+                            },
+                        )
+                    }
                 }
                 Row(
                     modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp)

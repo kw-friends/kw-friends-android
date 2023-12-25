@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -28,21 +29,18 @@ class SettingsViewModel: ViewModel() {
     //유저 프로필 불러왔는지 여부
     var myProfileImiageLoaded by mutableStateOf<Boolean>(false)
 
-    //다크모드 여부 저장
-    var isDarkMode by mutableStateOf<Boolean?>(true)
 
-    //조용모드 여부 저장
-    var isQuietMode by mutableStateOf<Boolean?>(false)
 
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){
         viewModelScope.launch {
             UserDataStore.getDataFlow().collect {
-                isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")]
-                isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")]
+                UserDataStore.isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")]
+                UserDataStore.isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")]
+                UserDataStore.userIgnoreList = it[stringSetPreferencesKey("USER_IGNORE_LIST")]?.toMutableSet() ?: mutableSetOf()
                 //유저 설정 기본값
-                if(isDarkMode == null) isDarkMode = false
-                if(isQuietMode == null) isQuietMode = false
+                if(UserDataStore.isDarkMode == null) UserDataStore.isDarkMode = false
+                if(UserDataStore.isQuietMode == null) UserDataStore.isQuietMode = false
             }
         }
     }
@@ -50,14 +48,14 @@ class SettingsViewModel: ViewModel() {
     //다크모드 스위치 변경 함수
     fun switchDarkMode(){
         viewModelScope.launch {
-            UserDataStore.setBooleanData("SETTINGS_DARK_MODE", !isDarkMode!!)
+            UserDataStore.setBooleanData("SETTINGS_DARK_MODE", !(UserDataStore.isDarkMode ?: false))
         }
     }
 
     //조용모드 스위치 변경 함수
     fun switchQuietMode(){
         viewModelScope.launch {
-            UserDataStore.setBooleanData("SETTINGS_QUIET_MODE", !isQuietMode!!)
+            UserDataStore.setBooleanData("SETTINGS_QUIET_MODE", !(UserDataStore.isQuietMode ?: false))
         }
     }
 

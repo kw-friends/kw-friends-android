@@ -33,6 +33,7 @@ import hello.kwfriends.BuildConfig
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserInfoCard
@@ -112,12 +113,12 @@ fun SettingsScreen(
                     )
                     SettingsSwitchItem(
                         title = "다크 모드",
-                        checked = settingsViewModel.isDarkMode!!,
+                        checked = UserDataStore.isDarkMode!!,
                         onCheckedChange = { settingsViewModel.switchDarkMode() }
                     )
                     SettingsSwitchItem(
                         title = "조용 모드",
-                        checked = settingsViewModel.isQuietMode!!,
+                        checked = UserDataStore.isQuietMode!!,
                         onCheckedChange = { settingsViewModel.switchQuietMode() },
                         description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
                     )

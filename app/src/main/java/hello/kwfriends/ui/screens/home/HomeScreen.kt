@@ -164,6 +164,8 @@ fun HomeScreen(
         UserInfoPopup(
             state = homeViewModel.userInfoPopupState.first,
             uid = homeViewModel.userInfoPopupState.second,
+            addUserIgnore = { homeViewModel.addUserIgnore(homeViewModel.userInfoPopupState.second) },
+            removeUserIgnore = { homeViewModel.removeUserIgnore(homeViewModel.userInfoPopupState.second) },
             onDismiss = { homeViewModel.userInfoPopupState = false to "" }
         )
         //태그
