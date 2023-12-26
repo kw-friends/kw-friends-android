@@ -32,6 +32,15 @@ class UserDataStore(context: Context) {
         //차단 목록 여부 저장
         var userIgnoreList by mutableStateOf<MutableSet<String>>(mutableSetOf())
 
+        fun userIgnoreListUpdate(mode: String, uid: String) {
+            if(mode == "ADD") {
+                userIgnoreList = (userIgnoreList + uid).toMutableSet()
+            }
+            else if(mode == "REMOVE") {
+                userIgnoreList = (userIgnoreList - uid).toMutableSet()
+            }
+        }
+
         //String 데이터 저장
         suspend fun setStringData(key: String, value: String){
             Log.w("Lim", "[pref] 데이터를 저장합니다. $key : $value")

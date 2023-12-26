@@ -135,7 +135,7 @@ class SettingsViewModel: ViewModel() {
     //유저 차단 추가
     fun addUserIgnore(uid: String) {
         viewModelScope.launch {
-            UserDataStore.userIgnoreList += uid
+            UserDataStore.userIgnoreListUpdate("ADD", uid)
             UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
             Log.w("addUserIgnore", "유저($uid) 차단")
         }
@@ -144,7 +144,7 @@ class SettingsViewModel: ViewModel() {
     //유저 차단 제거
     fun removeUserIgnore(uid: String) {
         viewModelScope.launch {
-            UserDataStore.userIgnoreList -= uid
+            UserDataStore.userIgnoreListUpdate("REMOVE", uid)
             UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
             Log.w("removeUserIgnore", "유저($uid) 차단해제")
         }
