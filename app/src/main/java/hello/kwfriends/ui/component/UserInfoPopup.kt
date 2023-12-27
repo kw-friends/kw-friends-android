@@ -100,38 +100,36 @@ fun UserInfoPopup(
                             onDismissRequest = { menuExpanded = false },
                             offset = DpOffset(x = position.x.dp, y = position.y.dp)
                         ) {
-                            if(uid != Firebase.auth.currentUser!!.uid) {
-                                DropdownMenuItem(
-                                    text = { Text("신고") },
-                                    enabled = Firebase.auth.currentUser!!.uid !in UserData.usersDataMap[uid]?.get("reporters").toString()
-                                            && uid != Firebase.auth.currentUser!!.uid,
-                                    onClick = {
-                                        menuExpanded = false
-                                        onUserReport()
-                                    },
-                                    trailingIcon = {
-                                        if (Firebase.auth.currentUser!!.uid in UserData.usersDataMap[uid]?.get("reporters").toString()) {
-                                            Icon(
-                                                Icons.Default.Check,
-                                                tint = Color.Gray,
-                                                contentDescription = "check icon"
-                                            )
-                                        }
+                            DropdownMenuItem(
+                                text = { Text("신고") },
+                                enabled = Firebase.auth.currentUser!!.uid !in UserData.usersDataMap[uid]?.get("reporters").toString()
+                                        && uid != Firebase.auth.currentUser!!.uid,
+                                onClick = {
+                                    menuExpanded = false
+                                    onUserReport()
+                                },
+                                trailingIcon = {
+                                    if (Firebase.auth.currentUser!!.uid in UserData.usersDataMap[uid]?.get("reporters").toString()) {
+                                        Icon(
+                                            Icons.Default.Check,
+                                            tint = Color.Gray,
+                                            contentDescription = "check icon"
+                                        )
                                     }
-                                )
-                                DropdownMenuItem(
-                                    text = {
-                                        if(uid in UserDataStore.userIgnoreList) Text("차단 해제")
-                                        else Text("차단")
-                                    },
-                                    enabled = true,
-                                    onClick = {
-                                        menuExpanded = false
-                                        if(uid in UserDataStore.userIgnoreList) removeUserIgnore()
-                                        else addUserIgnore()
-                                    },
-                                )
-                            }
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    if(uid in UserDataStore.userIgnoreList) Text("차단 해제")
+                                    else Text("차단")
+                                },
+                                enabled = uid != Firebase.auth.currentUser!!.uid,
+                                onClick = {
+                                    menuExpanded = false
+                                    if(uid in UserDataStore.userIgnoreList) removeUserIgnore()
+                                    else addUserIgnore()
+                                },
+                            )
                         }
 
                         Row(
