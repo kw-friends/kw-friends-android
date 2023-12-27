@@ -41,7 +41,7 @@ object Report {
         val key = database.child("postReports").push().key
         val reportMap = mapOf(
             "reports/post/$key/postID" to postID,
-            "reports/post/$key/postProviderID" to postProviderID,
+            "reports/post/$key/postPromoterID" to postProviderID,
             "reports/post/$key/reporterID" to reporterID,
             "reports/post/$key/reason" to reason,
             "reports/post/$key/timestamp" to ServerValue.TIMESTAMP,

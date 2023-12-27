@@ -133,8 +133,7 @@ fun HomeScreen(
             postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second },
             onDismiss = { homeViewModel.postPopupState = false to "" },
             onReport = {
-                homeViewModel.reportDialogState =
-                    true to homeViewModel.postPopupState.second
+                homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second
             },
             homeViewModel = homeViewModel,
             enjoyButton = {

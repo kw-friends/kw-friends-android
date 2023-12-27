@@ -128,7 +128,7 @@ fun PostInfoScreen(
             ) {
                 DropdownMenuItem(
                     text = { Text("신고") },
-                    enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid),
+                    enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid) && postDetail.gatheringPromoterUID != Firebase.auth.currentUser!!.uid,
                     onClick = {
                         menuExpanded = false
                         onReport()
