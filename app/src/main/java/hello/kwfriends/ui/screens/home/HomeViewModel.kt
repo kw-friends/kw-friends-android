@@ -110,8 +110,9 @@ class HomeViewModel : ViewModel() {
     fun report() {
         viewModelScope.launch {
             reportDialogState = false to reportDialogState.second
-            Report.report(
-                postID = reportDialogState.second!!,
+            Report.postReport(
+                postID = reportDialogState.second?:"",
+                postProviderID = posts.find { it.postID == (reportDialogState.second ?: "") }?.gatheringPromoterUID ?: "unknown",
                 reporterID = UserAuth.fa.currentUser!!.uid,
                 reason = reportChoice
             )
