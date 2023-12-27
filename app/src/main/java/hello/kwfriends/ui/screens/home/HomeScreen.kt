@@ -41,9 +41,10 @@ import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NewPostPopup
 import hello.kwfriends.ui.component.NoSearchResult
 import hello.kwfriends.ui.component.PostInfoPopup
-import hello.kwfriends.ui.component.ReportDialog
+import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.component.UserInfoPopup
+import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
 import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
@@ -132,8 +133,8 @@ fun HomeScreen(
             state = homeViewModel.postPopupState.first,
             postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second },
             onDismiss = { homeViewModel.postPopupState = false to "" },
-            onReport = {
-                homeViewModel.reportDialogState = true to homeViewModel.postPopupState.second
+            onPostReport = {
+                homeViewModel.postReportDialogState = true to homeViewModel.postPopupState.second
             },
             homeViewModel = homeViewModel,
             enjoyButton = {
@@ -154,10 +155,17 @@ fun HomeScreen(
             onDismiss = { homeViewModel.newPostPopupState = false },
             newPostViewModel = newPostViewModel
         )
-        //신고 다이얼로그
-        ReportDialog(
-            homeViewModel.reportDialogState.first,
+        //포스트 신고 다이얼로그
+        PostReportDialog(
+            homeViewModel.postReportDialogState.first,
             homeViewModel = homeViewModel
+        )
+        //유저 신고 다이얼로그
+        UserReportDialog(
+            state = homeViewModel.userReportDialogState.first,
+            textList = homeViewModel.userReportTextList,
+            onDismiss = { homeViewModel.userReportDialogState = false to "" },
+            onUserReport = { homeViewModel.userReport(it) }
         )
         //유저 정보 팝업
         UserInfoPopup(
@@ -165,7 +173,8 @@ fun HomeScreen(
             uid = homeViewModel.userInfoPopupState.second,
             addUserIgnore = { homeViewModel.addUserIgnore(homeViewModel.userInfoPopupState.second) },
             removeUserIgnore = { homeViewModel.removeUserIgnore(homeViewModel.userInfoPopupState.second) },
-            onDismiss = { homeViewModel.userInfoPopupState = false to "" }
+            onDismiss = { homeViewModel.userInfoPopupState = false to "" },
+            onUserReport = { homeViewModel.userReportDialogState = true to homeViewModel.userInfoPopupState.second }
         )
         //태그
         Column(modifier = Modifier.padding(paddingValues)) {

@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.storage.ProfileImage
@@ -32,6 +33,36 @@ class SettingsViewModel: ViewModel() {
 
     //포스트 팝업 보이기 여부 및 포스트 uid
     var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    //유저 신고 팝업 보이기 여부 및 신고 대상 uid
+    var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    //유저 신고 텍스트 리스트
+    val userReportTextList by mutableStateOf(
+        listOf(
+            "낚시/놀람/도배",
+            "음란물/불건전한 만남 및 대화",
+            "불쾌감을 주는 사용자",
+            "정당/정치인 비하 및 선거운동",
+            "유출/사칭/사기",
+            "상업적 광고 및 판매",
+            "욕설/비하"
+        )
+    )
+
+    //유저 신고 함수
+    fun userReport(reason: List<String>) {
+        viewModelScope.launch {
+            userReportDialogState = false to userReportDialogState.second
+            Report.userReport(
+                uid = userReportDialogState.second,
+                reporterID = Firebase.auth.currentUser?.uid?:"unknown",
+                reason = reason,
+            )
+            downlodData(userReportDialogState.second)
+            userReportDialogState = false to ""
+        }
+    }
 
     //유저 설정 세팅값들 불러오는 함수
     fun userSettingValuesLoad(){

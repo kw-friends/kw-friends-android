@@ -12,7 +12,7 @@ fun PostInfoPopup(
     state: Boolean,
     postDetail: PostDetail?,
     onDismiss: () -> Unit,
-    onReport: () -> Unit,
+    onPostReport: () -> Unit,
     homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
@@ -31,7 +31,7 @@ fun PostInfoPopup(
             PostInfoScreen(
                 postDetail = postDetail,
                 onDismiss = onDismiss,
-                onReport = onReport,
+                onPostReport = onPostReport,
                 homeViewModel = homeViewModel,
                 enjoyButton = enjoyButton
             )

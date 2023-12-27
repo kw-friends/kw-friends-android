@@ -50,13 +50,28 @@ class HomeViewModel : ViewModel() {
     //유저 정보 팝업 보이기 여부 및 포스트 uid
     var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    //신고 팝업 보이기 여부 및 신고 대상 포스트 uid
-    var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
+    //포스트 신고 팝업 보이기 여부 및 신고 대상 포스트 id
+    var postReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    //신고 텍스트 리스트
-    val reportTextList by mutableStateOf(
+    //유저 신고 팝업 보이기 여부 및 신고 대상 uid
+    var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    //포스트 신고 텍스트 리스트
+    val postReportTextList by mutableStateOf(
         listOf(
             "게시판 성격에 부적절함",
+            "낚시/놀람/도배",
+            "음란물/불건전한 만남 및 대화",
+            "불쾌감을 주는 사용자",
+            "정당/정치인 비하 및 선거운동",
+            "유출/사칭/사기",
+            "상업적 광고 및 판매",
+            "욕설/비하"
+        )
+    )
+    //유저 신고 텍스트 리스트
+    val userReportTextList by mutableStateOf(
+        listOf(
             "낚시/놀람/도배",
             "음란물/불건전한 만남 및 대화",
             "불쾌감을 주는 사용자",
@@ -107,16 +122,29 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun report() {
+    fun postReport() {
         viewModelScope.launch {
-            reportDialogState = false to reportDialogState.second
+            postReportDialogState = false to postReportDialogState.second
             Report.postReport(
-                postID = reportDialogState.second?:"",
-                postProviderID = posts.find { it.postID == (reportDialogState.second ?: "") }?.gatheringPromoterUID ?: "unknown",
+                postID = postReportDialogState.second?:"",
+                postProviderID = posts.find { it.postID == (postReportDialogState.second ?: "") }?.gatheringPromoterUID ?: "unknown",
                 reporterID = UserAuth.fa.currentUser!!.uid,
                 reason = reportChoice
             )
-            reportDialogState = false to null
+            postReportDialogState = false to ""
+        }
+    }
+
+    fun userReport(reason: List<String>) {
+        viewModelScope.launch {
+            userReportDialogState = false to userReportDialogState.second
+            Report.userReport(
+                uid = userReportDialogState.second?:"unknown",
+                reporterID = Firebase.auth.currentUser?.uid?:"unknown",
+                reason = reason,
+            )
+            downlodData(userReportDialogState.second)
+            userReportDialogState = false to ""
         }
     }
 
@@ -265,7 +293,6 @@ class HomeViewModel : ViewModel() {
             isRefreshing = true
             posts = Post.initPostData()
             initPostMap()
-            initReportChoice()
             isRefreshing = false
         }
     }

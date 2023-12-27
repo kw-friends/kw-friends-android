@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,7 +39,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -56,7 +56,8 @@ fun UserInfoPopup(
     uid: String,
     addUserIgnore: () -> Unit,
     removeUserIgnore: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onUserReport: () -> Unit
 ) {
     if(state) {
         var menuExpanded by remember { mutableStateOf(false) }
@@ -102,10 +103,21 @@ fun UserInfoPopup(
                             if(uid != Firebase.auth.currentUser!!.uid) {
                                 DropdownMenuItem(
                                     text = { Text("신고") },
-                                    enabled = true,
+                                    enabled = Firebase.auth.currentUser!!.uid !in UserData.usersDataMap[uid]?.get("reporters").toString()
+                                            && uid != Firebase.auth.currentUser!!.uid,
                                     onClick = {
                                         menuExpanded = false
+                                        onUserReport()
                                     },
+                                    trailingIcon = {
+                                        if (Firebase.auth.currentUser!!.uid in UserData.usersDataMap[uid]?.get("reporters").toString()) {
+                                            Icon(
+                                                Icons.Default.Check,
+                                                tint = Color.Gray,
+                                                contentDescription = "check icon"
+                                            )
+                                        }
+                                    }
                                 )
                                 DropdownMenuItem(
                                     text = {
@@ -166,16 +178,4 @@ fun UserInfoPopup(
             Spacer(modifier = Modifier.weight(1f))
         }
     }
-}
-
-@Preview
-@Composable
-fun UserInfoPopupPreview() {
-    UserInfoPopup(
-        state = true,
-        uid = "Preview",
-        addUserIgnore = { },
-        removeUserIgnore = { },
-        onDismiss = { }
-    )
 }

@@ -41,6 +41,7 @@ import hello.kwfriends.ui.component.SettingsSwitchItem
 import hello.kwfriends.ui.component.UserIgnoreListPopup
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.component.UserInfoPopup
+import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,13 +76,21 @@ fun SettingsScreen(
     if(!settingsViewModel.myProfileImiageLoaded) {
         settingsViewModel.myProfileImageDownload()
     }
+    //유저 신고 다이얼로그
+    UserReportDialog(
+        state = settingsViewModel.userReportDialogState.first,
+        textList = settingsViewModel.userReportTextList,
+        onDismiss = { settingsViewModel.userReportDialogState = false to "" },
+        onUserReport = { settingsViewModel.userReport(it) }
+    )
     //유저 정보 팝업
     UserInfoPopup(
         state = settingsViewModel.userInfoPopupState.first,
         uid = settingsViewModel.userInfoPopupState.second,
         addUserIgnore = { settingsViewModel.addUserIgnore(settingsViewModel.userInfoPopupState.second) },
         removeUserIgnore = { settingsViewModel.removeUserIgnore(settingsViewModel.userInfoPopupState.second) },
-        onDismiss = { settingsViewModel.userInfoPopupState = false to "" }
+        onDismiss = { settingsViewModel.userInfoPopupState = false to "" },
+        onUserReport = { settingsViewModel.userReportDialogState = true to settingsViewModel.userInfoPopupState.second }
     )
     //유저 차단 목록 팝업
     UserIgnoreListPopup(

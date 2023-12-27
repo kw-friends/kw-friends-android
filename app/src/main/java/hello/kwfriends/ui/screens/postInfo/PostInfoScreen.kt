@@ -66,7 +66,7 @@ import java.util.Locale
 fun PostInfoScreen(
     postDetail: PostDetail,
     onDismiss: () -> Unit,
-    onReport: () -> Unit,
+    onPostReport: () -> Unit,
     homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
@@ -131,7 +131,7 @@ fun PostInfoScreen(
                     enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid) && postDetail.gatheringPromoterUID != Firebase.auth.currentUser!!.uid,
                     onClick = {
                         menuExpanded = false
-                        onReport()
+                        onPostReport()
                     },
                     trailingIcon = {
                         if (postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid)) {
