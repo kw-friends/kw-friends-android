@@ -13,10 +13,10 @@ object Report {
     suspend fun userReport(uid: String, reporterID: String, reason: List<String>): Boolean {
         val key = database.child("userReports").push().key
         val reportMap = mapOf(
-            "userReports/$key/uid" to uid,
-            "userReports/$key/reporterID" to reporterID,
-            "userReports/$key/reason" to reason,
-            "userReports/$key/timestamp" to ServerValue.TIMESTAMP,
+            "reports/user/$key/uid" to uid,
+            "reports/user/$key/reporterID" to reporterID,
+            "reports/user/$key/reason" to reason,
+            "reports/user/$key/timestamp" to ServerValue.TIMESTAMP,
             "users/$uid/reporters/$reporterID" to true
         )
         val result = suspendCoroutine<Boolean> { continuation ->
@@ -40,11 +40,11 @@ object Report {
     suspend fun postReport(postID: String, postProviderID: String, reporterID: String, reason: List<String>): Boolean {
         val key = database.child("postReports").push().key
         val reportMap = mapOf(
-            "postReports/$key/postID" to postID,
-            "postReports/$key/postProviderID" to postProviderID,
-            "postReports/$key/reporterID" to reporterID,
-            "postReports/$key/reason" to reason,
-            "postReports/$key/timestamp" to ServerValue.TIMESTAMP,
+            "reports/post/$key/postID" to postID,
+            "reports/post/$key/postProviderID" to postProviderID,
+            "reports/post/$key/reporterID" to reporterID,
+            "reports/post/$key/reason" to reason,
+            "reports/post/$key/timestamp" to ServerValue.TIMESTAMP,
             "posts/$postID/reporters/$reporterID" to true
         )
         val result = suspendCoroutine<Boolean> { continuation ->
