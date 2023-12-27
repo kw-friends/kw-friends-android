@@ -82,18 +82,11 @@ class HomeViewModel : ViewModel() {
         )
     )
 
-    //신고 선택 리스트
-    var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
-
     private val uid = Firebase.auth.currentUser!!.uid
 
     // post 리스너 설정
     init {
         Post.setPostListener(viewModel = this, action = Action.ADD)
-    }
-
-    fun initReportChoice() {
-        reportChoice = mutableListOf()
     }
 
     //유저 차단 추가
@@ -122,14 +115,14 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun postReport() {
+    fun postReport(reason: List<String>) {
         viewModelScope.launch {
             postReportDialogState = false to postReportDialogState.second
             Report.postReport(
-                postID = postReportDialogState.second?:"",
-                postProviderID = posts.find { it.postID == (postReportDialogState.second ?: "") }?.gatheringPromoterUID ?: "unknown",
+                postID = postReportDialogState.second,
+                postProviderID = posts.find { it.postID == (postReportDialogState.second) }?.gatheringPromoterUID ?: "unknown",
                 reporterID = UserAuth.fa.currentUser!!.uid,
-                reason = reportChoice
+                reason = reason
             )
             postReportDialogState = false to ""
         }
@@ -139,7 +132,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             userReportDialogState = false to userReportDialogState.second
             Report.userReport(
-                uid = userReportDialogState.second?:"unknown",
+                uid = userReportDialogState.second,
                 reporterID = Firebase.auth.currentUser?.uid?:"unknown",
                 reason = reason,
             )

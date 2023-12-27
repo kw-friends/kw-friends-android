@@ -156,9 +156,10 @@ fun HomeScreen(
             newPostViewModel = newPostViewModel
         )
         //포스트 신고 다이얼로그
-        PostReportDialog(
-            homeViewModel.postReportDialogState.first,
-            homeViewModel = homeViewModel
+        PostReportDialog(state = homeViewModel.postReportDialogState.first,
+            textList = homeViewModel.postReportTextList,
+            onDismiss = { homeViewModel.postReportDialogState = false to "" },
+            onPostReport = { homeViewModel.postReport(it) }
         )
         //유저 신고 다이얼로그
         UserReportDialog(
