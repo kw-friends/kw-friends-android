@@ -10,28 +10,55 @@ import kotlin.coroutines.suspendCoroutine
 object Report {
     var database = Firebase.database.reference
 
-
-    suspend fun report(postID: String, reporterID: String, reason: List<String>): Boolean {
-        val key = database.child("reports").push().key
+    suspend fun userReport(uid: String, reporterID: String, reason: List<String>): Boolean {
+        val key = database.child("userReports").push().key
         val reportMap = mapOf(
-            "reports/$key/postID" to postID,
-            "reports/$key/reporterID" to reporterID,
-            "reports/$key/reason" to reason,
-            "reports/$key/timestamp" to ServerValue.TIMESTAMP,
+            "reports/user/$key/uid" to uid,
+            "reports/user/$key/reporterID" to reporterID,
+            "reports/user/$key/reason" to reason,
+            "reports/user/$key/timestamp" to ServerValue.TIMESTAMP,
+            "users/$uid/reporters/$reporterID" to true
+        )
+        val result = suspendCoroutine<Boolean> { continuation ->
+            database.updateChildren(reportMap)
+                .addOnSuccessListener {
+                    Log.w("Report.userReport()", "신고 업로드 성공")
+                    continuation.resume(true)
+                }
+                .addOnFailureListener {
+                    Log.w("Report.userReport()", "신고 업로드 실패(fail): $it")
+                    continuation.resume(false)
+                }
+                .addOnCanceledListener {
+                    Log.w("Report.userReport()", "신고 업로드 실패(cancel)")
+                    continuation.resume(false)
+                }
+        }
+        return result
+    }
+
+    suspend fun postReport(postID: String, postProviderID: String, reporterID: String, reason: List<String>): Boolean {
+        val key = database.child("postReports").push().key
+        val reportMap = mapOf(
+            "reports/post/$key/postID" to postID,
+            "reports/post/$key/postPromoterID" to postProviderID,
+            "reports/post/$key/reporterID" to reporterID,
+            "reports/post/$key/reason" to reason,
+            "reports/post/$key/timestamp" to ServerValue.TIMESTAMP,
             "posts/$postID/reporters/$reporterID" to true
         )
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(reportMap)
                 .addOnSuccessListener {
-                    Log.w("Report.report()", "신고 업로드 성공")
+                    Log.w("Report.postReport()", "신고 업로드 성공")
                     continuation.resume(true)
                 }
                 .addOnFailureListener {
-                    Log.w("Report.report()", "신고 업로드 실패(fail): $it")
+                    Log.w("Report.postReport()", "신고 업로드 실패(fail): $it")
                     continuation.resume(false)
                 }
                 .addOnCanceledListener {
-                    Log.w("Report.report()", "신고 업로드 실패(cancel)")
+                    Log.w("Report.postReport()", "신고 업로드 실패(cancel)")
                     continuation.resume(false)
                 }
         }

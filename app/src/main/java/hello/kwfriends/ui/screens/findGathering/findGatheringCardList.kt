@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
+import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -102,8 +103,9 @@ fun GatheringListItem(
 fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
     LazyColumn {
         items(posts) { postData ->
-            if (postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
-                    .toInt()
+            if (
+                postData.reporters.size < ServerData.data?.get("hideReportCount").toString().toInt()
+                && postData.gatheringPromoterUID !in UserDataStore.userIgnoreList
             ) { //신고 n개 이상이면 숨기기
                 GatheringListItem(
                     postDetail = postData,

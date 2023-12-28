@@ -3,6 +3,7 @@ package hello.kwfriends.ui.screens.settings
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +35,13 @@ import hello.kwfriends.BuildConfig
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
+import hello.kwfriends.ui.component.UserIgnoreListPopup
 import hello.kwfriends.ui.component.UserInfoCard
+import hello.kwfriends.ui.component.UserInfoPopup
+import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,10 +61,46 @@ fun SettingsScreen(
             settingsViewModel.myProfileImageUpload(uri)
         }
     }
+    BackHandler {
+        if (settingsViewModel.userInfoPopupState.first) {
+            settingsViewModel.userInfoPopupState = false to ""
+        }
+        else if(settingsViewModel.userIgnoreListPopup) {
+            settingsViewModel.userIgnoreListPopup = false
+        }
+        else {
+            navigation.navigate(Routes.HOME_SCREEN)
+        }
+    }
     //프로필 이미지 로드
     if(!settingsViewModel.myProfileImiageLoaded) {
         settingsViewModel.myProfileImageDownload()
     }
+    //유저 신고 다이얼로그
+    UserReportDialog(
+        state = settingsViewModel.userReportDialogState.first,
+        textList = settingsViewModel.userReportTextList,
+        onDismiss = { settingsViewModel.userReportDialogState = false to "" },
+        onUserReport = { settingsViewModel.userReport(it) }
+    )
+    //유저 정보 팝업
+    UserInfoPopup(
+        state = settingsViewModel.userInfoPopupState.first,
+        uid = settingsViewModel.userInfoPopupState.second,
+        addUserIgnore = { settingsViewModel.addUserIgnore(settingsViewModel.userInfoPopupState.second) },
+        removeUserIgnore = { settingsViewModel.removeUserIgnore(settingsViewModel.userInfoPopupState.second) },
+        onDismiss = { settingsViewModel.userInfoPopupState = false to "" },
+        onUserReport = { settingsViewModel.userReportDialogState = true to settingsViewModel.userInfoPopupState.second }
+    )
+    //유저 차단 목록 팝업
+    UserIgnoreListPopup(
+        state = settingsViewModel.userIgnoreListPopup,
+        onDismiss = { settingsViewModel.userIgnoreListPopup = false },
+        downloadUri = { settingsViewModel.downlodUri(it) },
+        downloadData = { settingsViewModel.downlodData(it) },
+        removeUserIgnore = { settingsViewModel.removeUserIgnore(it) },
+        onUserInfoPopup = { settingsViewModel.userInfoPopupState = true to it }
+    )
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +112,7 @@ fun SettingsScreen(
                 modifier = Modifier.align(Alignment.TopStart),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                androidx.compose.material.IconButton(
+                IconButton(
                     onClick = { navigation.navigate(Routes.HOME_SCREEN) }
                 ) {
                     Icon(
@@ -112,14 +154,18 @@ fun SettingsScreen(
                     )
                     SettingsSwitchItem(
                         title = "다크 모드",
-                        checked = settingsViewModel.isDarkMode!!,
+                        checked = UserDataStore.isDarkMode!!,
                         onCheckedChange = { settingsViewModel.switchDarkMode() }
                     )
                     SettingsSwitchItem(
                         title = "조용 모드",
-                        checked = settingsViewModel.isQuietMode!!,
+                        checked = UserDataStore.isQuietMode!!,
                         onCheckedChange = { settingsViewModel.switchQuietMode() },
                         description = "모든 알림을 꺼 다른 일에 집중할 수 있어요"
+                    )
+                    SettingsButtonItem(
+                        title = "차단 유저 목록",
+                        onClick = { settingsViewModel.userIgnoreListPopup = true }
                     )
                     SettingsButtonItem(
                         title = "공지사항",

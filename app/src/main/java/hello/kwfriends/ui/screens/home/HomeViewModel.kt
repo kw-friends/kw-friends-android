@@ -18,6 +18,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -40,17 +41,23 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    //포스트 생성 다이얼로그 보이기 여부
+    //포스트 생성 팝업 보이기 여부
     var newPostPopupState by mutableStateOf<Boolean>(false)
 
-    //포스트 다이얼로그 보이기 여부 및 포스트 uid
+    //포스트 팝업 보이기 여부 및 포스트 uid
     var postPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    //신고 다이얼로그 보이기 여부 및 신고 대상 포스트 uid
-    var reportDialogState by mutableStateOf<Pair<Boolean, String?>>(false to null)
+    //유저 정보 팝업 보이기 여부 및 포스트 uid
+    var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    //신고 텍스트 리스트
-    val reportTextList by mutableStateOf(
+    //포스트 신고 팝업 보이기 여부 및 신고 대상 포스트 id
+    var postReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    //유저 신고 팝업 보이기 여부 및 신고 대상 uid
+    var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    //포스트 신고 텍스트 리스트
+    val postReportTextList by mutableStateOf(
         listOf(
             "게시판 성격에 부적절함",
             "낚시/놀람/도배",
@@ -62,19 +69,42 @@ class HomeViewModel : ViewModel() {
             "욕설/비하"
         )
     )
-
-    //신고 선택 리스트
-    var reportChoice by mutableStateOf<MutableList<String>>(mutableListOf())
+    //유저 신고 텍스트 리스트
+    val userReportTextList by mutableStateOf(
+        listOf(
+            "낚시/놀람/도배",
+            "음란물/불건전한 만남 및 대화",
+            "불쾌감을 주는 사용자",
+            "정당/정치인 비하 및 선거운동",
+            "유출/사칭/사기",
+            "상업적 광고 및 판매",
+            "욕설/비하"
+        )
+    )
 
     private val uid = Firebase.auth.currentUser!!.uid
-
-    fun initReportChoice() {
-        reportChoice = mutableListOf()
-    }
 
     // post 리스너 설정
     init {
         Post.setPostListener(viewModel = this, action = Action.ADD)
+    }
+
+    //유저 차단 추가
+    fun addUserIgnore(uid: String) {
+        viewModelScope.launch {
+            UserDataStore.userIgnoreListUpdate("ADD", uid)
+            UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
+            Log.w("addUserIgnore", "유저($uid) 차단")
+        }
+    }
+
+    //유저 차단 제거
+    fun removeUserIgnore(uid: String) {
+        viewModelScope.launch {
+            UserDataStore.userIgnoreListUpdate("REMOVE", uid)
+            UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
+            Log.w("removeUserIgnore", "유저($uid) 차단해제")
+        }
     }
 
     //검색 텍스트 수정 함수
@@ -85,15 +115,29 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun report() {
+    fun postReport(reason: List<String>) {
         viewModelScope.launch {
-            reportDialogState = false to reportDialogState.second
-            Report.report(
-                postID = reportDialogState.second!!,
+            postReportDialogState = false to postReportDialogState.second
+            Report.postReport(
+                postID = postReportDialogState.second,
+                postProviderID = posts.find { it.postID == (postReportDialogState.second) }?.gatheringPromoterUID ?: "unknown",
                 reporterID = UserAuth.fa.currentUser!!.uid,
-                reason = reportChoice
+                reason = reason
             )
-            reportDialogState = false to null
+            postReportDialogState = false to ""
+        }
+    }
+
+    fun userReport(reason: List<String>) {
+        viewModelScope.launch {
+            userReportDialogState = false to userReportDialogState.second
+            Report.userReport(
+                uid = userReportDialogState.second,
+                reporterID = Firebase.auth.currentUser?.uid?:"unknown",
+                reason = reason,
+            )
+            downlodData(userReportDialogState.second)
+            userReportDialogState = false to ""
         }
     }
 
@@ -242,7 +286,6 @@ class HomeViewModel : ViewModel() {
             isRefreshing = true
             posts = Post.initPostData()
             initPostMap()
-            initReportChoice()
             isRefreshing = false
         }
     }
