@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import androidx.compose.ui.window.Popup
-import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.screens.home.HomeViewModel
 
 @Composable
