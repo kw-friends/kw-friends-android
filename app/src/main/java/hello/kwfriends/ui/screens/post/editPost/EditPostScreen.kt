@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.newPost
+package hello.kwfriends.ui.screens.post.editPost
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,68 +22,56 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
-import kotlinx.coroutines.launch
-
+import hello.kwfriends.ui.component.TimePickerStyle
+import hello.kwfriends.ui.screens.post.editPost.dateTimePicker.DatePickerPopup
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun NewPostScreen(
-    newPostViewModel: NewPostViewModel,
-    onDismiss: () -> Unit,
+fun EditPostScreen(
+    editPostViewModel: EditPostViewModel,
+    postDetail: PostDetail,
+    onDismiss: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val snackbarMessage by newPostViewModel.snackbarEvent.collectAsState()
+    DatePickerPopup(
+        state = editPostViewModel.datePickerPopupState,
+        onDismiss = { editPostViewModel.datePickerPopupState = false },
+        editPostViewModel = editPostViewModel
+    )
 
-    snackbarMessage?.let { message ->
-        snackbarHostState.currentSnackbarData?.dismiss() // running snackbar 종료
-        scope.launch {
-            snackbarHostState.showSnackbar(message) // snackbar 표시
-            newPostViewModel._snackbarEvent.value = null // _snackbarEvent 초기화
-        }
-    }
-    SnackbarHost(snackbarHostState) { data ->
-        // custom snackbar with the custom border
-        Snackbar(
-            actionOnNewLine = true,
-            snackbarData = data
-        )
-    }
     LaunchedEffect(true) {
-        newPostViewModel.initInput()
+        editPostViewModel.initPostData(postDetail)
     }
+
+    val scrollState = rememberScrollState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFBFF))
+            .background(color = Color(0xFFFFFBFF))
     ) {
-        //top start
         Row(
             modifier = Modifier.align(Alignment.TopStart),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            androidx.compose.material.IconButton(
+            IconButton(
                 onClick = onDismiss
             ) {
                 Icon(
@@ -92,44 +80,46 @@ fun NewPostScreen(
                 )
             }
             Text(
-                text = "새 모임 생성",
+                text = "내용 수정∙편집하기",
                 style = MaterialTheme.typography.titleMedium,
                 fontFamily = FontFamily.Default
             )
         }
+
         Column(
             modifier = Modifier
-                .padding(top = 40.dp)
+                .padding(
+                    top = 40.dp,
+                    start = 14.dp,
+                    end = 14.dp
+                ) // (vertical = 40.dp, horizontal = 14.dp)
                 .verticalScroll(scrollState)
         ) {
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
-                modifier = Modifier.padding(horizontal = 14.dp),
                 placeholder = "",
-                value = newPostViewModel.gatheringPromoter,
+                value = editPostViewModel.gatheringPromoter,
                 canValueChange = false,
                 onValueChange = {},
                 externalTitle = "모임 주최자"
             )
             FullTextField(
-                modifier = Modifier.padding(horizontal = 14.dp),
                 placeholder = "",
-                value = newPostViewModel.gatheringTitle,
-                onValueChange = { newPostViewModel.gatheringTitleChange(it) },
+                value = editPostViewModel.gatheringTitle,
+                onValueChange = { editPostViewModel.gatheringTitleChange(it) },
                 imeAction = ImeAction.Next,
-                isError = !newPostViewModel.gatheringTitleStatus,
+                isError = !editPostViewModel.gatheringTitleStatus,
                 externalTitle = "모임 제목",
                 errorMessage = "필수 항목",
             )
             FullTextField(
-                modifier = Modifier.padding(horizontal = 14.dp),
                 placeholder = "",
-                value = newPostViewModel.gatheringDescription,
-                onValueChange = { newPostViewModel.gatheringDescriptionChange(it) },
+                value = editPostViewModel.gatheringDescription,
+                onValueChange = { editPostViewModel.gatheringDescriptionChange(it) },
                 isSingleLine = false,
                 maxLines = 6,
                 imeAction = ImeAction.Default,
-                isError = !newPostViewModel.gatheringDescriptionStatus,
+                isError = !editPostViewModel.gatheringDescriptionStatus,
                 externalTitle = "모임 설명",
                 errorMessage = "필수 항목",
             )
@@ -144,43 +134,66 @@ fun NewPostScreen(
                     text = "최대 인원",
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(horizontal = 14.dp)
                 )
-                if (!newPostViewModel.participantsRangeValidation) {
+                if (!editPostViewModel.participantsRangeValidation) {
                     Text(
                         text = "2명 이상, 100명 이하의 인원 수를 입력해 주세요.",
                         color = Color(0xFFFF0000),
                         style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(end = 14.dp)
                     )
                 }
             }
             SingleTextField(
-                modifier = Modifier.padding(horizontal = 14.dp),
-                value = newPostViewModel.maximumParticipants,
-                onValueChange = { newPostViewModel.maximumParticipantsChange(max = it) },
+                value = editPostViewModel.maximumParticipants,
+                onValueChange = { editPostViewModel.maximumParticipantsChange(max = it) },
                 imeAction = ImeAction.Done
             )
-            Column(modifier = Modifier.padding(horizontal = 14.dp)) {
-                Text(
-                    text = "모임 태그",
-                    color = Color(0xFF636363),
-                    style = MaterialTheme.typography.labelMedium,
+            Text(
+                text = "모임 일시",
+                color = Color(0xFF636363),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = {
+                    editPostViewModel.datePickerPopupState = true
+                }) {
+                    Text(
+                        text = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(
+                            editPostViewModel.date
+                        ),
+                    )
+                }
+                TimePickerStyle(
+                    hourValue = editPostViewModel.gatheringHour,
+                    minuteValue = editPostViewModel.gatheringMinute,
+                    onHourValueChange = { editPostViewModel.onHourChanged(it) },
+                    onMinuteValueChange = { editPostViewModel.onMinuteChanged(it) }
                 )
             }
-            FlowRow(modifier = Modifier.padding(start = 14.dp)) {
-                newPostViewModel.tagMap.forEach {
+            Text(
+                text = "모임 장소",
+                color = Color(0xFF636363),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                text = "모임 태그",
+                color = Color(0xFF636363),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            FlowRow {
+                editPostViewModel.tagMap.forEach {
                     TagChip(
                         modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
                         selected = it.value,
-                        onClick = { newPostViewModel.updateTagMap(it.key) }
+                        onClick = { editPostViewModel.updateTagMap(it.key) }
                     )
                 }
             }
             Column(
                 modifier = Modifier
-                    .padding(14.dp)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -190,19 +203,20 @@ fun NewPostScreen(
                 )
                 Button(
                     onClick = {
-                        if (!newPostViewModel.isUploading) {
-                            if (!newPostViewModel.validateGatheringInfo()) {
-                                newPostViewModel.showSnackbar("모임 정보가 부족합니다.")
+                        if (!editPostViewModel.isUploading) {
+                            if (!editPostViewModel.validateGatheringInfo()) {
+                                editPostViewModel.showSnackbar("모임 정보가 부족합니다.")
                             } else {
-                                newPostViewModel.uploadGatheringToFirestore(onDismiss)
+                                editPostViewModel.updatePostInfoToFirestore(onDismiss)
                             }
                         }
                     },
+                    enabled = !editPostViewModel.isUploading,
                     modifier = Modifier
                         .width(IntrinsicSize.Max)
                         .align(Alignment.End)
                 ) {
-                    if (!newPostViewModel.isUploading) {
+                    if (!editPostViewModel.isUploading) {
                         Text(text = "모임 만들기", style = MaterialTheme.typography.labelLarge)
                     } else {
                         Row(verticalAlignment = Alignment.CenterVertically) {

@@ -20,6 +20,8 @@ import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class HomeViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
@@ -52,6 +54,9 @@ class HomeViewModel : ViewModel() {
 
     //포스트 신고 팝업 보이기 여부 및 신고 대상 포스트 id
     var postReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    // 포스트 수정 페이지 다이얼로그 보이기 여부 및 포스트 uid
+    var editPostInfoState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
@@ -141,6 +146,10 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun dateTimeFormat(time: Long): String {
+        return SimpleDateFormat("yyyy/MM/dd hh:mm", Locale.getDefault()).format(time)
+    }
+
     //필터 함수
     fun filter(targetPosts: List<PostDetail>): List<PostDetail> {
         val activityTags = mutableListOf<String>()
@@ -166,7 +175,7 @@ class HomeViewModel : ViewModel() {
         val resultPosts = targetPosts.filter { post ->
             post.gatheringTitle.contains(searchText, ignoreCase = true) || //제목
                     post.gatheringLocation.contains(searchText, ignoreCase = true) || //장소
-                    post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
+//                    post.gatheringTime.contains(searchText, ignoreCase = true) || //시간
                     post.gatheringDescription.contains(searchText, ignoreCase = true) || //설명
                     post.gatheringTags.toString().contains(searchText, ignoreCase = true)
         }

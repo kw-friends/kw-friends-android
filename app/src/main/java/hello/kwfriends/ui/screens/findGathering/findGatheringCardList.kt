@@ -63,7 +63,10 @@ fun GatheringListItem(
                     ) {
                         FlowRow(verticalArrangement = Arrangement.Center) {
                             Text(
-                                text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(
+                                text = SimpleDateFormat(
+                                    "yyyy/MM/dd HH:mm",
+                                    Locale.getDefault()
+                                ).format(
                                     postDetail.timestamp
                                 ),
                                 maxLines = 1,
@@ -130,7 +133,7 @@ fun GatheringItemListPreview() {
             PostDetail(
                 gatheringTitle = "Preview",
                 maximumParticipants = "Preview",
-                gatheringTime = "Preview",
+                gatheringTime = 0L,
                 gatheringDescription = "Preview",
                 gatheringTags = listOf("Preview"),
                 gatheringLocation = "",
