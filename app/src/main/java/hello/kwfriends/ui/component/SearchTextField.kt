@@ -28,10 +28,10 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.ui.theme.AppFont
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -78,11 +78,11 @@ fun SearchTextField(
         interactionSource = interactionSource,
         singleLine = isSingleLine,
         textStyle = TextStyle(
-            fontFamily = AppFont.defaultFontFamily,
+            fontFamily = FontFamily.Default,
             color = textColor,
             textAlign = TextAlign.Start,
         ),
-        cursorBrush = SolidColor(Color(0xF1363636)),
+        cursorBrush = SolidColor(Color(0xF1161616)),
         maxLines = maxLines,
         keyboardActions = KeyboardActions(onDone = {
             focusManager.clearFocus()

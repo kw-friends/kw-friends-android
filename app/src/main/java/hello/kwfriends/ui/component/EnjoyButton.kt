@@ -25,7 +25,8 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 fun EnjoyButton(
     modifier: Modifier = Modifier,
     postDetail: PostDetail?,
-    updateStatus: () -> Unit
+    updateStatus: () -> Unit,
+    editPostInfo: () -> Unit
 ) {
     val participationStatus = postDetail?.myParticipantStatus
 
@@ -38,11 +39,14 @@ fun EnjoyButton(
             ) {
                 updateStatus()
             }
+            if (participationStatus == ParticipationStatus.MY_GATHERING) {
+                editPostInfo()
+            }
         },
-        enabled = (participationStatus == ParticipationStatus.PARTICIPATED ||
+        enabled = ((participationStatus == ParticipationStatus.PARTICIPATED ||
                 participationStatus == ParticipationStatus.NOT_PARTICIPATED) &&
-                participationStatus != ParticipationStatus.MAXED_OUT &&
-                participationStatus != ParticipationStatus.MY_GATHERING
+                participationStatus != ParticipationStatus.MAXED_OUT) ||
+                participationStatus == ParticipationStatus.MY_GATHERING
 
     ) {
         Row(
@@ -107,7 +111,7 @@ fun EnjoyButton(
                     )
                     Spacer(modifier = Modifier.size(7.dp))
                     Text(
-                        text = "내가 생성한 모임",
+                        text = "모임 수정하기",
                         style = MaterialTheme.typography.labelLarge
                     )
                 }

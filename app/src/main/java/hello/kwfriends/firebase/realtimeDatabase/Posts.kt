@@ -17,7 +17,7 @@ data class PostDetail(
     val gatheringPromoterUID: String = "",
     val gatheringPromoter: String = "",
     val gatheringLocation: String = "",
-    val gatheringTime: String = "",
+    val gatheringTime: Long = 0L,
     val maximumParticipants: String = "",
     val gatheringDescription: String = "",
     var myParticipantStatus: ParticipationStatus = ParticipationStatus.NOT_PARTICIPATED,
@@ -174,6 +174,37 @@ object Post {
                     Log.d("uploadPost", "참여 목록 생성 성공")
                 }.addOnFailureListener { e ->
                     Log.d("uploadPost", "참여 목록 생성 성공: $e")
+                }
+        }
+    }
+
+    suspend fun update(postData: Map<String, Any>, postID: String, participants: Map<String, Any>) {
+        val postHashMap = hashMapOf<String, Any>(
+            "/posts/$postID" to postData,
+        )
+
+        val updateResult = suspendCoroutine<Boolean> { continuation ->
+            database.reference.updateChildren(postHashMap)
+                .addOnSuccessListener {
+                    Log.d("uploadPost", "모임 생성 성공")
+                    continuation.resume(true)
+                }.addOnFailureListener { e ->
+                    Log.d("uploadPost", "모임 생성 실패: $e")
+                    continuation.resume(false)
+                }
+        }
+
+        val participantsSetResult = suspendCoroutine<Boolean> { continuation ->
+            val participantsListMap = hashMapOf<String, Any>(
+                "/posts/$postID/participants" to participants,
+            )
+            database.reference.updateChildren(participantsListMap)
+                .addOnSuccessListener {
+                    Log.d("uploadPost", "참여 목록 생성 성공")
+                    continuation.resume(true)
+                }.addOnFailureListener { e ->
+                    Log.d("uploadPost", "참여 목록 생성 성공: $e")
+                    continuation.resume(false)
                 }
         }
     }

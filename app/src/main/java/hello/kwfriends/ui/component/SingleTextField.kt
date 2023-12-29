@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -35,7 +36,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.ui.theme.AppFont
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -79,7 +79,8 @@ fun SingleTextField(
                     textColor = Color(0xFF4B4B4B)
                     placeholderColor = Color(0xFF4B4B4B)
                 }
-            }.then(
+            }
+            .then(
                 if (fullWidth) {
                     Modifier.fillMaxWidth()
                 } else {
@@ -89,7 +90,7 @@ fun SingleTextField(
         interactionSource = interactionSource,
         singleLine = isSingleLine,
         textStyle = TextStyle(
-            fontFamily = AppFont.defaultFontFamily,
+            fontFamily = FontFamily.Default,
             color = textColor,
             textAlign = TextAlign.Start,
         ),
@@ -99,7 +100,7 @@ fun SingleTextField(
         } else {
             KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
         },
-        cursorBrush = SolidColor(Color(0xF1363636)),
+        cursorBrush = SolidColor(Color(0xF1161616)),
         maxLines = 1,
         keyboardActions = KeyboardActions(onDone = {
             focusManager.clearFocus()

@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -38,12 +39,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.ui.theme.AppFont
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun FullTextField(
-    modifier: Modifier = Modifier,
     placeholder: String = "",
     isPassword: Boolean = false,
     canValueChange: Boolean = true,
@@ -79,7 +78,6 @@ fun FullTextField(
                     text = externalTitle,
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(horizontal = 14.dp)
                 )
             }
             if (isError) {
@@ -87,7 +85,6 @@ fun FullTextField(
                     text = errorMessage,
                     color = Color(0xFFFF0000),
                     style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(end = 14.dp)
                 )
             }
         }
@@ -96,7 +93,7 @@ fun FullTextField(
     BasicTextField(value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         enabled = canValueChange,
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .then(
@@ -122,7 +119,7 @@ fun FullTextField(
         interactionSource = interactionSource,
         singleLine = isSingleLine,
         textStyle = TextStyle(
-            fontFamily = AppFont.defaultFontFamily,
+            fontFamily = FontFamily.Default,
             color = textColor,
             textAlign = TextAlign.Start,
         ),
@@ -132,7 +129,7 @@ fun FullTextField(
         } else {
             KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction)
         },
-        cursorBrush = SolidColor(Color(0xF1363636)),
+        cursorBrush = SolidColor(Color(0xF1161616)),
         maxLines = maxLines,
         keyboardActions = KeyboardActions(onDone = {
             focusManager.clearFocus()

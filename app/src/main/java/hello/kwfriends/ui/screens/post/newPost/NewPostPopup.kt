@@ -1,11 +1,9 @@
-package hello.kwfriends.ui.component
+package hello.kwfriends.ui.screens.post.newPost
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import hello.kwfriends.ui.screens.newPost.NewPostScreen
-import hello.kwfriends.ui.screens.newPost.NewPostViewModel
 
 @Composable
 fun NewPostPopup(
@@ -13,7 +11,7 @@ fun NewPostPopup(
     onDismiss: () -> Unit,
     newPostViewModel: NewPostViewModel,
 ) {
-    if(state) {
+    if (state) {
         Popup(
             onDismissRequest = onDismiss,
             properties = PopupProperties(focusable = true)
@@ -25,7 +23,6 @@ fun NewPostPopup(
                 newPostViewModel = newPostViewModel,
                 onDismiss = onDismiss
             )
-
         }
     }
 }

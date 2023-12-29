@@ -1,7 +1,8 @@
-package hello.kwfriends.ui.screens.newPost
+package hello.kwfriends.ui.screens.post.newPost
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
+import hello.kwfriends.ui.screens.post.postValidation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +25,7 @@ class NewPostViewModel : ViewModel() {
 
     var gatheringPromoter by mutableStateOf("")
 
-    var gatheringTime by mutableStateOf("")
+    var gatheringTime by mutableLongStateOf(0L)
 
     var gatheringLocation by mutableStateOf("")
 
@@ -34,7 +36,7 @@ class NewPostViewModel : ViewModel() {
     var gatheringDescriptionStatus by mutableStateOf(false)
 
     var isUploading by mutableStateOf(false)
-    var uploadResult by mutableStateOf(true)
+
     val _snackbarEvent = MutableStateFlow<String?>(null)
     val snackbarEvent: StateFlow<String?> get() = _snackbarEvent
 
@@ -45,37 +47,19 @@ class NewPostViewModel : ViewModel() {
         _snackbarEvent.value = message
     }
 
-    fun isStrHasData(text: String?): Boolean {
-        Log.d("isStrHasData()", (text == null || text == "").toString())
-        return !(text == null || text == "")
-    }
-
-    fun checkParticipantsRange(
-        min: String,
-        max: String
-    ): Boolean { // min이 1이상, max가 2 이상, 100 이하이고, min < max인지를 확인
-        return try {
-            Log.i("checkParticipantsRange", "true")
-            min.toInt() < max.toInt() && min.toInt() in 1..100 && max.toInt() in 2..100
-        } catch (e: NumberFormatException) {
-            Log.i("checkParticipantsRange", "false")
-            false
-        }
-    }
-
     fun gatheringTitleChange(text: String) {
         gatheringTitle = text
-        gatheringTitleStatus = isStrHasData(text)
+        gatheringTitleStatus = postValidation.isStrHasData(text)
     }
 
     fun gatheringDescriptionChange(text: String) {
         gatheringDescription = text
-        gatheringDescriptionStatus = isStrHasData(text)
+        gatheringDescriptionStatus = postValidation.isStrHasData(text)
     }
 
     fun maximumParticipantsChange(max: String) {
         maximumParticipants = max
-        participantsRangeValidation = checkParticipantsRange("1", max)
+        participantsRangeValidation = postValidation.checkParticipantsRange("1", max)
     }
 
     fun validateGatheringInfo(): Boolean {
@@ -94,7 +78,7 @@ class NewPostViewModel : ViewModel() {
         gatheringPromoter = UserData.myInfo!!["name"].toString()
         gatheringTitle = ""
         gatheringTitleStatus = false
-        gatheringTime = ""
+        gatheringTime = 0L
         gatheringLocation = ""
         gatheringDescription = ""
         gatheringDescriptionStatus = false
@@ -107,7 +91,7 @@ class NewPostViewModel : ViewModel() {
         }
     }
 
-    fun uploadGatheringToFirestore(end: () -> Unit) {
+    fun uploadPostInfoToFirestore(end: () -> Unit) {
         showSnackbar("모임 생성 중...")
 
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")

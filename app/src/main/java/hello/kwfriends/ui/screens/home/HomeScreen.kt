@@ -38,13 +38,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
-import hello.kwfriends.ui.component.NewPostPopup
 import hello.kwfriends.ui.component.NoSearchResult
-import hello.kwfriends.ui.component.PostInfoPopup
 import hello.kwfriends.ui.component.ReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
-import hello.kwfriends.ui.screens.newPost.NewPostViewModel
+import hello.kwfriends.ui.screens.post.editPost.EditPostPopup
+import hello.kwfriends.ui.screens.post.editPost.EditPostViewModel
+import hello.kwfriends.ui.screens.post.newPost.NewPostPopup
+import hello.kwfriends.ui.screens.post.newPost.NewPostViewModel
+import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
@@ -55,6 +57,7 @@ import hello.kwfriends.ui.theme.KWFriendsTheme
 fun HomeScreen(
     homeViewModel: HomeViewModel,
     newPostViewModel: NewPostViewModel,
+    editPostViewModel: EditPostViewModel,
     settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
@@ -144,9 +147,20 @@ fun HomeScreen(
                             postID = homeViewModel.postPopupState.second,
                             viewModel = homeViewModel
                         )
+                    },
+                    editPostInfo = {
+                        homeViewModel.editPostInfoState =
+                            true to homeViewModel.postPopupState.second
                     }
                 )
             }
+        )
+        // 모임 정보 수정 팝업
+        EditPostPopup(
+            state = homeViewModel.editPostInfoState.first,
+            onDismiss = { homeViewModel.editPostInfoState = false to "" },
+            editPostViewModel = editPostViewModel,
+            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second }
         )
         //모임 생성 다이얼로그
         NewPostPopup(
@@ -225,6 +239,7 @@ fun HomeScreenPreview() {
             homeViewModel = HomeViewModel(),
             newPostViewModel = NewPostViewModel(),
             settingsViewModel = SettingsViewModel(),
+            editPostViewModel = EditPostViewModel(),
             navigation = navController
         )
     }

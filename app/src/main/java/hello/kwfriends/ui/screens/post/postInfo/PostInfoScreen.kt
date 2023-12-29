@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.postInfo
+package hello.kwfriends.ui.screens.post.postInfo
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -209,6 +209,21 @@ fun PostInfoScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom
             ) {
+                if (postDetail.gatheringTime != 0L) {
+                    Text(
+                        text = "마감 기한:  ${homeViewModel.dateTimeFormat(postDetail.gatheringTime)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight(400)
+                    )
+                } else {
+                    Text(
+                        text = "마감 기한이 정해지지 않았습니다",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
+                        fontWeight = FontWeight(400)
+                    )
+                }
                 Divider(
                     modifier = Modifier.padding(vertical = 20.dp),
                     color = Color.Gray,
