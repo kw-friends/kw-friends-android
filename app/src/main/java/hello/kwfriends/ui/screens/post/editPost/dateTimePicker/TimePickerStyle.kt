@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.component
+package hello.kwfriends.ui.screens.post.editPost.dateTimePicker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource

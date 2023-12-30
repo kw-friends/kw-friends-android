@@ -19,8 +19,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.TimeZone
 
 class EditPostViewModel : ViewModel() {
 
@@ -37,6 +38,7 @@ class EditPostViewModel : ViewModel() {
     var date by mutableLongStateOf(0L)
     var gatheringHour by mutableStateOf("")
     var gatheringMinute by mutableStateOf("")
+    var gatheringTimeMessage by mutableStateOf("")
 
     var gatheringLocation by mutableStateOf("")
 
@@ -61,24 +63,54 @@ class EditPostViewModel : ViewModel() {
     fun onHourChanged(hour: String) {
         if (postValidation.checkHourRange(hour)) {
             gatheringHour = hour
-            updateGatheringTime()
+            validateGatheringTime()
         }
     }
 
     fun onMinuteChanged(minute: String) {
         if (postValidation.checkMinuteRange(minute)) {
             gatheringMinute = minute
-            updateGatheringTime()
+            validateGatheringTime()
         }
     }
 
-    fun updateGatheringTime() {
-        if (gatheringHour != "" && gatheringMinute != "") {
-            gatheringTime =
-                date + gatheringHour.toLong() * 3600000 + gatheringMinute.toLong() * 60000
+    fun onDateChanged(time: Long) {
+        date = time
+        Log.d("dateValidator", date.toString())
+        validateGatheringTime()
+    }
+
+    fun getTimeZoneOffset(): Long {
+        val timeZone = TimeZone.getDefault()
+        val timeOffset = timeZone.rawOffset.toLong()
+        Log.d("getTimeZoneOffset", "$timeOffset")
+        return timeOffset
+    }
+
+    // 모임 시간이 현재 시간 이후인지 확인
+    fun validateGatheringTime() {
+        val minimumTimeHour: Int = 3 // 시간 단위
+        val timeDelay: Long = minimumTimeHour.toLong() * 3600000
+
+        if (gatheringHour == "" || gatheringMinute == "") {
+            gatheringTimeMessage = "입력칸이 비어있습니다."
+            gatheringTimeValidation = false
+            return
+        }
+
+        gatheringTime =
+            date + gatheringHour.toLong() * 3600000 + gatheringMinute.toLong() * 60000
+        Log.d("gatheringTime", gatheringTime.toString())
+        val liveDateTime =
+            ZonedDateTime.now(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        Log.d("liveDateTime", liveDateTime.toString())
+
+        if (gatheringTime >= liveDateTime + timeDelay) {
             gatheringTimeValidation = true
+            gatheringTimeMessage = ""
         } else {
             gatheringTimeValidation = false
+            gatheringTimeMessage = "모임 일시는 지금으로부터 최소 ${minimumTimeHour}시간 이후부터 설정 가능합니다."
         }
     }
 
@@ -87,8 +119,6 @@ class EditPostViewModel : ViewModel() {
     }
 
     fun initPostData(postDetail: PostDetail) {
-        val dateTime = LocalDateTime.now()
-
         postID = postDetail.postID
         gatheringTitle = postDetail.gatheringTitle
         gatheringTitleStatus = true
@@ -109,6 +139,10 @@ class EditPostViewModel : ViewModel() {
             .toMutableMap()
 
         date = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        Log.d("dateInit", date.toString())
+        gatheringHour = ""
+        gatheringMinute = ""
+        validateGatheringTime()
     }
 
     fun gatheringTitleChange(text: String) {

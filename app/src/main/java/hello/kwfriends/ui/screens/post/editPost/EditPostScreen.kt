@@ -38,8 +38,8 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
-import hello.kwfriends.ui.component.TimePickerStyle
 import hello.kwfriends.ui.screens.post.editPost.dateTimePicker.DatePickerPopup
+import hello.kwfriends.ui.screens.post.editPost.dateTimePicker.TimePickerStyle
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -148,11 +148,26 @@ fun EditPostScreen(
                 onValueChange = { editPostViewModel.maximumParticipantsChange(max = it) },
                 imeAction = ImeAction.Done
             )
-            Text(
-                text = "모임 일시",
-                color = Color(0xFF636363),
-                style = MaterialTheme.typography.labelMedium,
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "모임 일시",
+                    color = Color(0xFF636363),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                if (!editPostViewModel.gatheringTimeValidation) {
+                    Text(
+                        text = editPostViewModel.gatheringTimeMessage,
+                        color = Color(0xFFFF0000),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
