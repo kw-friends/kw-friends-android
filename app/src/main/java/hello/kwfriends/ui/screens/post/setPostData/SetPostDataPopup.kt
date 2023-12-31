@@ -1,19 +1,20 @@
-package hello.kwfriends.ui.screens.post.editPost
+package hello.kwfriends.ui.screens.post.setPostData
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 
 @Composable
-fun EditPostPopup(
-    state: Boolean,
+fun SetPostDataPopup(
+    state: Action,
     onDismiss: () -> Unit,
-    editPostViewModel: EditPostViewModel,
+    setPostDataViewModel: SetPostDataViewModel,
     postDetail: PostDetail?
 ) {
-    if (state && postDetail != null) {
+    if (state != Action.NONE) {
         Popup(
             onDismissRequest = onDismiss,
             properties = PopupProperties(focusable = true)
@@ -21,10 +22,11 @@ fun EditPostPopup(
             BackHandler {
                 onDismiss()
             }
-            EditPostScreen(
-                editPostViewModel = editPostViewModel,
+            SetPostDataScreen(
+                setPostDataViewModel = setPostDataViewModel,
                 onDismiss = onDismiss,
-                postDetail = postDetail
+                postDetail = postDetail,
+                state = state
             )
         }
     }

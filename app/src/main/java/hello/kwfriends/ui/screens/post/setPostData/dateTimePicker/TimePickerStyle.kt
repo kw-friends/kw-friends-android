@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.component
+package hello.kwfriends.ui.screens.post.setPostData.dateTimePicker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -104,7 +104,6 @@ fun TimePickerStyle(
     modifier: Modifier = Modifier,
     hourValue: String,
     minuteValue: String,
-    style: TextStyle = MaterialTheme.typography.bodyMedium,
     onHourValueChange: (String) -> Unit,
     onMinuteValueChange: (String) -> Unit
 ) {

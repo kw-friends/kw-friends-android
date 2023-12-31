@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.post.editPost
+package hello.kwfriends.ui.screens.post.setPostData
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,30 +34,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
-import hello.kwfriends.ui.component.TimePickerStyle
-import hello.kwfriends.ui.screens.post.editPost.dateTimePicker.DatePickerPopup
+import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.DatePickerPopup
+import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.TimePickerStyle
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EditPostScreen(
-    editPostViewModel: EditPostViewModel,
-    postDetail: PostDetail,
-    onDismiss: () -> Unit
+fun SetPostDataScreen(
+    setPostDataViewModel: SetPostDataViewModel,
+    postDetail: PostDetail?,
+    onDismiss: () -> Unit,
+    state: Action
 ) {
     DatePickerPopup(
-        state = editPostViewModel.datePickerPopupState,
-        onDismiss = { editPostViewModel.datePickerPopupState = false },
-        editPostViewModel = editPostViewModel
+        state = setPostDataViewModel.datePickerPopupState,
+        onDismiss = { setPostDataViewModel.datePickerPopupState = false },
+        setPostDataViewModel = setPostDataViewModel
     )
 
     LaunchedEffect(true) {
-        editPostViewModel.initPostData(postDetail)
+        setPostDataViewModel.initPostData(postDetail = postDetail, state = state)
     }
 
     val scrollState = rememberScrollState()
@@ -80,7 +82,7 @@ fun EditPostScreen(
                 )
             }
             Text(
-                text = "내용 수정∙편집하기",
+                text = if (state == Action.MODIFY) "내용 수정∙편집" else "새 모임 생성",
                 style = MaterialTheme.typography.titleMedium,
                 fontFamily = FontFamily.Default
             )
@@ -98,28 +100,28 @@ fun EditPostScreen(
             Spacer(modifier = Modifier.size(10.dp))
             FullTextField(
                 placeholder = "",
-                value = editPostViewModel.gatheringPromoter,
+                value = setPostDataViewModel.gatheringPromoter,
                 canValueChange = false,
                 onValueChange = {},
                 externalTitle = "모임 주최자"
             )
             FullTextField(
                 placeholder = "",
-                value = editPostViewModel.gatheringTitle,
-                onValueChange = { editPostViewModel.gatheringTitleChange(it) },
+                value = setPostDataViewModel.gatheringTitle,
+                onValueChange = { setPostDataViewModel.gatheringTitleChange(it) },
                 imeAction = ImeAction.Next,
-                isError = !editPostViewModel.gatheringTitleStatus,
+                isError = !setPostDataViewModel.gatheringTitleStatus,
                 externalTitle = "모임 제목",
                 errorMessage = "필수 항목",
             )
             FullTextField(
                 placeholder = "",
-                value = editPostViewModel.gatheringDescription,
-                onValueChange = { editPostViewModel.gatheringDescriptionChange(it) },
+                value = setPostDataViewModel.gatheringDescription,
+                onValueChange = { setPostDataViewModel.gatheringDescriptionChange(it) },
                 isSingleLine = false,
                 maxLines = 6,
                 imeAction = ImeAction.Default,
-                isError = !editPostViewModel.gatheringDescriptionStatus,
+                isError = !setPostDataViewModel.gatheringDescriptionStatus,
                 externalTitle = "모임 설명",
                 errorMessage = "필수 항목",
             )
@@ -135,7 +137,7 @@ fun EditPostScreen(
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
                 )
-                if (!editPostViewModel.participantsRangeValidation) {
+                if (!setPostDataViewModel.participantsRangeValidation) {
                     Text(
                         text = "2명 이상, 100명 이하의 인원 수를 입력해 주세요.",
                         color = Color(0xFFFF0000),
@@ -144,32 +146,47 @@ fun EditPostScreen(
                 }
             }
             SingleTextField(
-                value = editPostViewModel.maximumParticipants,
-                onValueChange = { editPostViewModel.maximumParticipantsChange(max = it) },
+                value = setPostDataViewModel.maximumParticipants,
+                onValueChange = { setPostDataViewModel.maximumParticipantsChange(max = it) },
                 imeAction = ImeAction.Done
             )
-            Text(
-                text = "모임 일시",
-                color = Color(0xFF636363),
-                style = MaterialTheme.typography.labelMedium,
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "모임 일시",
+                    color = Color(0xFF636363),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                if (!setPostDataViewModel.gatheringTimeValidation) {
+                    Text(
+                        text = setPostDataViewModel.gatheringTimeMessage,
+                        color = Color(0xFFFF0000),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(onClick = {
-                    editPostViewModel.datePickerPopupState = true
+                    setPostDataViewModel.datePickerPopupState = true
                 }) {
                     Text(
                         text = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(
-                            editPostViewModel.date
+                            setPostDataViewModel.date
                         ),
                     )
                 }
                 TimePickerStyle(
-                    hourValue = editPostViewModel.gatheringHour,
-                    minuteValue = editPostViewModel.gatheringMinute,
-                    onHourValueChange = { editPostViewModel.onHourChanged(it) },
-                    onMinuteValueChange = { editPostViewModel.onMinuteChanged(it) }
+                    hourValue = setPostDataViewModel.gatheringHour,
+                    minuteValue = setPostDataViewModel.gatheringMinute,
+                    onHourValueChange = { setPostDataViewModel.onHourChanged(it) },
+                    onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) }
                 )
             }
             Text(
@@ -183,12 +200,12 @@ fun EditPostScreen(
                 style = MaterialTheme.typography.labelMedium,
             )
             FlowRow {
-                editPostViewModel.tagMap.forEach {
+                setPostDataViewModel.tagMap.forEach {
                     TagChip(
                         modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
                         selected = it.value,
-                        onClick = { editPostViewModel.updateTagMap(it.key) }
+                        onClick = { setPostDataViewModel.updateTagMap(it.key) }
                     )
                 }
             }
@@ -203,21 +220,24 @@ fun EditPostScreen(
                 )
                 Button(
                     onClick = {
-                        if (!editPostViewModel.isUploading) {
-                            if (!editPostViewModel.validateGatheringInfo()) {
-                                editPostViewModel.showSnackbar("모임 정보가 부족합니다.")
+                        if (!setPostDataViewModel.isUploading) {
+                            if (!setPostDataViewModel.validateGatheringInfo()) {
+                                setPostDataViewModel.showSnackbar("모임 정보가 부족합니다.")
                             } else {
-                                editPostViewModel.updatePostInfoToFirestore(onDismiss)
+                                setPostDataViewModel.updatePostInfoToFirestore(onDismiss)
                             }
                         }
                     },
-                    enabled = !editPostViewModel.isUploading,
+                    enabled = !setPostDataViewModel.isUploading,
                     modifier = Modifier
                         .width(IntrinsicSize.Max)
                         .align(Alignment.End)
                 ) {
-                    if (!editPostViewModel.isUploading) {
-                        Text(text = "모임 만들기", style = MaterialTheme.typography.labelLarge)
+                    if (!setPostDataViewModel.isUploading) {
+                        Text(
+                            text = if (state == Action.MODIFY) "모임 수정하기" else "모임 만들기",
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     } else {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             CircularProgressIndicator(
@@ -226,7 +246,10 @@ fun EditPostScreen(
                                 strokeWidth = 2.dp
                             )
                             Spacer(modifier = Modifier.size(7.dp))
-                            Text(text = "업로드 중..", style = MaterialTheme.typography.labelLarge)
+                            Text(
+                                text = if (state == Action.MODIFY) "수정 중.." else "생성 중..",
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
                 }
