@@ -147,12 +147,12 @@ fun HomeScreen(
                     updateStatus = {
                         homeViewModel.updateParticipationStatus(
                             postID = homeViewModel.postInfoPopupState.second,
-                            viewModel = homeViewModel
                         )
                     },
                     editPostInfo = {
                         Log.d("actionState", "Action.MODIFY")
-                        homeViewModel.setPostDataState = Action.MODIFY to homeViewModel.postInfoPopupState.second
+                        homeViewModel.setPostDataState =
+                            Action.MODIFY to homeViewModel.postInfoPopupState.second
                     }
                 )
             }

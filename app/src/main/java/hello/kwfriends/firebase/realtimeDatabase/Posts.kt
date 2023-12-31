@@ -90,7 +90,7 @@ object Post {
                     "onChildRemoved:${dataSnapshot.value!!}, postID: ${dataSnapshot.key!!}"
                 )
                 val postDetail = dataSnapshot.getValue(PostDetail::class.java) ?: return
-                viewModel?.postRemoved(postData = postDetail, postID = dataSnapshot.key!!)
+                viewModel?.postRemoved(postID = dataSnapshot.key!!)
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
