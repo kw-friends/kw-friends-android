@@ -4,6 +4,7 @@ package hello.kwfriends.ui.screens.home
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.horizontalScroll
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeTopAppBar
 import hello.kwfriends.ui.component.NoSearchResult
@@ -44,11 +46,9 @@ import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
-import hello.kwfriends.ui.screens.post.editPost.EditPostPopup
-import hello.kwfriends.ui.screens.post.editPost.EditPostViewModel
-import hello.kwfriends.ui.screens.post.newPost.NewPostPopup
-import hello.kwfriends.ui.screens.post.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
+import hello.kwfriends.ui.screens.post.setPostData.SetPostDataPopup
+import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
@@ -58,8 +58,7 @@ import hello.kwfriends.ui.theme.KWFriendsTheme
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel,
-    newPostViewModel: NewPostViewModel,
-    editPostViewModel: EditPostViewModel,
+    setPostDataViewModel: SetPostDataViewModel,
     settingsViewModel: SettingsViewModel,
     navigation: NavController
 ) {
@@ -125,56 +124,62 @@ fun HomeScreen(
                 text = { Text(text = "모임 생성") },
                 icon = { Icon(Icons.Default.Add, null) },
                 onClick = {
-                    homeViewModel.newPostPopupState = true
+                    Log.d("actionState", "Action.ADD")
+                    homeViewModel.setPostDataState =
+                        Triple(true, "", Action.ADD)
                 },
                 modifier = Modifier.padding(bottom = 35.dp)
             )
         }
     ) { paddingValues ->
+
         //포스트 정보 팝업
         PostInfoPopup(
-            state = homeViewModel.postPopupState.first,
-            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second },
-            onDismiss = { homeViewModel.postPopupState = false to "" },
+            state = homeViewModel.postInfoPopupState.first,
+            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second },
+            onDismiss = { homeViewModel.postInfoPopupState = false to "" },
             onPostReport = {
-                homeViewModel.postReportDialogState = true to homeViewModel.postPopupState.second
+                homeViewModel.postReportDialogState =
+                    true to homeViewModel.postInfoPopupState.second
             },
             homeViewModel = homeViewModel,
             enjoyButton = {
                 EnjoyButton(
-                    postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second },
+                    postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second },
                     updateStatus = {
                         homeViewModel.updateParticipationStatus(
-                            postID = homeViewModel.postPopupState.second,
+                            postID = homeViewModel.postInfoPopupState.second,
                             viewModel = homeViewModel
                         )
                     },
                     editPostInfo = {
-                        homeViewModel.editPostInfoState =
-                            true to homeViewModel.postPopupState.second
+                        Log.d("actionState", "Action.MODIFY")
+                        homeViewModel.setPostDataState =
+                            Triple(true, homeViewModel.postInfoPopupState.second, Action.MODIFY)
                     }
                 )
             }
         )
-        // 모임 정보 수정 팝업
-        EditPostPopup(
-            state = homeViewModel.editPostInfoState.first,
-            onDismiss = { homeViewModel.editPostInfoState = false to "" },
-            editPostViewModel = editPostViewModel,
-            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postPopupState.second }
+
+        // 모임 정보 설정 팝업
+        SetPostDataPopup(
+            state = homeViewModel.setPostDataState.first,
+            onDismiss = {
+                homeViewModel.setPostDataState = Triple(false, "", Action.NONE)
+                Log.d("actionState", "Action.NONE")
+            },
+            setPostDataViewModel = setPostDataViewModel,
+            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second },
+            homeViewModel = homeViewModel
         )
-        //모임 생성 팝업
-        NewPostPopup(
-            state = homeViewModel.newPostPopupState,
-            onDismiss = { homeViewModel.newPostPopupState = false },
-            newPostViewModel = newPostViewModel
-        )
+
         //포스트 신고 다이얼로그
         PostReportDialog(state = homeViewModel.postReportDialogState.first,
             textList = homeViewModel.postReportTextList,
             onDismiss = { homeViewModel.postReportDialogState = false to "" },
             onPostReport = { homeViewModel.postReport(it) }
         )
+
         //유저 신고 다이얼로그
         UserReportDialog(
             state = homeViewModel.userReportDialogState.first,
@@ -182,6 +187,7 @@ fun HomeScreen(
             onDismiss = { homeViewModel.userReportDialogState = false to "" },
             onUserReport = { homeViewModel.userReport(it) }
         )
+
         //유저 정보 팝업
         UserInfoPopup(
             state = homeViewModel.userInfoPopupState.first,
@@ -189,8 +195,12 @@ fun HomeScreen(
             addUserIgnore = { homeViewModel.addUserIgnore(homeViewModel.userInfoPopupState.second) },
             removeUserIgnore = { homeViewModel.removeUserIgnore(homeViewModel.userInfoPopupState.second) },
             onDismiss = { homeViewModel.userInfoPopupState = false to "" },
-            onUserReport = { homeViewModel.userReportDialogState = true to homeViewModel.userInfoPopupState.second }
+            onUserReport = {
+                homeViewModel.userReportDialogState =
+                    true to homeViewModel.userInfoPopupState.second
+            }
         )
+
         //태그
         Column(modifier = Modifier.padding(paddingValues)) {
             Row(
@@ -255,9 +265,8 @@ fun HomeScreenPreview() {
     KWFriendsTheme {
         HomeScreen(
             homeViewModel = HomeViewModel(),
-            newPostViewModel = NewPostViewModel(),
             settingsViewModel = SettingsViewModel(),
-            editPostViewModel = EditPostViewModel(),
+            setPostDataViewModel = SetPostDataViewModel(),
             navigation = navController
         )
     }

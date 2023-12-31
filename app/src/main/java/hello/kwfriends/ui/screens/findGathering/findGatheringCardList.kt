@@ -40,7 +40,7 @@ fun GatheringListItem(
     Column {
         ListItem(
             modifier = Modifier.clickable {
-                viewModel.postPopupState = true to postDetail.postID
+                viewModel.postInfoPopupState = true to postDetail.postID
             },
             headlineContent = {
                 Column(Modifier.padding(vertical = 7.dp)) {

@@ -43,11 +43,8 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    //포스트 생성 팝업 보이기 여부
-    var newPostPopupState by mutableStateOf<Boolean>(false)
-
     //포스트 팝업 보이기 여부 및 포스트 uid
-    var postPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
+    var postInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
     //유저 정보 팝업 보이기 여부 및 포스트 uid
     var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
@@ -55,8 +52,14 @@ class HomeViewModel : ViewModel() {
     //포스트 신고 팝업 보이기 여부 및 신고 대상 포스트 id
     var postReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    // 포스트 수정 페이지 다이얼로그 보이기 여부 및 포스트 uid
-    var editPostInfoState by mutableStateOf<Pair<Boolean, String>>(false to "")
+    // 포스트 설정 페이지 다이얼로그 보이기 여부, 포스트 uid, Action State
+    var setPostDataState by mutableStateOf<Triple<Boolean, String, Action>>(
+        Triple(
+            false,
+            "",
+            Action.NONE
+        )
+    )
 
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")

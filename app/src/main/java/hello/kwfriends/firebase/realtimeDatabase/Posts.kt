@@ -53,7 +53,9 @@ enum class ParticipationStatus {
 
 enum class Action {
     ADD,
-    DELETE
+    DELETE,
+    MODIFY,
+    NONE
 }
 
 object Post {
@@ -225,7 +227,8 @@ object Post {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 참여 실패")
                         continuation.resume(false)
                     }
-            } else {
+            }
+            if (action == Action.DELETE) {
                 database.reference.child("/posts/$postID/participants/$uid").setValue(null)
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 퇴장 성공")

@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.post.editPost.dateTimePicker
+package hello.kwfriends.ui.screens.post.setPostData.dateTimePicker
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import hello.kwfriends.ui.screens.post.editPost.EditPostViewModel
+import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Locale
@@ -26,14 +26,14 @@ import java.util.Locale
 @Composable
 fun DatePickerPopup(
     onDismiss: () -> Unit,
-    editPostViewModel: EditPostViewModel
+    setPostDataViewModel: SetPostDataViewModel
 ) {
     val datePickerState = remember {
         DatePickerState(
             initialDisplayedMonthMillis = null,
             yearRange = (2023..2040), // KW Friends 서비스 종료 시점으로 설정
             initialDisplayMode = DisplayMode.Picker,
-            initialSelectedDateMillis = editPostViewModel.date
+            initialSelectedDateMillis = setPostDataViewModel.date
         )
     }
 
@@ -42,7 +42,7 @@ fun DatePickerPopup(
         onDismissRequest = onDismiss,
         confirmButton = {
             Button(onClick = {
-                editPostViewModel.onDateChanged(datePickerState.selectedDateMillis!!)
+                setPostDataViewModel.onDateChanged(datePickerState.selectedDateMillis!!)
                 onDismiss()
             }
             ) {
@@ -61,7 +61,7 @@ fun DatePickerPopup(
                 headline = {
                     Text(
                         text = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(
-                            editPostViewModel.date
+                            setPostDataViewModel.date
                         )
                     )
                 },
@@ -81,6 +81,6 @@ fun DatePickerPopup(
 fun DatePickerPopupPreview() {
     DatePickerPopup(
         onDismiss = {},
-        editPostViewModel = EditPostViewModel()
+        setPostDataViewModel = SetPostDataViewModel()
     )
 }

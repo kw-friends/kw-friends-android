@@ -15,20 +15,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.base.BaseActivity
-import hello.kwfriends.ui.screens.post.editPost.EditPostViewModel
+import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.home.HomeViewModel
-import hello.kwfriends.ui.screens.post.newPost.NewPostViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
-    private val newPostViewModel: NewPostViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val editPostViewModel: EditPostViewModel by viewModels()
+    private val setPostDataViewModel: SetPostDataViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +58,8 @@ class MainActivity : BaseActivity() {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         HomeScreen(
                             homeViewModel = homeViewModel,
-                            newPostViewModel = newPostViewModel,
                             settingsViewModel = settingsViewModel,
-                            editPostViewModel = editPostViewModel,
+                            setPostDataViewModel = setPostDataViewModel,
                             navigation = navController
                         )
                     }
