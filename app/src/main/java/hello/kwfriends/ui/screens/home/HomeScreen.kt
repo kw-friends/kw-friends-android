@@ -166,7 +166,8 @@ fun HomeScreen(
                 Log.d("actionState", "Action.NONE")
             },
             setPostDataViewModel = setPostDataViewModel,
-            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second }
+            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second },
+            homeViewModel = homeViewModel
         )
 
         //포스트 신고 다이얼로그

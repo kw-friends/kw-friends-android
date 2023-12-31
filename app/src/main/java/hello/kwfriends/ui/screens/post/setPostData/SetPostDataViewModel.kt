@@ -36,6 +36,8 @@ class SetPostDataViewModel : ViewModel() {
     var gatheringPromoterUID by mutableStateOf("")
     var gatheringPromoter by mutableStateOf("")
 
+    var gatheringTimeLocationUse by mutableStateOf(false)
+
     var gatheringTime by mutableLongStateOf(0L)
     var gatheringTimeValidation by mutableStateOf(false)
     var date by mutableLongStateOf(0L)
@@ -196,10 +198,17 @@ class SetPostDataViewModel : ViewModel() {
     }
 
     fun validateGatheringInfo(): Boolean {
-        return (gatheringTitleStatus &&
-                gatheringDescriptionStatus &&
-                participantsRangeValidation &&
-                gatheringTimeValidation)
+        return if (gatheringTimeLocationUse) {
+            (gatheringTitleStatus &&
+                    gatheringDescriptionStatus &&
+                    participantsRangeValidation &&
+                    gatheringTimeValidation)
+        } else {
+            (gatheringTitleStatus &&
+                    gatheringDescriptionStatus &&
+                    participantsRangeValidation)
+        }
+
     }
 
     fun updateTagMap(tag: String) {
@@ -217,6 +226,10 @@ class SetPostDataViewModel : ViewModel() {
         Log.d("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.d("gatheringDescription", "gatheringDescription = $gatheringDescription")
         Log.d("participants", "participants = $participants")
+
+        if (!gatheringTimeLocationUse) {
+            gatheringTime = 0L
+        }
 
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
@@ -254,6 +267,10 @@ class SetPostDataViewModel : ViewModel() {
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
         Log.w("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
+
+        if (!gatheringTimeLocationUse) {
+            gatheringTime = 0L
+        }
 
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
