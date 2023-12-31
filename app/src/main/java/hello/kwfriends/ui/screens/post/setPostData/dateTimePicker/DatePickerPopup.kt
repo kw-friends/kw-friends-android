@@ -1,15 +1,15 @@
-package hello.kwfriends.ui.screens.post.editPost.dateTimePicker
+package hello.kwfriends.ui.screens.post.setPostData.dateTimePicker
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Popup
-import hello.kwfriends.ui.screens.post.editPost.EditPostViewModel
+import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 
 @Composable
 fun DatePickerPopup(
     state: Boolean,
     onDismiss: () -> Unit,
-    editPostViewModel: EditPostViewModel
+    setPostDataViewModel: SetPostDataViewModel
 ) {
     if (state) {
         Popup(
@@ -20,7 +20,7 @@ fun DatePickerPopup(
             }
             DatePickerPopup(
                 onDismiss = onDismiss,
-                editPostViewModel = editPostViewModel
+                setPostDataViewModel = setPostDataViewModel
             )
         }
     }
