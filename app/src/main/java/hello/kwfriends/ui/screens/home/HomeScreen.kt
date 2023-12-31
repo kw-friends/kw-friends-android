@@ -152,7 +152,8 @@ fun HomeScreen(
                     },
                     editPostInfo = {
                         Log.d("actionState", "Action.MODIFY")
-                        homeViewModel.setPostDataState = Action.MODIFY to homeViewModel.postInfoPopupState.second
+                        homeViewModel.setPostDataState =
+                            Action.MODIFY to homeViewModel.postInfoPopupState.second
                     }
                 )
             }
