@@ -33,7 +33,7 @@ fun DatePickerPopup(
             initialDisplayedMonthMillis = null,
             yearRange = (2023..2040), // KW Friends 서비스 종료 시점으로 설정
             initialDisplayMode = DisplayMode.Picker,
-            initialSelectedDateMillis = setPostDataViewModel.date
+            initialSelectedDateMillis = setPostDataViewModel.gatheringDate
         )
     }
 
@@ -61,7 +61,7 @@ fun DatePickerPopup(
                 headline = {
                     Text(
                         text = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(
-                            setPostDataViewModel.date
+                            setPostDataViewModel.gatheringDate
                         )
                     )
                 },

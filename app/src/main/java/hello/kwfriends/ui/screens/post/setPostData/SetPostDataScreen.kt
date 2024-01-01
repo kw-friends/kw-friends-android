@@ -71,6 +71,10 @@ fun SetPostDataScreen(
     onDismiss: () -> Unit,
     state: Action
 ) {
+
+    val scrollState = rememberScrollState()
+    var additionalInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringTimeLocationUse) }
+
     DatePickerPopup(
         state = setPostDataViewModel.datePickerPopupState,
         onDismiss = { setPostDataViewModel.datePickerPopupState = false },
@@ -79,10 +83,9 @@ fun SetPostDataScreen(
 
     LaunchedEffect(true) {
         setPostDataViewModel.initPostData(postDetail = postDetail, state = state)
+        additionalInfoVisibility = setPostDataViewModel.gatheringTimeLocationUse
     }
 
-    val scrollState = rememberScrollState()
-    var additionalInfoVisibility by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -250,7 +253,7 @@ fun SetPostDataScreen(
                                         "yyyy/MM/dd",
                                         Locale.getDefault()
                                     ).format(
-                                        setPostDataViewModel.date
+                                        setPostDataViewModel.gatheringDate
                                     ),
                                 )
                             }
