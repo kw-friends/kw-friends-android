@@ -67,6 +67,7 @@ fun PostInfoScreen(
     postDetail: PostDetail,
     onDismiss: () -> Unit,
     onPostReport: () -> Unit,
+    onPostDelete: () -> Unit,
     homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
@@ -143,6 +144,12 @@ fun PostInfoScreen(
                         }
                     }
                 )
+                if (postDetail.gatheringPromoterUID == Firebase.auth.currentUser!!.uid) {
+                    DropdownMenuItem(
+                        text = { Text("모임 삭제") },
+                        onClick = { onPostDelete() }
+                    )
+                }
             }
         }
         Column(
@@ -169,7 +176,6 @@ fun PostInfoScreen(
                         .border(0.5.dp, Color.Gray, CircleShape),
                     contentScale = ContentScale.Crop,
                 )
-                Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
                         text = UserData.usersDataMap[postDetail.gatheringPromoterUID]?.get("name")

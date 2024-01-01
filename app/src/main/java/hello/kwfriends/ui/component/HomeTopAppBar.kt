@@ -51,8 +51,7 @@ fun HomeTopAppBar(
 ) {
     TopAppBar(
         modifier = Modifier
-            .padding(top = 10.dp)
-            .height(40.dp),
+            .height(56.dp),
         title = {
             Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
                 AnimatedVisibility(
@@ -76,6 +75,7 @@ fun HomeTopAppBar(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End,
+                modifier = Modifier.height(56.dp)
             ) {
                 if (isSearching) {
                     IconButton(
@@ -84,26 +84,25 @@ fun HomeTopAppBar(
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Exit",
-                            modifier = Modifier.size(25.dp)
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
-                Box(if(isSearching) Modifier.weight(1f) else Modifier) {
-                    Row(Modifier.align(Alignment.CenterEnd)) {
+                Box(if (isSearching) Modifier.weight(1f) else Modifier) {
+                    Row(
+                        Modifier.align(Alignment.CenterEnd),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         SearchTextField(
                             value = searchText,
                             onValueChange = setSearchText,
                             enable = isSearching,
                             modifier = Modifier
-                                .animateContentSize(
-                                    animationSpec = tween(easing = LinearOutSlowInEasing),
-
-                                    )
+                                .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
                                 .focusRequester(focusRequester)
                                 .then(
                                     if (isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
                                 )
-
                         )
                     }
                     IconButton(
@@ -114,22 +113,22 @@ fun HomeTopAppBar(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier
+                                .size(24.dp)
                         )
                     }
                 }
                 IconButton(
                     onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
-                    modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Account",
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                     )
                 }
             }
-
 
 
         },

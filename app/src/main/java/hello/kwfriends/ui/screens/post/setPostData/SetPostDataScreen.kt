@@ -88,6 +88,7 @@ fun SetPostDataScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFFFFBFF))
+            .height(56.dp)
     ) {
         Row(
             modifier = Modifier.align(Alignment.TopStart),
@@ -110,7 +111,7 @@ fun SetPostDataScreen(
 
         Column(
             modifier = Modifier
-                .padding(top = 40.dp, start = 14.dp, end = 14.dp, bottom = 4.dp)
+                .padding(top = 56.dp, start = 24.dp, end = 24.dp, bottom = 4.dp)
                 .verticalScroll(scrollState)
         ) {
             Spacer(modifier = Modifier.size(10.dp))
@@ -172,7 +173,7 @@ fun SetPostDataScreen(
             )
             Column(
                 modifier = Modifier
-                    .padding(top = 14.dp, end = 4.dp)
+                    .padding(top = 14.dp)
                     .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(Color(0xFFFCEEEE))
