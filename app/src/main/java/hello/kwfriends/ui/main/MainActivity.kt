@@ -17,6 +17,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.post.editPost.EditPostViewModel
 import hello.kwfriends.ui.screens.auth.AuthScreen
+import hello.kwfriends.ui.screens.chattingList.ChattingLIstViewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.post.newPost.NewPostViewModel
@@ -76,6 +78,13 @@ class MainActivity : BaseActivity() {
                     composable(Routes.AUTH_SCREEN) {
                         statusBarColor.value = Color(0xFFE79898)
                         AuthScreen(navigation = navController)
+                    }
+                    composable(Routes.CHATTING_LIST_SCREEN) {
+                        statusBarColor.value = Color(0xFFFFFBFF)
+                        ChattingListScreen(
+                            chattingLIstViewModel = ChattingLIstViewModel(),
+                            navigation = navController
+                        )
                     }
                 }
             }

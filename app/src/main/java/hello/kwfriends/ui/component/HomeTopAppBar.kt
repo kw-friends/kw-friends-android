@@ -120,12 +120,12 @@ fun HomeTopAppBar(
                     }
                 }
                 IconButton(
-                    onClick = { navigation.navigate(Routes.HOME_SCREEN) },
+                    onClick = { navigation.navigate(Routes.CHATTING_LIST_SCREEN) },
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Chat,
-                        contentDescription = "Account",
+                        contentDescription = "go to chatting list",
                         modifier = Modifier.size(25.dp)
                     )
                 }
@@ -135,7 +135,7 @@ fun HomeTopAppBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Account",
+                        contentDescription = "go to setting screen",
                         modifier = Modifier.size(30.dp)
                     )
                 }
