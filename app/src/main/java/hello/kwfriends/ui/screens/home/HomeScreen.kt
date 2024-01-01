@@ -45,6 +45,7 @@ import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.TagChip
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
+import hello.kwfriends.ui.component.finalCheckPopup
 import hello.kwfriends.ui.screens.findGathering.FindGatheringItemList
 import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataPopup
@@ -130,23 +131,32 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
+        val postID = homeViewModel.postInfoPopupState.second
 
         //포스트 정보 팝업
         PostInfoPopup(
             state = homeViewModel.postInfoPopupState.first,
-            postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second },
+            postDetail = homeViewModel.posts.find { it.postID == postID },
             onDismiss = { homeViewModel.postInfoPopupState = false to "" },
-            onPostReport = {
-                homeViewModel.postReportDialogState =
-                    true to homeViewModel.postInfoPopupState.second
+            onPostReport = { homeViewModel.postReportDialogState = true to postID },
+            onPostDelete = {
+                homeViewModel.finalCheckState = true
+                homeViewModel.finalCheckPopupSet(
+                    title = "모임을 삭제할까요?",
+                    body = "삭제한 모임은 다시 되돌릴 수 없습니다.",
+                    onContinueAction = {
+                        Log.d("postDelete", "postDelete")
+                        homeViewModel.postDelete(postID)
+                    }
+                )
             },
             homeViewModel = homeViewModel,
             enjoyButton = {
                 EnjoyButton(
-                    postDetail = homeViewModel.posts.find { it.postID == homeViewModel.postInfoPopupState.second },
+                    postDetail = homeViewModel.posts.find { it.postID == postID },
                     updateStatus = {
                         homeViewModel.updateParticipationStatus(
-                            postID = homeViewModel.postInfoPopupState.second,
+                            postID = postID,
                         )
                     },
                     editPostInfo = {
@@ -195,6 +205,20 @@ fun HomeScreen(
             onUserReport = {
                 homeViewModel.userReportDialogState =
                     true to homeViewModel.userInfoPopupState.second
+            }
+        )
+
+        // 사용자 조작 확인 팝업
+        finalCheckPopup(
+            state = homeViewModel.finalCheckState,
+            title = homeViewModel.finalCheckTitle,
+            body = homeViewModel.finalCheckBody,
+            onContinue = {
+                homeViewModel.finalCheckState = false
+                homeViewModel.onContinueAction()
+            },
+            onDismiss = {
+                homeViewModel.finalCheckState = false
             }
         )
 
