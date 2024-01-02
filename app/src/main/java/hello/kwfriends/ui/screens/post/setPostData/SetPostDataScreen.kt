@@ -1,6 +1,16 @@
 package hello.kwfriends.ui.screens.post.setPostData
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -28,10 +39,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.Action
@@ -39,19 +56,25 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
+import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.DatePickerPopup
 import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.TimePickerStyle
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SetPostDataScreen(
     setPostDataViewModel: SetPostDataViewModel,
+    homeViewModel: HomeViewModel,
     postDetail: PostDetail?,
     onDismiss: () -> Unit,
     state: Action
 ) {
+
+    val scrollState = rememberScrollState()
+    var additionalInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringTimeLocationUse) }
+
     DatePickerPopup(
         state = setPostDataViewModel.datePickerPopupState,
         onDismiss = { setPostDataViewModel.datePickerPopupState = false },
@@ -60,14 +83,15 @@ fun SetPostDataScreen(
 
     LaunchedEffect(true) {
         setPostDataViewModel.initPostData(postDetail = postDetail, state = state)
+        additionalInfoVisibility = setPostDataViewModel.gatheringTimeLocationUse
     }
 
-    val scrollState = rememberScrollState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFFFFBFF))
+            .height(56.dp)
     ) {
         Row(
             modifier = Modifier.align(Alignment.TopStart),
@@ -90,14 +114,13 @@ fun SetPostDataScreen(
 
         Column(
             modifier = Modifier
-                .padding(
-                    top = 40.dp,
-                    start = 14.dp,
-                    end = 14.dp
-                ) // (vertical = 40.dp, horizontal = 14.dp)
+                .padding(top = 56.dp, start = 14.dp, end = 14.dp, bottom = 4.dp)
                 .verticalScroll(scrollState)
         ) {
-            Spacer(modifier = Modifier.size(10.dp))
+            Text(
+                text = "기본 정보 설정",
+                style = MaterialTheme.typography.titleSmall
+            )
             FullTextField(
                 placeholder = "",
                 value = setPostDataViewModel.gatheringPromoter,
@@ -150,50 +173,105 @@ fun SetPostDataScreen(
                 onValueChange = { setPostDataViewModel.maximumParticipantsChange(max = it) },
                 imeAction = ImeAction.Done
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom,
+            Column(
                 modifier = Modifier
-                    .height(IntrinsicSize.Min)
+                    .padding(top = 14.dp)
                     .fillMaxWidth()
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .background(Color(0xFFFCEEEE))
+                    .clickable {
+                        additionalInfoVisibility = !additionalInfoVisibility
+                        setPostDataViewModel.gatheringTimeLocationUse =
+                            !setPostDataViewModel.gatheringTimeLocationUse
+                    }
             ) {
-                Text(
-                    text = "모임 일시",
-                    color = Color(0xFF636363),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                if (!setPostDataViewModel.gatheringTimeValidation) {
-                    Text(
-                        text = setPostDataViewModel.gatheringTimeMessage,
-                        color = Color(0xFFFF0000),
-                        style = MaterialTheme.typography.labelSmall,
-                    )
+                AnimatedContent(
+                    targetState = additionalInfoVisibility,
+                    transitionSpec = {
+                        if (additionalInfoVisibility) {
+                            (slideInHorizontally { height -> height } + fadeIn()).togetherWith(
+                                slideOutHorizontally { height -> -height } + fadeOut())
+                        } else {
+                            (slideInHorizontally { height -> -height } + fadeIn()).togetherWith(
+                                slideOutHorizontally { height -> height } + fadeOut())
+                        }.using(
+                            SizeTransform(clip = false)
+                        )
+                    }, label = "additionalInfoVisibility = $additionalInfoVisibility"
+                ) { targetState ->
+                    if (targetState) {
+                        Text(
+                            text = "좋아요! 시간∙위치 정보를 추가해 주세요.",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = W600,
+                            modifier = Modifier.padding(horizontal = 7.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "시간∙위치 정보를 추가할까요?",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = W600,
+                            modifier = Modifier.padding(horizontal = 7.dp)
+                        )
+                    }
+                }
+
+                AnimatedVisibility(additionalInfoVisibility) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 7.dp)
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Bottom,
+                            modifier = Modifier
+                                .height(IntrinsicSize.Min)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "모임 일시",
+                                color = Color(0xFF636363),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                            if (!setPostDataViewModel.gatheringTimeValidation) {
+                                Text(
+                                    text = setPostDataViewModel.gatheringTimeMessage,
+                                    color = Color(0xFFFF0000),
+                                    style = MaterialTheme.typography.labelSmall,
+                                )
+                            }
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextButton(onClick = {
+                                setPostDataViewModel.datePickerPopupState = true
+                            }) {
+                                Text(
+                                    text = SimpleDateFormat(
+                                        "yyyy/MM/dd",
+                                        Locale.getDefault()
+                                    ).format(
+                                        setPostDataViewModel.gatheringDate
+                                    ),
+                                )
+                            }
+                            TimePickerStyle(
+                                hourValue = setPostDataViewModel.gatheringHour,
+                                minuteValue = setPostDataViewModel.gatheringMinute,
+                                onHourValueChange = { setPostDataViewModel.onHourChanged(it) },
+                                onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) }
+                            )
+                        }
+                        Text(
+                            text = "모임 장소",
+                            color = Color(0xFF636363),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
                 }
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextButton(onClick = {
-                    setPostDataViewModel.datePickerPopupState = true
-                }) {
-                    Text(
-                        text = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(
-                            setPostDataViewModel.date
-                        ),
-                    )
-                }
-                TimePickerStyle(
-                    hourValue = setPostDataViewModel.gatheringHour,
-                    minuteValue = setPostDataViewModel.gatheringMinute,
-                    onHourValueChange = { setPostDataViewModel.onHourChanged(it) },
-                    onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) }
-                )
-            }
-            Text(
-                text = "모임 장소",
-                color = Color(0xFF636363),
-                style = MaterialTheme.typography.labelMedium,
-            )
             Text(
                 text = "모임 태그",
                 color = Color(0xFF636363),
@@ -223,7 +301,9 @@ fun SetPostDataScreen(
                         if (!setPostDataViewModel.isUploading) {
                             if (!setPostDataViewModel.validateGatheringInfo()) {
                                 setPostDataViewModel.showSnackbar("모임 정보가 부족합니다.")
-                            } else {
+                            } else if (homeViewModel.setPostDataState.first == Action.ADD) {
+                                setPostDataViewModel.uploadPostInfoToFirestore(onDismiss)
+                            } else { // homeViewModel.setPostDataState.first == Action.MODIFY
                                 setPostDataViewModel.updatePostInfoToFirestore(onDismiss)
                             }
                         }

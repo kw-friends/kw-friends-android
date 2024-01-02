@@ -36,9 +36,11 @@ class SetPostDataViewModel : ViewModel() {
     var gatheringPromoterUID by mutableStateOf("")
     var gatheringPromoter by mutableStateOf("")
 
+    var gatheringTimeLocationUse by mutableStateOf(false)
+
     var gatheringTime by mutableLongStateOf(0L)
     var gatheringTimeValidation by mutableStateOf(false)
-    var date by mutableLongStateOf(0L)
+    var gatheringDate by mutableLongStateOf(0L)
     var gatheringHour by mutableStateOf("")
     var gatheringMinute by mutableStateOf("")
     var gatheringTimeMessage by mutableStateOf("")
@@ -69,7 +71,6 @@ class SetPostDataViewModel : ViewModel() {
     }
 
     fun initPostData(postDetail: PostDetail?, state: Action) {
-        date = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
         Log.d("actionState", state.toString())
 
         if (state == Action.MODIFY && postDetail != null) {
@@ -94,14 +95,18 @@ class SetPostDataViewModel : ViewModel() {
                     .toMutableMap()
 
             val time = Instant.ofEpochMilli(postDetail.gatheringTime).atZone(ZoneId.systemDefault())
+            gatheringDate = gatheringTime
             gatheringHour = DateTimeFormatter.ofPattern("HH").format(time).toString()
             gatheringMinute = DateTimeFormatter.ofPattern("mm").format(time).toString()
-            Log.d("dateInit", date.toString())
+            Log.d("dateInit", gatheringDate.toString())
             validateGatheringTime()
 
+            gatheringTimeLocationUse = gatheringTime != 0L
         }
 
         if (state == Action.ADD) {
+            gatheringDate =
+                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
             gatheringPromoter = UserData.myInfo!!["name"].toString()
             gatheringTitle = ""
             gatheringTitleStatus = false
@@ -147,8 +152,8 @@ class SetPostDataViewModel : ViewModel() {
     }
 
     fun onDateChanged(time: Long) {
-        date = time
-        Log.d("dateValidator", date.toString())
+        gatheringDate = time
+        Log.d("dateValidator", gatheringDate.toString())
         validateGatheringTime()
     }
 
@@ -171,7 +176,7 @@ class SetPostDataViewModel : ViewModel() {
         }
 
         gatheringTime =
-            date + gatheringHour.toLong() * 3600000 + gatheringMinute.toLong() * 60000 - getTimeZoneOffset()
+            gatheringDate + gatheringHour.toLong() * 3600000 + gatheringMinute.toLong() * 60000 - getTimeZoneOffset()
         Log.d("gatheringTime", gatheringTime.toString())
         val liveDateTime =
             ZonedDateTime.now(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -196,10 +201,17 @@ class SetPostDataViewModel : ViewModel() {
     }
 
     fun validateGatheringInfo(): Boolean {
-        return (gatheringTitleStatus &&
-                gatheringDescriptionStatus &&
-                participantsRangeValidation &&
-                gatheringTimeValidation)
+        return if (gatheringTimeLocationUse) {
+            (gatheringTitleStatus &&
+                    gatheringDescriptionStatus &&
+                    participantsRangeValidation &&
+                    gatheringTimeValidation)
+        } else {
+            (gatheringTitleStatus &&
+                    gatheringDescriptionStatus &&
+                    participantsRangeValidation)
+        }
+
     }
 
     fun updateTagMap(tag: String) {
@@ -217,6 +229,10 @@ class SetPostDataViewModel : ViewModel() {
         Log.d("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.d("gatheringDescription", "gatheringDescription = $gatheringDescription")
         Log.d("participants", "participants = $participants")
+
+        if (!gatheringTimeLocationUse) {
+            gatheringTime = 0L
+        }
 
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {
@@ -254,6 +270,10 @@ class SetPostDataViewModel : ViewModel() {
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
         Log.w("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
         Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
+
+        if (!gatheringTimeLocationUse) {
+            gatheringTime = 0L
+        }
 
         if (validateGatheringInfo()) { //항상 true?
             viewModelScope.launch {

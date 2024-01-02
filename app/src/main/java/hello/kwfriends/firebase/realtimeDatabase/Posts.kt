@@ -150,6 +150,19 @@ object Post {
         return postList
     }
 
+    suspend fun deletePost(postID: String) {
+        val result = suspendCoroutine<Boolean> { continuation ->
+            database.reference.child("/posts/$postID").setValue(null)
+                .addOnSuccessListener {
+                    Log.d("deletePost", "postId \"${postID}\" 삭제 완료")
+                    continuation.resume(true)
+                }.addOnFailureListener { e ->
+                    Log.d("deletePost", "postId \"${postID}\" 삭제 실패: $e")
+                    continuation.resume(false)
+                }
+        }
+    }
+
 
     suspend fun upload(postData: Map<String, Any>) {
         val key = database.reference.child("posts").push().key

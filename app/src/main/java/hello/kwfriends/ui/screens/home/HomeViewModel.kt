@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Continuation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.Tags.Tags
@@ -58,6 +59,12 @@ class HomeViewModel : ViewModel() {
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
+    // 사용자 조작 확인 다이얼로그
+    var finalCheckState by mutableStateOf(false)
+    var finalCheckTitle by mutableStateOf("")
+    var finalCheckBody by mutableStateOf("")
+    var onContinueAction by mutableStateOf({})
+
     //포스트 신고 텍스트 리스트
     val postReportTextList by mutableStateOf(
         listOf(
@@ -71,6 +78,7 @@ class HomeViewModel : ViewModel() {
             "욕설/비하"
         )
     )
+
     //유저 신고 텍스트 리스트
     val userReportTextList by mutableStateOf(
         listOf(
@@ -122,11 +130,20 @@ class HomeViewModel : ViewModel() {
             postReportDialogState = false to postReportDialogState.second
             Report.postReport(
                 postID = postReportDialogState.second,
-                postProviderID = posts.find { it.postID == (postReportDialogState.second) }?.gatheringPromoterUID ?: "unknown",
+                postProviderID = posts.find { it.postID == (postReportDialogState.second) }?.gatheringPromoterUID
+                    ?: "unknown",
                 reporterID = UserAuth.fa.currentUser!!.uid,
                 reason = reason
             )
             postReportDialogState = false to ""
+        }
+    }
+
+    fun postDelete(postID: String) {
+        viewModelScope.launch {
+            Post.deletePost(postID)
+            finalCheckPopupSet(title = "", body = "", onContinueAction = {})
+            postInfoPopupState = false to ""
         }
     }
 
@@ -135,7 +152,7 @@ class HomeViewModel : ViewModel() {
             userReportDialogState = false to userReportDialogState.second
             Report.userReport(
                 uid = userReportDialogState.second,
-                reporterID = Firebase.auth.currentUser?.uid?:"unknown",
+                reporterID = Firebase.auth.currentUser?.uid ?: "unknown",
                 reason = reason,
             )
             downlodData(userReportDialogState.second)
@@ -183,6 +200,16 @@ class HomeViewModel : ViewModel() {
         if (!isSearching) {
             isSearching = true
         }
+    }
+
+    fun finalCheckPopupSet(
+        title: String,
+        body: String,
+        onContinueAction: () -> Unit
+    ) {
+        finalCheckTitle = title
+        finalCheckBody = body
+        this.onContinueAction = onContinueAction
     }
 
     fun postAdded(postData: PostDetail, postID: String) {
