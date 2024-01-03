@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -30,9 +30,12 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,7 +63,7 @@ import hello.kwfriends.ui.screens.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PostInfoScreen(
     postDetail: PostDetail,
@@ -86,169 +88,179 @@ fun PostInfoScreen(
         previousParticipants.value.addAll(postDetail.participants.keys)
     }
 
-    Box(
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFBFF))
-    ) {
-        //top start
-        Row(
-            modifier = Modifier.align(Alignment.TopStart),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = onDismiss
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "back button"
-                )
-            }
-            Text(
-                text = "모임 상세정보",
-                style = MaterialTheme.typography.titleMedium,
-                fontFamily = FontFamily.Default
-            )
-        }
-
-        //top end
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.TopEnd)
-                .wrapContentSize(Alignment.TopEnd)
-        ) {
-            IconButton(
-                onClick = { menuExpanded = true }
-            ) {
-                Icon(Icons.Default.MoreVert, contentDescription = "report menu")
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("신고") },
-                    enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid) && postDetail.gatheringPromoterUID != Firebase.auth.currentUser!!.uid,
-                    onClick = {
-                        menuExpanded = false
-                        onPostReport()
-                    },
-                    trailingIcon = {
-                        if (postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid)) {
-                            Icon(
-                                Icons.Default.Check,
-                                tint = Color.Gray,
-                                contentDescription = "check icon"
+            .background(Color(0xFFFFFBFF)),
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = onDismiss
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "back button"
+                        )
+                    }
+                },
+                title = {
+                    Text(
+                        text = "모임 상세정보",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.W600
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.MoreVert,
+                            contentDescription = "report menu",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "신고",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid) && postDetail.gatheringPromoterUID != Firebase.auth.currentUser!!.uid,
+                            onClick = {
+                                menuExpanded = false
+                                onPostReport()
+                            },
+                            trailingIcon = {
+                                if (postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid)) {
+                                    Icon(
+                                        Icons.Default.Check,
+                                        tint = Color.Gray,
+                                        contentDescription = "check icon"
+                                    )
+                                }
+                            }
+                        )
+                        if (postDetail.gatheringPromoterUID == Firebase.auth.currentUser!!.uid) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "모임 삭제",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                },
+                                onClick = { onPostDelete() }
                             )
                         }
                     }
-                )
-                if (postDetail.gatheringPromoterUID == Firebase.auth.currentUser!!.uid) {
-                    DropdownMenuItem(
-                        text = { Text("모임 삭제") },
-                        onClick = { onPostDelete() }
-                    )
                 }
-            }
+            )
         }
+    ) { it ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
+                .padding(it)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            //top
-            Row(
+            Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable {
-                        homeViewModel.userInfoPopupState = true to postDetail.gatheringPromoterUID
-                    }
+                    .padding(horizontal = 14.dp)
             ) {
-                AsyncImage(
-                    model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]
-                        ?: R.drawable.profile_default_image,
-                    placeholder = painterResource(id = R.drawable.profile_default_image),
-                    contentDescription = "gathering promoter's profile image",
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .border(0.5.dp, Color.Gray, CircleShape),
-                    contentScale = ContentScale.Crop,
-                )
-                Column {
-                    Text(
-                        text = UserData.usersDataMap[postDetail.gatheringPromoterUID]?.get("name")
-                            ?.toString() ?: "unknown",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontFamily = FontFamily.Default,
-                        fontWeight = FontWeight(500)
-                    )
+                        .fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable {
+                                homeViewModel.userInfoPopupState =
+                                    true to postDetail.gatheringPromoterUID
+                            }) {
+                        AsyncImage(
+                            model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]
+                                ?: R.drawable.profile_default_image,
+                            placeholder = painterResource(id = R.drawable.profile_default_image),
+                            contentDescription = "gathering promoter's profile image",
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .border(0.5.dp, Color.Gray, CircleShape),
+                            contentScale = ContentScale.Crop,
+                        )
+                        Spacer(Modifier.size(8.dp))
+                        Text(
+                            text = UserData.usersDataMap[postDetail.gatheringPromoterUID]?.get("name")
+                                ?.toString() ?: "unknown",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight(500)
+                        )
+                    }
                     Text(
                         text = SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(
                             postDetail.timestamp
                         ),
                         maxLines = 1,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
-                        color = Color.Gray
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray,
                     )
                 }
+                Text(
+                    text = postDetail.gatheringTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight(600)
+                )
+                Text(
+                    text = postDetail.gatheringDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
-            Spacer(Modifier.height(15.dp))
-            Text(
-                text = postDetail.gatheringTitle,
-                style = MaterialTheme.typography.titleMedium,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight(600)
-            )
-            Spacer(Modifier.height(15.dp))
-            Text(
-                text = postDetail.gatheringDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                fontFamily = FontFamily.Default
-            )
-            FlowRow(modifier = Modifier.padding(top = 20.dp)) {
-                postDetail.gatheringTags.forEach {
-                    Text(
-                        text = "#${it}",
-                        modifier = Modifier.padding(end = 4.dp),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
-                        color = Color.Gray
-                    )
-                }
-            }
-
-            //bottom
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Bottom
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 14.dp)
             ) {
+                FlowRow(modifier = Modifier.padding(top = 20.dp)) {
+                    postDetail.gatheringTags.forEach {
+                        Text(
+                            text = "#${it}",
+                            modifier = Modifier.padding(end = 4.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray
+                        )
+                    }
+                }
                 if (postDetail.gatheringTime != 0L) {
                     Text(
                         text = "마감 기한:  ${homeViewModel.dateTimeFormat(postDetail.gatheringTime)}",
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(400)
                     )
                 } else {
                     Text(
                         text = "마감 기한이 정해지지 않았습니다",
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
                         fontWeight = FontWeight(400)
                     )
                 }
                 Divider(
-                    modifier = Modifier.padding(vertical = 20.dp),
+                    modifier = Modifier.padding(vertical = 10.dp),
                     color = Color.Gray,
                     thickness = 0.5.dp,
                 )
                 Text(
                     text = "참여 인원  ${postDetail.participants.size}/${postDetail.maximumParticipants}",
                     style = MaterialTheme.typography.bodySmall,
-                    fontFamily = FontFamily.Default,
                     fontWeight = FontWeight(400)
                 )
                 AnimatedVisibility(visible = postDetail.participants.isNotEmpty()) {
@@ -268,7 +280,8 @@ fun PostInfoScreen(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
                                         .clickable {
-                                            homeViewModel.userInfoPopupState = true to it.key
+                                            homeViewModel.userInfoPopupState =
+                                                true to it.key
                                         }
                                         .padding(vertical = 5.dp, horizontal = 2.dp)
                                 ) {
@@ -291,14 +304,12 @@ fun PostInfoScreen(
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontFamily = FontFamily.Default,
+                                        style = MaterialTheme.typography.labelMedium,
                                     )
                                     if (it.key == postDetail.gatheringPromoterUID)
                                         Text(
                                             text = "모임 주최자",
                                             style = MaterialTheme.typography.labelSmall,
-                                            fontFamily = FontFamily.Default,
                                         )
                                 }
                             }
@@ -306,13 +317,10 @@ fun PostInfoScreen(
                     }
                 }
                 Spacer(Modifier.height(30.dp))
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     enjoyButton()
                 }
-
+                Spacer(modifier = Modifier.size(48.dp))
             }
         }
     }

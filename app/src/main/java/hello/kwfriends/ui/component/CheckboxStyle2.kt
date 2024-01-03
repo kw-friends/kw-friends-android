@@ -11,35 +11,33 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun CheckboxStyle2(
     modifier: Modifier = Modifier,
-    clickablePadding: Dp = 0.dp,
+    verticalPadding: Dp = 0.dp,
     text: String,
     textColor: Color,
-    fontSize: TextUnit = 15.sp,
-    checkBoxSize: Dp = 15.dp,
+    checkBoxSize: Dp = 16.dp,
     checked: Boolean,
     onClicked: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.clickable { onClicked() }.padding(vertical = clickablePadding)
+        modifier = modifier
+            .clickable { onClicked() }
+            .padding(vertical = verticalPadding)
     ) {
         Box {
             Spacer(
@@ -60,14 +58,11 @@ fun CheckboxStyle2(
                     .size(checkBoxSize)
             )
         }
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = text,
             color = textColor,
-            style = TextStyle(
-                fontWeight = FontWeight(300),
-                fontSize = fontSize,
-            ),
+            style = MaterialTheme.typography.labelMedium,
             textAlign = TextAlign.Center
         )
     }

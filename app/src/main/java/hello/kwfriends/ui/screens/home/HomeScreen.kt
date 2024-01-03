@@ -24,6 +24,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -122,12 +123,12 @@ fun HomeScreen(
         //플로팅 버튼
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                text = { Text(text = "모임 생성") },
-                icon = { Icon(Icons.Default.Add, null) },
+                text = { Text(text = "모임 생성", style = MaterialTheme.typography.bodyMedium) },
+                icon = { Icon(Icons.Default.Add, "모임 생성") },
                 onClick = {
                     homeViewModel.setPostDataState = Action.ADD to ""
                 },
-                modifier = Modifier.padding(bottom = 35.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
     ) { paddingValues ->
@@ -258,9 +259,7 @@ fun HomeScreen(
                                 viewModel = homeViewModel
                             )
                         }
-                    }
-                    //검색중 아닐때는 모든 모임 목록 표시
-                    else {
+                    } else { // 검색중 아닐때는 모든 모임 목록 표시
                         FindGatheringItemList(
                             homeViewModel.filter(homeViewModel.posts),
                             viewModel = homeViewModel
@@ -275,7 +274,6 @@ fun HomeScreen(
                 )
             }
         }
-
     }
 }
 

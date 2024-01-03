@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,9 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -38,6 +40,7 @@ import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserIgnoreListPopup(
     state: Boolean,
@@ -47,7 +50,7 @@ fun UserIgnoreListPopup(
     removeUserIgnore: (String) -> Unit,
     onUserInfoPopup: (String) -> Unit
 ) {
-    if(state) {
+    if (state) {
         LaunchedEffect(true) {
             UserDataStore.userIgnoreList.forEach {
                 downloadUri(it)
@@ -57,34 +60,34 @@ fun UserIgnoreListPopup(
         Popup(
             onDismissRequest = onDismiss
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xFFFFFBFF))
-            ) {
-                //top start
-                Row(
-                    modifier = Modifier.align(Alignment.TopStart),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onDismiss
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBackIosNew,
-                            contentDescription = "back button"
-                        )
-                    }
-                    Text(
-                        text = "차단 유저 목록",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontFamily = FontFamily.Default
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = "차단 유저 목록",
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { onDismiss() },
+                                modifier = Modifier.size(48.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBackIosNew,
+                                    contentDescription = "back button",
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
+                        }
                     )
                 }
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
+                        .padding(it)
                 ) {
                     //top
                     UserDataStore.userIgnoreList.forEach { uid ->
@@ -125,7 +128,7 @@ fun UserIgnoreListPopup(
                                 Modifier
                                     .align(Alignment.CenterEnd)
                                     .clip(RoundedCornerShape(10.dp))
-                                    .clickable{ removeUserIgnore(uid) }
+                                    .clickable { removeUserIgnore(uid) }
                             )
                         }
                     }

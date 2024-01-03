@@ -1,18 +1,13 @@
 package hello.kwfriends.ui.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -31,7 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,23 +45,13 @@ fun HomeTopAppBar(
     focusRequester: FocusRequester
 ) {
     TopAppBar(
-        modifier = Modifier
-            .height(56.dp),
         title = {
-            Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                AnimatedVisibility(
-                    visible = !isSearching,
-                    enter = fadeIn(),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 100))
-                ) {
-                    Text(
-                        text = "모임 찾기",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily.Default,
-                        maxLines = 1,
-                    )
-                }
-            }
+            Text(
+                text = "모임 찾기",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.W600,
+                maxLines = 1
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
 //            containerColor = Color(0xFFE2A39B)
@@ -75,11 +60,11 @@ fun HomeTopAppBar(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End,
-                modifier = Modifier.height(56.dp)
             ) {
                 if (isSearching) {
                     IconButton(
                         onClick = clickBackButton,
+                        modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
@@ -109,6 +94,7 @@ fun HomeTopAppBar(
                         onClick = clickSearchButton,
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
+                            .size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -120,6 +106,7 @@ fun HomeTopAppBar(
                 }
                 IconButton(
                     onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
@@ -129,8 +116,6 @@ fun HomeTopAppBar(
                     )
                 }
             }
-
-
         },
     )
 }

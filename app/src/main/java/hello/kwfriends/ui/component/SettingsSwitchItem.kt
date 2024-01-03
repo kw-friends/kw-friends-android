@@ -25,11 +25,11 @@ fun SettingsSwitchItem(
     modifier: Modifier = Modifier,
     title: String,
     checked: Boolean,
-    onCheckedChange:  ((Boolean) -> Unit)?,
+    onCheckedChange: ((Boolean) -> Unit)?,
     description: String = "",
     isUpperLine: Boolean = true
 ) {
-    if(isUpperLine){
+    if (isUpperLine) {
         Divider(
             color = Color.LightGray,
             thickness = 0.5.dp,
@@ -40,16 +40,19 @@ fun SettingsSwitchItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
+            .padding(horizontal = 4.dp)
     ) {
         Column {
-            Box(modifier = Modifier.padding(vertical = 15.dp)) {
-                Text(text = title, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default, lineHeight = 1.sp)
+            Box(modifier = Modifier.padding(vertical = 4.dp)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    lineHeight = 1.sp
+                )
                 if (description != "") {
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
                         color = Color.DarkGray,
                         modifier = Modifier
                             .padding(top = 23.dp)
@@ -70,7 +73,7 @@ fun SettingsSwitchItem(
 
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
 @Composable
-fun SettingsSwitchItemPreview(){
+fun SettingsSwitchItemPreview() {
     SettingsSwitchItem(
         title = "Preview",
         checked = true,

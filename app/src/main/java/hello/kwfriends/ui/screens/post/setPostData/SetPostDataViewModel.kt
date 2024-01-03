@@ -95,7 +95,9 @@ class SetPostDataViewModel : ViewModel() {
                     .toMutableMap()
 
             val time = Instant.ofEpochMilli(postDetail.gatheringTime).atZone(ZoneId.systemDefault())
-            gatheringDate = gatheringTime
+            gatheringDate =
+                if (gatheringTime == 0L) LocalDate.now().atStartOfDay(ZoneId.systemDefault())
+                    .toInstant().toEpochMilli() else gatheringTime
             gatheringHour = DateTimeFormatter.ofPattern("HH").format(time).toString()
             gatheringMinute = DateTimeFormatter.ofPattern("mm").format(time).toString()
             Log.d("dateInit", gatheringDate.toString())

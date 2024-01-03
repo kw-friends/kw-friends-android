@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import hello.kwfriends.R
 
 object AppFont {
@@ -30,7 +31,10 @@ val Typography = Typography(
     headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = AppFont.defaultFontFamily),
     headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = AppFont.defaultFontFamily),
 
-    titleLarge = defaultTypography.titleLarge.copy(fontFamily = AppFont.defaultFontFamily),
+    titleLarge = defaultTypography.titleLarge.copy(
+        fontFamily = AppFont.defaultFontFamily,
+        fontSize = 24.sp
+    ),
     titleMedium = defaultTypography.titleMedium.copy(fontFamily = AppFont.defaultFontFamily),
     titleSmall = defaultTypography.titleSmall.copy(fontFamily = AppFont.defaultFontFamily),
 

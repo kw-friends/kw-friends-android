@@ -24,7 +24,7 @@ fun FinalCheckScreen(
             )
         },
         title = {
-            Text(text = title, style = MaterialTheme.typography.titleLarge)
+            Text(text = title, style = MaterialTheme.typography.titleMedium)
         },
         text = {
             Text(text = body, style = MaterialTheme.typography.bodyMedium)

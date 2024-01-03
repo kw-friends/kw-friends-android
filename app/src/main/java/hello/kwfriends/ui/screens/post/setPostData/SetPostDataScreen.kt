@@ -108,7 +108,6 @@ fun SetPostDataScreen(
             Text(
                 text = if (state == Action.MODIFY) "내용 수정∙편집" else "새 모임 생성",
                 style = MaterialTheme.typography.titleMedium,
-                fontFamily = FontFamily.Default
             )
         }
 

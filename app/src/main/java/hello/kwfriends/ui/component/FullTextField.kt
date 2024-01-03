@@ -99,7 +99,7 @@ fun FullTextField(
             .then(
                 Modifier
                     .height(IntrinsicSize.Min)
-                    .heightIn(min = 48.dp)
+                    .heightIn(min = 40.dp)
             )
             .onFocusChanged {
                 if (it.isFocused && canValueChange) {
@@ -118,11 +118,7 @@ fun FullTextField(
             },
         interactionSource = interactionSource,
         singleLine = isSingleLine,
-        textStyle = TextStyle(
-            fontFamily = FontFamily.Default,
-            color = textColor,
-            textAlign = TextAlign.Start,
-        ),
+        textStyle = MaterialTheme.typography.bodyMedium,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = if (isPassword) {
             KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction)
