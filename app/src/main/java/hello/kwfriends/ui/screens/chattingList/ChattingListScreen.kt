@@ -76,6 +76,7 @@ fun ChattingListScreen(
                             fontFamily = FontFamily.Default,
                             fontWeight = FontWeight(600)
                         )
+                        Spacer(modifier = Modifier.height(3.dp))
                         Text(
                             text = "새해 복 많이받으세요~!",
                             style = MaterialTheme.typography.bodyLarge,
