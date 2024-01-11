@@ -31,13 +31,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -56,6 +56,7 @@ fun FullTextField(
     isError: Boolean = false,
     errorMessage: String = "",
     style: TextStyle = MaterialTheme.typography.bodyMedium,
+    bottomPadding: Dp = 0.dp
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -115,7 +116,8 @@ fun FullTextField(
                     textColor = Color(0xFF4B4B4B)
                     placeholderColor = Color(0xFF4B4B4B)
                 }
-            },
+            }
+            .padding(bottom = bottomPadding),
         interactionSource = interactionSource,
         singleLine = isSingleLine,
         textStyle = MaterialTheme.typography.bodyMedium,

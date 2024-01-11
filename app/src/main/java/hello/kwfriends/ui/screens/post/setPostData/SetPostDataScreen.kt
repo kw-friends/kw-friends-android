@@ -32,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -73,7 +73,8 @@ fun SetPostDataScreen(
 ) {
 
     val scrollState = rememberScrollState()
-    var additionalInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringTimeLocationUse) }
+    var timeInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringTimeUse) }
+    var locationInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringLocationUse) }
 
     DatePickerPopup(
         state = setPostDataViewModel.datePickerPopupState,
@@ -83,7 +84,8 @@ fun SetPostDataScreen(
 
     LaunchedEffect(true) {
         setPostDataViewModel.initPostData(postDetail = postDetail, state = state)
-        additionalInfoVisibility = setPostDataViewModel.gatheringTimeLocationUse
+        timeInfoVisibility = setPostDataViewModel.gatheringTimeUse
+        locationInfoVisibility = setPostDataViewModel.gatheringLocationUse
     }
 
 
@@ -132,7 +134,7 @@ fun SetPostDataScreen(
                 value = setPostDataViewModel.gatheringTitle,
                 onValueChange = { setPostDataViewModel.gatheringTitleChange(it) },
                 imeAction = ImeAction.Next,
-                isError = !setPostDataViewModel.gatheringTitleStatus,
+                isError = !setPostDataViewModel.gatheringTitleValidation,
                 externalTitle = "모임 제목",
                 errorMessage = "필수 항목",
             )
@@ -143,7 +145,7 @@ fun SetPostDataScreen(
                 isSingleLine = false,
                 maxLines = 6,
                 imeAction = ImeAction.Default,
-                isError = !setPostDataViewModel.gatheringDescriptionStatus,
+                isError = !setPostDataViewModel.gatheringDescriptionValidation,
                 externalTitle = "모임 설명",
                 errorMessage = "필수 항목",
             )
@@ -159,7 +161,7 @@ fun SetPostDataScreen(
                     color = Color(0xFF636363),
                     style = MaterialTheme.typography.labelMedium,
                 )
-                if (!setPostDataViewModel.participantsRangeValidation) {
+                if (!setPostDataViewModel.maximumParticipantsValidation) {
                     Text(
                         text = "2명 이상, 100명 이하의 인원 수를 입력해 주세요.",
                         color = Color(0xFFFF0000),
@@ -175,99 +177,167 @@ fun SetPostDataScreen(
             Column(
                 modifier = Modifier
                     .padding(top = 14.dp)
-                    .fillMaxWidth()
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(Color(0xFFFCEEEE))
-                    .clickable {
-                        additionalInfoVisibility = !additionalInfoVisibility
-                        setPostDataViewModel.gatheringTimeLocationUse =
-                            !setPostDataViewModel.gatheringTimeLocationUse
-                    }
             ) {
-                AnimatedContent(
-                    targetState = additionalInfoVisibility,
-                    transitionSpec = {
-                        if (additionalInfoVisibility) {
-                            (slideInHorizontally { height -> height } + fadeIn()).togetherWith(
-                                slideOutHorizontally { height -> -height } + fadeOut())
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickable {
+                            timeInfoVisibility = !timeInfoVisibility
+                            setPostDataViewModel.gatheringTimeUse =
+                                !setPostDataViewModel.gatheringTimeUse
+                        }
+                ) {
+                    AnimatedContent(
+                        targetState = timeInfoVisibility,
+                        transitionSpec = {
+                            if (timeInfoVisibility) {
+                                (slideInHorizontally { height -> height } + fadeIn()).togetherWith(
+                                    slideOutHorizontally { height -> -height } + fadeOut())
+                            } else {
+                                (slideInHorizontally { height -> -height } + fadeIn()).togetherWith(
+                                    slideOutHorizontally { height -> height } + fadeOut())
+                            }.using(
+                                SizeTransform(clip = false)
+                            )
+                        }, label = "additionalInfoVisibility = $timeInfoVisibility"
+                    ) { targetState ->
+                        if (targetState) {
+                            Text(
+                                text = "좋아요! 시간 정보를 추가해 주세요.", // 좋아요! 시간∙위치 정보를 추가해 주세요.
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = W600,
+                                modifier = Modifier.padding(horizontal = 7.dp)
+                            )
                         } else {
-                            (slideInHorizontally { height -> -height } + fadeIn()).togetherWith(
-                                slideOutHorizontally { height -> height } + fadeOut())
-                        }.using(
-                            SizeTransform(clip = false)
-                        )
-                    }, label = "additionalInfoVisibility = $additionalInfoVisibility"
-                ) { targetState ->
-                    if (targetState) {
-                        Text(
-                            text = "좋아요! 시간∙위치 정보를 추가해 주세요.",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = W600,
-                            modifier = Modifier.padding(horizontal = 7.dp)
-                        )
-                    } else {
-                        Text(
-                            text = "시간∙위치 정보를 추가할까요?",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = W600,
-                            modifier = Modifier.padding(horizontal = 7.dp)
-                        )
+                            Text(
+                                text = "시간 정보를 추가할까요?",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = W600,
+                                modifier = Modifier.padding(horizontal = 7.dp)
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(timeInfoVisibility) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Bottom,
+                                modifier = Modifier
+                                    .height(IntrinsicSize.Min)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "모임 일시",
+                                    color = Color(0xFF636363),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                                if (!setPostDataViewModel.gatheringTimeValidation) {
+                                    Text(
+                                        text = setPostDataViewModel.gatheringTimeMessage,
+                                        color = Color(0xFFFF0000),
+                                        style = MaterialTheme.typography.labelSmall,
+                                    )
+                                }
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextButton(onClick = {
+                                    setPostDataViewModel.datePickerPopupState = true
+                                }) {
+                                    Text(
+                                        text = SimpleDateFormat(
+                                            "yyyy/MM/dd",
+                                            Locale.getDefault()
+                                        ).format(
+                                            setPostDataViewModel.gatheringDate
+                                        ),
+                                    )
+                                }
+                                TimePickerStyle(
+                                    hourValue = setPostDataViewModel.gatheringHour,
+                                    minuteValue = setPostDataViewModel.gatheringMinute,
+                                    onHourValueChange = { setPostDataViewModel.onHourChanged(it) },
+                                    onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) }
+                                )
+                            }
+                        }
                     }
                 }
 
-                AnimatedVisibility(additionalInfoVisibility) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 7.dp)
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.Bottom,
-                            modifier = Modifier
-                                .height(IntrinsicSize.Min)
-                                .fillMaxWidth()
-                        ) {
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .padding(horizontal = 8.dp)
+                )
+
+                // 모임 위치 입력
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clickable {
+                            locationInfoVisibility = !locationInfoVisibility
+                            setPostDataViewModel.gatheringLocationUse =
+                                !setPostDataViewModel.gatheringLocationUse
+                        }
+                ) {
+                    AnimatedContent(
+                        targetState = locationInfoVisibility,
+                        transitionSpec = {
+                            if (locationInfoVisibility) {
+                                (slideInHorizontally { height -> height } + fadeIn()).togetherWith(
+                                    slideOutHorizontally { height -> -height } + fadeOut())
+                            } else {
+                                (slideInHorizontally { height -> -height } + fadeIn()).togetherWith(
+                                    slideOutHorizontally { height -> height } + fadeOut())
+                            }.using(
+                                SizeTransform(clip = false)
+                            )
+                        }, label = "additionalInfoVisibility = $locationInfoVisibility"
+                    ) { targetState ->
+                        if (targetState) {
                             Text(
-                                text = "모임 일시",
-                                color = Color(0xFF636363),
-                                style = MaterialTheme.typography.labelMedium,
+                                text = "좋아요! 위치 정보를 추가해 주세요.", // 좋아요! 시간∙위치 정보를 추가해 주세요.
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = W600,
+                                modifier = Modifier.padding(horizontal = 7.dp)
                             )
-                            if (!setPostDataViewModel.gatheringTimeValidation) {
-                                Text(
-                                    text = setPostDataViewModel.gatheringTimeMessage,
-                                    color = Color(0xFFFF0000),
-                                    style = MaterialTheme.typography.labelSmall,
-                                )
-                            }
+                        } else {
+                            Text(
+                                text = "위치 정보를 추가할까요?",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = W600,
+                                modifier = Modifier.padding(horizontal = 7.dp)
+                            )
                         }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+                    }
+
+                    AnimatedVisibility(locationInfoVisibility) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
                         ) {
-                            TextButton(onClick = {
-                                setPostDataViewModel.datePickerPopupState = true
-                            }) {
-                                Text(
-                                    text = SimpleDateFormat(
-                                        "yyyy/MM/dd",
-                                        Locale.getDefault()
-                                    ).format(
-                                        setPostDataViewModel.gatheringDate
-                                    ),
-                                )
-                            }
-                            TimePickerStyle(
-                                hourValue = setPostDataViewModel.gatheringHour,
-                                minuteValue = setPostDataViewModel.gatheringMinute,
-                                onHourValueChange = { setPostDataViewModel.onHourChanged(it) },
-                                onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) }
+                            FullTextField(
+                                value = setPostDataViewModel.gatheringLocation,
+                                onValueChange = { setPostDataViewModel.gatheringLocationChange(it) },
+                                imeAction = ImeAction.Next,
+                                isError = !setPostDataViewModel.gatheringLocationValidation,
+                                externalTitle = "모임 위치",
+                                errorMessage = "모임 정보를 입력해 주세요.",
+                                bottomPadding = 10.dp
                             )
                         }
-                        Text(
-                            text = "모임 장소",
-                            color = Color(0xFF636363),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
                     }
                 }
             }

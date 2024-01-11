@@ -80,14 +80,17 @@ fun HomeScreen(
     )
     //검색창에 대한 포커스
     val focusRequester = remember { FocusRequester() }
+
     LaunchedEffect(!homeViewModel.isSearching) {
         focusRequester.requestFocus()
     }
+
     //두번눌러서 앱 종료에 필요한 코드
     var backPressedTime = 0L
     val startMain = remember { Intent(Intent.ACTION_MAIN) }
     startMain.addCategory(Intent.CATEGORY_HOME)
     startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
     //뒤로 가기 버튼을 눌렀을 때 실행할 코드
     BackHandler {
         //검색 취소
@@ -104,8 +107,9 @@ fun HomeScreen(
             backPressedTime = System.currentTimeMillis()
         }
     }
+
     //태그 필터 리스트 스크롤 저장 변수
-    val scrollState = rememberScrollState()
+    val tagsHorizontalScrollState = rememberScrollState()
 
     Scaffold(
         //앱 바
@@ -228,7 +232,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(scrollState)
+                    .horizontalScroll(tagsHorizontalScrollState)
 //                .background(Color(0xFFE2A39B))
             ) {
                 Spacer(Modifier.width(12.dp))

@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -88,15 +87,4 @@ dependencies {// mode
     implementation("io.coil-kt:coil-compose:2.5.0") //for Coil
     implementation("androidx.core:core-splashscreen:1.0.1") //for splash screen
     implementation("com.google.firebase:firebase-database")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-
-    // Google Map API
-    implementation("com.google.maps.android:maps-compose:4.3.0")
-
-    // Optionally, you can include the Compose utils library for Clustering,
-    // Street View metadata checks, etc.
-    implementation("com.google.maps.android:maps-compose-utils:4.3.0")
-
-    // Optionally, you can include the widgets library for ScaleBar, etc.
-    implementation("com.google.maps.android:maps-compose-widgets:4.3.0")
 }

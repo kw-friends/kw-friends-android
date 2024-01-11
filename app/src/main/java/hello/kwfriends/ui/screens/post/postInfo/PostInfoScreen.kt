@@ -240,6 +240,7 @@ fun PostInfoScreen(
                         )
                     }
                 }
+
                 if (postDetail.gatheringTime != 0L) {
                     Text(
                         text = "마감 기한:  ${homeViewModel.dateTimeFormat(postDetail.gatheringTime)}",
@@ -253,16 +254,33 @@ fun PostInfoScreen(
                         fontWeight = FontWeight(400)
                     )
                 }
+
+                if (postDetail.gatheringLocation != "") {
+                    Text(
+                        text = "모임 장소:  ${postDetail.gatheringLocation}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight(400)
+                    )
+                } else {
+                    Text(
+                        text = "모임 장소가 정해지지 않았습니다",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight(400)
+                    )
+                }
+
                 Divider(
                     modifier = Modifier.padding(vertical = 10.dp),
                     color = Color.Gray,
                     thickness = 0.5.dp,
                 )
+
                 Text(
                     text = "참여 인원  ${postDetail.participants.size}/${postDetail.maximumParticipants}",
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight(400)
                 )
+
                 AnimatedVisibility(visible = postDetail.participants.isNotEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -316,10 +334,13 @@ fun PostInfoScreen(
                         }
                     }
                 }
+
                 Spacer(Modifier.height(30.dp))
+
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     enjoyButton()
                 }
+
                 Spacer(modifier = Modifier.size(48.dp))
             }
         }
