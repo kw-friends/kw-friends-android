@@ -31,12 +31,12 @@ class SetPostDataViewModel : ViewModel() {
     var postID by mutableStateOf("")
 
     var gatheringTitle by mutableStateOf("")
-    var gatheringTitleStatus by mutableStateOf(false)
+    var gatheringTitleValidation by mutableStateOf(false)
 
     var gatheringPromoterUID by mutableStateOf("")
     var gatheringPromoter by mutableStateOf("")
 
-    var gatheringTimeLocationUse by mutableStateOf(false)
+    var gatheringTimeUse by mutableStateOf(false)
 
     var gatheringTime by mutableLongStateOf(0L)
     var gatheringTimeValidation by mutableStateOf(false)
@@ -45,13 +45,15 @@ class SetPostDataViewModel : ViewModel() {
     var gatheringMinute by mutableStateOf("")
     var gatheringTimeMessage by mutableStateOf("")
 
+    var gatheringLocationUse by mutableStateOf(false)
     var gatheringLocation by mutableStateOf("")
+    var gatheringLocationValidation by mutableStateOf(false)
 
     var maximumParticipants by mutableStateOf("")
-    var participantsRangeValidation by mutableStateOf(false)
+    var maximumParticipantsValidation by mutableStateOf(false)
 
     var gatheringDescription by mutableStateOf("")
-    var gatheringDescriptionStatus by mutableStateOf(false)
+    var gatheringDescriptionValidation by mutableStateOf(false)
 
     var participants by mutableStateOf<MutableMap<String, Boolean>>(mutableMapOf())
 
@@ -76,15 +78,15 @@ class SetPostDataViewModel : ViewModel() {
         if (state == Action.MODIFY && postDetail != null) {
             postID = postDetail.postID
             gatheringTitle = postDetail.gatheringTitle
-            gatheringTitleStatus = true
+            gatheringTitleValidation = true
             gatheringPromoterUID = postDetail.gatheringPromoterUID
             gatheringPromoter = UserData.myInfo!!["name"].toString()
             gatheringTime = postDetail.gatheringTime
-            gatheringLocation = ""
+            gatheringLocation = postDetail.gatheringLocation
             gatheringDescription = postDetail.gatheringDescription
-            gatheringDescriptionStatus = true
+            gatheringDescriptionValidation = true
             maximumParticipants = postDetail.maximumParticipants
-            participantsRangeValidation = true
+            maximumParticipantsValidation = true
             tagMap = tagMap.toMutableMap().apply {
                 Tags.list.forEach { tag ->
                     this[tag] = tag in postDetail.gatheringTags
@@ -103,7 +105,11 @@ class SetPostDataViewModel : ViewModel() {
             Log.d("dateInit", gatheringDate.toString())
             validateGatheringTime()
 
-            gatheringTimeLocationUse = gatheringTime != 0L
+            gatheringTimeUse = gatheringTime != 0L
+            gatheringLocationUse = gatheringLocation != ""
+
+            gatheringTimeValidation = gatheringTimeUse
+            gatheringLocationValidation = gatheringLocationUse
         }
 
         if (state == Action.ADD) {
@@ -111,14 +117,16 @@ class SetPostDataViewModel : ViewModel() {
                 LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
             gatheringPromoter = UserData.myInfo!!["name"].toString()
             gatheringTitle = ""
-            gatheringTitleStatus = false
+            gatheringTitleValidation = false
             gatheringTime = 0L
             gatheringTimeMessage = "입력칸이 비어있습니다."
+            gatheringTimeValidation = false
+            gatheringLocationValidation = false
             gatheringLocation = ""
             gatheringDescription = ""
-            gatheringDescriptionStatus = false
+            gatheringDescriptionValidation = false
             maximumParticipants = ""
-            participantsRangeValidation = false
+            maximumParticipantsValidation = false
             gatheringHour = ""
             gatheringMinute = ""
             tagMap = tagMap.toMutableMap().apply {
@@ -126,17 +134,20 @@ class SetPostDataViewModel : ViewModel() {
                     this[tag] = false
                 }
             }
+
+            gatheringTimeUse = false
+            gatheringLocationUse = false
         }
     }
 
     fun gatheringTitleChange(text: String) {
         gatheringTitle = text
-        gatheringTitleStatus = postValidation.isStrHasData(text)
+        gatheringTitleValidation = postValidation.isStrHasData(text)
     }
 
     fun gatheringDescriptionChange(text: String) {
         gatheringDescription = text
-        gatheringDescriptionStatus = postValidation.isStrHasData(text)
+        gatheringDescriptionValidation = postValidation.isStrHasData(text)
     }
 
     fun onHourChanged(hour: String) {
@@ -193,27 +204,26 @@ class SetPostDataViewModel : ViewModel() {
         }
     }
 
-    fun gatheringLocationChange() {
+    fun gatheringLocationChange(text: String) {
+        gatheringLocation = text
+        validateGatheringLocation()
+    }
 
+    fun validateGatheringLocation() {
+        gatheringLocationValidation = gatheringLocation != ""
     }
 
     fun maximumParticipantsChange(max: String) {
         maximumParticipants = max
-        participantsRangeValidation = postValidation.checkParticipantsRange("1", max)
+        maximumParticipantsValidation = postValidation.checkMaximumParticipantsRange(max)
     }
 
     fun validateGatheringInfo(): Boolean {
-        return if (gatheringTimeLocationUse) {
-            (gatheringTitleStatus &&
-                    gatheringDescriptionStatus &&
-                    participantsRangeValidation &&
-                    gatheringTimeValidation)
-        } else {
-            (gatheringTitleStatus &&
-                    gatheringDescriptionStatus &&
-                    participantsRangeValidation)
-        }
-
+        return gatheringTitleValidation && // 모임 제목
+                gatheringDescriptionValidation && // 모임 인원 범위
+                maximumParticipantsValidation && // 최대 인원
+                ((!gatheringTimeUse) || (gatheringTimeUse && gatheringTimeValidation)) && // 모임 시간
+                ((!gatheringLocationUse) || (gatheringLocationUse && gatheringLocationValidation)) // 모임 위치
     }
 
     fun updateTagMap(tag: String) {
@@ -226,13 +236,13 @@ class SetPostDataViewModel : ViewModel() {
         showSnackbar("모임 정보 업데이트 중...")
 
         Log.d("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
-        Log.d("NewPostViewModel", "gatheringTitle = $gatheringTitleStatus")
+        Log.d("NewPostViewModel", "gatheringTitle = $gatheringTitleValidation")
         Log.d("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
-        Log.d("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
+        Log.d("NewPostViewModel", "maximumMemberCount = $maximumParticipantsValidation")
         Log.d("gatheringDescription", "gatheringDescription = $gatheringDescription")
         Log.d("participants", "participants = $participants")
 
-        if (!gatheringTimeLocationUse) {
+        if (!gatheringTimeUse) {
             gatheringTime = 0L
         }
 
@@ -268,12 +278,12 @@ class SetPostDataViewModel : ViewModel() {
         showSnackbar("모임 생성 중...")
 
         Log.w("NewPostViewModel", "validateGatheringInfo = ${validateGatheringInfo()}")
-        Log.w("NewPostViewModel", "gatheringTitle = $gatheringTitleStatus")
+        Log.w("NewPostViewModel", "gatheringTitle = $gatheringTitleValidation")
         Log.w("NewPostViewModel", "gatheringPromoter = $gatheringPromoter")
-        Log.w("NewPostViewModel", "maximumMemberCount = $participantsRangeValidation")
+        Log.w("NewPostViewModel", "maximumMemberCount = $maximumParticipantsValidation")
         Log.w("gatheringDescription", "gatheringDescription = $gatheringDescription")
 
-        if (!gatheringTimeLocationUse) {
+        if (!gatheringTimeUse) {
             gatheringTime = 0L
         }
 
