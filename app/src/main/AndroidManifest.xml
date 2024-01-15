@@ -26,8 +26,8 @@
             </intent-filter>
 
             <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="${MAPS_API_KEY}" />
+                android:name="android.app.lib_name"
+                android:value="" />
         </activity>
         <activity
             android:name="hello.kwfriends.ui.main.MainActivity"
