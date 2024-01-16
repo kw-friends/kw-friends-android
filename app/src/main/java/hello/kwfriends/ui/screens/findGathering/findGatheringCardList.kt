@@ -13,13 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -41,46 +44,67 @@ fun GatheringListItem(
     postDetail: PostDetail,
     viewModel: HomeViewModel
 ) {
-    Column {
-        ListItem(
-            modifier = Modifier.clickable {
+    ListItem(
+        colors = ListItemDefaults.colors(
+            containerColor = Color(0xFFFAF3F3),
+        ),
+        modifier = Modifier
+            .padding(vertical = 4.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable {
                 viewModel.postInfoPopupState = true to postDetail.postID
             },
-            headlineContent = {
-                Column() {
-                    Text(
-                        postDetail.gatheringTitle,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight(500),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        postDetail.gatheringDescription.replace("\n", " "),
-                        maxLines = 2,
-                        style = MaterialTheme.typography.bodySmall.merge(
-                            TextStyle(
-                                platformStyle = PlatformTextStyle(
-                                    includeFontPadding = false
-                                )
+        headlineContent = {
+            Column {
+                Text(
+                    postDetail.gatheringTitle,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight(500),
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    postDetail.gatheringDescription.replace("\n", " "),
+                    maxLines = 2,
+                    style = MaterialTheme.typography.bodySmall.merge(
+                        TextStyle(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
                             )
-                        ),
-                        color = Color.DarkGray,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        )
+                    ),
+                    color = Color.DarkGray,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FlowRow(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(vertical = 8.dp)
                     ) {
-                        FlowRow(
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        ) {
+                        Text(
+                            text = SimpleDateFormat(
+                                "yyyy/MM/dd HH:mm",
+                                Locale.getDefault()
+                            ).format(
+                                postDetail.timestamp
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray,
+                        )
+                        if (postDetail.gatheringTags.isNotEmpty()) {
+                            Divider(
+                                color = Color.LightGray,
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .height(16.dp)
+                                    .width(1.dp)
+                                    .align(Alignment.CenterVertically)
+                            )
+                        }
+                        postDetail.gatheringTags.forEach {
                             Text(
-                                text = SimpleDateFormat(
-                                    "yyyy/MM/dd HH:mm",
-                                    Locale.getDefault()
-                                ).format(
-                                    postDetail.timestamp
-                                ),
+                                text = "#$it ",
                                 style = MaterialTheme.typography.labelSmall.merge(
                                     TextStyle(
                                         platformStyle = PlatformTextStyle(
@@ -90,72 +114,52 @@ fun GatheringListItem(
                                 ),
                                 color = Color.Gray,
                             )
-                            if (postDetail.gatheringTags.isNotEmpty()) {
-                                Divider(
-                                    color = Color.LightGray,
-                                    modifier = Modifier
-                                        .padding(horizontal = 4.dp)
-                                        .height(16.dp)
-                                        .width(1.dp)
-                                        .align(Alignment.CenterVertically)
-                                )
-                            }
-                            postDetail.gatheringTags.forEach {
-                                Text(
-                                    text = "#$it ",
-                                    style = MaterialTheme.typography.labelSmall.merge(
-                                        TextStyle(
-                                            platformStyle = PlatformTextStyle(
-                                                includeFontPadding = false
-                                            )
-                                        )
-                                    ),
-                                    color = Color.Gray,
-                                )
-                            }
                         }
-
                     }
+
                 }
-            },
-            trailingContent = { Text(text = "${postDetail.participants.count()}/${postDetail.maximumParticipants}") },
-        )
-    }
+            }
+        },
+        trailingContent = { Text(text = "${postDetail.participants.count()}/${postDetail.maximumParticipants}") },
+    )
 }
 
 
 @Composable
 fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
-    LazyColumn {
-        items(posts) { postData ->
-            if (
-                postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
-                    .toInt()
-                && postData.gatheringPromoterUID !in UserDataStore.userIgnoreList
-            ) { //신고 n개 이상이면 숨기기
-                GatheringListItem(
-                    postDetail = postData,
-                    viewModel = viewModel
-                )
+    Column(
+        modifier = Modifier.padding(horizontal = 10.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+        ) {
+            items(posts) { postData ->
+                if (
+                    postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
+                        .toInt()
+                    && postData.gatheringPromoterUID !in UserDataStore.userIgnoreList
+                ) { //신고 n개 이상이면 숨기기
+                    GatheringListItem(
+                        postDetail = postData,
+                        viewModel = viewModel
+                    )
+                }
             }
-            Divider(
-                modifier = Modifier.padding(horizontal = 5.dp),
-                color = Color.LightGray,
-                thickness = 0.5.dp,
-            )
-        }
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(96.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "KW Friends",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
+
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "KW Friends",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                }
             }
         }
     }
