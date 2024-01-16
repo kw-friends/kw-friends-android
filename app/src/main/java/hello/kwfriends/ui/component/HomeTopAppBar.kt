@@ -1,23 +1,17 @@
 package hello.kwfriends.ui.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -111,12 +105,11 @@ fun HomeTopAppBar(
                 }
                 IconButton(
                     onClick = { navigation.navigate(Routes.CHATTING_LIST_SCREEN) },
-                    modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Chat,
                         contentDescription = "go to chatting list",
-                        modifier = Modifier.size(25.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
                 IconButton(
@@ -127,9 +120,7 @@ fun HomeTopAppBar(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Account",
                         modifier = Modifier
-                            .size(24.dp)
-                        contentDescription = "go to setting screen",
-                        modifier = Modifier.size(30.dp)
+                            .size(24.dp),
                     )
                 }
             }
