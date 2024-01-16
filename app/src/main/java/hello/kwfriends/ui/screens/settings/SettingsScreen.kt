@@ -10,11 +10,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
@@ -23,12 +23,16 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import hello.kwfriends.BuildConfig
@@ -64,71 +68,79 @@ fun SettingsScreen(
     BackHandler {
         if (settingsViewModel.userInfoPopupState.first) {
             settingsViewModel.userInfoPopupState = false to ""
-        }
-        else if(settingsViewModel.userIgnoreListPopup) {
+        } else if (settingsViewModel.userIgnoreListPopup) {
             settingsViewModel.userIgnoreListPopup = false
-        }
-        else {
+        } else {
             navigation.navigate(Routes.HOME_SCREEN)
         }
     }
     //프로필 이미지 로드
-    if(!settingsViewModel.myProfileImiageLoaded) {
+    if (!settingsViewModel.myProfileImiageLoaded) {
         settingsViewModel.myProfileImageDownload()
     }
-    //유저 신고 다이얼로그
-    UserReportDialog(
-        state = settingsViewModel.userReportDialogState.first,
-        textList = settingsViewModel.userReportTextList,
-        onDismiss = { settingsViewModel.userReportDialogState = false to "" },
-        onUserReport = { settingsViewModel.userReport(it) }
-    )
-    //유저 정보 팝업
-    UserInfoPopup(
-        state = settingsViewModel.userInfoPopupState.first,
-        uid = settingsViewModel.userInfoPopupState.second,
-        addUserIgnore = { settingsViewModel.addUserIgnore(settingsViewModel.userInfoPopupState.second) },
-        removeUserIgnore = { settingsViewModel.removeUserIgnore(settingsViewModel.userInfoPopupState.second) },
-        onDismiss = { settingsViewModel.userInfoPopupState = false to "" },
-        onUserReport = { settingsViewModel.userReportDialogState = true to settingsViewModel.userInfoPopupState.second }
-    )
-    //유저 차단 목록 팝업
-    UserIgnoreListPopup(
-        state = settingsViewModel.userIgnoreListPopup,
-        onDismiss = { settingsViewModel.userIgnoreListPopup = false },
-        downloadUri = { settingsViewModel.downlodUri(it) },
-        downloadData = { settingsViewModel.downlodData(it) },
-        removeUserIgnore = { settingsViewModel.removeUserIgnore(it) },
-        onUserInfoPopup = { settingsViewModel.userInfoPopupState = true to it }
-    )
-    Box(
+
+    Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFBFF))
-    ) {
-        Box {
-            //top start
-            Row(
-                modifier = Modifier.align(Alignment.TopStart),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = { navigation.navigate(Routes.HOME_SCREEN) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "back button"
+            .background(Color(0xFFFFFBFF)),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "설정",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.W600
                     )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigation.navigate(Routes.HOME_SCREEN) },
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "back button",
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+                },
+            )
+        }
+    ) { it ->
+        //유저 신고 다이얼로그
+        Column(
+            modifier = Modifier.padding(it)
+        ) {
+            UserReportDialog(
+                state = settingsViewModel.userReportDialogState.first,
+                textList = settingsViewModel.userReportTextList,
+                onDismiss = { settingsViewModel.userReportDialogState = false to "" },
+                onUserReport = { settingsViewModel.userReport(it) }
+            )
+            //유저 정보 팝업
+            UserInfoPopup(
+                state = settingsViewModel.userInfoPopupState.first,
+                uid = settingsViewModel.userInfoPopupState.second,
+                addUserIgnore = { settingsViewModel.addUserIgnore(settingsViewModel.userInfoPopupState.second) },
+                removeUserIgnore = { settingsViewModel.removeUserIgnore(settingsViewModel.userInfoPopupState.second) },
+                onDismiss = { settingsViewModel.userInfoPopupState = false to "" },
+                onUserReport = {
+                    settingsViewModel.userReportDialogState =
+                        true to settingsViewModel.userInfoPopupState.second
                 }
-                Text(
-                    text = "설정",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontFamily = FontFamily.Default
-                )
-            }
+            )
+            //유저 차단 목록 팝업
+            UserIgnoreListPopup(
+                state = settingsViewModel.userIgnoreListPopup,
+                onDismiss = { settingsViewModel.userIgnoreListPopup = false },
+                downloadUri = { settingsViewModel.downlodUri(it) },
+                downloadData = { settingsViewModel.downlodData(it) },
+                removeUserIgnore = { settingsViewModel.removeUserIgnore(it) },
+                onUserInfoPopup = { settingsViewModel.userInfoPopupState = true to it }
+            )
             Column(
                 modifier = Modifier
-                    .padding(top = 60.dp, start = 10.dp, end = 10.dp)
+                    .padding(horizontal = 14.dp)
                     .verticalScroll(scrollState)
             ) {
                 UserInfoCard(
@@ -191,15 +203,13 @@ fun SettingsScreen(
                         title = "회원탈퇴",
                         onClick = { settingsViewModel.mainDeleteUser(navigation) }
                     )
-
                     SettingsButtonItem(
                         title = "앱 버전",
-                        description = BuildConfig.VERSION_NAME,
+                        description = BuildConfig.VERSION_NAME.toString(),
                         onClick = { /*앱스토어와 연결*/ }
                     )
                 }
             }
         }
     }
-
 }

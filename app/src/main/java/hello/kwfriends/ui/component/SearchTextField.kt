@@ -53,7 +53,8 @@ fun SearchTextField(
     var textColor by remember { mutableStateOf(Color(0xFF000000)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
 
-    BasicTextField(value = value,
+    BasicTextField(
+        value = value,
         onValueChange = if (enable) onValueChange else { _ -> Unit },
         enabled = enable,
         modifier = modifier
@@ -62,7 +63,7 @@ fun SearchTextField(
             .then(
                 Modifier
                     .height(IntrinsicSize.Min)
-                    .heightIn(min = 48.dp)
+                    .heightIn(min = 40.dp)
             )
             .onFocusChanged {
                 if (it.isFocused) {
@@ -77,11 +78,7 @@ fun SearchTextField(
             },
         interactionSource = interactionSource,
         singleLine = isSingleLine,
-        textStyle = TextStyle(
-            fontFamily = FontFamily.Default,
-            color = textColor,
-            textAlign = TextAlign.Start,
-        ),
+        textStyle = MaterialTheme.typography.bodyMedium,
         cursorBrush = SolidColor(Color(0xF1161616)),
         maxLines = maxLines,
         keyboardActions = KeyboardActions(onDone = {

@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,24 +50,13 @@ fun HomeTopAppBar(
     focusRequester: FocusRequester
 ) {
     TopAppBar(
-        modifier = Modifier
-            .padding(top = 10.dp)
-            .height(40.dp),
         title = {
-            Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                AnimatedVisibility(
-                    visible = !isSearching,
-                    enter = fadeIn(),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 100))
-                ) {
-                    Text(
-                        text = "모임 찾기",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily.Default,
-                        maxLines = 1,
-                    )
-                }
-            }
+            Text(
+                text = "모임 찾기",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.W600,
+                maxLines = 1
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
 //            containerColor = Color(0xFFE2A39B)
@@ -81,25 +69,26 @@ fun HomeTopAppBar(
                 if (isSearching) {
                     IconButton(
                         onClick = clickBackButton,
+                        modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Exit",
-                            modifier = Modifier.size(25.dp)
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
-                Box(if(isSearching) Modifier.weight(1f) else Modifier) {
-                    Row(Modifier.align(Alignment.CenterEnd)) {
+                Box(if (isSearching) Modifier.weight(1f) else Modifier) {
+                    Row(
+                        Modifier.align(Alignment.CenterEnd),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         SearchTextField(
                             value = searchText,
                             onValueChange = setSearchText,
                             enable = isSearching,
                             modifier = Modifier
-                                .animateContentSize(
-                                    animationSpec = tween(easing = LinearOutSlowInEasing),
-
-                                    )
+                                .animateContentSize(animationSpec = tween(easing = LinearOutSlowInEasing))
                                 .focusRequester(focusRequester)
                                 .then(
                                     if (isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
@@ -115,7 +104,8 @@ fun HomeTopAppBar(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier
+                                .size(24.dp)
                         )
                     }
                 }
@@ -131,18 +121,18 @@ fun HomeTopAppBar(
                 }
                 IconButton(
                     onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Account",
+                        modifier = Modifier
+                            .size(24.dp)
                         contentDescription = "go to setting screen",
                         modifier = Modifier.size(30.dp)
                     )
                 }
             }
-
-
-
         },
     )
 }

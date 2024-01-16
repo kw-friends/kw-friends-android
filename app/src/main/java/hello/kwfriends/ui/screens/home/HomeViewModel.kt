@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Continuation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.Tags.Tags
@@ -43,11 +44,8 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    //포스트 생성 팝업 보이기 여부
-    var newPostPopupState by mutableStateOf<Boolean>(false)
-
     //포스트 팝업 보이기 여부 및 포스트 uid
-    var postPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
+    var postInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
     //유저 정보 팝업 보이기 여부 및 포스트 uid
     var userInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
@@ -55,11 +53,17 @@ class HomeViewModel : ViewModel() {
     //포스트 신고 팝업 보이기 여부 및 신고 대상 포스트 id
     var postReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
-    // 포스트 수정 페이지 다이얼로그 보이기 여부 및 포스트 uid
-    var editPostInfoState by mutableStateOf<Pair<Boolean, String>>(false to "")
+    // 포스트 설정 페이지 다이얼로그 보이기 여부, 포스트 uid, Action State
+    var setPostDataState by mutableStateOf<Pair<Action, String>>(Action.NONE to "")
 
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    // 사용자 조작 확인 다이얼로그
+    var finalCheckState by mutableStateOf(false)
+    var finalCheckTitle by mutableStateOf("")
+    var finalCheckBody by mutableStateOf("")
+    var onContinueAction by mutableStateOf({})
 
     //포스트 신고 텍스트 리스트
     val postReportTextList by mutableStateOf(
@@ -74,6 +78,7 @@ class HomeViewModel : ViewModel() {
             "욕설/비하"
         )
     )
+
     //유저 신고 텍스트 리스트
     val userReportTextList by mutableStateOf(
         listOf(
@@ -125,11 +130,20 @@ class HomeViewModel : ViewModel() {
             postReportDialogState = false to postReportDialogState.second
             Report.postReport(
                 postID = postReportDialogState.second,
-                postProviderID = posts.find { it.postID == (postReportDialogState.second) }?.gatheringPromoterUID ?: "unknown",
+                postProviderID = posts.find { it.postID == (postReportDialogState.second) }?.gatheringPromoterUID
+                    ?: "unknown",
                 reporterID = UserAuth.fa.currentUser!!.uid,
                 reason = reason
             )
             postReportDialogState = false to ""
+        }
+    }
+
+    fun postDelete(postID: String) {
+        viewModelScope.launch {
+            Post.deletePost(postID)
+            finalCheckPopupSet(title = "", body = "", onContinueAction = {})
+            postInfoPopupState = false to ""
         }
     }
 
@@ -138,7 +152,7 @@ class HomeViewModel : ViewModel() {
             userReportDialogState = false to userReportDialogState.second
             Report.userReport(
                 uid = userReportDialogState.second,
-                reporterID = Firebase.auth.currentUser?.uid?:"unknown",
+                reporterID = Firebase.auth.currentUser?.uid ?: "unknown",
                 reason = reason,
             )
             downlodData(userReportDialogState.second)
@@ -188,6 +202,16 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    fun finalCheckPopupSet(
+        title: String,
+        body: String,
+        onContinueAction: () -> Unit
+    ) {
+        finalCheckTitle = title
+        finalCheckBody = body
+        this.onContinueAction = onContinueAction
+    }
+
     fun postAdded(postData: PostDetail, postID: String) {
         postData.postID = postID
         postData.myParticipantStatus = if (postData.gatheringPromoterUID == uid) {
@@ -213,7 +237,7 @@ class HomeViewModel : ViewModel() {
         Log.d("postAdded", "postID: ${postData.postID}")
     }
 
-    fun postRemoved(postData: PostDetail, postID: String) {
+    fun postRemoved(postID: String) {
         posts = posts.filter { it.postID != postID }
         Log.d("postRemoved", "postID: ${postID}")
     }
@@ -252,7 +276,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun updateParticipationStatus(postID: String, viewModel: HomeViewModel) {
+    fun updateParticipationStatus(postID: String) {
         val postDetail = posts.find { it.postID == postID }
 
         Log.d(

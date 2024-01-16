@@ -8,12 +8,11 @@ object postValidation {
         return !(text == null || text == "")
     }
 
-    fun checkParticipantsRange(
-        min: String,
-        max: String
-    ): Boolean { // min이 1이상, max가 2 이상, 100 이하이고, min < max인지를 확인
+    fun checkMaximumParticipantsRange(
+        num: String
+    ): Boolean { // max가 2 이상, 100 이하인지를 확인
         return try {
-            min.toInt() < max.toInt() && min.toInt() in 1..100 && max.toInt() in 2..100
+            num.toInt() in 2..100
         } catch (e: NumberFormatException) {
             false
         }

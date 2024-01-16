@@ -33,7 +33,7 @@ fun SettingsButtonItem(
     description: String = "",
     isUpperLine: Boolean = true
 ) {
-    if(isUpperLine) {
+    if (isUpperLine) {
         Divider(
             color = Color.LightGray,
             thickness = 0.5.dp,
@@ -44,22 +44,24 @@ fun SettingsButtonItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(15.dp))
+            .clip(shape = RoundedCornerShape(12.dp))
             .clickable { onClick() }
-            .padding(horizontal = 10.dp)
+            .padding(horizontal = 4.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 15.dp)
+            modifier = Modifier.padding(vertical = 4.dp)
         ) {
             Column(Modifier.weight(10F)) {
-                Box{
-                    Text(text = title, style = MaterialTheme.typography.bodyLarge, fontFamily = FontFamily.Default)
+                Box {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     if (description != "") {
                         Text(
                             text = description,
                             style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Default,
                             color = Color.DarkGray,
                             modifier = Modifier
                                 .padding(top = 23.dp)
@@ -71,7 +73,7 @@ fun SettingsButtonItem(
             Icon(
                 imageVector = Icons.Default.ArrowForwardIos,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(24.dp),
                 tint = Color.Gray
             )
         }

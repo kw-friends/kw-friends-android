@@ -53,7 +53,9 @@ enum class ParticipationStatus {
 
 enum class Action {
     ADD,
-    DELETE
+    DELETE,
+    MODIFY,
+    NONE
 }
 
 object Post {
@@ -88,7 +90,7 @@ object Post {
                     "onChildRemoved:${dataSnapshot.value!!}, postID: ${dataSnapshot.key!!}"
                 )
                 val postDetail = dataSnapshot.getValue(PostDetail::class.java) ?: return
-                viewModel?.postRemoved(postData = postDetail, postID = dataSnapshot.key!!)
+                viewModel?.postRemoved(postID = dataSnapshot.key!!)
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
@@ -146,6 +148,19 @@ object Post {
         Log.d("initPostData", "모임 데이터 변환 완료")
 
         return postList
+    }
+
+    suspend fun deletePost(postID: String) {
+        val result = suspendCoroutine<Boolean> { continuation ->
+            database.reference.child("/posts/$postID").setValue(null)
+                .addOnSuccessListener {
+                    Log.d("deletePost", "postId \"${postID}\" 삭제 완료")
+                    continuation.resume(true)
+                }.addOnFailureListener { e ->
+                    Log.d("deletePost", "postId \"${postID}\" 삭제 실패: $e")
+                    continuation.resume(false)
+                }
+        }
     }
 
 
@@ -225,7 +240,8 @@ object Post {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 참여 실패")
                         continuation.resume(false)
                     }
-            } else {
+            }
+            if (action == Action.DELETE) {
                 database.reference.child("/posts/$postID/participants/$uid").setValue(null)
                     .addOnSuccessListener {
                         Log.d("updateParticipationStatus", "${uid}가 ${postID}에 퇴장 성공")

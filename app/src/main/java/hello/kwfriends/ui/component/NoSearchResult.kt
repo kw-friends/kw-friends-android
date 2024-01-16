@@ -27,7 +27,7 @@ fun NoSearchResult(searchKeyword: String) {
         ) {
             Text(
                 text = " \"${searchKeyword}\"에 대한 검색 결과가 없습니다",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleSmall,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 20.dp),
                 maxLines = 100

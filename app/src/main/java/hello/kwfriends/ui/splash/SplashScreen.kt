@@ -8,7 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +58,7 @@ fun SplashScreen(viewModel: SplashViewModel) {
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = if(viewModel.processingState != "") viewModel.processingState else "라면 끓이는 중",
+            text = if (viewModel.processingState != "") viewModel.processingState else "",
             color = md_theme_light_primaryContainer,
             style = MaterialTheme.typography.labelLarge
         )

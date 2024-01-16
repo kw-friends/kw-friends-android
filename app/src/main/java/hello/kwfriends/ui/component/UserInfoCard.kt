@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,9 +51,9 @@ fun UserInfoCard(
 ) {
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomEnd = 24.dp, bottomStart = 24.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(Color.Transparent)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomEnd = 24.dp, bottomStart = 24.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -62,14 +61,14 @@ fun UserInfoCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             AsyncImage(
                 model = profileImageUri ?: R.drawable.profile_default_image,
                 placeholder = painterResource(id = R.drawable.profile_default_image),
                 contentDescription = "My profile image",
                 modifier = Modifier
-                    .size(70.dp)
+                    .size(72.dp)
                     .padding(4.dp)
                     .clip(CircleShape)
                     .border(0.5.dp, Color.Gray, CircleShape),
@@ -79,30 +78,29 @@ fun UserInfoCard(
                 text = userName,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight(700),
-                fontFamily = FontFamily.Default,
                 modifier = Modifier.padding(start = 12.dp)
             )
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .clip(RoundedCornerShape(24.dp))
+                .clip(RoundedCornerShape(16.dp))
                 .background(Color.Transparent)
                 .fillMaxWidth()
-                .border(1.dp, Color.LightGray, RoundedCornerShape(24.dp))
-                .padding(horizontal = 25.dp)
+                .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                .padding(horizontal = 12.dp, vertical = 4.dp)
                 .height(IntrinsicSize.Min)
         ) {
-            Text(text = major, style = MaterialTheme.typography.labelSmall, fontFamily = FontFamily.Default)
+            Text(text = major, style = MaterialTheme.typography.labelMedium)
             Divider(
                 color = Color.LightGray,
                 modifier = Modifier
-                    .height(10.dp)
                     .padding(horizontal = 6.dp)
                     .width(1.dp)
+                    .height(16.dp)
             )
-            Text(text = "${admissionYear}학번", style = MaterialTheme.typography.labelSmall, fontFamily = FontFamily.Default)
-            Box(modifier = Modifier.fillMaxSize().padding(vertical = 10.dp)) {
+            Text(text = "${admissionYear}학번", style = MaterialTheme.typography.labelMedium)
+            Box(modifier = Modifier.fillMaxSize()) {
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(24.dp))
@@ -117,7 +115,7 @@ fun UserInfoCard(
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.size(5.dp))
-                    Text(text = "내 정보 수정", style = MaterialTheme.typography.bodyMedium, fontFamily = FontFamily.Default)
+                    Text(text = "내 정보 수정", style = MaterialTheme.typography.bodyMedium)
                 }
             }
 

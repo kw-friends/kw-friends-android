@@ -12,6 +12,7 @@ fun PostInfoPopup(
     postDetail: PostDetail?,
     onDismiss: () -> Unit,
     onPostReport: () -> Unit,
+    onPostDelete: () -> Unit,
     homeViewModel: HomeViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
@@ -31,6 +32,7 @@ fun PostInfoPopup(
                 postDetail = postDetail,
                 onDismiss = onDismiss,
                 onPostReport = onPostReport,
+                onPostDelete = onPostDelete,
                 homeViewModel = homeViewModel,
                 enjoyButton = enjoyButton
             )
