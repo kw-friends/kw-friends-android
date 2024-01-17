@@ -34,7 +34,7 @@ import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.preferenceDatastore.UserDataStore
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -42,7 +42,7 @@ import java.util.Locale
 @Composable
 fun GatheringListItem(
     postDetail: PostDetail,
-    viewModel: HomeViewModel
+    viewModel: MainViewModel
 ) {
     ListItem(
         colors = ListItemDefaults.colors(
@@ -126,40 +126,36 @@ fun GatheringListItem(
 
 
 @Composable
-fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
-    Column(
-        modifier = Modifier.padding(horizontal = 10.dp)
+fun FindGatheringList(posts: List<PostDetail>, mainViewModel: MainViewModel) {
+    LazyColumn(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-        ) {
-            items(posts) { postData ->
-                if (
-                    postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
-                        .toInt()
-                    && postData.gatheringPromoterUID !in UserDataStore.userIgnoreList
-                ) { //신고 n개 이상이면 숨기기
-                    GatheringListItem(
-                        postDetail = postData,
-                        viewModel = viewModel
-                    )
-                }
+        items(posts) { postData ->
+            if (
+                postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
+                    .toInt()
+                && postData.gatheringPromoterUID !in UserDataStore.userIgnoreList
+            ) { //신고 n개 이상이면 숨기기
+                GatheringListItem(
+                    postDetail = postData,
+                    viewModel = mainViewModel
+                )
             }
+        }
 
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(96.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "KW Friends",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
-                    )
-                }
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(96.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "KW Friends",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
             }
         }
     }
@@ -168,7 +164,7 @@ fun FindGatheringItemList(posts: List<PostDetail>, viewModel: HomeViewModel) {
 @Preview
 @Composable
 fun GatheringItemListPreview() {
-    FindGatheringItemList(
+    FindGatheringList(
         listOf(
             PostDetail(
                 gatheringTitle = "Preview",
@@ -183,6 +179,6 @@ fun GatheringItemListPreview() {
                 postID = "Preview",
             )
         ),
-        viewModel = HomeViewModel()
+        mainViewModel = MainViewModel()
     )
 }

@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.main
+package hello.kwfriends.ui.screens.main
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -17,14 +17,12 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.auth.AuthScreen
-import hello.kwfriends.ui.screens.home.HomeScreen
-import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
 
 class MainActivity : BaseActivity() {
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
 
@@ -56,23 +54,23 @@ class MainActivity : BaseActivity() {
                 ) {
                     composable(Routes.HOME_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
-                        HomeScreen(
-                            homeViewModel = homeViewModel,
+                        MainScreen(
+                            mainViewModel = mainViewModel,
                             settingsViewModel = settingsViewModel,
                             setPostDataViewModel = setPostDataViewModel,
-                            navigation = navController
+                            mainNavigation = navController
                         )
                     }
                     composable(Routes.SETTINGS_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         SettingsScreen(
                             settingsViewModel= settingsViewModel,
-                            navigation = navController
+                            mainNavigation = navController
                         )
                     }
                     composable(Routes.AUTH_SCREEN) {
                         statusBarColor.value = Color(0xFFE79898)
-                        AuthScreen(navigation = navController)
+                        AuthScreen(mainNavigation = navController)
                     }
                 }
             }

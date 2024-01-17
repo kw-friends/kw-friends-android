@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.splash
+package hello.kwfriends.ui.screens.splash
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.screens.auth.AuthViewModel
-import hello.kwfriends.ui.main.MainActivity
+import hello.kwfriends.ui.screens.main.MainActivity
 
 class SplashViewModel : ViewModel() {
 

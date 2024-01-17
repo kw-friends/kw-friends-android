@@ -4,7 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import androidx.compose.ui.window.Popup
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun PostInfoPopup(
@@ -13,7 +13,7 @@ fun PostInfoPopup(
     onDismiss: () -> Unit,
     onPostReport: () -> Unit,
     onPostDelete: () -> Unit,
-    homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
     if (state && postDetail != null) {
@@ -21,10 +21,9 @@ fun PostInfoPopup(
             onDismissRequest = onDismiss
         ) {
             BackHandler {
-                if(homeViewModel.userInfoPopupState.first) {
-                    homeViewModel.userInfoPopupState = false to ""
-                }
-                else {
+                if (mainViewModel.userInfoPopupState.first) {
+                    mainViewModel.userInfoPopupState = false to ""
+                } else {
                     onDismiss()
                 }
             }
@@ -33,7 +32,7 @@ fun PostInfoPopup(
                 onDismiss = onDismiss,
                 onPostReport = onPostReport,
                 onPostDelete = onPostDelete,
-                homeViewModel = homeViewModel,
+                mainViewModel = mainViewModel,
                 enjoyButton = enjoyButton
             )
         }

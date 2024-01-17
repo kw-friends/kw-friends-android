@@ -18,7 +18,7 @@ import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.auth.AuthUiState
 import hello.kwfriends.ui.screens.auth.AuthViewModel
-import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.main.Routes
 import kotlinx.coroutines.launch
 
 class SettingsViewModel: ViewModel() {

@@ -8,7 +8,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,9 +28,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,13 +42,13 @@ import hello.kwfriends.ui.component.UserIgnoreListPopup
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
-import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel,
-    navigation: NavController
+    mainNavigation: NavController
 ) {
     val scrollState = rememberScrollState()
     //이미지 선택
@@ -71,7 +67,7 @@ fun SettingsScreen(
         } else if (settingsViewModel.userIgnoreListPopup) {
             settingsViewModel.userIgnoreListPopup = false
         } else {
-            navigation.navigate(Routes.HOME_SCREEN)
+            mainNavigation.navigate(Routes.HOME_SCREEN)
         }
     }
     //프로필 이미지 로드
@@ -94,7 +90,7 @@ fun SettingsScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navigation.navigate(Routes.HOME_SCREEN) },
+                        onClick = { mainNavigation.navigate(Routes.HOME_SCREEN) },
                         modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
@@ -149,7 +145,7 @@ fun SettingsScreen(
                     admissionYear = UserData.myInfo!!["std-num"]!!.toString()
                         .slice(IntRange(2, 3)),
                     major = UserData.myInfo!!["department"]!!.toString(),
-                    navigation = navigation,
+                    navigation = mainNavigation,
                     settingsViewModel = settingsViewModel
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -193,15 +189,15 @@ fun SettingsScreen(
                     )
                     SettingsButtonItem(
                         title = "비밀번호 재설정",
-                        onClick = { settingsViewModel.mainFindPassword(navigation) }
+                        onClick = { settingsViewModel.mainFindPassword(mainNavigation) }
                     )
                     SettingsButtonItem(
                         title = "로그아웃",
-                        onClick = { settingsViewModel.mainSignOut(navigation) }
+                        onClick = { settingsViewModel.mainSignOut(mainNavigation) }
                     )
                     SettingsButtonItem(
                         title = "회원탈퇴",
-                        onClick = { settingsViewModel.mainDeleteUser(navigation) }
+                        onClick = { settingsViewModel.mainDeleteUser(mainNavigation) }
                     )
                     SettingsButtonItem(
                         title = "앱 버전",

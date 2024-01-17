@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.home
+package hello.kwfriends.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HomeScreen() {
+fun NotChatScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
-        Text(text = "대충 홈", style = MaterialTheme.typography.titleLarge)
+        Text(text = "대충 채팅방", style = MaterialTheme.typography.titleLarge)
     }
 }

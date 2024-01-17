@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.home
+package hello.kwfriends.ui.screens.main
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Continuation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.Tags.Tags
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class HomeViewModel : ViewModel() {
+class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
 

@@ -6,8 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -31,11 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopAppBar(
+fun MainTopAppBar(
     navigation: NavController,
     isSearching: Boolean,
     searchText: String,
@@ -124,7 +122,7 @@ fun HomeTopAppBar(
 @Composable
 fun HomeTopAppBarPreview() {
     val navController = rememberNavController()
-    HomeTopAppBar(
+    MainTopAppBar(
         navigation = navController,
         isSearching = false,
         searchText = "Preview",

@@ -6,7 +6,7 @@
     <string name="title_activity_auth_view_model">AuthViewModel</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="navigation_home">모임 찾기</string>
-    <string name="navigation_settings">설정</string>
-    <string name="navigation_myPage">마이페이지</string>
+    <string name="navigation_findGathering">모임 찾기</string>
+    <string name="navigation_home">홈</string>
+    <string name="navigation_chat">채팅</string>
 </resources>

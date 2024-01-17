@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.splash
+package hello.kwfriends.ui.screens.splash
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable

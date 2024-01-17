@@ -15,7 +15,7 @@ import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
-import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.main.Routes
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import kotlin.coroutines.resume
@@ -299,8 +299,9 @@ object AuthViewModel : ViewModel() {
                     uiState = AuthUiState.SignIn
                     Log.w("Lim", "이메일 인증이 되지 않았습니다.")
                 }
+            } else {
+                uiState = AuthUiState.SignIn
             }
-            else{ uiState = AuthUiState.SignIn }
         }
     }
 
@@ -353,7 +354,7 @@ object AuthViewModel : ViewModel() {
                     inputCollege = collegeList[tempStdNum[4]] ?: ""
                     inputDepartment = departmentList[collegeList[tempStdNum[4]]]
                         ?.get(tempStdNum.slice(IntRange(5, 6))) ?: ""
-                    Log.w("Lim", "소속 자동인식. 단과대:${inputCollege}, 학부:${inputDepartment}")
+                    Log.w("Lim", "소속 자동인식. 단과대:$inputCollege, 학부:$inputDepartment")
                 } else {
                     Log.w(ContentValues.TAG, "유저 정보가 존재하지 않음.")
                 }
@@ -376,8 +377,11 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 데이터 저장
         viewModelScope.launch {
-            if(UserData.update(tempUserInfo)) { uiState = AuthUiState.InputUserDepartment }
-            else { uiState = AuthUiState.SignIn }
+            if (UserData.update(tempUserInfo)) {
+                uiState = AuthUiState.InputUserDepartment
+            } else {
+                uiState = AuthUiState.SignIn
+            }
         }
     }
 
@@ -391,8 +395,11 @@ object AuthViewModel : ViewModel() {
         uiState = AuthUiState.Loading
         //유저 소속 정보 저장
         viewModelScope.launch {
-            if(UserData.update(tempUserInfo)) { uiState = AuthUiState.SignInSuccess }
-            else {uiState = AuthUiState.SignIn  }
+            if (UserData.update(tempUserInfo)) {
+                uiState = AuthUiState.SignInSuccess
+            } else {
+                uiState = AuthUiState.SignIn
+            }
         }
     }
 

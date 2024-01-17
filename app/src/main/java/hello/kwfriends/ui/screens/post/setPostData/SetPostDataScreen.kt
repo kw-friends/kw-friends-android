@@ -56,7 +56,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.DatePickerPopup
 import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.TimePickerStyle
 import java.text.SimpleDateFormat
@@ -66,7 +66,7 @@ import java.util.Locale
 @Composable
 fun SetPostDataScreen(
     setPostDataViewModel: SetPostDataViewModel,
-    homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
     postDetail: PostDetail?,
     onDismiss: () -> Unit,
     state: Action
@@ -370,7 +370,7 @@ fun SetPostDataScreen(
                         if (!setPostDataViewModel.isUploading) {
                             if (!setPostDataViewModel.validateGatheringInfo()) {
                                 setPostDataViewModel.showSnackbar("모임 정보가 부족합니다.")
-                            } else if (homeViewModel.setPostDataState.first == Action.ADD) {
+                            } else if (mainViewModel.setPostDataState.first == Action.ADD) {
                                 setPostDataViewModel.uploadPostInfoToFirestore(onDismiss)
                             } else { // homeViewModel.setPostDataState.first == Action.MODIFY
                                 setPostDataViewModel.updatePostInfoToFirestore(onDismiss)

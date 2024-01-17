@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.splash
+package hello.kwfriends.ui.screens.splash
 
 object SplashProcessingState {
     const val hello = "환영합니다!"

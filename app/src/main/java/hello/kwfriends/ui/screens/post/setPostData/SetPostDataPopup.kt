@@ -6,14 +6,14 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun SetPostDataPopup(
     state: Action,
     onDismiss: () -> Unit,
     setPostDataViewModel: SetPostDataViewModel,
-    homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
     postDetail: PostDetail?
 ) {
     if (state != Action.NONE) {
@@ -29,7 +29,7 @@ fun SetPostDataPopup(
                 onDismiss = onDismiss,
                 postDetail = postDetail,
                 state = state,
-                homeViewModel = homeViewModel
+                mainViewModel = mainViewModel
             )
         }
     }

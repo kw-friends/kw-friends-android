@@ -7,7 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -63,7 +63,7 @@ object Post {
     private var database = Firebase.database
     private val uid = Firebase.auth.currentUser!!.uid
 
-    fun setPostListener(viewModel: HomeViewModel?, action: Action) {
+    fun setPostListener(viewModel: MainViewModel?, action: Action) {
         val postReference = database.getReference("posts")
         val postListener = object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
