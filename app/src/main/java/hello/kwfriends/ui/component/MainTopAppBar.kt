@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.component
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -18,7 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,16 +40,42 @@ fun MainTopAppBar(
     setSearchText: (String) -> Unit,
     clickSearchButton: () -> Unit,
     clickBackButton: () -> Unit,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
+    currentDestination: String?
 ) {
     TopAppBar(
         title = {
-            Text(
-                text = "모임 찾기",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.W600,
-                maxLines = 1
-            )
+            Crossfade(targetState = currentDestination, label = "") { destination ->
+                when (destination) {
+                    "home" -> {
+                        Text(
+                            text = "홈",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.W600,
+                            maxLines = 1
+                        )
+                    }
+
+                    "findGathering" -> {
+                        Text(
+                            text = "모임 찾기",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.W600,
+                            maxLines = 1
+                        )
+                    }
+
+                    "chat" -> {
+                        Text(
+                            text = "채팅",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.W600,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+
         },
         actions = {
             Row(
@@ -126,6 +152,7 @@ fun HomeTopAppBarPreview() {
         setSearchText = { },
         clickSearchButton = { },
         clickBackButton = { },
-        focusRequester = FocusRequester()
+        focusRequester = FocusRequester(),
+        currentDestination = null
     )
 }

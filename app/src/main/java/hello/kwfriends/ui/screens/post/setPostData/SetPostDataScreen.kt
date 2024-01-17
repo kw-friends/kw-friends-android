@@ -202,7 +202,7 @@ fun SetPostDataScreen(
                             }.using(
                                 SizeTransform(clip = false)
                             )
-                        }, label = "additionalInfoVisibility = $timeInfoVisibility"
+                        }, label = "timeInfoVisibility = $timeInfoVisibility"
                     ) { targetState ->
                         if (targetState) {
                             Text(
@@ -303,7 +303,7 @@ fun SetPostDataScreen(
                             }.using(
                                 SizeTransform(clip = false)
                             )
-                        }, label = "additionalInfoVisibility = $locationInfoVisibility"
+                        }, label = "locationInfoVisibility = $locationInfoVisibility"
                     ) { targetState ->
                         if (targetState) {
                             Text(

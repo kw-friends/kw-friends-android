@@ -1,11 +1,11 @@
 package hello.kwfriends.ui.screens.main
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import hello.kwfriends.R
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.People
 import androidx.compose.ui.graphics.vector.ImageVector
+import hello.kwfriends.R
 
 enum class MainDestination(
     val route: String,
@@ -19,10 +19,10 @@ enum class MainDestination(
     ),
     FindGatheringScreen(
         route = ROUTE_FIND_GATHERING,
-        icon = Icons.Default.Add,
+        icon = Icons.Default.People,
         labelResId = R.string.navigation_findGathering
     ),
-    ChatScreen(
+    notChatScreen(
         route = ROUTE_CHAT,
         icon = Icons.Default.Chat,
         labelResId = R.string.navigation_chat

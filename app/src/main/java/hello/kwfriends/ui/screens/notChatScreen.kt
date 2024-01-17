@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun NotChatScreen() {
+fun notChatScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
         Text(text = "대충 채팅방", style = MaterialTheme.typography.titleLarge)
     }
