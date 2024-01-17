@@ -51,9 +51,6 @@ fun MainTopAppBar(
                 maxLines = 1
             )
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-//            containerColor = Color(0xFFE2A39B)
-        ),
         actions = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
