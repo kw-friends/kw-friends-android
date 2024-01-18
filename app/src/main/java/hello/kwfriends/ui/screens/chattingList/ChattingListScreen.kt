@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -20,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,11 +41,23 @@ fun ChattingListScreen(
     chattingLIstViewModel: ChattingLIstViewModel,
     navigation: NavController
 ) {
+    LaunchedEffect(true) {
+        chattingLIstViewModel.getRoomList()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFFFFBFF))
     ) {
+        Button(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onClick = {
+                chattingLIstViewModel.addRoom()
+                chattingLIstViewModel.getRoomList()
+            }
+        ) {
+            Text("채팅방 생성하기")
+        }
         //top start
         Row(
             modifier = Modifier.align(Alignment.TopStart),
@@ -68,59 +82,62 @@ fun ChattingListScreen(
                 .fillMaxSize()
         ) {
             //top
-            Box(
-                modifier = Modifier
-                    .padding(top = 60.dp)
-                    .fillMaxWidth()
-            ) {
-                Box(modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
+            Spacer(modifier = Modifier.height(60.dp))
+            chattingLIstViewModel.chattingRoomDatas?.values?.forEach {
+                val data = it as Map<String, Any>
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier.align(Alignment.TopStart)
+                    Box(modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
                     ) {
-                        AsyncImage(
-                            model = R.drawable.test_image,
-                            placeholder = painterResource(id = R.drawable.test_image),
-                            contentDescription = "chatting room's example image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(RoundedCornerShape(20.dp)),
-                            contentScale = ContentScale.Crop,
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                text = "테스트용 채팅방",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontFamily = FontFamily.Default,
-                                color = Color.Black,
-                                fontWeight = FontWeight(400)
+                        Row(
+                            modifier = Modifier.align(Alignment.TopStart)
+                        ) {
+                            AsyncImage(
+                                model = R.drawable.test_image,
+                                placeholder = painterResource(id = R.drawable.test_image),
+                                contentDescription = "chatting room's example image",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(RoundedCornerShape(20.dp)),
+                                contentScale = ContentScale.Crop,
                             )
-                            Spacer(modifier = Modifier.height(3.dp))
-                            Text(
-                                text = "새해 복 많이받으세요~!",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray,
-                                fontFamily = FontFamily.Default,
-                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = data["title"].toString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontFamily = FontFamily.Default,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight(400)
+                                )
+                                Spacer(modifier = Modifier.height(3.dp))
+                                Text(
+                                    text = "새해 복 많이받으세요~!",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Gray,
+                                    fontFamily = FontFamily.Default,
+                                )
+                            }
                         }
+                        Text(
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            text = "2023/12/31",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily.Default,
+                            color = Color.Gray
+                        )
                     }
-                    Text(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        text = "2023/12/31",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
-                        color = Color.Gray
-                    )
                 }
+                Divider(
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    color = Color.LightGray,
+                    thickness = 0.5.dp,
+                )
             }
-            Divider(
-                modifier = Modifier.padding(horizontal = 5.dp),
-                color = Color.LightGray,
-                thickness = 0.5.dp,
-            )
         }
     }
 }

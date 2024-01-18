@@ -170,6 +170,27 @@ object Chattings {
         return result
     }
 
+    //채팅방 목록 및 정보 가져오기
+    suspend fun getRoomList(): Map<String, Any>? {
+        val result = suspendCoroutine<Map<String, Any>?> { continuation ->
+            database.child("chattings").child("rooms").get()
+                .addOnSuccessListener { dataSnapshot ->
+                    val data = dataSnapshot.getValue<Map<String, Any>>()
+                    Log.w("getRoomList()", "데이터 가져오기 성공 $data")
+                    continuation.resume(data)
+                }
+                .addOnFailureListener {
+                    Log.w("getRoomList()", "데이터 가져오기 실패: $it")
+                    continuation.resume(null)
+                }
+                .addOnCanceledListener {
+                    Log.w("getRoomList()", "데이터 가져오기 캔슬")
+                    continuation.resume(null)
+                }
+        }
+        return result
+    }
+
     //채팅방 정보 한번만 가져와서 반환하는 함수
     suspend fun getRoomInfo(roomID: String): Map<String, Any>?{
         val result = suspendCoroutine<Map<String, Any>?> { continuation ->

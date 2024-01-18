@@ -29,6 +29,7 @@ class MainActivity : BaseActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
+    private val chattingLIstViewModel: ChattingLIstViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +80,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.CHATTING_LIST_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingListScreen(
-                            chattingLIstViewModel = ChattingLIstViewModel(),
+                            chattingLIstViewModel = chattingLIstViewModel,
                             navigation = navController
                         )
                     }
