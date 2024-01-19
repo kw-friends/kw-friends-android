@@ -74,15 +74,18 @@ fun FindGatheringScreen(
                         NoSearchResult(mainViewModel.searchText)
                     } else {
                         //검색 결과 화면
-                        FindGatheringList(
+                        GatheringList(
                             mainViewModel.filter(mainViewModel.searchingPosts),
-                            mainViewModel = mainViewModel
+                            mainViewModel = mainViewModel,
+                            maximumItems = null
                         )
                     }
                 } else { // 검색중 아닐때는 모든 모임 목록 표시
-                    FindGatheringList(
+                    GatheringList(
                         mainViewModel.filter(mainViewModel.posts),
-                        mainViewModel = mainViewModel
+                        mainViewModel = mainViewModel,
+                        maximumItems = null,
+                        logo = false
                     )
                 }
             }

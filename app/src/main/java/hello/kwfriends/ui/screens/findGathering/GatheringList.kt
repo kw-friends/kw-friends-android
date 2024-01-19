@@ -40,7 +40,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun GatheringListItem(
+fun GatheringItem(
     postDetail: PostDetail,
     viewModel: MainViewModel
 ) {
@@ -126,36 +126,49 @@ fun GatheringListItem(
 
 
 @Composable
-fun FindGatheringList(posts: List<PostDetail>, mainViewModel: MainViewModel) {
+fun GatheringList(
+    posts: List<PostDetail>,
+    mainViewModel: MainViewModel,
+    maximumItems: Int?,
+    excludeFrontPosts: Boolean = false,
+    logo: Boolean = true
+) {
     LazyColumn(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
     ) {
-        items(posts) { postData ->
+        // TODO 일정 모임 개수만 가져오기 구현.
+        // 근데 어차피 한번에 모든 모임을 가져오는데 필요한가?? 나중에 이미지 가져오는것도 생기면 필요할수도 ㅇㅇ
+        items(
+            if (!excludeFrontPosts) posts.take(maximumItems ?: 999)
+            else posts.drop(maximumItems ?: 999).take(maximumItems ?: 999)
+        ) { postData ->
             if (
                 postData.reporters.size < ServerData.data?.get("hideReportCount").toString()
                     .toInt()
                 && postData.gatheringPromoterUID !in UserDataStore.userIgnoreList
             ) { //신고 n개 이상이면 숨기기
-                GatheringListItem(
+                GatheringItem(
                     postDetail = postData,
                     viewModel = mainViewModel
                 )
             }
         }
 
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(96.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "KW Friends",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
+        if (logo) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "KW Friends",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                }
             }
         }
     }
@@ -164,8 +177,8 @@ fun FindGatheringList(posts: List<PostDetail>, mainViewModel: MainViewModel) {
 @Preview
 @Composable
 fun GatheringItemListPreview() {
-    FindGatheringList(
-        listOf(
+    GatheringList(
+        posts = listOf(
             PostDetail(
                 gatheringTitle = "Preview",
                 maximumParticipants = "Preview",
@@ -179,6 +192,7 @@ fun GatheringItemListPreview() {
                 postID = "Preview",
             )
         ),
-        mainViewModel = MainViewModel()
+        mainViewModel = MainViewModel(),
+        maximumItems = null
     )
 }

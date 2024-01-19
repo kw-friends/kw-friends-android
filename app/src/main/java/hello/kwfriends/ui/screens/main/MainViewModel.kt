@@ -26,6 +26,7 @@ import java.util.Locale
 class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
+    var participatedGatherings by mutableStateOf<List<Pair<PostDetail, ParticipationStatus>>>(listOf())
 
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
@@ -211,6 +212,12 @@ class MainViewModel : ViewModel() {
         this.onContinueAction = onContinueAction
     }
 
+    fun updateParticipatedGatherings() {
+        participatedGatherings = posts.filter { uid in it.participants }.map {
+            Pair(it, ParticipationStatus.PARTICIPATED)
+        }
+    }
+
     fun postAdded(postData: PostDetail, postID: String) {
         postData.postID = postID
         postData.myParticipantStatus = if (postData.gatheringPromoterUID == uid) {
@@ -234,11 +241,15 @@ class MainViewModel : ViewModel() {
         )
         Log.d("postAdded", "${postData.participants.toMap()}")
         Log.d("postAdded", "postID: ${postData.postID}")
+
+        updateParticipatedGatherings()
     }
 
     fun postRemoved(postID: String) {
         posts = posts.filter { it.postID != postID }
         Log.d("postRemoved", "postID: ${postID}")
+
+        updateParticipatedGatherings()
     }
 
     fun postChanged(postData: PostDetail, postID: String) {
@@ -256,6 +267,8 @@ class MainViewModel : ViewModel() {
         posts = posts.map { if (it.postID == postID) postData else it }
         Log.d("postChanged", "postID: ${postData.postID}")
         Log.d("postChanged", "posts: ${posts}")
+
+        updateParticipatedGatherings()
     }
 
     fun initPostMap() {
@@ -273,6 +286,8 @@ class MainViewModel : ViewModel() {
                 }
             }
         }
+
+        updateParticipatedGatherings()
     }
 
     fun updateParticipationStatus(postID: String) {
@@ -311,6 +326,8 @@ class MainViewModel : ViewModel() {
                 return@launch
             }
         }
+
+        updateParticipatedGatherings()
     }
 
     fun refreshPost() {

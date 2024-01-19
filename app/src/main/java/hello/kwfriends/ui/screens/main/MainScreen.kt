@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -73,14 +74,7 @@ fun MainScreen(
     var fabOpened by remember {
         mutableStateOf(true)
     }
-//    val offset by animateIntOffsetAsState(
-//        targetValue = if (fabOpened) {
-//            IntOffset.Zero
-//        } else {
-//            IntOffset(600, 0)
-//        },
-//        label = "offset"
-//    )
+
 
 
     //유저 개인 설정 세팅값 받아오기
@@ -249,11 +243,12 @@ fun MainScreen(
                 onNavigate = { homeNavigation.navigateTo(it) })
         }
     ) { paddingValues ->
-
         NavHost(
             navController = navController,
             startDestination = MainDestination.HomeScreen.route,
-            Modifier.padding(paddingValues)
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
             composable(MainDestination.FindGatheringScreen.route) {
                 fabOpened = true
@@ -265,7 +260,7 @@ fun MainScreen(
             }
             composable(MainDestination.HomeScreen.route) {
                 fabOpened = true
-                HomeScreen()
+                HomeScreen(mainViewModel = mainViewModel)
             }
             composable(MainDestination.notChatScreen.route) {
                 fabOpened = false

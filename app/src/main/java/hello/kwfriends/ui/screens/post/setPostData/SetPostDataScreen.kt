@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -93,10 +94,11 @@ fun SetPostDataScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFFFFBFF))
-            .height(56.dp)
     ) {
         Row(
-            modifier = Modifier.align(Alignment.TopStart),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .height(56.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
@@ -110,6 +112,7 @@ fun SetPostDataScreen(
             Text(
                 text = if (state == Action.MODIFY) "내용 수정∙편집" else "새 모임 생성",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.W500
             )
         }
 
