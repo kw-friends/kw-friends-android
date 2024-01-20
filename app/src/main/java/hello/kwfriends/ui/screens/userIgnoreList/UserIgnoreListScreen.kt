@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -45,6 +47,7 @@ fun UserIgnoreListScreen(
     removeUserIgnore: (String) -> Unit,
     onUserInfoPopup: (String) -> Unit
 ) {
+    val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         UserDataStore.userIgnoreList.forEach {
             downloadUri(it)
@@ -79,6 +82,7 @@ fun UserIgnoreListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 60.dp, bottom = 40.dp, start = 20.dp, end = 20.dp)
+                .verticalScroll(scrollState)
         ) {
             //top
             UserDataStore.userIgnoreList.forEach { uid ->
