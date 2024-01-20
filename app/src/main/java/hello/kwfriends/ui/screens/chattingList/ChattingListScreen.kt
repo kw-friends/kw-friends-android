@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -41,6 +43,7 @@ fun ChattingListScreen(
     chattingLIstViewModel: ChattingLIstViewModel,
     navigation: NavController
 ) {
+    val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         chattingLIstViewModel.getRoomList()
     }
@@ -80,57 +83,53 @@ fun ChattingListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
             //top
             Spacer(modifier = Modifier.height(60.dp))
             chattingLIstViewModel.chattingRoomDatas?.values?.forEach {
                 val data = it as Map<String, Any>
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
+                Box(modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
                 ) {
-                    Box(modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
+                    Row(
+                        modifier = Modifier.align(Alignment.TopStart)
                     ) {
-                        Row(
-                            modifier = Modifier.align(Alignment.TopStart)
-                        ) {
-                            AsyncImage(
-                                model = R.drawable.test_image,
-                                placeholder = painterResource(id = R.drawable.test_image),
-                                contentDescription = "chatting room's example image",
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .clip(RoundedCornerShape(20.dp)),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(
-                                    text = data["title"].toString(),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontFamily = FontFamily.Default,
-                                    color = Color.Black,
-                                    fontWeight = FontWeight(400)
-                                )
-                                Spacer(modifier = Modifier.height(3.dp))
-                                Text(
-                                    text = "새해 복 많이받으세요~!",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Gray,
-                                    fontFamily = FontFamily.Default,
-                                )
-                            }
-                        }
-                        Text(
-                            modifier = Modifier.align(Alignment.TopEnd),
-                            text = "2023/12/31",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Default,
-                            color = Color.Gray
+                        AsyncImage(
+                            model = R.drawable.test_image,
+                            placeholder = painterResource(id = R.drawable.test_image),
+                            contentDescription = "chatting room's example image",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(RoundedCornerShape(20.dp)),
+                            contentScale = ContentScale.Crop,
                         )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = data["title"].toString(),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontFamily = FontFamily.Default,
+                                color = Color.Black,
+                                fontWeight = FontWeight(400)
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(
+                                text = "새해 복 많이받으세요~!",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray,
+                                fontFamily = FontFamily.Default,
+                            )
+                        }
                     }
+                    Text(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        text = "2023/12/31",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
+                        color = Color.Gray
+                    )
                 }
                 Divider(
                     modifier = Modifier.padding(horizontal = 5.dp),
