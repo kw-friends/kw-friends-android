@@ -9,11 +9,18 @@ import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+enum class MessageType {
+    TEXT,
+    IMAGE,
+    AUDIO,
+    VIDEO
+}
+
 object Chattings {
     private var database = Firebase.database.reference
 
     //채팅방 만들기
-    suspend fun make(title: String, owners: List<String>, members: List<String>): Boolean {
+    suspend fun make(title: String, owners: List<String>, members: List<String>): String? {
         val roomID = database.child("chattings").child("rooms").push().key
         val chattingRoomMap = mutableMapOf<String, Any>(
             "chattings/rooms/$roomID/title" to title,
@@ -25,19 +32,19 @@ object Chattings {
         members.forEach {
             chattingRoomMap["chattings/rooms/$roomID/members/$it"] = true
         }
-        val result = suspendCoroutine<Boolean> { continuation ->
+        val result = suspendCoroutine<String?> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {
                     Log.w("Chattings.makeRoom()", "채팅방 생성 성공")
-                    continuation.resume(true)
+                    continuation.resume(roomID)
                 }
                 .addOnFailureListener {
                     Log.w("Chattings.makeRoom()", "채팅방 생성 실패(fail): $it")
-                    continuation.resume(false)
+                    continuation.resume(null)
                 }
                 .addOnCanceledListener {
                     Log.w("Chattings.makeRoom()", "채팅방 생성 실패(cancel)")
-                    continuation.resume(false)
+                    continuation.resume(null)
                 }
         }
         return result
@@ -101,7 +108,7 @@ object Chattings {
     }
 
     //채팅 보내기
-    suspend fun sendMessage(roomID: String, uid: String, content: String, type: String): Boolean {
+    suspend fun sendMessage(roomID: String, uid: String, content: String, type: MessageType): Boolean {
         val info = getRoomInfo(roomID)
         val members = info?.get("members") as Map<String, Boolean>
         if(info["state"] != "available") {
@@ -118,7 +125,12 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/content" to content,
             "chattings/messages/$roomID/$messageID/type" to type,
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
+            "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
         )
+        if(type == MessageType.TEXT) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = content
+        else if(type == MessageType.IMAGE) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(사진)"
+        else if(type == MessageType.AUDIO) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(음성녹음)"
+        else if(type == MessageType.VIDEO) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(영상)"
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {

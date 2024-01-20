@@ -32,11 +32,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.ui.main.Routes
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ChattingListScreen(
@@ -52,15 +55,6 @@ fun ChattingListScreen(
             .fillMaxSize()
             .background(Color(0xFFFFFBFF))
     ) {
-        Button(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            onClick = {
-                chattingLIstViewModel.addRoom()
-                chattingLIstViewModel.getRoomList()
-            }
-        ) {
-            Text("채팅방 생성하기")
-        }
         //top start
         Row(
             modifier = Modifier.align(Alignment.TopStart),
@@ -82,13 +76,14 @@ fun ChattingListScreen(
         }
         Column(
             modifier = Modifier
+                .padding(top = 50.dp)
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
             //top
-            Spacer(modifier = Modifier.height(60.dp))
             chattingLIstViewModel.chattingRoomDatas?.values?.forEach {
-                val data = it as Map<String, Any>
+                val roomInfo = it as Map<String, Any?>?
+                val recentMessage = roomInfo?.get("recentMessage") as Map<String, Any?>?
                 Box(modifier = Modifier
                     .padding(10.dp)
                     .fillMaxWidth()
@@ -108,34 +103,58 @@ fun ChattingListScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = data["title"].toString(),
+                                text = roomInfo?.get("title")?.toString() ?: "",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontFamily = FontFamily.Default,
                                 color = Color.Black,
-                                fontWeight = FontWeight(400)
+                                fontWeight = FontWeight(400),
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.height(3.dp))
                             Text(
-                                text = "새해 복 많이받으세요~!",
+                                text = recentMessage?.get("content")?.toString() ?: "",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray,
                                 fontFamily = FontFamily.Default,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
-                    Text(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        text = "2023/12/31",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
-                        color = Color.Gray
-                    )
+                    if(recentMessage?.get("timestamp") != null) {
+                        Text(
+                            modifier = Modifier.align(Alignment.TopEnd),
+                            text = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(
+                                recentMessage["timestamp"]
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily.Default,
+                            color = Color.Gray
+                        )
+                    }
+
                 }
                 Divider(
                     modifier = Modifier.padding(horizontal = 5.dp),
                     color = Color.LightGray,
                     thickness = 0.5.dp,
                 )
+            }
+            Button(
+                onClick = {
+                    chattingLIstViewModel.temp_addRoom()
+                    chattingLIstViewModel.getRoomList()
+                }
+            ) {
+                Text("채팅방 생성하기")
+            }
+            Button(
+                onClick = {
+                    chattingLIstViewModel.temp_sendMessage()
+                    chattingLIstViewModel.getRoomList()
+                }
+            ) {
+                Text("메세지 전송하기")
             }
         }
     }
