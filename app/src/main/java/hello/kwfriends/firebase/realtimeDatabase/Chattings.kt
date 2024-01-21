@@ -16,15 +16,26 @@ enum class MessageType {
     VIDEO
 }
 
+enum class ChattingRoomType {
+    GROUP,
+    DIRECT
+}
+
+enum class ChattingRoomState {
+    AVAILABLE,
+    DELETED
+}
+
 object Chattings {
     private var database = Firebase.database.reference
 
     //채팅방 만들기
-    suspend fun make(title: String, owners: List<String>, members: List<String>): String? {
+    suspend fun make(title: String, type: ChattingRoomType, owners: List<String>, members: List<String>): String? {
         val roomID = database.child("chattings").child("rooms").push().key
         val chattingRoomMap = mutableMapOf<String, Any>(
             "chattings/rooms/$roomID/title" to title,
-            "chattings/rooms/$roomID/state" to "available",
+            "chattings/rooms/$roomID/state" to ChattingRoomState.AVAILABLE,
+            "chattings/rooms/$roomID/type" to type
         )
         owners.forEach {
             chattingRoomMap["chattings/rooms/$roomID/owner/$it"] = true
@@ -53,7 +64,7 @@ object Chattings {
     //채팅방 생성
     suspend fun join(roomID: String): Boolean {
         val info = getRoomInfo(roomID)
-        if(info?.get("state") != "available") {
+        if(info?.get("state") != ChattingRoomState.AVAILABLE) {
             Log.w("Chattings.join()", "채팅방 상태가 available이 아니라 채팅방 참가에 실패했습니다. 상태: ${info?.get("state")}")
             return false
         }
@@ -111,7 +122,7 @@ object Chattings {
     suspend fun sendMessage(roomID: String, uid: String, content: String, type: MessageType): Boolean {
         val info = getRoomInfo(roomID)
         val members = info?.get("members") as Map<String, Boolean>
-        if(info["state"] != "available") {
+        if(info["state"] != ChattingRoomState.AVAILABLE) {
             Log.w("Chattings.sendMessage()", "채팅방 상태가 available이 아니라 채팅방 전송에 실패했습니다. 상태: ${info["state"]}")
             return false
         }
@@ -153,7 +164,7 @@ object Chattings {
     suspend fun delete(roomID: String): Boolean {
         val info = getRoomInfo(roomID)
         val owners = info?.get("owners") as Map<String, Boolean>
-        if(info["state"] != "available") {
+        if(info["state"] != ChattingRoomState.AVAILABLE) {
             Log.w("Chattings.delete()", "채팅방 상태가 available이 아니라 채팅방 삭제 실패했습니다. 상태: ${info["state"]}")
             return false
         }
@@ -162,7 +173,7 @@ object Chattings {
             return false
         }
         val chattingRoomMap = mapOf(
-            "chattings/chats/$roomID/info/state" to "deleted",
+            "chattings/chats/$roomID/info/state" to ChattingRoomState.DELETED,
         )
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(chattingRoomMap)
