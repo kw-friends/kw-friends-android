@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -34,6 +35,8 @@ import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.main.Routes
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ChattingScreen(
@@ -44,6 +47,9 @@ fun ChattingScreen(
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         chattingViewModel.getMessages(roomID)
+    }
+    LaunchedEffect(chattingViewModel.chattingData) {
+        scrollState.scrollTo(scrollState.maxValue)
     }
     Box(
         modifier = Modifier
@@ -76,9 +82,12 @@ fun ChattingScreen(
                 .verticalScroll(scrollState)
         ) {
             //top
-            chattingViewModel.chattingData?.forEach {
+            val sortedData = chattingViewModel.chattingData?.entries?.sortedBy {
+                (it.value["timestamp"] as? Long) ?: Long.MAX_VALUE
+            }
+            sortedData?.forEach {
                 Box(
-
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Row {
                         AsyncImage(
@@ -97,6 +106,15 @@ fun ChattingScreen(
                             Text(text = it.value["content"].toString())
                         }
                     }
+                    Text(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        text = SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault()).format(
+                            it.value["timestamp"]
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Default,
+                        color = Color.Gray
+                    )
                 }
             }
         }

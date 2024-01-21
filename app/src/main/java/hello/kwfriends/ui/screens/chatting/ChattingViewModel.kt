@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.screens.chatting
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,7 +15,6 @@ class ChattingViewModel: ViewModel() {
     fun getMessages(roomID: String) {
         viewModelScope.launch {
             chattingData = Chattings.getRoomMessages(roomID)
-            Log.w("test", "${chattingData}")
 
         }
     }

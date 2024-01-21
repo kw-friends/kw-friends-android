@@ -85,7 +85,10 @@ fun ChattingListScreen(
                 .verticalScroll(scrollState)
         ) {
             //top
-            Chattings.chattingRoomList?.forEach {
+            val sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
+                ((it.value["recentMessage"] as Map<String, Any>)["timestamp"] as? Long) ?: Long.MAX_VALUE
+            }
+            sortedData?.forEach {
                 val roomInfo = it.value as Map<String, Any?>?
                 val recentMessage = roomInfo?.get("recentMessage") as Map<String, Any?>?
                 Box(modifier = Modifier
@@ -129,7 +132,7 @@ fun ChattingListScreen(
                     if(recentMessage?.get("timestamp") != null) {
                         Text(
                             modifier = Modifier.align(Alignment.TopEnd),
-                            text = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(
+                            text = SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault()).format(
                                 recentMessage["timestamp"]
                             ),
                             style = MaterialTheme.typography.bodySmall,
