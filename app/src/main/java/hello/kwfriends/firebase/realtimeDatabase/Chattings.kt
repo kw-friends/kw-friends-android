@@ -32,7 +32,7 @@ enum class ChattingRoomState {
 object Chattings {
     private var database = Firebase.database.reference
 
-    var chattingRoomDatas by mutableStateOf<Map<String, Any>?>(mutableMapOf())
+    var chattingRoomList by mutableStateOf<Map<String, Map<String, Any>>?>(mutableMapOf())
 
     //채팅방 만들기
     suspend fun make(title: String, type: ChattingRoomType, owners: List<String>, members: List<String>): String? {
@@ -208,7 +208,7 @@ object Chattings {
                         data[it.key]?.set("state", ChattingRoomState.valueOf(it.value["state"].toString()))
                         data[it.key]?.set("type", ChattingRoomType.valueOf(it.value["type"].toString()))
                     }
-                    chattingRoomDatas = data
+                    chattingRoomList = data
                     Log.w("Chattings.getRoomList()", "데이터 가져오기 성공 $data")
                     continuation.resume(true)
                 }

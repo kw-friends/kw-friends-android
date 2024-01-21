@@ -17,6 +17,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.auth.AuthScreen
+import hello.kwfriends.ui.screens.chatting.ChattingScreen
+import hello.kwfriends.ui.screens.chatting.ChattingViewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingLIstViewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
@@ -82,6 +84,14 @@ class MainActivity : BaseActivity() {
                         ChattingListScreen(
                             chattingLIstViewModel = chattingLIstViewModel,
                             navigation = navController
+                        )
+                    }
+                    composable(route = Routes.CHATTING_SCREEN + "/{roomID}") { navBackStackEntry ->
+                        statusBarColor.value = Color(0xFFFFFBFF)
+                        ChattingScreen(
+                            chattingViewModel = ChattingViewModel(),
+                            navigation = navController,
+                            roomID = navBackStackEntry.arguments?.getString("roomID")!!
                         )
                     }
                 }

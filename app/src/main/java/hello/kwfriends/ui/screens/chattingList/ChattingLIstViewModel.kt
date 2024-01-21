@@ -43,7 +43,7 @@ class ChattingLIstViewModel : ViewModel() {
     fun temp_sendMessage() {
         viewModelScope.launch {
             Chattings.sendMessage(
-                roomID = Chattings.chattingRoomDatas?.keys?.first()!!,
+                roomID = Chattings.chattingRoomList?.keys?.first()!!,
                 uid = Firebase.auth.currentUser!!.uid,
                 content = "안녕하세요!",
                 type = MessageType.TEXT

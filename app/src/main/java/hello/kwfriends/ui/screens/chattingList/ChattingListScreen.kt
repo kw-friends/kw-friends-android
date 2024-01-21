@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.chattingList
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,12 +85,13 @@ fun ChattingListScreen(
                 .verticalScroll(scrollState)
         ) {
             //top
-            Chattings.chattingRoomDatas?.values?.forEach {
-                val roomInfo = it as Map<String, Any?>?
+            Chattings.chattingRoomList?.forEach {
+                val roomInfo = it.value as Map<String, Any?>?
                 val recentMessage = roomInfo?.get("recentMessage") as Map<String, Any?>?
                 Box(modifier = Modifier
                     .padding(10.dp)
                     .fillMaxWidth()
+                    .clickable { navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}") }
                 ) {
                     Row(
                         modifier = Modifier.align(Alignment.TopStart)
