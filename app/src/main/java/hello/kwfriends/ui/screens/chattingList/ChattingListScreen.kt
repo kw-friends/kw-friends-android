@@ -33,8 +33,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.ui.main.Routes
@@ -158,4 +160,10 @@ fun ChattingListScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun ChattingListScreenPreview() {
+    ChattingListScreen(chattingLIstViewModel = ChattingLIstViewModel(), navigation = rememberNavController())
 }

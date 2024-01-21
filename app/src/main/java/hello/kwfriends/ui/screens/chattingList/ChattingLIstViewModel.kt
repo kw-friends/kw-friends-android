@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import kotlinx.coroutines.launch
@@ -28,7 +29,8 @@ class ChattingLIstViewModel : ViewModel() {
             val roomID = Chattings.make(
                 title = "테스트용 채팅방",
                 owners = listOf(Firebase.auth.currentUser!!.uid),
-                members = listOf(Firebase.auth.currentUser!!.uid)
+                members = listOf(Firebase.auth.currentUser!!.uid),
+                type = ChattingRoomType.GROUP
             )
             if(roomID != null) {
                 Chattings.sendMessage(
