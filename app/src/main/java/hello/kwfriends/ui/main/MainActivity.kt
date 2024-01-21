@@ -32,6 +32,7 @@ class MainActivity : BaseActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
     private val chattingLIstViewModel: ChattingLIstViewModel by viewModels()
+    private val chattingViewModel: ChattingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +90,7 @@ class MainActivity : BaseActivity() {
                     composable(route = Routes.CHATTING_SCREEN + "/{roomID}") { navBackStackEntry ->
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingScreen(
-                            chattingViewModel = ChattingViewModel(),
+                            chattingViewModel = chattingViewModel,
                             navigation = navController,
                             roomID = navBackStackEntry.arguments?.getString("roomID")!!
                         )

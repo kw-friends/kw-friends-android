@@ -32,7 +32,7 @@ enum class ChattingRoomState {
 object Chattings {
     private var database = Firebase.database.reference
 
-    var chattingRoomList by mutableStateOf<Map<String, Map<String, Any>>?>(mutableMapOf())
+    var chattingRoomList by mutableStateOf<Map<String, Map<String, Any>>?>(emptyMap())
 
     //채팅방 만들기
     suspend fun make(title: String, type: ChattingRoomType, owners: List<String>, members: List<String>): String? {
@@ -250,13 +250,13 @@ object Chattings {
     }
 
     //채팅방 메세지 한번만 가져와서 반환하는 함수
-    suspend fun getRoomMessages(roomID: String): Map<String, Any>?{
-        val result = suspendCoroutine<Map<String, Any>?> { continuation ->
+    suspend fun getRoomMessages(roomID: String): Map<String, Map<String, Any>>?{
+        val result = suspendCoroutine<Map<String, Map<String, Any>>?> { continuation ->
             database.child("chattings").child("messages").child(roomID).get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<Map<String, Any>>()?.toMutableMap()
-                    if(data != null) {
-                        data["type"] = MessageType.valueOf(data["type"].toString())
+                    val data = dataSnapshot.getValue<MutableMap<String, MutableMap<String, Any>>>()?.toMutableMap()
+                    data?.forEach {
+                        data[it.key]?.set("type", MessageType.valueOf(data[it.key]?.get("type").toString()))
                     }
                     Log.w("Chattings.getRoomMessages()", "데이터 가져오기 성공 $data")
                     continuation.resume(data)

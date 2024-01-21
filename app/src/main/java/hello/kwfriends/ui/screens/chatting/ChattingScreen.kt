@@ -1,12 +1,15 @@
 package hello.kwfriends.ui.screens.chatting
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -15,13 +18,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
+import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.main.Routes
 
 @Composable
@@ -31,6 +42,9 @@ fun ChattingScreen(
     roomID: String
 ) {
     val scrollState = rememberScrollState()
+    LaunchedEffect(true) {
+        chattingViewModel.getMessages(roomID)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -62,6 +76,29 @@ fun ChattingScreen(
                 .verticalScroll(scrollState)
         ) {
             //top
+            chattingViewModel.chattingData?.forEach {
+                Box(
+
+                ) {
+                    Row {
+                        AsyncImage(
+                            model = ProfileImage.usersUriMap[it.value["uid"]]
+                                ?: R.drawable.profile_default_image,
+                            placeholder = painterResource(id = R.drawable.profile_default_image),
+                            contentDescription = "chatter's profile image",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                                .border(0.5.dp, Color.Gray, CircleShape),
+                            contentScale = ContentScale.Crop,
+                        )
+                        Column {
+                            Text(text = UserData.usersDataMap[it.value["uid"]]?.get("name")?.toString() ?: "unknown")
+                            Text(text = it.value["content"].toString())
+                        }
+                    }
+                }
+            }
         }
     }
 }

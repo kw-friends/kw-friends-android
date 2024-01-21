@@ -89,9 +89,9 @@ fun ChattingListScreen(
                 val roomInfo = it.value as Map<String, Any?>?
                 val recentMessage = roomInfo?.get("recentMessage") as Map<String, Any?>?
                 Box(modifier = Modifier
+                    .clickable { navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}") }
                     .padding(10.dp)
                     .fillMaxWidth()
-                    .clickable { navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}") }
                 ) {
                     Row(
                         modifier = Modifier.align(Alignment.TopStart)
