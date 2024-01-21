@@ -1,6 +1,9 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.getValue
@@ -29,6 +32,8 @@ enum class ChattingRoomState {
 object Chattings {
     private var database = Firebase.database.reference
 
+    var chattingRoomDatas by mutableStateOf<Map<String, Any>?>(mutableMapOf())
+
     //채팅방 만들기
     suspend fun make(title: String, type: ChattingRoomType, owners: List<String>, members: List<String>): String? {
         val roomID = database.child("chattings").child("rooms").push().key
@@ -46,7 +51,7 @@ object Chattings {
         val result = suspendCoroutine<String?> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {
-                    Log.w("Chattings.makeRoom()", "채팅방 생성 성공")
+                    Log.w("Chattings.makeRoom()", "채팅방 생성 성공: $roomID")
                     continuation.resume(roomID)
                 }
                 .addOnFailureListener {
@@ -194,21 +199,26 @@ object Chattings {
     }
 
     //채팅방 목록 및 정보 가져오기
-    suspend fun getRoomList(): Map<String, Any>? {
-        val result = suspendCoroutine<Map<String, Any>?> { continuation ->
+    suspend fun getRoomList(): Boolean {
+        val result = suspendCoroutine<Boolean> { continuation ->
             database.child("chattings").child("rooms").get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<Map<String, Any>>()
-                    Log.w("getRoomList()", "데이터 가져오기 성공 $data")
-                    continuation.resume(data)
+                    val data = dataSnapshot.getValue<MutableMap<String, MutableMap<String, Any>>>()
+                    data?.forEach {
+                        data[it.key]?.set("state", ChattingRoomState.valueOf(it.value["state"].toString()))
+                        data[it.key]?.set("type", ChattingRoomType.valueOf(it.value["type"].toString()))
+                    }
+                    chattingRoomDatas = data
+                    Log.w("Chattings.getRoomList()", "데이터 가져오기 성공 $data")
+                    continuation.resume(true)
                 }
                 .addOnFailureListener {
-                    Log.w("getRoomList()", "데이터 가져오기 실패: $it")
-                    continuation.resume(null)
+                    Log.w("Chattings.getRoomList()", "데이터 가져오기 실패: $it")
+                    continuation.resume(false)
                 }
                 .addOnCanceledListener {
-                    Log.w("getRoomList()", "데이터 가져오기 캔슬")
-                    continuation.resume(null)
+                    Log.w("Chattings.getRoomList()", "데이터 가져오기 캔슬")
+                    continuation.resume(false)
                 }
         }
         return result
@@ -219,16 +229,20 @@ object Chattings {
         val result = suspendCoroutine<Map<String, Any>?> { continuation ->
             database.child("chattings").child("rooms").child(roomID).get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<Map<String, Any>>()
-                    Log.w("getRoomInfo()", "데이터 가져오기 성공 $data")
+                    val data = dataSnapshot.getValue<Map<String, Any>>()?.toMutableMap()
+                    if(data != null) {
+                        data["state"] = ChattingRoomState.valueOf(data["state"].toString())
+                        data["type"] = ChattingRoomType.valueOf(data["type"].toString())
+                    }
+                    Log.w("Chattings.getRoomInfo()", "데이터 가져오기 성공 $data")
                     continuation.resume(data)
                 }
                 .addOnFailureListener {
-                    Log.w("getRoomInfo()", "데이터 가져오기 실패")
+                    Log.w("Chattings.getRoomInfo()", "데이터 가져오기 실패")
                     continuation.resume(null)
                 }
                 .addOnCanceledListener {
-                    Log.w("getRoomInfo()", "데이터 가져오기 캔슬")
+                    Log.w("Chattings.getRoomInfo()", "데이터 가져오기 캔슬")
                     continuation.resume(null)
                 }
         }
@@ -240,16 +254,19 @@ object Chattings {
         val result = suspendCoroutine<Map<String, Any>?> { continuation ->
             database.child("chattings").child("messages").child(roomID).get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<Map<String, Any>>()
-                    Log.w("getRoomMessages()", "데이터 가져오기 성공 $data")
+                    val data = dataSnapshot.getValue<Map<String, Any>>()?.toMutableMap()
+                    if(data != null) {
+                        data["type"] = MessageType.valueOf(data["type"].toString())
+                    }
+                    Log.w("Chattings.getRoomMessages()", "데이터 가져오기 성공 $data")
                     continuation.resume(data)
                 }
                 .addOnFailureListener {
-                    Log.w("getRoomMessages()", "데이터 가져오기 실패")
+                    Log.w("Chattings.getRoomMessages()", "데이터 가져오기 실패")
                     continuation.resume(null)
                 }
                 .addOnCanceledListener {
-                    Log.w("getRoomMessages()", "데이터 가져오기 캔슬")
+                    Log.w("Chattings.getRoomMessages()", "데이터 가져오기 캔슬")
                     continuation.resume(null)
                 }
         }

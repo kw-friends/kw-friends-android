@@ -39,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
+import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.ui.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -83,7 +84,7 @@ fun ChattingListScreen(
                 .verticalScroll(scrollState)
         ) {
             //top
-            chattingLIstViewModel.chattingRoomDatas?.values?.forEach {
+            Chattings.chattingRoomDatas?.values?.forEach {
                 val roomInfo = it as Map<String, Any?>?
                 val recentMessage = roomInfo?.get("recentMessage") as Map<String, Any?>?
                 Box(modifier = Modifier
