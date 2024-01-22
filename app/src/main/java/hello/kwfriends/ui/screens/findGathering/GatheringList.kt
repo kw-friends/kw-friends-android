@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +47,8 @@ import java.util.Locale
 @Composable
 fun GatheringItem(
     postDetail: PostDetail,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    participationStatus: ParticipationStatus?
 ) {
     ListItem(
         colors = ListItemDefaults.colors(
@@ -120,7 +126,35 @@ fun GatheringItem(
                 }
             }
         },
-        trailingContent = { Text(text = "${postDetail.participants.count()}/${postDetail.maximumParticipants}") },
+        trailingContent = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "${postDetail.participants.count()}/${postDetail.maximumParticipants}",
+                    style = MaterialTheme.typography.labelSmall
+                )
+                if (participationStatus == ParticipationStatus.PARTICIPATED) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(vertical = 4.dp)
+                    )
+                }
+                if (participationStatus == ParticipationStatus.MY_GATHERING) {
+                    Icon(
+                        imageVector = Icons.Default.EmojiPeople,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(vertical = 4.dp)
+                    )
+                }
+            }
+        },
     )
 }
 
@@ -131,7 +165,8 @@ fun GatheringList(
     mainViewModel: MainViewModel,
     maximumItems: Int?,
     excludeFrontPosts: Boolean = false,
-    logo: Boolean = true
+    logo: Boolean = true,
+    showParticipationStatus: Boolean
 ) {
     LazyColumn(
         modifier = Modifier
@@ -150,7 +185,8 @@ fun GatheringList(
             ) { //신고 n개 이상이면 숨기기
                 GatheringItem(
                     postDetail = postData,
-                    viewModel = mainViewModel
+                    viewModel = mainViewModel,
+                    participationStatus = if (showParticipationStatus) postData.myParticipantStatus else null
                 )
             }
         }
@@ -193,6 +229,7 @@ fun GatheringItemListPreview() {
             )
         ),
         mainViewModel = MainViewModel(),
-        maximumItems = null
+        maximumItems = null,
+        showParticipationStatus = true
     )
 }
