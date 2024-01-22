@@ -29,7 +29,7 @@ class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
-    private val chattingLIstViewModel: ChattingListViewModel by viewModels()
+    private val chattingListViewModel: ChattingListViewModel by viewModels()
     private val chattingViewModel: ChattingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +65,7 @@ class MainActivity : BaseActivity() {
                             mainViewModel = mainViewModel,
                             settingsViewModel = settingsViewModel,
                             setPostDataViewModel = setPostDataViewModel,
-                            chattingListViewModel = chattingLIstViewModel,
+                            chattingListViewModel = chattingListViewModel,
                             mainNavigation = navController
                         )
                     }
@@ -83,7 +83,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.CHATTING_LIST_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingListScreen(
-                            chattingListViewModel = chattingLIstViewModel,
+                            chattingListViewModel = chattingListViewModel,
                             navigation = navController
                         )
                     }
