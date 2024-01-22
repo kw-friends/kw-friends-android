@@ -34,7 +34,7 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
-import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -102,7 +102,10 @@ fun ChattingScreen(
                             contentScale = ContentScale.Crop,
                         )
                         Column {
-                            Text(text = UserData.usersDataMap[it.value["uid"]]?.get("name")?.toString() ?: "unknown")
+                            Text(
+                                text = UserData.usersDataMap[it.value["uid"]]?.get("name")
+                                    ?.toString() ?: "unknown"
+                            )
                             Text(text = it.value["content"].toString())
                         }
                     }

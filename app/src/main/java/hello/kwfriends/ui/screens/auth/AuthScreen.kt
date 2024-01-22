@@ -56,13 +56,12 @@ import hello.kwfriends.ui.component.TextfieldStyle2
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun AuthScreen(navigation: NavController) {
+fun AuthScreen(mainNavigation: NavController) {
 
     LaunchedEffect(AuthViewModel.uiState) {
-        if(AuthViewModel.uiState == AuthUiState.SignInSuccess) {
-            AuthViewModel.signInSuccessCheck(navigation)
-        }
-        else if (AuthViewModel.uiState == AuthUiState.SignIn) {
+        if (AuthViewModel.uiState == AuthUiState.SignInSuccess) {
+            AuthViewModel.signInSuccessCheck(mainNavigation)
+        } else if (AuthViewModel.uiState == AuthUiState.SignIn) {
             if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
                 if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사
                     Log.w("Lim", "로그인 및 이메일 인증 기록 확인. 이후 화면으로 이동")
@@ -213,7 +212,7 @@ fun AuthScreen(navigation: NavController) {
 
         is AuthUiState.FindPassword -> {
             BackHandler {
-                AuthViewModel.signInSuccessCheck(navigation)
+                AuthViewModel.signInSuccessCheck(mainNavigation)
             }
             Box(
                 modifier = Modifier
@@ -255,7 +254,11 @@ fun AuthScreen(navigation: NavController) {
                         Text(
                             text = "이전화면",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { AuthViewModel.signInSuccessCheck(navigation) }
+                            modifier = Modifier.clickable {
+                                AuthViewModel.signInSuccessCheck(
+                                    mainNavigation
+                                )
+                            }
                         )
                     }
                 }
@@ -547,7 +550,7 @@ fun AuthScreen(navigation: NavController) {
 
         is AuthUiState.DeleteUser -> {
             BackHandler {
-                AuthViewModel.signInSuccessCheck(navigation)
+                AuthViewModel.signInSuccessCheck(mainNavigation)
             }
             Box(
                 modifier = Modifier
@@ -599,7 +602,11 @@ fun AuthScreen(navigation: NavController) {
                         Text(
                             text = "돌아가기",
                             color = Color(0xFFF1F1F1),
-                            modifier = Modifier.clickable { AuthViewModel.signInSuccessCheck(navigation) }
+                            modifier = Modifier.clickable {
+                                AuthViewModel.signInSuccessCheck(
+                                    mainNavigation
+                                )
+                            }
                         )
                     }
                 }

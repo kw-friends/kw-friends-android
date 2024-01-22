@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 class ChattingLIstViewModel : ViewModel() {
 
 
-
     fun getRoomList() {
         viewModelScope.launch {
             Chattings.getRoomList()
@@ -29,7 +28,7 @@ class ChattingLIstViewModel : ViewModel() {
                 members = listOf(Firebase.auth.currentUser!!.uid),
                 type = ChattingRoomType.GROUP
             )
-            if(roomID != null) {
+            if (roomID != null) {
                 Chattings.sendMessage(
                     roomID = roomID,
                     uid = "BROADCAST",

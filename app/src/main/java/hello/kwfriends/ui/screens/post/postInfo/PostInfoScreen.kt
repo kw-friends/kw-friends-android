@@ -59,7 +59,7 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -70,7 +70,7 @@ fun PostInfoScreen(
     onDismiss: () -> Unit,
     onPostReport: () -> Unit,
     onPostDelete: () -> Unit,
-    homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -82,8 +82,8 @@ fun PostInfoScreen(
     LaunchedEffect(postDetail.participants) {
         val newParticipations = postDetail.participants.keys - previousParticipants.value
         newParticipations.forEach {
-            homeViewModel.downlodUri(it)
-            homeViewModel.downlodData(it)
+            mainViewModel.downlodUri(it)
+            mainViewModel.downlodData(it)
         }
         previousParticipants.value.addAll(postDetail.participants.keys)
     }
@@ -184,7 +184,7 @@ fun PostInfoScreen(
                     Row(verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .clickable {
-                                homeViewModel.userInfoPopupState =
+                                mainViewModel.userInfoPopupState =
                                     true to postDetail.gatheringPromoterUID
                             }) {
                         AsyncImage(
@@ -243,7 +243,7 @@ fun PostInfoScreen(
 
                 if (postDetail.gatheringTime != 0L) {
                     Text(
-                        text = "마감 기한:  ${homeViewModel.dateTimeFormat(postDetail.gatheringTime)}",
+                        text = "마감 기한:  ${mainViewModel.dateTimeFormat(postDetail.gatheringTime)}",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight(400)
                     )
@@ -298,7 +298,7 @@ fun PostInfoScreen(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
                                         .clickable {
-                                            homeViewModel.userInfoPopupState =
+                                            mainViewModel.userInfoPopupState =
                                                 true to it.key
                                         }
                                         .padding(vertical = 5.dp, horizontal = 2.dp)

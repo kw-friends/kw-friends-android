@@ -41,7 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
-import hello.kwfriends.ui.main.Routes
+import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -86,7 +86,8 @@ fun ChattingListScreen(
         ) {
             //top
             val sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
-                ((it.value["recentMessage"] as Map<String, Any>)["timestamp"] as? Long) ?: Long.MAX_VALUE
+                ((it.value["recentMessage"] as Map<String, Any>)["timestamp"] as? Long)
+                    ?: Long.MAX_VALUE
             }
             sortedData?.forEach {
                 val roomInfo = it.value as Map<String, Any?>?
@@ -129,10 +130,13 @@ fun ChattingListScreen(
                             )
                         }
                     }
-                    if(recentMessage?.get("timestamp") != null) {
+                    if (recentMessage?.get("timestamp") != null) {
                         Text(
                             modifier = Modifier.align(Alignment.TopEnd),
-                            text = SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault()).format(
+                            text = SimpleDateFormat(
+                                "yyyy/MM/dd hh:mm a",
+                                Locale.getDefault()
+                            ).format(
                                 recentMessage["timestamp"]
                             ),
                             style = MaterialTheme.typography.bodySmall,
@@ -171,5 +175,8 @@ fun ChattingListScreen(
 @Preview
 @Composable
 fun ChattingListScreenPreview() {
-    ChattingListScreen(chattingLIstViewModel = ChattingLIstViewModel(), navigation = rememberNavController())
+    ChattingListScreen(
+        chattingLIstViewModel = ChattingLIstViewModel(),
+        navigation = rememberNavController()
+    )
 }

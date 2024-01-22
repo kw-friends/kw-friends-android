@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.home
+package hello.kwfriends.ui.screens.main
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Continuation
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.Tags.Tags
@@ -24,9 +23,10 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class HomeViewModel : ViewModel() {
+class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
+    var participatedGatherings by mutableStateOf<List<Pair<PostDetail, ParticipationStatus>>>(listOf())
 
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
@@ -212,6 +212,12 @@ class HomeViewModel : ViewModel() {
         this.onContinueAction = onContinueAction
     }
 
+    fun updateParticipatedGatherings() {
+        participatedGatherings = posts.filter { uid in it.participants }.map {
+            Pair(it, ParticipationStatus.PARTICIPATED)
+        }
+    }
+
     fun postAdded(postData: PostDetail, postID: String) {
         postData.postID = postID
         postData.myParticipantStatus = if (postData.gatheringPromoterUID == uid) {
@@ -235,11 +241,15 @@ class HomeViewModel : ViewModel() {
         )
         Log.d("postAdded", "${postData.participants.toMap()}")
         Log.d("postAdded", "postID: ${postData.postID}")
+
+        updateParticipatedGatherings()
     }
 
     fun postRemoved(postID: String) {
         posts = posts.filter { it.postID != postID }
         Log.d("postRemoved", "postID: ${postID}")
+
+        updateParticipatedGatherings()
     }
 
     fun postChanged(postData: PostDetail, postID: String) {
@@ -257,6 +267,8 @@ class HomeViewModel : ViewModel() {
         posts = posts.map { if (it.postID == postID) postData else it }
         Log.d("postChanged", "postID: ${postData.postID}")
         Log.d("postChanged", "posts: ${posts}")
+
+        updateParticipatedGatherings()
     }
 
     fun initPostMap() {
@@ -274,6 +286,8 @@ class HomeViewModel : ViewModel() {
                 }
             }
         }
+
+        updateParticipatedGatherings()
     }
 
     fun updateParticipationStatus(postID: String) {
@@ -312,6 +326,8 @@ class HomeViewModel : ViewModel() {
                 return@launch
             }
         }
+
+        updateParticipatedGatherings()
     }
 
     fun refreshPost() {

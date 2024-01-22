@@ -17,7 +17,7 @@
         android:theme="@style/Theme.KWFriends"
         tools:targetApi="31">
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name="hello.kwfriends.ui.screens.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.SplashScreen">
             <intent-filter>
@@ -30,7 +30,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name="hello.kwfriends.ui.main.MainActivity"
+            android:name="hello.kwfriends.ui.screens.main.MainActivity"
             android:exported="false"/>
     </application>
 

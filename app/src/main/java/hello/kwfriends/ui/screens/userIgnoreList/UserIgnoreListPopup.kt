@@ -12,7 +12,7 @@ fun UserIgnoreListPopup(
     removeUserIgnore: (String) -> Unit,
     onUserInfoPopup: (String) -> Unit
 ) {
-    if(state) {
+    if (state) {
         Popup(
             onDismissRequest = onDismiss
         ) {

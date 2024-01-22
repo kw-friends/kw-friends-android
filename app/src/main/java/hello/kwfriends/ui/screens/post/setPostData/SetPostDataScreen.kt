@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,7 @@ import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
-import hello.kwfriends.ui.screens.home.HomeViewModel
+import hello.kwfriends.ui.screens.main.MainViewModel
 import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.DatePickerPopup
 import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.TimePickerStyle
 import java.text.SimpleDateFormat
@@ -66,7 +67,7 @@ import java.util.Locale
 @Composable
 fun SetPostDataScreen(
     setPostDataViewModel: SetPostDataViewModel,
-    homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
     postDetail: PostDetail?,
     onDismiss: () -> Unit,
     state: Action
@@ -93,10 +94,11 @@ fun SetPostDataScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFFFFFBFF))
-            .height(56.dp)
     ) {
         Row(
-            modifier = Modifier.align(Alignment.TopStart),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .height(56.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
@@ -110,6 +112,7 @@ fun SetPostDataScreen(
             Text(
                 text = if (state == Action.MODIFY) "내용 수정∙편집" else "새 모임 생성",
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.W500
             )
         }
 
@@ -202,7 +205,7 @@ fun SetPostDataScreen(
                             }.using(
                                 SizeTransform(clip = false)
                             )
-                        }, label = "additionalInfoVisibility = $timeInfoVisibility"
+                        }, label = "timeInfoVisibility = $timeInfoVisibility"
                     ) { targetState ->
                         if (targetState) {
                             Text(
@@ -303,7 +306,7 @@ fun SetPostDataScreen(
                             }.using(
                                 SizeTransform(clip = false)
                             )
-                        }, label = "additionalInfoVisibility = $locationInfoVisibility"
+                        }, label = "locationInfoVisibility = $locationInfoVisibility"
                     ) { targetState ->
                         if (targetState) {
                             Text(
@@ -370,7 +373,7 @@ fun SetPostDataScreen(
                         if (!setPostDataViewModel.isUploading) {
                             if (!setPostDataViewModel.validateGatheringInfo()) {
                                 setPostDataViewModel.showSnackbar("모임 정보가 부족합니다.")
-                            } else if (homeViewModel.setPostDataState.first == Action.ADD) {
+                            } else if (mainViewModel.setPostDataState.first == Action.ADD) {
                                 setPostDataViewModel.uploadPostInfoToFirestore(onDismiss)
                             } else { // homeViewModel.setPostDataState.first == Action.MODIFY
                                 setPostDataViewModel.updatePostInfoToFirestore(onDismiss)

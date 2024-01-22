@@ -123,7 +123,7 @@ fun UserIgnoreListScreen(
                         Modifier
                             .align(Alignment.CenterEnd)
                             .clip(RoundedCornerShape(10.dp))
-                            .clickable{ removeUserIgnore(uid) }
+                            .clickable { removeUserIgnore(uid) }
                     )
                 }
             }

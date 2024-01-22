@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.splash
+package hello.kwfriends.ui.screens.splash
 
 import android.annotation.SuppressLint
 import android.os.Bundle

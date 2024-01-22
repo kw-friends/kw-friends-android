@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import kotlinx.coroutines.launch
 
-class ChattingViewModel: ViewModel() {
+class ChattingViewModel : ViewModel() {
 
     var chattingData by mutableStateOf<Map<String, Map<String, Any>>?>(emptyMap())
 
