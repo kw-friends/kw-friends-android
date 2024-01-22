@@ -17,6 +17,10 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.auth.AuthScreen
+import hello.kwfriends.ui.screens.chatting.ChattingScreen
+import hello.kwfriends.ui.screens.chatting.ChattingViewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingLIstViewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.home.HomeViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
@@ -27,6 +31,8 @@ class MainActivity : BaseActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
+    private val chattingLIstViewModel: ChattingLIstViewModel by viewModels()
+    private val chattingViewModel: ChattingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +79,21 @@ class MainActivity : BaseActivity() {
                     composable(Routes.AUTH_SCREEN) {
                         statusBarColor.value = Color(0xFFE79898)
                         AuthScreen(navigation = navController)
+                    }
+                    composable(Routes.CHATTING_LIST_SCREEN) {
+                        statusBarColor.value = Color(0xFFFFFBFF)
+                        ChattingListScreen(
+                            chattingLIstViewModel = chattingLIstViewModel,
+                            navigation = navController
+                        )
+                    }
+                    composable(route = Routes.CHATTING_SCREEN + "/{roomID}") { navBackStackEntry ->
+                        statusBarColor.value = Color(0xFFFFFBFF)
+                        ChattingScreen(
+                            chattingViewModel = chattingViewModel,
+                            navigation = navController,
+                            roomID = navBackStackEntry.arguments?.getString("roomID")!!
+                        )
                     }
                 }
             }

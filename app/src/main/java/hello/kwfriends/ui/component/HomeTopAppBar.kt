@@ -6,13 +6,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -88,13 +87,13 @@ fun HomeTopAppBar(
                                 .then(
                                     if (isSearching) Modifier.weight(1f) else Modifier.width(0.dp)
                                 )
+
                         )
                     }
                     IconButton(
                         onClick = clickSearchButton,
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
-                            .size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -105,6 +104,15 @@ fun HomeTopAppBar(
                     }
                 }
                 IconButton(
+                    onClick = { navigation.navigate(Routes.CHATTING_LIST_SCREEN) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Chat,
+                        contentDescription = "go to chatting list",
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                IconButton(
                     onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
                     modifier = Modifier.size(48.dp)
                 ) {
@@ -112,7 +120,7 @@ fun HomeTopAppBar(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Account",
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(24.dp),
                     )
                 }
             }
