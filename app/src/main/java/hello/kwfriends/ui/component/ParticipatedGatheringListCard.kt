@@ -63,7 +63,7 @@ fun ParticipatedGatheringListCard(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.W600
             )
-            if (participatedGatherings.size != 0) {
+            if (participatedGatherings.isNotEmpty()) {
                 IconButton(
                     onClick = { },
                     modifier = Modifier.size(48.dp)
@@ -92,7 +92,8 @@ fun ParticipatedGatheringListCard(
                 posts = participatedGatherings.map { it.first },
                 mainViewModel = mainViewModel,
                 maximumItems = maximumLines,
-                logo = false
+                logo = false,
+                showParticipationStatus = false
             )
             AnimatedVisibility(expended) {
                 GatheringList(
@@ -100,7 +101,8 @@ fun ParticipatedGatheringListCard(
                     mainViewModel = mainViewModel,
                     maximumItems = maximumLines,
                     excludeFrontPosts = true,
-                    logo = false
+                    logo = false,
+                    showParticipationStatus = false
                 )
             }
             AnimatedVisibility(participatedGatherings.size > maximumLines) {

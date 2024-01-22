@@ -77,7 +77,8 @@ fun FindGatheringScreen(
                         GatheringList(
                             mainViewModel.filter(mainViewModel.searchingPosts),
                             mainViewModel = mainViewModel,
-                            maximumItems = null
+                            maximumItems = null,
+                            showParticipationStatus = true
                         )
                     }
                 } else { // 검색중 아닐때는 모든 모임 목록 표시
@@ -85,7 +86,8 @@ fun FindGatheringScreen(
                         mainViewModel.filter(mainViewModel.posts),
                         mainViewModel = mainViewModel,
                         maximumItems = null,
-                        logo = false
+                        logo = true,
+                        showParticipationStatus = true
                     )
                 }
             }
