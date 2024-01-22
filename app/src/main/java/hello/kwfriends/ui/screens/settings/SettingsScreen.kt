@@ -38,7 +38,7 @@ import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
-import hello.kwfriends.ui.component.UserIgnoreListPopup
+import hello.kwfriends.ui.screens.userIgnoreList.UserIgnoreListPopup
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
