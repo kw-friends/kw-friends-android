@@ -86,7 +86,7 @@ fun ChattingListScreen(
         ) {
             //top
             val sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
-                ((it.value["recentMessage"] as Map<String, Any>?)?.get("timestamp") as? Long)
+                ((it.value["recentMessage"] as Map<String, Any?>?)?.get("timestamp") as? Long)
                     ?: Long.MAX_VALUE
             }
             sortedData?.forEach {
