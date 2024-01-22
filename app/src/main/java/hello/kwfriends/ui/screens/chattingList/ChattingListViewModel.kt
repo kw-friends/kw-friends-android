@@ -10,7 +10,7 @@ import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import kotlinx.coroutines.launch
 
-class ChattingLIstViewModel : ViewModel() {
+class ChattingListViewModel : ViewModel() {
 
 
     fun getRoomList() {

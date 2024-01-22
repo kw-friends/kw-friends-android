@@ -46,9 +46,10 @@ import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.component.finalCheckPopup
+import hello.kwfriends.ui.screens.chattingList.ChattingListViewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
-import hello.kwfriends.ui.screens.notChatScreen
 import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataPopup
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
@@ -61,6 +62,7 @@ fun MainScreen(
     mainViewModel: MainViewModel,
     setPostDataViewModel: SetPostDataViewModel,
     settingsViewModel: SettingsViewModel,
+    chattingListViewModel: ChattingListViewModel,
     mainNavigation: NavController
 ) {
     val postID = mainViewModel.postInfoPopupState.second
@@ -262,9 +264,12 @@ fun MainScreen(
                 fabOpened = true
                 HomeScreen(mainViewModel = mainViewModel)
             }
-            composable(MainDestination.notChatScreen.route) {
+            composable(MainDestination.ChatScreen.route) {
                 fabOpened = false
-                notChatScreen()
+                ChattingListScreen(
+                    chattingListViewModel = chattingListViewModel,
+                    navigation = navController
+                )
             }
 
         }
@@ -280,6 +285,7 @@ fun HomeScreenPreview() {
             mainViewModel = MainViewModel(),
             settingsViewModel = SettingsViewModel(),
             setPostDataViewModel = SetPostDataViewModel(),
+            chattingListViewModel = ChattingListViewModel(),
             mainNavigation = navController
         )
     }

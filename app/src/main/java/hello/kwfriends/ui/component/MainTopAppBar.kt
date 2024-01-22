@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -125,15 +124,6 @@ fun MainTopAppBar(
                                 .size(24.dp)
                         )
                     }
-                }
-                IconButton(
-                    onClick = { navigation.navigate(Routes.CHATTING_LIST_SCREEN) },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Chat,
-                        contentDescription = "go to chatting list",
-                        modifier = Modifier.size(22.dp)
-                    )
                 }
                 IconButton(
                     onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },

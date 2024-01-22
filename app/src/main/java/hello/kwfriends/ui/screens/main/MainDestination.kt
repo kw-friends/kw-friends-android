@@ -22,7 +22,7 @@ enum class MainDestination(
         icon = Icons.Default.People,
         labelResId = R.string.navigation_findGathering
     ),
-    notChatScreen(
+    ChatScreen(
         route = ROUTE_CHAT,
         icon = Icons.Default.Chat,
         labelResId = R.string.navigation_chat

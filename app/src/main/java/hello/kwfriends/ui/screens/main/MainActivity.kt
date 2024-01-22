@@ -18,7 +18,7 @@ import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.chatting.ChattingScreen
 import hello.kwfriends.ui.screens.chatting.ChattingViewModel
-import hello.kwfriends.ui.screens.chattingList.ChattingLIstViewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingListViewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
@@ -29,7 +29,7 @@ class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
-    private val chattingLIstViewModel: ChattingLIstViewModel by viewModels()
+    private val chattingLIstViewModel: ChattingListViewModel by viewModels()
     private val chattingViewModel: ChattingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +65,7 @@ class MainActivity : BaseActivity() {
                             mainViewModel = mainViewModel,
                             settingsViewModel = settingsViewModel,
                             setPostDataViewModel = setPostDataViewModel,
+                            chattingListViewModel = chattingLIstViewModel,
                             mainNavigation = navController
                         )
                     }
@@ -82,7 +83,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.CHATTING_LIST_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingListScreen(
-                            chattingLIstViewModel = chattingLIstViewModel,
+                            chattingListViewModel = chattingLIstViewModel,
                             navigation = navController
                         )
                     }
