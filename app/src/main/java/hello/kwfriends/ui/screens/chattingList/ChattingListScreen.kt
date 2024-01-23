@@ -42,12 +42,12 @@ import java.util.Locale
 
 @Composable
 fun ChattingListScreen(
-    chattingListViewModel: ChattingListViewModel,
+    chattingsLIstViewModel: ChattingsListVIewModel,
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
-        chattingListViewModel.getRoomList()
+        chattingsLIstViewModel.getRoomList()
     }
     Column(
         modifier = Modifier
@@ -129,16 +129,16 @@ fun ChattingListScreen(
         }
         Button(
             onClick = {
-                chattingListViewModel.temp_addRoom()
-                chattingListViewModel.getRoomList()
+                chattingsLIstViewModel.temp_addRoom()
+                chattingsLIstViewModel.getRoomList()
             }
         ) {
             Text("채팅방 생성하기")
         }
         Button(
             onClick = {
-                chattingListViewModel.temp_sendMessage()
-                chattingListViewModel.getRoomList()
+                chattingsLIstViewModel.temp_sendMessage()
+                chattingsLIstViewModel.getRoomList()
             }
         ) {
             Text("메세지 전송하기")
@@ -150,7 +150,7 @@ fun ChattingListScreen(
 @Composable
 fun ChattingListScreenPreview() {
     ChattingListScreen(
-        chattingListViewModel = ChattingListViewModel(),
+        chattingsLIstViewModel = ChattingsListVIewModel(),
         navigation = rememberNavController()
     )
 }

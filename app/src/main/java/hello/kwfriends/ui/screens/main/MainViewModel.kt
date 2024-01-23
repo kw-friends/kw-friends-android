@@ -44,6 +44,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // 현재 참여 중 모임만 표시
+    var onlyParticipatedGathering by mutableStateOf(false)
+
     //포스트 팝업 보이기 여부 및 포스트 uid
     var postInfoPopupState by mutableStateOf<Pair<Boolean, String>>(false to "")
 
@@ -63,7 +66,7 @@ class MainViewModel : ViewModel() {
     var finalCheckState by mutableStateOf(false)
     var finalCheckTitle by mutableStateOf("")
     var finalCheckBody by mutableStateOf("")
-    var onContinueAction by mutableStateOf({})
+    var onContinueAction by mutableStateOf({}) // 제거
 
     //포스트 신고 텍스트 리스트
     val postReportTextList by mutableStateOf(
@@ -176,6 +179,8 @@ class MainViewModel : ViewModel() {
             activityTags.all {
                 it in post.gatheringTags
             }
+        }.filter { post ->
+            if (onlyParticipatedGathering) uid in post.participants else true
         }
         return resultPosts
     }

@@ -8,15 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import hello.kwfriends.Tags.Tags
 import hello.kwfriends.ui.component.EventCard
 import hello.kwfriends.ui.component.ParticipatedGatheringListCard
+import hello.kwfriends.ui.screens.main.MainDestination
+import hello.kwfriends.ui.screens.main.MainNavigation
 import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable
 fun HomeScreen(
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    homeNavigation: MainNavigation
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+    ) {
         EventCard(5)
         Column(
             modifier = Modifier
@@ -26,7 +33,16 @@ fun HomeScreen(
         ) {
             ParticipatedGatheringListCard(
                 participatedGatherings = mainViewModel.participatedGatherings,
-                mainViewModel = mainViewModel
+                mainViewModel = mainViewModel,
+                openParticipatedGatheringList = {
+                    homeNavigation.navigateTo(MainDestination.FindGatheringScreen)
+                    mainViewModel.filterTagMap.apply {
+                        Tags.list.forEach { tag ->
+                            this[tag] = false
+                        }
+                        mainViewModel.onlyParticipatedGathering = true
+                    }
+                }
             )
         }
     }

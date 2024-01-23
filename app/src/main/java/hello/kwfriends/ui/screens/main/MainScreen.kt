@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package hello.kwfriends.ui.screens.main
 
 import android.content.Intent
@@ -14,7 +12,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -46,8 +43,8 @@ import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.component.finalCheckPopup
-import hello.kwfriends.ui.screens.chattingList.ChattingListViewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
+import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
@@ -62,7 +59,7 @@ fun MainScreen(
     mainViewModel: MainViewModel,
     setPostDataViewModel: SetPostDataViewModel,
     settingsViewModel: SettingsViewModel,
-    chattingListViewModel: ChattingListViewModel,
+    chattingsLIstViewModel: ChattingsListVIewModel,
     mainNavigation: NavController
 ) {
     val postID = mainViewModel.postInfoPopupState.second
@@ -76,7 +73,6 @@ fun MainScreen(
     var fabOpened by remember {
         mutableStateOf(true)
     }
-
 
 
     //유저 개인 설정 세팅값 받아오기
@@ -262,12 +258,15 @@ fun MainScreen(
             }
             composable(MainDestination.HomeScreen.route) {
                 fabOpened = true
-                HomeScreen(mainViewModel = mainViewModel)
+                HomeScreen(
+                    mainViewModel = mainViewModel,
+                    homeNavigation = homeNavigation
+                )
             }
             composable(MainDestination.ChatScreen.route) {
                 fabOpened = false
                 ChattingListScreen(
-                    chattingListViewModel = chattingListViewModel,
+                    chattingsLIstViewModel = chattingsLIstViewModel,
                     navigation = mainNavigation
                 )
             }
@@ -285,7 +284,7 @@ fun HomeScreenPreview() {
             mainViewModel = MainViewModel(),
             settingsViewModel = SettingsViewModel(),
             setPostDataViewModel = SetPostDataViewModel(),
-            chattingListViewModel = ChattingListViewModel(),
+            chattingsLIstViewModel = ChattingsListVIewModel(),
             mainNavigation = navController
         )
     }

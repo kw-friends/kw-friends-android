@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -14,9 +15,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.NoSearchResult
@@ -47,10 +51,26 @@ fun FindGatheringScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalScroll(tagsHorizontalScrollState)
-            //                .background(Color(0xFFE2A39B))
+                .horizontalScroll(tagsHorizontalScrollState),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(Modifier.width(12.dp))
+            TagChip(
+                modifier = Modifier.padding(end = 4.dp),
+                text = "참여 중",
+                selected = mainViewModel.onlyParticipatedGathering,
+                onClick = {
+                    mainViewModel.onlyParticipatedGathering =
+                        !mainViewModel.onlyParticipatedGathering
+                }
+            )
+            Divider(
+                color = Color.Gray,
+                modifier = Modifier
+                    .width(1.4f.dp)
+                    .height(30.dp)
+            )
+            Spacer(Modifier.width(4.dp))
             mainViewModel.filterTagMap.forEach {
                 TagChip(
                     modifier = Modifier.padding(end = 4.dp),

@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +36,8 @@ import hello.kwfriends.ui.screens.main.MainViewModel
 @Composable
 fun ParticipatedGatheringListCard(
     participatedGatherings: List<Pair<PostDetail, ParticipationStatus>>,
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    openParticipatedGatheringList: () -> Unit
 ) {
     var expended by remember { mutableStateOf(false) }
 
@@ -63,16 +63,28 @@ fun ParticipatedGatheringListCard(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.W600
             )
-            if (participatedGatherings.isNotEmpty()) {
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.size(48.dp)
+            if (participatedGatherings.size > maximumLines) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable { openParticipatedGatheringList() }
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowForwardIos,
-                        contentDescription = "내가 참여한 모임",
-                        modifier = Modifier.size(24.dp)
+                    Text(
+                        text = "더보기",
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(start = 24.dp)
                     )
+                    IconButton(
+                        onClick = openParticipatedGatheringList,
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowForwardIos,
+                            contentDescription = "내가 참여한 모임",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
         }
@@ -95,34 +107,6 @@ fun ParticipatedGatheringListCard(
                 logo = false,
                 showParticipationStatus = false
             )
-            AnimatedVisibility(expended) {
-                GatheringList(
-                    posts = participatedGatherings.map { it.first },
-                    mainViewModel = mainViewModel,
-                    maximumItems = maximumLines,
-                    excludeFrontPosts = true,
-                    logo = false,
-                    showParticipationStatus = false
-                )
-            }
-            AnimatedVisibility(participatedGatherings.size > maximumLines) {
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFFAF3F3))
-                    .clickable {
-                        expended = !expended
-                    }
-                    .height(48.dp)
-                ) {
-                    Text(
-                        text = if (expended) "목록 접기" else "더보기",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
         }
     }
 }
