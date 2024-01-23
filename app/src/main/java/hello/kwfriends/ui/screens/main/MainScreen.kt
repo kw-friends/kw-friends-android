@@ -268,7 +268,7 @@ fun MainScreen(
                 fabOpened = false
                 ChattingListScreen(
                     chattingListViewModel = chattingListViewModel,
-                    navigation = navController
+                    navigation = mainNavigation
                 )
             }
 
