@@ -47,7 +47,9 @@ fun ChattingScreen(
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
+        chattingViewModel.getRoomInfo(roomID)
         chattingViewModel.getMessages(roomID)
+        chattingViewModel.getUsersProfile()
     }
     LaunchedEffect(chattingViewModel.messageData) {
         scrollState.scrollTo(scrollState.maxValue)
