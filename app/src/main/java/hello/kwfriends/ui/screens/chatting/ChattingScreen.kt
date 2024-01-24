@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.IconButton
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Icon
@@ -34,7 +36,6 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
-import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -48,7 +49,7 @@ fun ChattingScreen(
     LaunchedEffect(true) {
         chattingViewModel.getMessages(roomID)
     }
-    LaunchedEffect(chattingViewModel.chattingData) {
+    LaunchedEffect(chattingViewModel.messageData) {
         scrollState.scrollTo(scrollState.maxValue)
     }
     Box(
@@ -62,7 +63,7 @@ fun ChattingScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { navigation.navigate(Routes.CHATTING_LIST_SCREEN) }
+                onClick = { navigation.popBackStack() }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -82,7 +83,7 @@ fun ChattingScreen(
                 .verticalScroll(scrollState)
         ) {
             //top
-            val sortedData = chattingViewModel.chattingData?.entries?.sortedBy {
+            val sortedData = chattingViewModel.messageData?.entries?.sortedBy {
                 (it.value["timestamp"] as? Long) ?: Long.MAX_VALUE
             }
             sortedData?.forEach {
@@ -121,5 +122,19 @@ fun ChattingScreen(
                 }
             }
         }
+        Row(
+            modifier = Modifier.align(Alignment.BottomCenter),
+        ) {
+            TextField(
+                value = chattingViewModel.inputChatting,
+                onValueChange = { chattingViewModel.setInputChattingText(it) }
+            )
+            Button(onClick = {
+                chattingViewModel.sendMessage(roomID)
+            }) {
+                Text(text = "전송")
+            }
+        }
+
     }
 }
