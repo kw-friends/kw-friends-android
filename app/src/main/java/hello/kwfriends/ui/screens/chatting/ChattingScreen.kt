@@ -36,7 +36,6 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
-import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -64,7 +63,7 @@ fun ChattingScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { navigation.navigate(Routes.CHATTING_LIST_SCREEN) }
+                onClick = { navigation.popBackStack() }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
