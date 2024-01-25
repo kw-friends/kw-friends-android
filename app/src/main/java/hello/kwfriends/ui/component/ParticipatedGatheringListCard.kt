@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,10 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,10 +32,8 @@ import hello.kwfriends.ui.screens.main.MainViewModel
 fun ParticipatedGatheringListCard(
     participatedGatherings: List<Pair<PostDetail, ParticipationStatus>>,
     mainViewModel: MainViewModel,
-    openParticipatedGatheringList: () -> Unit
+    gotoFindGatheringScreen: (Boolean) -> Unit
 ) {
-    var expended by remember { mutableStateOf(false) }
-
     val maximumLines = 2
 
     Column(
@@ -68,20 +61,44 @@ fun ParticipatedGatheringListCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .clip(RoundedCornerShape(16.dp))
-                        .clickable { openParticipatedGatheringList() }
+                        .clickable { gotoFindGatheringScreen(true) }
                 ) {
                     Text(
-                        text = "더보기",
+                        text = "${participatedGatherings.size - 2}개 더보기",
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.padding(start = 24.dp)
                     )
                     IconButton(
-                        onClick = openParticipatedGatheringList,
+                        onClick = { gotoFindGatheringScreen(true) },
                         modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowForwardIos,
                             contentDescription = "내가 참여한 모임",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
+            if (participatedGatherings.isEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable { gotoFindGatheringScreen(false) }
+                ) {
+                    Text(
+                        text = "모임 찾기",
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(start = 24.dp)
+                    )
+                    IconButton(
+                        onClick = { gotoFindGatheringScreen(false) },
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowForwardIos,
+                            contentDescription = "모임 찾기",
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -97,7 +114,9 @@ fun ParticipatedGatheringListCard(
                 Text(
                     text = "참여한 모임이 없습니다.",
                     style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 12.dp)
                 )
             }
             GatheringList(
@@ -105,7 +124,8 @@ fun ParticipatedGatheringListCard(
                 mainViewModel = mainViewModel,
                 maximumItems = maximumLines,
                 logo = false,
-                showParticipationStatus = false
+                showParticipationStatus = false,
+                showNoSearchResultMessage = false
             )
         }
     }

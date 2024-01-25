@@ -165,7 +165,8 @@ fun GatheringList(
     mainViewModel: MainViewModel,
     maximumItems: Int?,
     logo: Boolean = true,
-    showParticipationStatus: Boolean
+    showParticipationStatus: Boolean,
+    showNoSearchResultMessage: Boolean
 ) {
     LazyColumn(
         modifier = Modifier
@@ -188,7 +189,24 @@ fun GatheringList(
             }
         }
 
-        if (logo) {
+        if (posts.isEmpty() && showNoSearchResultMessage) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "검색 결과가 없습니다.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
+
+        if (logo && posts.isNotEmpty()) {
             item {
                 Box(
                     modifier = Modifier
@@ -227,6 +245,7 @@ fun GatheringItemListPreview() {
         ),
         mainViewModel = MainViewModel(),
         maximumItems = null,
-        showParticipationStatus = true
+        showParticipationStatus = true,
+        showNoSearchResultMessage = true
     )
 }
