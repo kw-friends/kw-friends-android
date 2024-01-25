@@ -248,7 +248,16 @@ fun MainScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            composable(MainDestination.FindGatheringScreen.route) {
+
+            composable(
+                route = MainDestination.FindGatheringScreen.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(500))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(500))
+                }
+            ) {
                 fabOpened = true
                 FindGatheringScreen(
                     mainViewModel = mainViewModel,
@@ -256,14 +265,30 @@ fun MainScreen(
                     posts = mainViewModel.posts
                 )
             }
-            composable(MainDestination.HomeScreen.route) {
+            composable(
+                route = MainDestination.HomeScreen.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(500))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(500))
+                }
+            ) {
                 fabOpened = true
                 HomeScreen(
                     mainViewModel = mainViewModel,
                     homeNavigation = homeNavigation
                 )
             }
-            composable(MainDestination.ChatScreen.route) {
+            composable(
+                route = MainDestination.ChatScreen.route,
+                enterTransition = {
+                    fadeIn(animationSpec = tween(500))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(500))
+                }
+            ) {
                 fabOpened = false
                 ChattingListScreen(
                     chattingsLIstViewModel = chattingsLIstViewModel,
