@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -75,7 +74,6 @@ fun ChattingScreen(
             Text(
                 text = Chattings.chattingRoomList?.get(roomID)?.get("title").toString(),
                 style = MaterialTheme.typography.titleMedium,
-                fontFamily = FontFamily.Default
             )
         }
         Column(
@@ -92,7 +90,10 @@ fun ChattingScreen(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row {
+                    Row(
+                        modifier = Modifier.align(Alignment.TopStart),
+                        verticalAlignment = Alignment.Top
+                    ) {
                         AsyncImage(
                             model = ProfileImage.usersUriMap[it.value["uid"]]
                                 ?: R.drawable.profile_default_image,
@@ -118,7 +119,6 @@ fun ChattingScreen(
                             it.value["timestamp"]
                         ),
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
                         color = Color.Gray
                     )
                 }

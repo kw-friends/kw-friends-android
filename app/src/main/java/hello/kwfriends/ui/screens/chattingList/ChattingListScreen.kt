@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,14 +85,21 @@ fun ChattingListScreen(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
-                        Row {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 text = roomInfo?.get("title")?.toString() ?: "",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontFamily = FontFamily.Default,
                                 color = Color.Black,
                                 fontWeight = FontWeight(400),
                                 overflow = TextOverflow.Ellipsis
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = (roomInfo?.get("members") as Map<String, Any>).size.toString(),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Color.Gray,
                             )
                         }
                         Spacer(modifier = Modifier.height(3.dp))
@@ -101,7 +107,6 @@ fun ChattingListScreen(
                             text = recentMessage?.get("content")?.toString() ?: "",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Gray,
-                            fontFamily = FontFamily.Default,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -117,7 +122,6 @@ fun ChattingListScreen(
                             recentMessage["timestamp"]
                         ),
                         style = MaterialTheme.typography.bodySmall,
-                        fontFamily = FontFamily.Default,
                         color = Color.Gray
                     )
                 }
