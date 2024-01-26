@@ -10,6 +10,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -52,8 +54,11 @@ import hello.kwfriends.ui.screens.post.setPostData.SetPostDataPopup
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel,
@@ -70,8 +75,20 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    var fabOpened by remember {
-        mutableStateOf(true)
+    var fabOpened by remember { mutableStateOf(true) }
+    var fabTextVisibility by remember { mutableStateOf(true) }
+
+    LaunchedEffect(key1 = fabOpened) {
+        launch {
+            fabTextVisibility = fabOpened
+        }
+    }
+
+    LaunchedEffect(key1 = fabTextVisibility) {
+        launch {
+            delay(2500)
+            fabTextVisibility = false
+        }
     }
 
 
@@ -224,13 +241,16 @@ fun MainScreen(
                 { fullWidth -> fullWidth } + fadeOut(animationSpec = tween(durationMillis = 500))
             ) {
                 ExtendedFloatingActionButton(
-                    text = { Text(text = "모임 생성", style = MaterialTheme.typography.bodyMedium) },
+                    text = {
+                        Text(text = "모임 생성", style = MaterialTheme.typography.bodyMedium)
+                    },
                     icon = { Icon(Icons.Default.Add, "모임 생성") },
                     onClick = {
                         mainViewModel.setPostDataState = Action.ADD to ""
                     },
                     modifier = Modifier
-                        .padding(bottom = 8.dp)
+                        .padding(bottom = 8.dp),
+                    expanded = fabTextVisibility
                 )
             }
         },

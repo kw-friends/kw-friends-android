@@ -98,7 +98,8 @@ fun FindGatheringScreen(
                             mainViewModel.filter(mainViewModel.searchingPosts),
                             mainViewModel = mainViewModel,
                             maximumItems = null,
-                            showParticipationStatus = true
+                            showParticipationStatus = true,
+                            showNoSearchResultMessage = true
                         )
                     }
                 } else { // 검색중 아닐때는 모든 모임 목록 표시
@@ -107,7 +108,8 @@ fun FindGatheringScreen(
                         mainViewModel = mainViewModel,
                         maximumItems = null,
                         logo = true,
-                        showParticipationStatus = true
+                        showParticipationStatus = true,
+                        showNoSearchResultMessage = true
                     )
                 }
             }

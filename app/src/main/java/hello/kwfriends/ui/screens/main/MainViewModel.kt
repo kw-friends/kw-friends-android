@@ -34,6 +34,9 @@ class MainViewModel : ViewModel() {
     //검색 상태 저장 변수
     var isSearching by mutableStateOf(false)
 
+    // 참여 상태 업데이트 중 변수
+    var isProcessing by mutableStateOf(false)
+
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
 
@@ -302,6 +305,8 @@ class MainViewModel : ViewModel() {
             "updateParticipationStatus",
             "myParticipantStatus of $postID is ${postDetail?.myParticipantStatus}"
         )
+        isProcessing = true
+
         viewModelScope.launch {
             // 참여 신청
             if (postDetail?.myParticipantStatus == ParticipationStatus.NOT_PARTICIPATED) {
@@ -333,6 +338,8 @@ class MainViewModel : ViewModel() {
         }
 
         updateParticipatedGatherings()
+
+        isProcessing = false
     }
 
     fun refreshPost() {
