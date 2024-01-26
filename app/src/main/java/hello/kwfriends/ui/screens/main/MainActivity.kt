@@ -5,6 +5,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -18,8 +21,8 @@ import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.chatting.ChattingScreen
 import hello.kwfriends.ui.screens.chatting.ChattingViewModel
-import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
+import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
@@ -59,7 +62,15 @@ class MainActivity : BaseActivity() {
                     enterTransition = { EnterTransition.None },
                     exitTransition = { ExitTransition.None }
                 ) {
-                    composable(Routes.HOME_SCREEN) {
+                    composable(
+                        route = Routes.HOME_SCREEN,
+                        enterTransition = {
+                            fadeIn(animationSpec = tween(500))
+                        },
+                        exitTransition = {
+                            fadeOut(animationSpec = tween(500))
+                        }
+                    ) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         MainScreen(
                             mainViewModel = mainViewModel,
@@ -69,25 +80,57 @@ class MainActivity : BaseActivity() {
                             mainNavigation = navController
                         )
                     }
-                    composable(Routes.SETTINGS_SCREEN) {
+                    composable(
+                        route = Routes.SETTINGS_SCREEN,
+                        enterTransition = {
+                            fadeIn(animationSpec = tween(500))
+                        },
+                        exitTransition = {
+                            fadeOut(animationSpec = tween(500))
+                        }
+                    ) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         SettingsScreen(
                             settingsViewModel = settingsViewModel,
                             mainNavigation = navController
                         )
                     }
-                    composable(Routes.AUTH_SCREEN) {
+                    composable(
+                        route = Routes.AUTH_SCREEN,
+                        enterTransition = {
+                            fadeIn(animationSpec = tween(500))
+                        },
+                        exitTransition = {
+                            fadeOut(animationSpec = tween(500))
+                        }
+                    ) {
                         statusBarColor.value = Color(0xFFE79898)
                         AuthScreen(mainNavigation = navController)
                     }
-                    composable(Routes.CHATTING_LIST_SCREEN) {
+                    composable(
+                        route = Routes.CHATTING_LIST_SCREEN,
+                        enterTransition = {
+                            fadeIn(animationSpec = tween(500))
+                        },
+                        exitTransition = {
+                            fadeOut(animationSpec = tween(500))
+                        }
+                    ) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingListScreen(
                             chattingsLIstViewModel = chattingsLIstViewModel,
                             navigation = navController
                         )
                     }
-                    composable(route = Routes.CHATTING_SCREEN + "/{roomID}") { navBackStackEntry ->
+                    composable(
+                        route = Routes.CHATTING_SCREEN + "/{roomID}",
+                        enterTransition = {
+                            fadeIn(animationSpec = tween(500))
+                        },
+                        exitTransition = {
+                            fadeOut(animationSpec = tween(500))
+                        }
+                    ) { navBackStackEntry ->
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingScreen(
                             chattingViewModel = chattingViewModel,

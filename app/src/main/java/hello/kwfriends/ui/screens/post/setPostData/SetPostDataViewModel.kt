@@ -82,6 +82,7 @@ class SetPostDataViewModel : ViewModel() {
             gatheringPromoterUID = postDetail.gatheringPromoterUID
             gatheringPromoter = UserData.myInfo!!["name"].toString()
             gatheringTime = postDetail.gatheringTime
+            Log.d("PostDetail_MODIFY", "gatheringTime: $gatheringTime")
             gatheringLocation = postDetail.gatheringLocation
             gatheringDescription = postDetail.gatheringDescription
             gatheringDescriptionValidation = true
@@ -97,19 +98,43 @@ class SetPostDataViewModel : ViewModel() {
                     .toMutableMap()
 
             val time = Instant.ofEpochMilli(postDetail.gatheringTime).atZone(ZoneId.systemDefault())
+            Log.d("PostDetail_MODIFY", "gatheringTime: $gatheringTime")
             gatheringDate =
                 if (gatheringTime == 0L) LocalDate.now().atStartOfDay(ZoneId.systemDefault())
                     .toInstant().toEpochMilli() else gatheringTime
+            Log.d("PostDetail_MODIFY", "gatheringTime: $gatheringTime")
             gatheringHour = DateTimeFormatter.ofPattern("HH").format(time).toString()
             gatheringMinute = DateTimeFormatter.ofPattern("mm").format(time).toString()
             Log.d("dateInit", gatheringDate.toString())
             validateGatheringTime()
 
+            Log.d("PostDetail_MODIFY", "gatheringTime: $gatheringTime")
             gatheringTimeUse = gatheringTime != 0L
             gatheringLocationUse = gatheringLocation != ""
 
             gatheringTimeValidation = gatheringTimeUse
             gatheringLocationValidation = gatheringLocationUse
+
+            Log.d("PostDetail_MODIFY", "postID: $postID")
+            Log.d("PostDetail_MODIFY", "gatheringTitle: $gatheringTitle")
+            Log.d("PostDetail_MODIFY", "gatheringTitleValidation: $gatheringTitleValidation")
+            Log.d("PostDetail_MODIFY", "gatheringPromoterUID: $gatheringPromoterUID")
+            Log.d("PostDetail_MODIFY", "gatheringPromoter: $gatheringPromoter")
+            Log.d("PostDetail_MODIFY", "gatheringTime: $gatheringTime")
+            Log.d("PostDetail_MODIFY", "gatheringLocation: $gatheringLocation")
+            Log.d("PostDetail_MODIFY", "gatheringDescription: $gatheringDescription")
+            Log.d("PostDetail_MODIFY", "gatheringDescriptionValidation: $gatheringDescriptionValidation")
+            Log.d("PostDetail_MODIFY", "maximumParticipants: $maximumParticipants")
+            Log.d("PostDetail_MODIFY", "maximumParticipantsValidation: $maximumParticipantsValidation")
+            Log.d("PostDetail_MODIFY", "tagMap: $tagMap")
+            Log.d("PostDetail_MODIFY", "participants: $participants")
+            Log.d("PostDetail_MODIFY", "gatheringDate: $gatheringDate")
+            Log.d("PostDetail_MODIFY", "gatheringHour: $gatheringHour")
+            Log.d("PostDetail_MODIFY", "gatheringMinute: $gatheringMinute")
+            Log.d("PostDetail_MODIFY", "gatheringTimeUse: $gatheringTimeUse")
+            Log.d("PostDetail_MODIFY", "gatheringLocationUse: $gatheringLocationUse")
+            Log.d("PostDetail_MODIFY", "gatheringTimeValidation: $gatheringTimeValidation")
+            Log.d("PostDetail_MODIFY", "gatheringLocationValidation: $gatheringLocationValidation")
         }
 
         if (state == Action.ADD) {
@@ -137,6 +162,25 @@ class SetPostDataViewModel : ViewModel() {
 
             gatheringTimeUse = false
             gatheringLocationUse = false
+
+            Log.d("PostDetail_ADD", "gatheringDate: $gatheringDate")
+            Log.d("PostDetail_ADD", "gatheringPromoter: $gatheringPromoter")
+            Log.d("PostDetail_ADD", "gatheringTitle: $gatheringTitle")
+            Log.d("PostDetail_ADD", "gatheringTitleValidation: $gatheringTitleValidation")
+            Log.d("PostDetail_ADD", "gatheringTime: $gatheringTime")
+            Log.d("PostDetail_ADD", "gatheringTimeMessage: $gatheringTimeMessage")
+            Log.d("PostDetail_ADD", "gatheringTimeValidation: $gatheringTimeValidation")
+            Log.d("PostDetail_ADD", "gatheringLocationValidation: $gatheringLocationValidation")
+            Log.d("PostDetail_ADD", "gatheringLocation: $gatheringLocation")
+            Log.d("PostDetail_ADD", "gatheringDescription: $gatheringDescription")
+            Log.d("PostDetail_ADD", "gatheringDescriptionValidation: $gatheringDescriptionValidation")
+            Log.d("PostDetail_ADD", "maximumParticipants: $maximumParticipants")
+            Log.d("PostDetail_ADD", "maximumParticipantsValidation: $maximumParticipantsValidation")
+            Log.d("PostDetail_ADD", "gatheringHour: $gatheringHour")
+            Log.d("PostDetail_ADD", "gatheringMinute: $gatheringMinute")
+            Log.d("PostDetail_ADD", "tagMap: $tagMap")
+            Log.d("PostDetail_ADD", "gatheringTimeUse: $gatheringTimeUse")
+            Log.d("PostDetail_ADD", "gatheringLocationUse: $gatheringLocationUse")
         }
     }
 
@@ -177,10 +221,11 @@ class SetPostDataViewModel : ViewModel() {
         return timeOffset
     }
 
-    // 모임 시간이 현재 시간 이후인지 확인
+    // 모임 시간이 현재 시간 이후인지 확인 // TODO 시간 확인 로직 점검
     fun validateGatheringTime() {
         val minimumTimeHour: Int = 3 // 시간 단위
         val timeDelay: Long = minimumTimeHour.toLong() * 3600000
+        var targetGatheringTime: Long = 0L
 
         if (gatheringHour == "" || gatheringMinute == "") {
             gatheringTimeMessage = "입력칸이 비어있습니다."
@@ -188,14 +233,14 @@ class SetPostDataViewModel : ViewModel() {
             return
         }
 
-        gatheringTime =
+        targetGatheringTime =
             gatheringDate + gatheringHour.toLong() * 3600000 + gatheringMinute.toLong() * 60000 - getTimeZoneOffset()
-        Log.d("gatheringTime", gatheringTime.toString())
+        Log.d("gatheringTime", targetGatheringTime.toString())
         val liveDateTime =
             ZonedDateTime.now(ZoneId.systemDefault()).toInstant().toEpochMilli()
         Log.d("liveDateTime", liveDateTime.toString())
 
-        if (gatheringTime >= liveDateTime + timeDelay) {
+        if (targetGatheringTime >= liveDateTime + timeDelay) {
             gatheringTimeValidation = true
             gatheringTimeMessage = ""
         } else {
@@ -214,8 +259,13 @@ class SetPostDataViewModel : ViewModel() {
     }
 
     fun maximumParticipantsChange(max: String) {
-        maximumParticipants = max
-        maximumParticipantsValidation = postValidation.checkMaximumParticipantsRange(max)
+        if (postValidation.checkMaximumParticipantsRange(max)) {
+            maximumParticipants = max
+            maximumParticipantsValidation = true
+        } else {
+            maximumParticipants = max
+            maximumParticipantsValidation = false
+        }
     }
 
     fun validateGatheringInfo(): Boolean {

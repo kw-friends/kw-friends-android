@@ -12,15 +12,15 @@ enum class MainDestination(
     val icon: ImageVector,
     val labelResId: Int
 ) {
-    HomeScreen(
-        route = ROUTE_HOME,
-        icon = Icons.Default.Home,
-        labelResId = R.string.navigation_home
-    ),
     FindGatheringScreen(
         route = ROUTE_FIND_GATHERING,
         icon = Icons.Default.People,
         labelResId = R.string.navigation_findGathering
+    ),
+    HomeScreen(
+        route = ROUTE_HOME,
+        icon = Icons.Default.Home,
+        labelResId = R.string.navigation_home
     ),
     ChatScreen(
         route = ROUTE_CHAT,

@@ -63,6 +63,8 @@ import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private val uid = Firebase.auth.currentUser!!.uid
+
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PostInfoScreen(
@@ -133,13 +135,13 @@ fun PostInfoScreen(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             },
-                            enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid) && postDetail.gatheringPromoterUID != Firebase.auth.currentUser!!.uid,
+                            enabled = !postDetail.reporters.containsKey(uid) && postDetail.gatheringPromoterUID != uid,
                             onClick = {
                                 menuExpanded = false
                                 onPostReport()
                             },
                             trailingIcon = {
-                                if (postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid)) {
+                                if (postDetail.reporters.containsKey(uid)) {
                                     Icon(
                                         Icons.Default.Check,
                                         tint = Color.Gray,

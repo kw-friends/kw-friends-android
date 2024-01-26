@@ -105,7 +105,8 @@ fun ParticipatedGatheringListCard(
                 mainViewModel = mainViewModel,
                 maximumItems = maximumLines,
                 logo = false,
-                showParticipationStatus = false
+                showParticipationStatus = false,
+                showNoSearchResultMessage = true
             )
         }
     }
