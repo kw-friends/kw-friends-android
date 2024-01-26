@@ -266,7 +266,7 @@ fun MainScreen(
             composable(MainDestination.ChatScreen.route) {
                 fabOpened = false
                 ChattingListScreen(
-                    chattingsLIstViewModel = chattingsLIstViewModel,
+                    chattingsListViewModel = chattingsLIstViewModel,
                     navigation = mainNavigation
                 )
             }

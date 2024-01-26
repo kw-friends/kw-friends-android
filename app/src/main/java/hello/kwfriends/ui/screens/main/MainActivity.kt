@@ -83,7 +83,7 @@ class MainActivity : BaseActivity() {
                     composable(Routes.CHATTING_LIST_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingListScreen(
-                            chattingsLIstViewModel = chattingsLIstViewModel,
+                            chattingsListViewModel = chattingsLIstViewModel,
                             navigation = navController
                         )
                     }

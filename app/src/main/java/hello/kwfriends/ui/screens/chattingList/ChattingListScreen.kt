@@ -42,12 +42,12 @@ import java.util.Locale
 
 @Composable
 fun ChattingListScreen(
-    chattingsLIstViewModel: ChattingsListVIewModel,
+    chattingsListViewModel: ChattingsListVIewModel,
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
-        chattingsLIstViewModel.getRoomList()
+        chattingsListViewModel.getRoomList()
     }
     Column(
         modifier = Modifier
@@ -86,14 +86,16 @@ fun ChattingListScreen(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
-                        Text(
-                            text = roomInfo?.get("title")?.toString() ?: "",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontFamily = FontFamily.Default,
-                            color = Color.Black,
-                            fontWeight = FontWeight(400),
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Row {
+                            Text(
+                                text = roomInfo?.get("title")?.toString() ?: "",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontFamily = FontFamily.Default,
+                                color = Color.Black,
+                                fontWeight = FontWeight(400),
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
                             text = recentMessage?.get("content")?.toString() ?: "",
@@ -129,16 +131,16 @@ fun ChattingListScreen(
         }
         Button(
             onClick = {
-                chattingsLIstViewModel.temp_addRoom()
-                chattingsLIstViewModel.getRoomList()
+                chattingsListViewModel.temp_addRoom()
+                chattingsListViewModel.getRoomList()
             }
         ) {
             Text("채팅방 생성하기")
         }
         Button(
             onClick = {
-                chattingsLIstViewModel.temp_sendMessage()
-                chattingsLIstViewModel.getRoomList()
+                chattingsListViewModel.temp_sendMessage()
+                chattingsListViewModel.getRoomList()
             }
         ) {
             Text("메세지 전송하기")
@@ -150,7 +152,7 @@ fun ChattingListScreen(
 @Composable
 fun ChattingListScreenPreview() {
     ChattingListScreen(
-        chattingsLIstViewModel = ChattingsListVIewModel(),
+        chattingsListViewModel = ChattingsListVIewModel(),
         navigation = rememberNavController()
     )
 }
