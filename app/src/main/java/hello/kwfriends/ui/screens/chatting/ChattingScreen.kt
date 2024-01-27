@@ -84,7 +84,8 @@ fun ChattingScreen(
         ) {
             //top
             val sortedData = chattingViewModel.messageData?.entries?.sortedBy {
-                (it.value["timestamp"] as? Long) ?: Long.MAX_VALUE
+                if(it.value.timestamp.toString() == "") Long.MIN_VALUE
+                else it.value.timestamp as Long
             }
             sortedData?.forEach {
                 Box(
@@ -95,7 +96,7 @@ fun ChattingScreen(
                         verticalAlignment = Alignment.Top
                     ) {
                         AsyncImage(
-                            model = ProfileImage.usersUriMap[it.value["uid"]]
+                            model = ProfileImage.usersUriMap[it.value.uid]
                                 ?: R.drawable.profile_default_image,
                             placeholder = painterResource(id = R.drawable.profile_default_image),
                             contentDescription = "chatter's profile image",
@@ -107,16 +108,16 @@ fun ChattingScreen(
                         )
                         Column {
                             Text(
-                                text = UserData.usersDataMap[it.value["uid"]]?.get("name")
+                                text = UserData.usersDataMap[it.value.uid]?.get("name")
                                     ?.toString() ?: "unknown"
                             )
-                            Text(text = it.value["content"].toString())
+                            Text(text = it.value.content.toString())
                         }
                     }
                     Text(
                         modifier = Modifier.align(Alignment.TopEnd),
                         text = SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault()).format(
-                            it.value["timestamp"]
+                            it.value.timestamp
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray

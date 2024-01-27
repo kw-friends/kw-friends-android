@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
+import hello.kwfriends.firebase.realtimeDatabase.MessageDetail
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import hello.kwfriends.firebase.realtimeDatabase.RoomDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class ChattingViewModel : ViewModel() {
 
-    var messageData by mutableStateOf<Map<String, Map<String, Any>>?>(emptyMap())
+    var messageData by mutableStateOf<Map<String, MessageDetail>?>(emptyMap())
     var roomInfo by mutableStateOf<RoomDetail?>(null)
 
     var inputChatting by mutableStateOf<String>("")

@@ -22,7 +22,7 @@ data class RoomDetail(
 )
 
 data class MessageDetail(
-    var id: String = "",
+    var uid: String = "",
     var content: String = "",
     var type: MessageType = MessageType.TEXT,
     var timestamp: Any = "",
@@ -295,17 +295,14 @@ object Chattings {
     }
 
     //채팅방 메세지 한번만 가져와서 반환하는 함수
-    suspend fun getRoomMessages(roomID: String): Map<String, Map<String, Any>>? {
-        val result = suspendCoroutine<Map<String, Map<String, Any>>?> { continuation ->
+    suspend fun getRoomMessages(roomID: String): Map<String, MessageDetail>? {
+        val result = suspendCoroutine<Map<String, MessageDetail>?> { continuation ->
             database.child("chattings").child("messages").child(roomID).orderByChild("timestamp")
                 .get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<MutableMap<String, MutableMap<String, Any>>>()
+                    val data = dataSnapshot.getValue<MutableMap<String, MessageDetail>>()
                     data?.forEach {
-                        data[it.key]?.set(
-                            "type",
-                            MessageType.valueOf(data[it.key]?.get("type").toString())
-                        )
+                        data[it.key]?.type = MessageType.valueOf(data[it.key]?.type.toString())
                     }
                     Log.w("Chattings.getRoomMessages()", "데이터 가져오기 성공 $data")
                     continuation.resume(data)
