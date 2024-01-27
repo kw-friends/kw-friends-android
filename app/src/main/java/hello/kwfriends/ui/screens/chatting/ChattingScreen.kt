@@ -72,7 +72,7 @@ fun ChattingScreen(
                 )
             }
             Text(
-                text = Chattings.chattingRoomList?.get(roomID)?.get("title").toString(),
+                text = Chattings.chattingRoomList?.get(roomID)?.title ?: "",
                 style = MaterialTheme.typography.titleMedium,
             )
         }

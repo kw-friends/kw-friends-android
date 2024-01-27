@@ -60,12 +60,11 @@ fun ChattingListScreen(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 14.dp)
         )
         val sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
-            ((it.value["recentMessage"] as Map<String, Any?>?)?.get("timestamp") as? Long)
-                ?: Long.MAX_VALUE
+            if(it.value.recentMessage.timestamp.toString() == "") Long.MIN_VALUE
+            else it.value.recentMessage.timestamp as Long
         }
         sortedData?.forEach {
-            val roomInfo = it.value as Map<String, Any?>?
-            val recentMessage = roomInfo?.get("recentMessage") as Map<String, Any?>?
+            val roomInfo = it.value
             Box(modifier = Modifier
                 .clickable { navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}") }
                 .padding(10.dp)
@@ -89,7 +88,7 @@ fun ChattingListScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = roomInfo?.get("title")?.toString() ?: "",
+                                text = roomInfo.title,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight(400),
@@ -97,14 +96,14 @@ fun ChattingListScreen(
                             )
                             Spacer(modifier = Modifier.width(5.dp))
                             Text(
-                                text = (roomInfo?.get("members") as Map<String, Any>).size.toString(),
+                                text = (roomInfo.members).size.toString(),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = Color.Gray,
                             )
                         }
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
-                            text = recentMessage?.get("content")?.toString() ?: "",
+                            text = roomInfo.recentMessage.content,
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Gray,
                             maxLines = 2,
@@ -112,20 +111,19 @@ fun ChattingListScreen(
                         )
                     }
                 }
-                if (recentMessage?.get("timestamp") != null) {
-                    Text(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        text = SimpleDateFormat(
+                Text(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    text =
+                        if(roomInfo.recentMessage.timestamp.toString() == "") ""
+                        else SimpleDateFormat(
                             "yyyy/MM/dd hh:mm a",
                             Locale.getDefault()
                         ).format(
-                            recentMessage["timestamp"]
+                            roomInfo.recentMessage.timestamp
                         ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
-                }
-
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
             }
             Divider(
                 modifier = Modifier.padding(horizontal = 5.dp),

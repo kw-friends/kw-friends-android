@@ -12,6 +12,28 @@ import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+data class RoomDetail(
+    var title: String = "",
+    var state: ChattingRoomState = ChattingRoomState.DELETED,
+    var owners: Map<String, Any> = emptyMap(),
+    var members: Map<String, Any> = emptyMap(),
+    var type: ChattingRoomType = ChattingRoomType.DIRECT,
+    var recentMessage: RecentMessage = RecentMessage()
+)
+
+data class MessageDetail(
+    var id: String = "",
+    var content: String = "",
+    var type: MessageType = MessageType.TEXT,
+    var timestamp: Any = "",
+    var isRead: Map<String, Any> = emptyMap()
+)
+
+data class RecentMessage(
+    var content: String = "",
+    var timestamp: Any = ""
+)
+
 enum class MessageType {
     TEXT,
     IMAGE,
@@ -32,7 +54,7 @@ enum class ChattingRoomState {
 object Chattings {
     private var database = Firebase.database.reference
 
-    var chattingRoomList by mutableStateOf<Map<String, Map<String, Any>>?>(emptyMap())
+    var chattingRoomList by mutableStateOf<MutableMap<String, RoomDetail>?>(mutableMapOf())
 
     //채팅방 만들기
     suspend fun make(
@@ -74,10 +96,10 @@ object Chattings {
     //채팅방 생성
     suspend fun join(roomID: String): Boolean {
         val info = getRoomInfo(roomID)
-        if (info?.get("state") != ChattingRoomState.AVAILABLE) {
+        if (info?.state != ChattingRoomState.AVAILABLE) {
             Log.w(
                 "Chattings.join()",
-                "채팅방 상태가 available이 아니라 채팅방 참가에 실패했습니다. 상태: ${info?.get("state")}"
+                "채팅방 상태가 available이 아니라 채팅방 참가에 실패했습니다. 상태: ${info?.state}"
             )
             return false
         }
@@ -105,8 +127,8 @@ object Chattings {
     //채팅방 나가기
     suspend fun leave(roomID: String): Boolean {
         val info = getRoomInfo(roomID)
-        val members = info?.get("members") as Map<String, Boolean>
-        if (Firebase.auth.currentUser!!.uid !in members) {
+        val members = info?.members
+        if (members?.contains(Firebase.auth.currentUser!!.uid) != true) {
             Log.w("Chattings.leave()", "채팅방에 참여중이 아니라 채팅방 나가기에 실패했습니다.")
             return false
         }
@@ -139,14 +161,14 @@ object Chattings {
         type: MessageType
     ): Boolean {
         val info = getRoomInfo(roomID)
-        val members = info?.get("members") as Map<String, Boolean>
-        if (info["state"] != ChattingRoomState.AVAILABLE) {
+        val members = info?.members
+        if (info?.state != ChattingRoomState.AVAILABLE) {
             Log.w(
                 "Chattings.sendMessage()",
-                "채팅방 상태가 available이 아니라 채팅방 전송에 실패했습니다. 상태: ${info["state"]}"
+                "채팅방 상태가 available이 아니라 채팅방 전송에 실패했습니다. 상태: ${info?.state}"
             )
             return false
-        } else if (Firebase.auth.currentUser!!.uid !in members) {
+        } else if (members?.contains(Firebase.auth.currentUser!!.uid) != true) {
             Log.w("Chattings.leave()", "채팅방에 참여중이 아니라 채팅방 나가기에 실패했습니다.")
             return false
         }
@@ -158,14 +180,16 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
             "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
         )
-        if (type == MessageType.TEXT) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
-            content
-        else if (type == MessageType.IMAGE) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
-            "(사진)"
-        else if (type == MessageType.AUDIO) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
-            "(음성녹음)"
-        else if (type == MessageType.VIDEO) chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
-            "(영상)"
+        when (type) {
+            MessageType.TEXT -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
+                content
+            MessageType.IMAGE -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
+                "(사진)"
+            MessageType.AUDIO -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
+                "(음성녹음)"
+            MessageType.VIDEO -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
+                "(영상)"
+        }
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {
@@ -187,14 +211,14 @@ object Chattings {
     //채팅방 삭제하기
     suspend fun delete(roomID: String): Boolean {
         val info = getRoomInfo(roomID)
-        val owners = info?.get("owners") as Map<String, Boolean>
-        if (info["state"] != ChattingRoomState.AVAILABLE) {
+        val owners = info?.owners
+        if (info?.state != ChattingRoomState.AVAILABLE) {
             Log.w(
                 "Chattings.delete()",
-                "채팅방 상태가 available이 아니라 채팅방 삭제 실패했습니다. 상태: ${info["state"]}"
+                "채팅방 상태가 available이 아니라 채팅방 삭제 실패했습니다. 상태: ${info?.state}"
             )
             return false
-        } else if (Firebase.auth.currentUser!!.uid !in owners) {
+        } else if (owners?.contains(Firebase.auth.currentUser!!.uid) != true) {
             Log.w("Chattings.delete()", "채팅방 주인이 아니라 채팅방 삭제에 실패했습니다.")
             return false
         }
@@ -224,16 +248,10 @@ object Chattings {
         val result = suspendCoroutine<Boolean> { continuation ->
             database.child("chattings").child("rooms").get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<MutableMap<String, MutableMap<String, Any>>>()
+                    val data = dataSnapshot.getValue<MutableMap<String, RoomDetail>>()
                     data?.forEach {
-                        data[it.key]?.set(
-                            "state",
-                            ChattingRoomState.valueOf(it.value["state"].toString())
-                        )
-                        data[it.key]?.set(
-                            "type",
-                            ChattingRoomType.valueOf(it.value["type"].toString())
-                        )
+                        data[it.key]?.state = ChattingRoomState.valueOf(it.value.state.toString())
+                        data[it.key]?.type = ChattingRoomType.valueOf(it.value.type.toString())
                     }
                     chattingRoomList = data
                     Log.w("Chattings.getRoomList()", "데이터 가져오기 성공 $data")
@@ -252,14 +270,14 @@ object Chattings {
     }
 
     //채팅방 정보 한번만 가져와서 반환하는 함수
-    suspend fun getRoomInfo(roomID: String): Map<String, Any>? {
-        val result = suspendCoroutine<Map<String, Any>?> { continuation ->
+    suspend fun getRoomInfo(roomID: String): RoomDetail? {
+        val result = suspendCoroutine<RoomDetail?> { continuation ->
             database.child("chattings").child("rooms").child(roomID).get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<Map<String, Any>>()?.toMutableMap()
+                    val data = dataSnapshot.getValue<RoomDetail>()
                     if (data != null) {
-                        data["state"] = ChattingRoomState.valueOf(data["state"].toString())
-                        data["type"] = ChattingRoomType.valueOf(data["type"].toString())
+                        data.state = ChattingRoomState.valueOf(data.state.toString())
+                        data.type = ChattingRoomType.valueOf(data.type.toString())
                     }
                     Log.w("Chattings.getRoomInfo()", "데이터 가져오기 성공 $data")
                     continuation.resume(data)

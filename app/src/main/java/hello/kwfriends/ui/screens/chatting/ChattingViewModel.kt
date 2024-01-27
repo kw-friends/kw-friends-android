@@ -10,6 +10,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
+import hello.kwfriends.firebase.realtimeDatabase.RoomDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 class ChattingViewModel : ViewModel() {
 
     var messageData by mutableStateOf<Map<String, Map<String, Any>>?>(emptyMap())
-    var roomInfo by mutableStateOf<Map<String, Any>?>(emptyMap())
+    var roomInfo by mutableStateOf<RoomDetail?>(null)
 
     var inputChatting by mutableStateOf<String>("")
 
@@ -50,7 +51,7 @@ class ChattingViewModel : ViewModel() {
 
     fun getUsersProfile() {
         viewModelScope.launch {
-            val members = roomInfo?.get("members") as Map<String, Boolean>?
+            val members = roomInfo?.members
             Log.w("test", "members: $members")
             members?.keys?.forEach {
                 val uri = ProfileImage.getDownloadUrl(it)
