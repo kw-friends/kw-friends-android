@@ -122,6 +122,12 @@ fun ChattingScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
+                    Text(
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        text = "${it.value.read.size}명 읽음",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
                 }
             }
         }

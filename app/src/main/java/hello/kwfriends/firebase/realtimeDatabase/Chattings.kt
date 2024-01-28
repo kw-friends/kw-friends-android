@@ -26,7 +26,7 @@ data class MessageDetail(
     var content: String = "",
     var type: MessageType = MessageType.TEXT,
     var timestamp: Any = "",
-    var isRead: Map<String, Any> = emptyMap()
+    var read: Map<String, Any> = emptyMap()
 )
 
 data class RecentMessage(
@@ -177,6 +177,7 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/uid" to uid,
             "chattings/messages/$roomID/$messageID/content" to content,
             "chattings/messages/$roomID/$messageID/type" to type,
+            "chattings/messages/$roomID/$messageID/read" to emptyMap<String, Any>(),
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
             "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
         )
@@ -322,6 +323,33 @@ object Chattings {
     //채팅방 정보 수정하기
     fun setRoom() {
 
+    }
+
+    //메세지 읽음처리
+    suspend fun messageRead(roomID: String, messageData: MutableMap<String, MessageDetail>): Boolean {
+        val uid = Firebase.auth.currentUser!!.uid
+        val readMap = mutableMapOf<String, Any>()
+        messageData.forEach {
+            if(it.value.read[uid] != true) {
+                readMap["chattings/messages/$roomID/${it.key}/read/$uid"] = ServerValue.TIMESTAMP
+            }
+        }
+        val result = suspendCoroutine<Boolean> { continuation ->
+            database.updateChildren(readMap)
+                .addOnSuccessListener {
+                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메세지 읽음처리 성공")
+                    continuation.resume(true)
+                }
+                .addOnFailureListener {
+                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메세지 읽음처리 실패(fail): $it")
+                    continuation.resume(false)
+                }
+                .addOnCanceledListener {
+                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메세지 읽음처리 실패(cancel)")
+                    continuation.resume(false)
+                }
+        }
+        return result
     }
 
 }

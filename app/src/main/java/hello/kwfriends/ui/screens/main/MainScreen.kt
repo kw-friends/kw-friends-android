@@ -44,7 +44,7 @@ import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.component.finalCheckPopup
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
-import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
@@ -59,7 +59,7 @@ fun MainScreen(
     mainViewModel: MainViewModel,
     setPostDataViewModel: SetPostDataViewModel,
     settingsViewModel: SettingsViewModel,
-    chattingsLIstViewModel: ChattingsListVIewModel,
+    chattingsLIstViewModel: ChattingsListViewModel,
     mainNavigation: NavController
 ) {
     val postID = mainViewModel.postInfoPopupState.second
@@ -284,7 +284,7 @@ fun HomeScreenPreview() {
             mainViewModel = MainViewModel(),
             settingsViewModel = SettingsViewModel(),
             setPostDataViewModel = SetPostDataViewModel(),
-            chattingsLIstViewModel = ChattingsListVIewModel(),
+            chattingsLIstViewModel = ChattingsListViewModel(),
             mainNavigation = navController
         )
     }

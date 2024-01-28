@@ -41,7 +41,7 @@ import java.util.Locale
 
 @Composable
 fun ChattingListScreen(
-    chattingsListViewModel: ChattingsListVIewModel,
+    chattingsListViewModel: ChattingsListViewModel,
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
@@ -142,7 +142,6 @@ fun ChattingListScreen(
         Button(
             onClick = {
                 chattingsListViewModel.temp_sendMessage()
-                chattingsListViewModel.getRoomList()
             }
         ) {
             Text("메세지 전송하기")
@@ -154,7 +153,7 @@ fun ChattingListScreen(
 @Composable
 fun ChattingListScreenPreview() {
     ChattingListScreen(
-        chattingsListViewModel = ChattingsListVIewModel(),
+        chattingsListViewModel = ChattingsListViewModel(),
         navigation = rememberNavController()
     )
 }

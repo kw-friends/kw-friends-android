@@ -28,6 +28,8 @@ class ChattingViewModel : ViewModel() {
     fun getMessages(roomID: String) {
         viewModelScope.launch {
             messageData = Chattings.getRoomMessages(roomID)
+            Log.w("ChattingsViewModel", "채팅 목록: ${messageData}")
+            Chattings.messageRead(roomID, messageData?.toMutableMap() ?: mutableMapOf())
         }
     }
 
@@ -53,7 +55,6 @@ class ChattingViewModel : ViewModel() {
     fun getUsersProfile() {
         viewModelScope.launch {
             val members = roomInfo?.members
-            Log.w("test", "members: $members")
             members?.keys?.forEach {
                 val uri = ProfileImage.getDownloadUrl(it)
                 ProfileImage.updateUsersUriMap(it, uri)
