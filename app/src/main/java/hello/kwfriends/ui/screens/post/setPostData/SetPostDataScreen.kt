@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
@@ -175,6 +176,7 @@ fun SetPostDataScreen(
             SingleTextField(
                 value = setPostDataViewModel.maximumParticipants,
                 onValueChange = { setPostDataViewModel.maximumParticipantsChange(max = it) },
+                keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             )
             Column(

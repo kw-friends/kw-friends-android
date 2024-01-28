@@ -4,6 +4,10 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -29,11 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import hello.kwfriends.ui.screens.main.MainViewModel
 import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopAppBar(
+    mainViewModel: MainViewModel,
     navigation: NavController,
     isSearching: Boolean,
     searchText: String,
@@ -43,9 +50,17 @@ fun MainTopAppBar(
     focusRequester: FocusRequester,
     currentDestination: String?
 ) {
+    LaunchedEffect(key1 = !mainViewModel.isSearching) {
+        focusRequester.requestFocus()
+    }
+
     TopAppBar(
         title = {
-            Crossfade(targetState = currentDestination, label = "") { destination ->
+            Crossfade(
+                targetState = currentDestination,
+                label = "",
+                animationSpec = tween(300)
+            ) { destination ->
                 when (destination) {
                     "home" -> {
                         Text(
@@ -97,7 +112,8 @@ fun MainTopAppBar(
                 Box(if (isSearching) Modifier.weight(1f) else Modifier) {
                     Row(
                         Modifier.align(Alignment.CenterEnd),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         SearchTextField(
                             value = searchText,
@@ -112,18 +128,38 @@ fun MainTopAppBar(
 
                         )
                     }
-                    IconButton(
-                        onClick = clickSearchButton,
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd)
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = currentDestination == "findGathering" && !mainViewModel.isSearching,
+                        enter = if (currentDestination == "findGathering") {
+                            fadeIn(tween(300))
+                        } else {
+                            slideInHorizontally(animationSpec = tween(durationMillis = 300)) { fullWidth ->
+                                fullWidth
+                            } + fadeIn(
+                                animationSpec = tween(durationMillis = 300)
+                            )
+                        },
+                        exit = if (currentDestination != "findGathering") {
+                            fadeOut(tween(300))
+                        } else {
+                            slideOutHorizontally(animationSpec = tween(durationMillis = 300)) { 48} + fadeOut(
+                                animationSpec = tween(durationMillis = 300)
+                            )
+                        },
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            modifier = Modifier
-                                .size(24.dp)
-                        )
+                        IconButton(
+                            onClick = clickSearchButton
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
+                        }
                     }
+
                 }
                 IconButton(
                     onClick = { navigation.navigate(Routes.SETTINGS_SCREEN) },
@@ -146,6 +182,7 @@ fun MainTopAppBar(
 fun HomeTopAppBarPreview() {
     val navController = rememberNavController()
     MainTopAppBar(
+        mainViewModel = MainViewModel(),
         navigation = navController,
         isSearching = false,
         searchText = "Preview",

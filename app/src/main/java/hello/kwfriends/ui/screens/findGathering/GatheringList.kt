@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.findGathering
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,15 +17,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
@@ -43,13 +53,19 @@ import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalLayoutApi::class)
+private val uid = Firebase.auth.currentUser!!.uid
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun GatheringItem(
     postDetail: PostDetail,
     viewModel: MainViewModel,
-    participationStatus: ParticipationStatus?
+    participationStatus: ParticipationStatus?,
+    onReport: () -> Unit,
+    myParticipationStatus: ParticipationStatus
 ) {
+    var reportMenuExpended by remember { mutableStateOf(false) }
+
     ListItem(
         colors = ListItemDefaults.colors(
             containerColor = Color(0xFFFAF3F3),
@@ -57,10 +73,64 @@ fun GatheringItem(
         modifier = Modifier
             .padding(vertical = 4.dp)
             .clip(RoundedCornerShape(16.dp))
-            .clickable {
-                viewModel.postInfoPopupState = true to postDetail.postID
-            },
+            .combinedClickable(
+                onClick = { viewModel.postInfoPopupState = true to postDetail.postID },
+                onLongClick = { reportMenuExpended = true }
+            ),
         headlineContent = {
+            DropdownMenu(
+                expanded = reportMenuExpended,
+                onDismissRequest = { reportMenuExpended = false }
+            ) {
+                if (myParticipationStatus == ParticipationStatus.NOT_PARTICIPATED) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "신고",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        enabled = !postDetail.reporters.containsKey(uid) && postDetail.gatheringPromoterUID != uid,
+                        onClick = { onReport() },
+                        trailingIcon = {
+                            if (postDetail.reporters.containsKey(uid)) {
+                                Icon(
+                                    Icons.Default.Check,
+                                    tint = Color.Gray,
+                                    contentDescription = "check icon"
+                                )
+                            }
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "모임 참여",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        enabled = !viewModel.isProcessing,
+                        onClick = {
+                            viewModel.updateParticipationStatus(postID = postDetail.postID)
+                        }
+                    )
+                }
+                if (participationStatus == ParticipationStatus.PARTICIPATED){
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "모임 나가기",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        },
+                        enabled = !viewModel.isProcessing,
+                        onClick = {
+                            viewModel.updateParticipationStatus(postID = postDetail.postID)
+                        }
+                    )
+                }
+            }
+
             Column {
                 Text(
                     postDetail.gatheringTitle,
@@ -166,7 +236,7 @@ fun GatheringList(
     maximumItems: Int?,
     logo: Boolean = true,
     showParticipationStatus: Boolean,
-    showNoSearchResultMessage: Boolean
+    showNoSearchResultMessage: Boolean,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -184,7 +254,11 @@ fun GatheringList(
                 GatheringItem(
                     postDetail = postData,
                     viewModel = mainViewModel,
-                    participationStatus = if (showParticipationStatus) postData.myParticipantStatus else null
+                    participationStatus = if (showParticipationStatus) postData.myParticipantStatus else null,
+                    onReport = {
+                        mainViewModel.postReportDialogState = true to postData.postID
+                    },
+                    myParticipationStatus = postData.myParticipantStatus
                 )
             }
         }
