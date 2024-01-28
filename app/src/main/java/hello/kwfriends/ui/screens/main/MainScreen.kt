@@ -11,7 +11,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -221,6 +220,7 @@ fun MainScreen(
         //앱 바
         topBar = {
             MainTopAppBar(
+                mainViewModel = mainViewModel,
                 navigation = mainNavigation,
                 isSearching = mainViewModel.isSearching,
                 searchText = mainViewModel.searchText,
@@ -264,18 +264,13 @@ fun MainScreen(
         NavHost(
             navController = navController,
             startDestination = MainDestination.HomeScreen.route,
-            Modifier
+            modifier = Modifier
                 .padding(paddingValues)
-                .fillMaxSize()
+                .fillMaxSize(),
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
-            composable(
-                route = MainDestination.FindGatheringScreen.route,
-                enterTransition = {
-                    fadeIn(animationSpec = tween(500))
-                },
-                exitTransition = {
-                    fadeOut(animationSpec = tween(500))
-                }) {
+            composable(route = MainDestination.FindGatheringScreen.route) {
                 fabOpened = true
                 FindGatheringScreen(
                     mainViewModel = mainViewModel,
@@ -283,29 +278,17 @@ fun MainScreen(
                     posts = mainViewModel.posts
                 )
             }
-            composable(
-                route = MainDestination.HomeScreen.route,
-                enterTransition = {
-                    fadeIn(animationSpec = tween(500))
-                },
-                exitTransition = {
-                    fadeOut(animationSpec = tween(500))
-                }) {
+            composable(route = MainDestination.HomeScreen.route) {
                 fabOpened = true
+                mainViewModel.isSearching = false
                 HomeScreen(
                     mainViewModel = mainViewModel,
                     homeNavigation = homeNavigation
                 )
             }
-            composable(
-                route = MainDestination.ChatScreen.route,
-                enterTransition = {
-                    fadeIn(animationSpec = tween(500))
-                },
-                exitTransition = {
-                    fadeOut(animationSpec = tween(500))
-                }) {
+            composable(route = MainDestination.ChatScreen.route) {
                 fabOpened = false
+                mainViewModel.isSearching = false
                 ChattingListScreen(
                     chattingsLIstViewModel = chattingsLIstViewModel,
                     navigation = mainNavigation
