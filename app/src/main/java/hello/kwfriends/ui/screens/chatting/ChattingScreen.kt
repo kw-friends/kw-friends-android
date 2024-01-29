@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.IconButton
@@ -119,7 +120,18 @@ fun ChattingScreen(
                                 text = UserData.usersDataMap[it.value.uid]?.get("name")
                                     ?.toString() ?: "unknown"
                             )
-                            Text(text = it.value.content.toString())
+                            Box(
+                                Modifier
+                                    .clip(RoundedCornerShape(topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 10.dp))
+                                    .background(Color.LightGray)
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .padding(10.dp),
+                                    text = it.value.content
+                                )
+                            }
                         }
                     }
                     Text(
