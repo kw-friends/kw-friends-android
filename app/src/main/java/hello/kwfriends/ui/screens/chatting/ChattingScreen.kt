@@ -120,31 +120,41 @@ fun ChattingScreen(
                                 text = UserData.usersDataMap[it.value.uid]?.get("name")
                                     ?.toString() ?: "unknown"
                             )
-                            Box(
-                                Modifier
-                                    .clip(RoundedCornerShape(topEnd = 10.dp, bottomStart = 10.dp, bottomEnd = 10.dp))
-                                    .background(Color.LightGray)
+                            Row(
+                                verticalAlignment = Alignment.Bottom
                             ) {
+                                Box(
+                                    Modifier
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topEnd = 10.dp,
+                                                bottomStart = 10.dp,
+                                                bottomEnd = 10.dp
+                                            )
+                                        )
+                                        .background(Color(0xFFE7E4E4))
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                            .padding(10.dp),
+                                        text = it.value.content
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(5.dp))
                                 Text(
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .padding(10.dp),
-                                    text = it.value.content
+                                    text = "${it.value.read.size}명 읽음",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.Gray
                                 )
                             }
                         }
                     }
                     Text(
                         modifier = Modifier.align(Alignment.TopEnd),
-                        text = SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault()).format(
+                        text = SimpleDateFormat("a hh:mm", Locale.getDefault()).format(
                             it.value.timestamp
                         ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
-                    Text(
-                        modifier = Modifier.align(Alignment.BottomEnd),
-                        text = "${it.value.read.size}명 읽음",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
