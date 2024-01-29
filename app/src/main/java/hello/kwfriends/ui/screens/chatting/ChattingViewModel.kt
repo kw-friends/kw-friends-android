@@ -33,14 +33,16 @@ class ChattingViewModel : ViewModel() {
     }
 
     fun sendMessage(roomID: String) {
-        viewModelScope.launch {
-            Chattings.sendMessage(
-                roomID = roomID,
-                uid = Firebase.auth.currentUser!!.uid,
-                content = inputChatting,
-                type = MessageType.TEXT
-            )
-            inputChatting = ""
+        if(inputChatting != "") {
+            viewModelScope.launch {
+                Chattings.sendMessage(
+                    roomID = roomID,
+                    uid = Firebase.auth.currentUser!!.uid,
+                    content = inputChatting,
+                    type = MessageType.TEXT
+                )
+                inputChatting = ""
+            }
         }
     }
 
