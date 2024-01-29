@@ -234,6 +234,7 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/uid" to uid,
             "chattings/messages/$roomID/$messageID/content" to content,
             "chattings/messages/$roomID/$messageID/type" to type,
+            "chattings/messages/$roomID/$messageID/read/$uid" to ServerValue.TIMESTAMP,
             "chattings/messages/$roomID/$messageID/messageID" to messageID.toString(),
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
             "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
