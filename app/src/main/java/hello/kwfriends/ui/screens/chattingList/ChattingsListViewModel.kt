@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 
 class ChattingsListViewModel : ViewModel() {
 
-
     fun getRoomList() {
         viewModelScope.launch {
             Chattings.getRoomList()

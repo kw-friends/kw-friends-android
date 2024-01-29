@@ -47,6 +47,7 @@ fun ChattingListScreen(
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         chattingsListViewModel.getRoomList()
+        Chattings.removeChattingListener()
     }
     Column(
         modifier = Modifier

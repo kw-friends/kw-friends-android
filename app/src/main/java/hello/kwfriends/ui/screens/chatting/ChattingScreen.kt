@@ -5,10 +5,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -49,9 +52,11 @@ fun ChattingScreen(
         chattingViewModel.getRoomInfo(roomID)
         chattingViewModel.getMessages(roomID)
         chattingViewModel.getUsersProfile()
+        chattingViewModel.addListener(roomID)
     }
     LaunchedEffect(chattingViewModel.messageData) {
         scrollState.scrollTo(scrollState.maxValue)
+        Chattings.messageRead(roomID, chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf())
     }
     Box(
         modifier = Modifier
@@ -89,7 +94,9 @@ fun ChattingScreen(
             }
             sortedData?.forEach {
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
                 ) {
                     Row(
                         modifier = Modifier.align(Alignment.TopStart),
@@ -106,6 +113,7 @@ fun ChattingScreen(
                                 .border(0.5.dp, Color.Gray, CircleShape),
                             contentScale = ContentScale.Crop,
                         )
+                        Spacer(modifier = Modifier.width(5.dp))
                         Column {
                             Text(
                                 text = UserData.usersDataMap[it.value.uid]?.get("name")
@@ -130,6 +138,7 @@ fun ChattingScreen(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(60.dp))
         }
         Row(
             modifier = Modifier.align(Alignment.BottomCenter),

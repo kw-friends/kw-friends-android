@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class ChattingViewModel : ViewModel() {
 
-    var messageData by mutableStateOf<Map<String, MessageDetail>?>(emptyMap())
+    var messageData by mutableStateOf<Map<String, MessageDetail>?>(mutableMapOf())
     var roomInfo by mutableStateOf<RoomDetail?>(null)
 
     var inputChatting by mutableStateOf<String>("")
@@ -29,7 +29,6 @@ class ChattingViewModel : ViewModel() {
         viewModelScope.launch {
             messageData = Chattings.getRoomMessages(roomID)
             Log.w("ChattingsViewModel", "채팅 목록: ${messageData}")
-            Chattings.messageRead(roomID, messageData?.toMutableMap() ?: mutableMapOf())
         }
     }
 
@@ -42,7 +41,6 @@ class ChattingViewModel : ViewModel() {
                 type = MessageType.TEXT
             )
             inputChatting = ""
-            messageData = Chattings.getRoomMessages(roomID)
         }
     }
 
@@ -62,5 +60,14 @@ class ChattingViewModel : ViewModel() {
                 UserData.updateUsersDataMap(it, data)
             }
         }
+    }
+    fun addListener(roomID: String) {
+        Chattings.addChattingListener(roomID) {
+            val temp = messageData?.toMutableMap()
+            temp?.set(it.messageID, it)
+            messageData = temp
+        }
+
+
     }
 }

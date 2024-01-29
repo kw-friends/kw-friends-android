@@ -5,6 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
@@ -22,6 +25,7 @@ data class RoomDetail(
 )
 
 data class MessageDetail(
+    var messageID: String = "",
     var uid: String = "",
     var content: String = "",
     var type: MessageType = MessageType.TEXT,
@@ -52,9 +56,62 @@ enum class ChattingRoomState {
 }
 
 object Chattings {
-    private var database = Firebase.database.reference
+    val database = Firebase.database.reference
 
     var chattingRoomList by mutableStateOf<MutableMap<String, RoomDetail>?>(mutableMapOf())
+
+    var listenerCount: MutableList<Pair<String, ChildEventListener>> by mutableStateOf(mutableListOf())
+
+    fun addChattingListener(roomID: String, update: (MessageDetail) -> Unit) {
+        val reference = database.child("chattings").child("messages").child(roomID)
+        val chattingListener = object : ChildEventListener {
+            var messageDetail: MessageDetail? = null
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
+                if(messageDetail != null) update(messageDetail!!)
+                Log.w("chattingListener.onChildAdded", "onChildAdded: $messageDetail")
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
+                Log.w("chattingListener.onChildChanged", "onChildChanged: $messageDetail")
+                if(messageDetail != null) update(messageDetail!!)
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
+                Log.w("chattingListener.onChildRemoved", "onChildRemoved: $messageDetail")
+                if(messageDetail != null) update(messageDetail!!)
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
+                Log.w("chattingListener.onChildMoved", "onChildMoved: $messageDetail")
+                if(messageDetail != null) update(messageDetail!!)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(
+                    "chattingListener.onCancelled",
+                    "onCancelled: ",
+                    databaseError.toException()
+                )
+            }
+        }
+
+        listenerCount.add(roomID to chattingListener)
+        reference.addChildEventListener(chattingListener)
+        Log.d("setChattingListener", "${roomID}에 chattingListener 추가")
+    }
+
+    fun removeChattingListener() {
+        listenerCount.forEach {
+            val reference = Chattings.database.child("chattings").child("messages").child(it.first)
+            reference.removeEventListener(it.second)
+            Log.d("setChattingListener", "${it.first}에서 chattingListener 제거")
+        }
+        listenerCount = mutableListOf()
+    }
 
     //채팅방 만들기
     suspend fun make(
@@ -177,6 +234,7 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/uid" to uid,
             "chattings/messages/$roomID/$messageID/content" to content,
             "chattings/messages/$roomID/$messageID/type" to type,
+            "chattings/messages/$roomID/$messageID/messageID" to messageID.toString(),
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
             "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
         )
@@ -295,8 +353,8 @@ object Chattings {
     }
 
     //채팅방 메세지 한번만 가져와서 반환하는 함수
-    suspend fun getRoomMessages(roomID: String): Map<String, MessageDetail>? {
-        val result = suspendCoroutine<Map<String, MessageDetail>?> { continuation ->
+    suspend fun getRoomMessages(roomID: String): MutableMap<String, MessageDetail>? {
+        val result = suspendCoroutine<MutableMap<String, MessageDetail>?> { continuation ->
             database.child("chattings").child("messages").child(roomID).orderByChild("timestamp")
                 .get()
                 .addOnSuccessListener { dataSnapshot ->
