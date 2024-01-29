@@ -177,7 +177,6 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/uid" to uid,
             "chattings/messages/$roomID/$messageID/content" to content,
             "chattings/messages/$roomID/$messageID/type" to type,
-            "chattings/messages/$roomID/$messageID/read" to emptyMap<String, Any>(),
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
             "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
         )
@@ -330,7 +329,7 @@ object Chattings {
         val uid = Firebase.auth.currentUser!!.uid
         val readMap = mutableMapOf<String, Any>()
         messageData.forEach {
-            if(it.value.read[uid] != true) {
+            if(it.value.read[uid] == null) {
                 readMap["chattings/messages/$roomID/${it.key}/read/$uid"] = ServerValue.TIMESTAMP
             }
         }
