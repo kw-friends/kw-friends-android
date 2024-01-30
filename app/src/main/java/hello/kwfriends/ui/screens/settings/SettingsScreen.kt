@@ -123,7 +123,8 @@ fun SettingsScreen(
                 onUserReport = {
                     settingsViewModel.userReportDialogState =
                         true to settingsViewModel.userInfoPopupState.second
-                }
+                },
+                makeDirectChatting = { settingsViewModel.makeDirectChatting(settingsViewModel.userInfoPopupState.second) }
             )
             //유저 차단 목록 팝업
             UserIgnoreListPopup(

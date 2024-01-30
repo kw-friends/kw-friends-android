@@ -33,8 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
+import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -88,8 +92,16 @@ fun ChattingListScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            var title: String
+                            if(roomInfo.type == ChattingRoomType.DIRECT) {
+                                val temp = roomInfo.members.toMutableMap()
+                                temp.remove(Firebase.auth.currentUser!!.uid)
+                                title = temp.keys.toString()
+                                title = (UserData.usersDataMap[title.slice(IntRange(1, title.length - 2))]?.get("name") ?: "unknown").toString()
+                            }
+                            else title = roomInfo.title
                             Text(
-                                text = roomInfo.title,
+                                text = title,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight(400),

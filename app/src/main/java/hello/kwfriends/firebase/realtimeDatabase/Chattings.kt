@@ -410,4 +410,25 @@ object Chattings {
         return result
     }
 
+    suspend fun makeDirectChatting(targetUid: String) {
+        getRoomList()
+        var already = false
+        val uid = Firebase.auth.currentUser!!.uid
+        chattingRoomList?.forEach {
+            if(it.value.type == ChattingRoomType.DIRECT) {
+                if((targetUid in it.value.members) && (uid in it.value.members)) {
+                    already = true
+                }
+            }
+        }
+        if(!already) {
+            make(
+                title = "개인 채팅",
+                type = ChattingRoomType.DIRECT,
+                owners = listOf(uid, targetUid),
+                members = listOf(uid, targetUid),
+            )
+        }
+    }
+
 }

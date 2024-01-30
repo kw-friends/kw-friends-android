@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.preferenceDatastore.UserDataStore
@@ -178,6 +179,12 @@ class SettingsViewModel: ViewModel() {
             UserDataStore.userIgnoreListUpdate("REMOVE", uid)
             UserDataStore.setStringSetData("USER_IGNORE_LIST", UserDataStore.userIgnoreList)
             Log.w("removeUserIgnore", "유저($uid) 차단해제")
+        }
+    }
+
+    fun makeDirectChatting(targetUid: String) {
+        viewModelScope.launch {
+            Chattings.makeDirectChatting(targetUid)
         }
     }
 }
