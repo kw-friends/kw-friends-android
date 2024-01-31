@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,7 @@ fun UserInfoPopup(
     if(state) {
         var menuExpanded by remember { mutableStateOf(false) }
         var position by remember { mutableStateOf(Offset.Zero) }
+        val myUid = Firebase.auth.currentUser!!.uid
         Popup(
             onDismissRequest = onDismiss,
             alignment = Alignment.Center,
@@ -100,7 +102,7 @@ fun UserInfoPopup(
                         text = {
                             Text("개인 메세지 보내기")
                         },
-                        enabled = true,
+                        enabled = uid != myUid,
                         onClick = {
                             menuExpanded = false
                             makeDirectChatting()
@@ -108,16 +110,16 @@ fun UserInfoPopup(
                     )
                     DropdownMenuItem(
                         text = { Text("신고") },
-                        enabled = Firebase.auth.currentUser!!.uid !in UserData.usersDataMap[uid]?.get(
+                        enabled = myUid !in UserData.usersDataMap[uid]?.get(
                             "reporters"
                         ).toString()
-                                && uid != Firebase.auth.currentUser!!.uid,
+                                && uid != myUid,
                         onClick = {
                             menuExpanded = false
                             onUserReport()
                         },
                         trailingIcon = {
-                            if (Firebase.auth.currentUser!!.uid in UserData.usersDataMap[uid]?.get("reporters")
+                            if (myUid in UserData.usersDataMap[uid]?.get("reporters")
                                     .toString()
                             ) {
                                 Icon(
@@ -133,7 +135,7 @@ fun UserInfoPopup(
                             if (uid in UserDataStore.userIgnoreList) Text("차단 해제")
                             else Text("차단")
                         },
-                        enabled = uid != Firebase.auth.currentUser!!.uid,
+                        enabled = uid != myUid,
                         onClick = {
                             menuExpanded = false
                             if (uid in UserDataStore.userIgnoreList) removeUserIgnore()
