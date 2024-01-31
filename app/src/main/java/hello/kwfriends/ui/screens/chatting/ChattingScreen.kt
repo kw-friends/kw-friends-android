@@ -80,6 +80,12 @@ fun ChattingScreen(
                 text = Chattings.chattingRoomList?.get(roomID)?.title ?: "",
                 style = MaterialTheme.typography.titleMedium,
             )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = (Chattings.chattingRoomList?.get(roomID)?.members?.size).toString(),
+                style = MaterialTheme.typography.titleSmall,
+                color = Color.Gray,
+            )
         }
         Column(
             modifier = Modifier
@@ -126,9 +132,9 @@ fun ChattingScreen(
                                     Modifier
                                         .clip(
                                             RoundedCornerShape(
-                                                topEnd = 10.dp,
-                                                bottomStart = 10.dp,
-                                                bottomEnd = 10.dp
+                                                topEnd = 15.dp,
+                                                bottomStart = 15.dp,
+                                                bottomEnd = 15.dp
                                             )
                                         )
                                         .background(Color(0xFFE7E4E4))
