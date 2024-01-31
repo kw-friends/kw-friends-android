@@ -412,24 +412,26 @@ object Chattings {
         return result
     }
 
-    suspend fun makeDirectChatting(targetUid: String) {
+    suspend fun makeDirectChatting(targetUid: String): String {
         getRoomList()
+        var roomID: String = ""
         var already = false
         val uid = Firebase.auth.currentUser!!.uid
         chattingRoomList?.forEach {
             if(it.value.type == ChattingRoomType.DIRECT) {
                 if((targetUid in it.value.members) && (uid in it.value.members)) {
+                    roomID = it.key
                     already = true
                 }
             }
         }
         if(!already) {
-            val roomID = make(
+            roomID = make(
                 title = "개인 채팅",
                 type = ChattingRoomType.DIRECT,
                 owners = listOf(uid, targetUid),
                 members = listOf(uid, targetUid),
-            )
+            )?:""
             if (roomID != null) {
                 sendMessage(
                     roomID = roomID,
@@ -439,6 +441,7 @@ object Chattings {
                 )
             }
         }
+        return roomID
     }
 
 }

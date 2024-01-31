@@ -124,7 +124,12 @@ fun SettingsScreen(
                     settingsViewModel.userReportDialogState =
                         true to settingsViewModel.userInfoPopupState.second
                 },
-                makeDirectChatting = { settingsViewModel.makeDirectChatting(settingsViewModel.userInfoPopupState.second) }
+                makeDirectChatting = {
+                    settingsViewModel.makeDirectChatting(
+                        targetUid = settingsViewModel.userInfoPopupState.second,
+                        mainNavigation = mainNavigation
+                    )
+                }
             )
             //유저 차단 목록 팝업
             UserIgnoreListPopup(
@@ -202,7 +207,7 @@ fun SettingsScreen(
                     )
                     SettingsButtonItem(
                         title = "앱 버전",
-                        description = BuildConfig.VERSION_NAME.toString(),
+                        description = BuildConfig.VERSION_NAME,
                         onClick = { /*앱스토어와 연결*/ }
                     )
                 }

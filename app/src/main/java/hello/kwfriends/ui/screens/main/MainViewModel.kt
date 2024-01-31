@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.Tags.Tags
@@ -359,9 +360,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun makeDirectChatting(targetUid: String) {
+    fun makeDirectChatting(targetUid: String, mainNavigation: NavController) {
         viewModelScope.launch {
-            Chattings.makeDirectChatting(targetUid)
+            val roomID = Chattings.makeDirectChatting(targetUid)
+            if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }
 }

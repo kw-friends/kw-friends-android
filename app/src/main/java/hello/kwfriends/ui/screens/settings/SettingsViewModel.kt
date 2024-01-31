@@ -182,9 +182,10 @@ class SettingsViewModel: ViewModel() {
         }
     }
 
-    fun makeDirectChatting(targetUid: String) {
+    fun makeDirectChatting(targetUid: String, mainNavigation: NavController) {
         viewModelScope.launch {
-            Chattings.makeDirectChatting(targetUid)
+            val roomID = Chattings.makeDirectChatting(targetUid)
+            if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }
 }

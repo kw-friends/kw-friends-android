@@ -184,7 +184,12 @@ fun MainScreen(
             mainViewModel.userReportDialogState =
                 true to mainViewModel.userInfoPopupState.second
         },
-        makeDirectChatting = { mainViewModel.makeDirectChatting(mainViewModel.userInfoPopupState.second) }
+        makeDirectChatting = {
+            mainViewModel.makeDirectChatting(
+                targetUid = mainViewModel.userInfoPopupState.second,
+                mainNavigation = mainNavigation
+            )
+        }
     )
 
     // 사용자 조작 확인 팝업
