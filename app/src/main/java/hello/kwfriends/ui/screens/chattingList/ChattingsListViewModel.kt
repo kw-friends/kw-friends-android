@@ -8,14 +8,33 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
+import hello.kwfriends.firebase.realtimeDatabase.RoomDetail
+import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
 
 class ChattingsListViewModel : ViewModel() {
 
+    var sortedData: MutableList<MutableMap.MutableEntry<String, RoomDetail>>? = mutableListOf()
+
     fun getRoomList() {
         viewModelScope.launch {
             Chattings.getRoomList()
+            sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
+                if(it.value.recentMessage.timestamp.toString() == "") Long.MIN_VALUE
+                else it.value.recentMessage.timestamp as Long
+            }?.toMutableList()
+            sortedData?.forEach {
+                if(it.value.type == ChattingRoomType.DIRECT) {
+                    val temp = it.value.members.toMutableMap()
+                    temp.remove(Firebase.auth.currentUser!!.uid)
+                    val uid = temp.keys.toString().slice(IntRange(1, temp.keys.toString().length - 2))
+                    UserData.updateUsersDataMap(uid, UserData.get(uid))
+                    ProfileImage.updateUsersUriMap(uid, ProfileImage.getDownloadUrl(uid))
+                }
+            }
             Log.w("ChattingsListViewModel", "채팅방 목록: $Chattings.chattingRoomDatas")
+
         }
     }
 

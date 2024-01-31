@@ -39,6 +39,7 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -64,12 +65,15 @@ fun ChattingListScreen(
             fontWeight = FontWeight.W600,
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 14.dp)
         )
-        val sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
-            if(it.value.recentMessage.timestamp.toString() == "") Long.MIN_VALUE
-            else it.value.recentMessage.timestamp as Long
-        }
-        sortedData?.forEach {
+        chattingsListViewModel.sortedData?.forEach {
             val roomInfo = it.value
+            var targetUid = ""
+            if(it.value.type == ChattingRoomType.DIRECT) {
+                val temp = roomInfo.members.toMutableMap()
+                temp.remove(Firebase.auth.currentUser!!.uid)
+                targetUid = temp.keys.toString()
+                targetUid = targetUid.slice(IntRange(1, targetUid.length - 2))
+            }
             Box(modifier = Modifier
                 .clickable { navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}") }
                 .padding(10.dp)
@@ -79,7 +83,10 @@ fun ChattingListScreen(
                     modifier = Modifier.align(Alignment.TopStart)
                 ) {
                     AsyncImage(
-                        model = R.drawable.test_image,
+                        model = if(roomInfo.type == ChattingRoomType.DIRECT) {
+                                    ProfileImage.usersUriMap[targetUid] ?: R.drawable.profile_default_image
+                                }
+                                else R.drawable.test_image,
                         placeholder = painterResource(id = R.drawable.test_image),
                         contentDescription = "chatting room's example image",
                         modifier = Modifier
@@ -92,16 +99,12 @@ fun ChattingListScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            var title: String
-                            if(roomInfo.type == ChattingRoomType.DIRECT) {
-                                val temp = roomInfo.members.toMutableMap()
-                                temp.remove(Firebase.auth.currentUser!!.uid)
-                                title = temp.keys.toString()
-                                title = (UserData.usersDataMap[title.slice(IntRange(1, title.length - 2))]?.get("name") ?: "unknown").toString()
-                            }
-                            else title = roomInfo.title
+
                             Text(
-                                text = title,
+                                text = if(roomInfo.type == ChattingRoomType.DIRECT) {
+                                    (UserData.usersDataMap[targetUid]?.get("name") ?: "unknown").toString()
+                                    }
+                                    else roomInfo.title,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight(400),
