@@ -25,10 +25,11 @@ class ChattingViewModel : ViewModel() {
 
     fun setInputChattingText(text: String) { inputChatting = text }
 
-    fun getMessages(roomID: String) {
+    fun getMessagesAndProfiles(roomID: String) {
         viewModelScope.launch {
             messageData = Chattings.getRoomMessages(roomID)
             Log.w("ChattingsViewModel", "채팅 목록: ${messageData}")
+            getUsersProfile()
         }
     }
 

@@ -51,8 +51,7 @@ fun ChattingScreen(
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         chattingViewModel.getRoomInfo(roomID)
-        chattingViewModel.getMessages(roomID)
-        chattingViewModel.getUsersProfile()
+        chattingViewModel.getMessagesAndProfiles(roomID)
         chattingViewModel.addListener(roomID)
     }
     LaunchedEffect(chattingViewModel.messageData) {
