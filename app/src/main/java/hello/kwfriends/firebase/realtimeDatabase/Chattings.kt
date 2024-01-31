@@ -304,10 +304,12 @@ object Chattings {
 
     //채팅방 목록 및 정보 가져오기
     suspend fun getRoomList(): Boolean {
+        val uid = Firebase.auth.currentUser!!.uid
         val result = suspendCoroutine<Boolean> { continuation ->
             database.child("chattings").child("rooms").get()
                 .addOnSuccessListener { dataSnapshot ->
-                    val data = dataSnapshot.getValue<MutableMap<String, RoomDetail>>()
+                    var data = dataSnapshot.getValue<MutableMap<String, RoomDetail>>()
+                    data = data?.filter { it.value.members.containsKey(uid) }?.toMutableMap()
                     data?.forEach {
                         data[it.key]?.state = ChattingRoomState.valueOf(it.value.state.toString())
                         data[it.key]?.type = ChattingRoomType.valueOf(it.value.type.toString())
