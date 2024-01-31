@@ -422,12 +422,20 @@ object Chattings {
             }
         }
         if(!already) {
-            make(
+            val roomID = make(
                 title = "개인 채팅",
                 type = ChattingRoomType.DIRECT,
                 owners = listOf(uid, targetUid),
                 members = listOf(uid, targetUid),
             )
+            if (roomID != null) {
+                sendMessage(
+                    roomID = roomID,
+                    uid = "BROADCAST",
+                    content = "개인 채팅방이 생성되었습니다",
+                    type = MessageType.TEXT
+                )
+            }
         }
     }
 
