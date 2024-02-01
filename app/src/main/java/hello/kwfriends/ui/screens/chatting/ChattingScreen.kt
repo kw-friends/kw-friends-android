@@ -33,10 +33,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
+import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
@@ -49,6 +53,13 @@ fun ChattingScreen(
     navigation: NavController,
     roomID: String
 ) {
+    var targetUid: String = ""
+    if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.DIRECT) {
+        val temp = Chattings.chattingRoomList?.get(roomID)?.members?.toMutableMap()
+        temp?.remove(Firebase.auth.currentUser!!.uid)
+        targetUid = temp?.keys.toString()
+        targetUid = targetUid.slice(IntRange(1, targetUid.length - 2))
+    }
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         chattingViewModel.getRoomInfo(roomID)
@@ -85,8 +96,13 @@ fun ChattingScreen(
                 )
             }
             Text(
-                text = Chattings.chattingRoomList?.get(roomID)?.title ?: "",
+                text = if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.GROUP) {
+                        Chattings.chattingRoomList?.get(roomID)?.title ?: ""
+                        }
+                        else (UserData.usersDataMap[targetUid]?.get("name") ?: "unknown").toString(),
                 style = MaterialTheme.typography.titleMedium,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
