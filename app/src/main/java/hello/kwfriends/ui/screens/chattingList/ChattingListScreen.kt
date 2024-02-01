@@ -37,7 +37,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
-import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.main.Routes
@@ -52,7 +51,6 @@ fun ChattingListScreen(
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
         chattingsListViewModel.getRoomList()
-        Chattings.removeChattingListener()
     }
     Column(
         modifier = Modifier

@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.chatting
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,10 @@ fun ChattingScreen(
         scrollState.scrollTo(scrollState.maxValue)
         Chattings.messageRead(roomID, chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf())
     }
+    BackHandler {
+        navigation.popBackStack()
+        Chattings.removeChattingListener()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +74,10 @@ fun ChattingScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = { navigation.popBackStack() }
+                onClick = {
+                    navigation.popBackStack()
+                    Chattings.removeChattingListener()
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
