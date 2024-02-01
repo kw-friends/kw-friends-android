@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -96,6 +97,7 @@ fun ChattingScreen(
                 )
             }
             Text(
+                modifier = Modifier.widthIn(max = 200.dp),
                 text = if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.GROUP) {
                         Chattings.chattingRoomList?.get(roomID)?.title ?: ""
                         }
