@@ -16,6 +16,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 data class RoomDetail(
+    var roomID: String = "",
     var title: String = "",
     var state: ChattingRoomState = ChattingRoomState.DELETED,
     var owners: Map<String, Any> = emptyMap(),
@@ -60,57 +61,118 @@ object Chattings {
 
     var chattingRoomList by mutableStateOf<MutableMap<String, RoomDetail>?>(mutableMapOf())
 
-    var listenerCount: MutableList<Pair<String, ChildEventListener>> by mutableStateOf(mutableListOf())
+    var messageListenerCount: MutableList<Pair<String, ChildEventListener>> by mutableStateOf(mutableListOf())
+    var roomListListenerCount: MutableList<ChildEventListener> by mutableStateOf(mutableListOf())
 
-    fun addChattingListener(roomID: String, update: (MessageDetail) -> Unit) {
+    //채팅방 들어갔을 때 메세지 리스너
+    fun addMessageListener(roomID: String, update: (MessageDetail) -> Unit) {
         val reference = database.child("chattings").child("messages").child(roomID)
         val chattingListener = object : ChildEventListener {
             var messageDetail: MessageDetail? = null
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
                 if(messageDetail != null) update(messageDetail!!)
-                Log.w("chattingListener.onChildAdded", "onChildAdded: $messageDetail")
+                Log.w("messageListener.onChildAdded", "onChildAdded: $messageDetail")
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
-                Log.w("chattingListener.onChildChanged", "onChildChanged: $messageDetail")
+                Log.w("messageListener.onChildChanged", "onChildChanged: $messageDetail")
                 if(messageDetail != null) update(messageDetail!!)
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
-                Log.w("chattingListener.onChildRemoved", "onChildRemoved: $messageDetail")
+                Log.w("messageListener.onChildRemoved", "onChildRemoved: $messageDetail")
                 if(messageDetail != null) update(messageDetail!!)
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
-                Log.w("chattingListener.onChildMoved", "onChildMoved: $messageDetail")
+                Log.w("messageListener.onChildMoved", "onChildMoved: $messageDetail")
                 if(messageDetail != null) update(messageDetail!!)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w(
-                    "chattingListener.onCancelled",
+                    "messageListener.onCancelled",
                     "onCancelled: ",
                     databaseError.toException()
                 )
             }
         }
 
-        listenerCount.add(roomID to chattingListener)
+        messageListenerCount.add(roomID to chattingListener)
         reference.addChildEventListener(chattingListener)
-        Log.d("setChattingListener", "${roomID}에 chattingListener 추가")
+        Log.d("addMessageListener", "${roomID}에 messageListener 추가")
     }
 
-    fun removeChattingListener() {
-        listenerCount.forEach {
-            val reference = Chattings.database.child("chattings").child("messages").child(it.first)
+    //채팅방 나갈 때 메세지 리스너 제거
+    fun removeMessageListener() {
+        messageListenerCount.forEach {
+            val reference = database.child("chattings").child("messages").child(it.first)
             reference.removeEventListener(it.second)
-            Log.d("setChattingListener", "${it.first}에서 chattingListener 제거")
+            Log.d("removeMessageListener", "${it.first}에서 messageListener 제거")
         }
-        listenerCount = mutableListOf()
+        messageListenerCount = mutableListOf()
+    }
+
+    //채팅방 목록 가져오는 리스너 추가
+    fun addRoomListListener() {
+        val reference = database.child("chattings").child("rooms")
+        val chattingListener = object : ChildEventListener {
+            var roomDetail: RoomDetail? = null
+            fun update(roomDetail: RoomDetail) {
+                chattingRoomList = chattingRoomList?.toMutableMap().apply {
+                    this?.set(roomDetail.roomID, roomDetail)
+                }
+            }
+            override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
+                if(roomDetail != null) update(roomDetail!!)
+                Log.w("roomListener.onChildAdded", "onChildAdded: $roomDetail")
+            }
+
+            override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
+                Log.w("roomListener.onChildChanged", "onChildChanged: $roomDetail")
+                if(roomDetail != null) update(roomDetail!!)
+            }
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
+                Log.w("roomListener.onChildRemoved", "onChildRemoved: $roomDetail")
+                if(roomDetail != null) update(roomDetail!!)
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
+                Log.w("roomListener.onChildMoved", "onChildMoved: $roomDetail")
+                if(roomDetail != null) update(roomDetail!!)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w(
+                    "roomListener.onCancelled",
+                    "onCancelled: ",
+                    databaseError.toException()
+                )
+            }
+        }
+
+        roomListListenerCount.add(chattingListener)
+        reference.addChildEventListener(chattingListener)
+        Log.d("addRoomListener", "roomListener 추가")
+    }
+
+    //채팅방 목록 가져오는 리스너 제거
+    fun removeRoomListListener() {
+        roomListListenerCount.forEach {
+            val reference = database.child("chattings").child("rooms")
+            reference.removeEventListener(it)
+            Log.d("removeRoomListListener", "roomListener 제거")
+        }
+        roomListListenerCount = mutableListOf()
     }
 
     //채팅방 만들기
@@ -122,6 +184,7 @@ object Chattings {
     ): String? {
         val roomID = database.child("chattings").child("rooms").push().key
         val chattingRoomMap = mutableMapOf<String, Any>(
+            "chattings/rooms/$roomID/roomID" to roomID.toString(),
             "chattings/rooms/$roomID/title" to title,
             "chattings/rooms/$roomID/state" to ChattingRoomState.AVAILABLE,
             "chattings/rooms/$roomID/type" to type

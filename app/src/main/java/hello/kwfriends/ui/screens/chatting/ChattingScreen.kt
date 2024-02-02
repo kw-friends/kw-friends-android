@@ -73,7 +73,7 @@ fun ChattingScreen(
     }
     BackHandler {
         navigation.popBackStack()
-        Chattings.removeChattingListener()
+        Chattings.removeMessageListener()
     }
     Box(
         modifier = Modifier
@@ -88,7 +88,7 @@ fun ChattingScreen(
             IconButton(
                 onClick = {
                     navigation.popBackStack()
-                    Chattings.removeChattingListener()
+                    Chattings.removeMessageListener()
                 }
             ) {
                 Icon(

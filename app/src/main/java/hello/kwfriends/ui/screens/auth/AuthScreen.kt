@@ -60,7 +60,7 @@ fun AuthScreen(mainNavigation: NavController) {
 
     LaunchedEffect(AuthViewModel.uiState) {
         if (AuthViewModel.uiState == AuthUiState.SignInSuccess) {
-            AuthViewModel.signInSuccessCheck(mainNavigation)
+            AuthViewModel.signInSuccessCheck(mainNavigation) //유저 인증 및 정보 입력 검사 후 이후 페이지로 이동
         } else if (AuthViewModel.uiState == AuthUiState.SignIn) {
             if (Firebase.auth.currentUser != null) { // 로그인 된 상태일 때
                 if (Firebase.auth.currentUser?.isEmailVerified == true) { //이메일 인증 검사

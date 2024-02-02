@@ -68,4 +68,9 @@ class ChattingsListViewModel : ViewModel() {
         }
     }
 
+    fun addListener() {
+        viewModelScope.launch {
+            Chattings.addRoomListListener()
+        }
+    }
 }

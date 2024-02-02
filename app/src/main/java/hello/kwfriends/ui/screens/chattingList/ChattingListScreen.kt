@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.chattingList
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
+import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.main.Routes
@@ -51,7 +53,7 @@ fun ChattingListScreen(
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(true) {
-        chattingsListViewModel.getRoomList()
+        chattingsListViewModel.addListener()
     }
     Column(
         modifier = Modifier
@@ -64,7 +66,11 @@ fun ChattingListScreen(
             fontWeight = FontWeight.W600,
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 14.dp)
         )
-        chattingsListViewModel.sortedData?.forEach {
+        val sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
+            if (it.value.recentMessage.timestamp.toString() == "") Long.MIN_VALUE
+            else it.value.recentMessage.timestamp as Long
+        }
+        sortedData?.forEach {
             val roomInfo = it.value
             var targetUid = ""
             if(it.value.type == ChattingRoomType.DIRECT) {
@@ -74,7 +80,10 @@ fun ChattingListScreen(
                 targetUid = targetUid.slice(IntRange(1, targetUid.length - 2))
             }
             Box(modifier = Modifier
-                .clickable { navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}") }
+                .clickable {
+                    navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}")
+                    Chattings.removeRoomListListener()
+                }
                 .padding(10.dp)
                 .fillMaxWidth()
             ) {
@@ -151,7 +160,6 @@ fun ChattingListScreen(
         Button(
             onClick = {
                 chattingsListViewModel.temp_addRoom()
-                chattingsListViewModel.getRoomList()
             }
         ) {
             Text("채팅방 생성하기")
