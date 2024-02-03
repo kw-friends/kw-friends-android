@@ -142,7 +142,9 @@ object Chattings {
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
                 Log.w("roomListener.onChildRemoved", "onChildRemoved: $roomDetail")
-                if(roomDetail != null) update(roomDetail!!)
+                chattingRoomList = chattingRoomList?.toMutableMap().apply {
+                    this?.remove(roomDetail?.roomID)
+                }
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {

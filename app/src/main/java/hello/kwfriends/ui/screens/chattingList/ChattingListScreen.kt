@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.screens.chattingList
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,8 +51,11 @@ fun ChattingListScreen(
     navigation: NavController
 ) {
     val scrollState = rememberScrollState()
-    LaunchedEffect(true) {
+    DisposableEffect(true) {
         chattingsListViewModel.addListener()
+        onDispose {
+            Chattings.removeRoomListListener()
+        }
     }
     Column(
         modifier = Modifier
@@ -82,7 +84,6 @@ fun ChattingListScreen(
             Box(modifier = Modifier
                 .clickable {
                     navigation.navigate(Routes.CHATTING_SCREEN + "/${it.key}")
-                    Chattings.removeRoomListListener()
                 }
                 .padding(10.dp)
                 .fillMaxWidth()

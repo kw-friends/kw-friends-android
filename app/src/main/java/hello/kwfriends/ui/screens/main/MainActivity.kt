@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.chatting.ChattingScreen
@@ -60,8 +59,6 @@ class MainActivity : BaseActivity() {
                     enterTransition = { EnterTransition.None },
                     exitTransition = { ExitTransition.None }
                 ) {
-                    Chattings.removeRoomListListener()
-                    Chattings.removeMessageListener()
                     composable(Routes.HOME_SCREEN) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         MainScreen(

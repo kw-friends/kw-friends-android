@@ -36,7 +36,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.firebase.realtimeDatabase.Action
-import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeBottomBar
 import hello.kwfriends.ui.component.MainTopAppBar
@@ -255,8 +254,6 @@ fun MainScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Chattings.removeRoomListListener()
-            Chattings.removeMessageListener()
             composable(MainDestination.FindGatheringScreen.route) {
                 fabOpened = true
                 FindGatheringScreen(

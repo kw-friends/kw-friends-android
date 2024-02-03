@@ -1,6 +1,6 @@
 package hello.kwfriends.ui.screens.chatting
 
-import androidx.activity.compose.BackHandler
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -54,6 +56,13 @@ fun ChattingScreen(
     navigation: NavController,
     roomID: String
 ) {
+    try {
+        Chattings.chattingRoomList?.get(roomID)!!
+    }
+    catch (e: Exception) {
+        navigation.navigate(Routes.HOME_SCREEN)
+        Log.w("Chattings screen", "오류 발생, 메인 스크린으로 이동. error: $e")
+    }
     var targetUid: String = ""
     if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.DIRECT) {
         val temp = Chattings.chattingRoomList?.get(roomID)?.members?.toMutableMap()
@@ -65,15 +74,18 @@ fun ChattingScreen(
     LaunchedEffect(true) {
         chattingViewModel.getRoomInfo(roomID)
         chattingViewModel.getMessagesAndProfiles(roomID)
-        chattingViewModel.addListener(roomID)
+
     }
     LaunchedEffect(chattingViewModel.messageData) {
         scrollState.scrollTo(scrollState.maxValue)
         Chattings.messageRead(roomID, chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf())
     }
-    BackHandler {
-        navigation.popBackStack()
-        Chattings.removeMessageListener()
+    //리스너 생명주기 컴포즈에 맞추기
+    DisposableEffect(true) {
+        chattingViewModel.addListener(roomID)
+        onDispose {
+            Chattings.removeMessageListener()
+        }
     }
     Box(
         modifier = Modifier
@@ -88,7 +100,6 @@ fun ChattingScreen(
             IconButton(
                 onClick = {
                     navigation.popBackStack()
-                    Chattings.removeMessageListener()
                 }
             ) {
                 Icon(
