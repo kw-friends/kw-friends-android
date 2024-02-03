@@ -363,6 +363,7 @@ class MainViewModel : ViewModel() {
     fun makeDirectChatting(targetUid: String, mainNavigation: NavController) {
         viewModelScope.launch {
             val roomID = Chattings.makeDirectChatting(targetUid)
+            Chattings.getRoomList()
             if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }

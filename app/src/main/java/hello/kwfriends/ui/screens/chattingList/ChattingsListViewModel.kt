@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.screens.chattingList
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
@@ -17,7 +18,9 @@ class ChattingsListViewModel : ViewModel() {
 
     var sortedData: MutableList<MutableMap.MutableEntry<String, RoomDetail>>? = mutableListOf()
 
-    fun getRoomList() {
+    var userList: MutableList<String> = mutableStateListOf()
+
+    fun getRoomListAndProfiles() {
         viewModelScope.launch {
             Chattings.getRoomList()
             sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
@@ -69,8 +72,21 @@ class ChattingsListViewModel : ViewModel() {
     }
 
     fun addListener() {
+        userList = mutableListOf<String>()
         viewModelScope.launch {
-            Chattings.addRoomListListener()
+            Chattings.addRoomListListener() {
+                Chattings.chattingRoomList = Chattings.chattingRoomList?.toMutableMap().apply {
+                    this?.set(it.roomID, it)
+                    if(it.type == ChattingRoomType.DIRECT) {
+                        val temp = it.members.toMutableMap()
+                        temp.remove(Firebase.auth.currentUser!!.uid)
+                        val uid = temp.keys.toString().slice(IntRange(1, temp.keys.toString().length - 2))
+                        userList = userList.toMutableList().apply {
+                            this.add(uid)
+                        }
+                    }
+                }
+            }
         }
     }
 }

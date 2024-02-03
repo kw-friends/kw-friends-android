@@ -118,15 +118,10 @@ object Chattings {
     }
 
     //채팅방 목록 가져오는 리스너 추가
-    fun addRoomListListener() {
+    fun addRoomListListener(update: (RoomDetail) -> Unit) {
         val reference = database.child("chattings").child("rooms")
         val chattingListener = object : ChildEventListener {
             var roomDetail: RoomDetail? = null
-            fun update(roomDetail: RoomDetail) {
-                chattingRoomList = chattingRoomList?.toMutableMap().apply {
-                    this?.set(roomDetail.roomID, roomDetail)
-                }
-            }
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
                 if(roomDetail != null) update(roomDetail!!)

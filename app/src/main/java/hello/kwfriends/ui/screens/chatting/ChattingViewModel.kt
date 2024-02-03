@@ -1,6 +1,5 @@
 package hello.kwfriends.ui.screens.chatting
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,14 +23,6 @@ class ChattingViewModel : ViewModel() {
     var inputChatting by mutableStateOf<String>("")
 
     fun setInputChattingText(text: String) { inputChatting = text }
-
-    fun getMessagesAndProfiles(roomID: String) {
-        viewModelScope.launch {
-            messageData = Chattings.getRoomMessages(roomID)
-            Log.w("ChattingsViewModel", "채팅 목록: ${messageData}")
-            getUsersProfile()
-        }
-    }
 
     fun sendMessage(roomID: String) {
         if(inputChatting != "") {

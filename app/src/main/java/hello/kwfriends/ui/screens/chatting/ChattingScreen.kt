@@ -71,11 +71,6 @@ fun ChattingScreen(
         targetUid = targetUid.slice(IntRange(1, targetUid.length - 2))
     }
     val scrollState = rememberScrollState()
-    LaunchedEffect(true) {
-        chattingViewModel.getRoomInfo(roomID)
-        chattingViewModel.getMessagesAndProfiles(roomID)
-
-    }
     LaunchedEffect(chattingViewModel.messageData) {
         scrollState.scrollTo(scrollState.maxValue)
         Chattings.messageRead(roomID, chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf())
@@ -83,6 +78,8 @@ fun ChattingScreen(
     //리스너 생명주기 컴포즈에 맞추기
     DisposableEffect(true) {
         chattingViewModel.addListener(roomID)
+        chattingViewModel.getRoomInfo(roomID)
+        chattingViewModel.getUsersProfile()
         onDispose {
             Chattings.removeMessageListener()
         }

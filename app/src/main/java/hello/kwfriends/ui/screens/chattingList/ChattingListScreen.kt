@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +56,12 @@ fun ChattingListScreen(
         chattingsListViewModel.addListener()
         onDispose {
             Chattings.removeRoomListListener()
+        }
+    }
+    LaunchedEffect(chattingsListViewModel.userList) {
+        chattingsListViewModel.userList.forEach {
+            UserData.updateUsersDataMap(it, UserData.get(it))
+            ProfileImage.updateUsersUriMap(it, ProfileImage.getDownloadUrl(it))
         }
     }
     Column(
