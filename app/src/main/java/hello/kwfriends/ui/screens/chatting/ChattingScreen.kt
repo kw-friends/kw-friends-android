@@ -57,7 +57,7 @@ fun ChattingScreen(
     roomID: String
 ) {
     try {
-        Chattings.chattingRoomList?.get(roomID)!!
+        Firebase.auth.currentUser!!.uid
     }
     catch (e: Exception) {
         navigation.navigate(Routes.HOME_SCREEN)
