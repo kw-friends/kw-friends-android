@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.Tags.Tags
+import hello.kwfriends.firebase.realtimeDatabase.Events
 import hello.kwfriends.ui.component.EventCard
 import hello.kwfriends.ui.component.ParticipatedGatheringListCard
 import hello.kwfriends.ui.screens.main.MainDestination
@@ -23,7 +24,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
     ) {
-        EventCard(5)
+        EventCard(pageCount = Events.eventCount, mainViewModel = mainViewModel)
         Column(
             modifier = Modifier
                 .fillMaxSize()
