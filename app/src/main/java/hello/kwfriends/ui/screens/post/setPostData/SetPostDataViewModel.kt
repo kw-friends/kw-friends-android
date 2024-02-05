@@ -15,7 +15,7 @@ import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
-import hello.kwfriends.ui.screens.post.postValidation
+import hello.kwfriends.ui.screens.post.PostValidation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -186,23 +186,23 @@ class SetPostDataViewModel : ViewModel() {
 
     fun gatheringTitleChange(text: String) {
         gatheringTitle = text
-        gatheringTitleValidation = postValidation.isStrHasData(text)
+        gatheringTitleValidation = PostValidation.isStrHasData(text)
     }
 
     fun gatheringDescriptionChange(text: String) {
         gatheringDescription = text
-        gatheringDescriptionValidation = postValidation.isStrHasData(text)
+        gatheringDescriptionValidation = PostValidation.isStrHasData(text)
     }
 
     fun onHourChanged(hour: String) {
-        if (postValidation.checkHourRange(hour)) {
+        if (PostValidation.checkHourRange(hour)) {
             gatheringHour = hour
             validateGatheringTime()
         }
     }
 
     fun onMinuteChanged(minute: String) {
-        if (postValidation.checkMinuteRange(minute)) {
+        if (PostValidation.checkMinuteRange(minute)) {
             gatheringMinute = minute
             validateGatheringTime()
         }
@@ -259,7 +259,7 @@ class SetPostDataViewModel : ViewModel() {
     }
 
     fun maximumParticipantsChange(max: String) {
-        if (postValidation.checkMaximumParticipantsRange(max)) {
+        if (PostValidation.checkMaximumParticipantsRange(max)) {
             maximumParticipants = max
             maximumParticipantsValidation = true
         } else {

@@ -201,7 +201,7 @@ fun SettingsScreen(
                     )
                     SettingsButtonItem(
                         title = "앱 버전",
-                        description = BuildConfig.VERSION_NAME.toString(),
+                        description = BuildConfig.VERSION_NAME,
                         onClick = { /*앱스토어와 연결*/ }
                     )
                 }

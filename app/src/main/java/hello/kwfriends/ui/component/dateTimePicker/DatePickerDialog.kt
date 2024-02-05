@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.post.setPostData.dateTimePicker
+package hello.kwfriends.ui.component.dateTimePicker
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape

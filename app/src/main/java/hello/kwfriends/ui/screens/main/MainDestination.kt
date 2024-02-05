@@ -1,7 +1,7 @@
 package hello.kwfriends.ui.screens.main
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,7 +24,7 @@ enum class MainDestination(
     ),
     ChatScreen(
         route = ROUTE_CHAT,
-        icon = Icons.Default.Chat,
+        icon = Icons.AutoMirrored.Filled.Chat,
         labelResId = R.string.navigation_chat
     )
 }

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Popup
 
 @Composable
-fun finalCheckPopup(
+fun FinalCheckPopup(
     state: Boolean,
     title: String,
     body: String,

@@ -255,7 +255,7 @@ class MainViewModel : ViewModel() {
 
     fun postRemoved(postID: String) {
         posts = posts.filter { it.postID != postID }
-        Log.d("postRemoved", "postID: ${postID}")
+        Log.d("postRemoved", "postID: $postID")
 
         updateParticipatedGatherings()
     }
@@ -274,7 +274,7 @@ class MainViewModel : ViewModel() {
         }
         posts = posts.map { if (it.postID == postID) postData else it }
         Log.d("postChanged", "postID: ${postData.postID}")
-        Log.d("postChanged", "posts: ${posts}")
+        Log.d("postChanged", "posts: $posts")
 
         updateParticipatedGatherings()
     }
@@ -282,7 +282,7 @@ class MainViewModel : ViewModel() {
     fun initPostMap() {
         viewModelScope.launch {
             posts = Post.initPostData()
-            Log.d("initPostMap", "post set to ${posts}")
+            Log.d("initPostMap", "post set to $posts")
 
             for (post in posts) {
                 if (uid in post.participants.keys) {

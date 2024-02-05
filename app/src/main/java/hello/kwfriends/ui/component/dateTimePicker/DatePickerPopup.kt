@@ -1,4 +1,4 @@
-package hello.kwfriends.ui.screens.post.setPostData.dateTimePicker
+package hello.kwfriends.ui.component.dateTimePicker
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable

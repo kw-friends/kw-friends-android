@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -45,7 +44,7 @@ import hello.kwfriends.ui.component.MainTopAppBar
 import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
-import hello.kwfriends.ui.component.finalCheckPopup
+import hello.kwfriends.ui.component.FinalCheckPopup
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
@@ -59,7 +58,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     mainViewModel: MainViewModel,
@@ -210,7 +208,7 @@ fun MainScreen(
     )
 
     // 사용자 조작 확인 팝업
-    finalCheckPopup(
+    FinalCheckPopup(
         state = mainViewModel.finalCheckState,
         title = mainViewModel.finalCheckTitle,
         body = mainViewModel.finalCheckBody,

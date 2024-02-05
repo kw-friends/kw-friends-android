@@ -82,7 +82,7 @@ fun PostInfoScreen(
 
     //모임 참가한 유저들 이미지 및 데이터 가져오기
     LaunchedEffect(postDetail.participants) {
-        val newParticipations = postDetail.participants.keys - previousParticipants.value
+        val newParticipations = postDetail.participants.keys - previousParticipants.value.toSet()
         newParticipations.forEach {
             mainViewModel.downlodUri(it)
             mainViewModel.downlodData(it)
