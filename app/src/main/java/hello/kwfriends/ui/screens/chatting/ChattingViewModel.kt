@@ -38,21 +38,18 @@ class ChattingViewModel : ViewModel() {
         }
     }
 
-    fun getRoomInfo(roomID: String) {
+    fun getRoomInfoAndUserProfile(roomID: String) {
         viewModelScope.launch {
             roomInfo = Chattings.getRoomInfo(roomID)
+            getUsersProfile()
         }
     }
 
-    fun getUsersProfile() {
-        viewModelScope.launch {
-            val members = roomInfo?.members
-            members?.keys?.forEach {
-                val uri = ProfileImage.getDownloadUrl(it)
-                ProfileImage.updateUsersUriMap(it, uri)
-                val data = UserData.get(it)
-                UserData.updateUsersDataMap(it, data)
-            }
+    suspend fun getUsersProfile() {
+        val members = roomInfo?.members
+        members?.keys?.forEach {
+            ProfileImage.updateUsersUriMap(it, ProfileImage.getDownloadUrl(it))
+            UserData.updateUsersDataMap(it, UserData.get(it))
         }
     }
     fun addListener(roomID: String) {

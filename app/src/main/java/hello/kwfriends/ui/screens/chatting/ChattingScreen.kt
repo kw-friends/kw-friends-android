@@ -74,11 +74,12 @@ fun ChattingScreen(
         scrollState.scrollTo(scrollState.maxValue)
         Chattings.messageRead(roomID, chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf())
     }
+    LaunchedEffect(true) {
+        chattingViewModel.getRoomInfoAndUserProfile(roomID)
+    }
     //리스너 생명주기 컴포즈에 맞추기
     DisposableEffect(true) {
         chattingViewModel.addListener(roomID)
-        chattingViewModel.getRoomInfo(roomID)
-        chattingViewModel.getUsersProfile()
         onDispose {
             Chattings.removeMessageListener()
         }
