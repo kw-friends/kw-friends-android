@@ -18,9 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Icon
@@ -46,6 +44,7 @@ import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.ui.component.ChattingTextField
 import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -204,15 +203,20 @@ fun ChattingScreen(
         Row(
             modifier = Modifier.align(Alignment.BottomCenter),
         ) {
-            TextField(
+            ChattingTextField(
                 value = chattingViewModel.inputChatting,
-                onValueChange = { chattingViewModel.setInputChattingText(it) }
+                onValueChange = { chattingViewModel.setInputChattingText(it) },
+                chattingSend = { chattingViewModel.sendMessage(roomID) }
             )
-            Button(onClick = {
-                chattingViewModel.sendMessage(roomID)
-            }) {
-                Text(text = "전송")
-            }
+//            TextField(
+//                value = chattingViewModel.inputChatting,
+//                onValueChange = { chattingViewModel.setInputChattingText(it) }
+//            )
+//            Button(onClick = {
+//                chattingViewModel.sendMessage(roomID)
+//            }) {
+//                Text(text = "전송")
+//            }
         }
 
     }
