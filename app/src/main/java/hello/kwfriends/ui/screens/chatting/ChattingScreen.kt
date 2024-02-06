@@ -1,8 +1,10 @@
 package hello.kwfriends.ui.screens.chatting
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,15 +20,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +50,7 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
+import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.ChattingTextField
@@ -49,6 +58,7 @@ import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChattingScreen(
     chattingViewModel: ChattingViewModel,
@@ -179,6 +189,7 @@ fun ChattingScreen(
                             )
                             Spacer(modifier = Modifier.width(5.dp))
                             Column {
+                                var menuExpanded by remember { mutableStateOf(false) }
                                 Text(
                                     text = UserData.usersDataMap[it.value.uid]?.get("name")
                                         ?.toString() ?: "unknown"
@@ -197,11 +208,38 @@ fun ChattingScreen(
                                             )
                                             .background(Color(0xFFE7E4E4))
                                     ) {
+                                        if(it.value.uid == Firebase.auth.currentUser!!.uid && it.value.type != MessageType.DELETED) {
+                                            DropdownMenu(
+                                                expanded = menuExpanded,
+                                                onDismissRequest = { menuExpanded = false }
+                                            ) {
+                                                DropdownMenuItem(
+                                                    text = {
+                                                        Text(
+                                                            text = "삭제",
+                                                            style = MaterialTheme.typography.bodyMedium
+                                                        )
+                                                    },
+                                                    enabled = true,
+                                                    onClick = {
+                                                        menuExpanded = false
+                                                        chattingViewModel.removeMessage(roomID, it.value.messageID)
+                                                    },
+                                                )
+                                            }
+                                        }
+
                                         Text(
                                             modifier = Modifier
+                                                .combinedClickable (
+                                                    onClick = {  },
+                                                    onLongClick = { menuExpanded = true }
+                                                )
                                                 .align(Alignment.Center)
                                                 .padding(10.dp),
-                                            text = it.value.content
+                                            text = it.value.content,
+                                            color = if(it.value.type == MessageType.DELETED) Color.Gray
+                                                    else Color.Black
                                         )
                                     }
                                     Spacer(modifier = Modifier.width(5.dp))

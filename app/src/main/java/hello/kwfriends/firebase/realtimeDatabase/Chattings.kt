@@ -35,6 +35,7 @@ data class MessageDetail(
 )
 
 data class RecentMessage(
+    var messageID: String = "",
     var content: String = "",
     var timestamp: Any = ""
 )
@@ -43,7 +44,8 @@ enum class MessageType {
     TEXT,
     IMAGE,
     AUDIO,
-    VIDEO
+    VIDEO,
+    DELETED
 }
 
 enum class ChattingRoomType {
@@ -270,6 +272,47 @@ object Chattings {
         return result
     }
 
+    suspend fun removeMessage(
+        roomID: String,
+        messageID: String
+    ): Boolean {
+        val info = getRoomInfo(roomID)
+        val members = info?.members
+        if (info?.state != ChattingRoomState.AVAILABLE) {
+            Log.w(
+                "Chattings.sendMessage()",
+                "채팅방 상태가 available이 아니라 채팅방 삭제에 실패했습니다. 상태: ${info?.state}"
+            )
+            return false
+        } else if (members?.contains(Firebase.auth.currentUser!!.uid) != true) {
+            Log.w("Chattings.removeMessage()", "채팅방에 참여중이 아니라 채팅 삭제에 실패했습니다.")
+            return false
+        }
+        val chattingRoomMap = mutableMapOf<String, Any?>(
+            "chattings/messages/$roomID/$messageID/type" to MessageType.DELETED,
+            "chattings/messages/$roomID/$messageID/content" to "(메세지 삭제됨)",
+        )
+        if(info.recentMessage.messageID == messageID) {
+            chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(메세지 삭제됨)"
+        }
+        val result = suspendCoroutine<Boolean> { continuation ->
+            database.updateChildren(chattingRoomMap)
+                .addOnSuccessListener {
+                    Log.w("Chattings.removeMessage()", "메세지 삭제 성공")
+                    continuation.resume(true)
+                }
+                .addOnFailureListener {
+                    Log.w("Chattings.removeMessage()", "메세지 삭제 실패(fail): $it")
+                    continuation.resume(false)
+                }
+                .addOnCanceledListener {
+                    Log.w("Chattings.removeMessage()", "메세지 삭제 실패(cancel)")
+                    continuation.resume(false)
+                }
+        }
+        return result
+    }
+
     //채팅 보내기
     suspend fun sendMessage(
         roomID: String,
@@ -286,7 +329,7 @@ object Chattings {
             )
             return false
         } else if (members?.contains(Firebase.auth.currentUser!!.uid) != true) {
-            Log.w("Chattings.leave()", "채팅방에 참여중이 아니라 채팅방 나가기에 실패했습니다.")
+            Log.w("Chattings.sendMessage()", "채팅방에 참여중이 아니라 채팅 전송에 실패했습니다.")
             return false
         }
         val messageID = database.child("chattings").child("messages").push().key
@@ -298,6 +341,7 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/messageID" to messageID.toString(),
             "chattings/messages/$roomID/$messageID/timestamp" to ServerValue.TIMESTAMP,
             "chattings/rooms/$roomID/recentMessage/timestamp" to ServerValue.TIMESTAMP,
+            "chattings/rooms/$roomID/recentMessage/messageID" to messageID.toString(),
         )
         when (type) {
             MessageType.TEXT -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
@@ -308,6 +352,7 @@ object Chattings {
                 "(음성녹음)"
             MessageType.VIDEO -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
                 "(영상)"
+            else -> {}
         }
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(chattingRoomMap)

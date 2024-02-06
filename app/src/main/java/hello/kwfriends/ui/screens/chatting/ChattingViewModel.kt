@@ -58,7 +58,15 @@ class ChattingViewModel : ViewModel() {
                 this?.set(it.messageID, it)
             }
         }
-
-
     }
+
+    fun removeMessage(roomID: String, messageID: String) {
+        viewModelScope.launch {
+            Chattings.removeMessage(
+                roomID = roomID,
+                messageID = messageID
+            )
+        }
+    }
+
 }
