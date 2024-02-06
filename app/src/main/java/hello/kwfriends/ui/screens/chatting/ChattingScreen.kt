@@ -260,23 +260,25 @@ fun ChattingScreen(
                                 }
                             }
                         }
-                        val messageDate = LocalDateTime.ofInstant(
-                            Instant.ofEpochMilli(it.value.timestamp as Long),
-                            ZoneId.systemDefault()
-                        ).toLocalDate()
-                        val today = LocalDate.now()
-                        Text(
-                            modifier = Modifier.align(Alignment.TopEnd),
-                            text = if (messageDate.isEqual(today)) SimpleDateFormat(
-                                "a hh:mm",
-                                Locale.getDefault()
-                            ).format(it.value.timestamp)
-                            else SimpleDateFormat("yyyy/MM/d a hh:mm", Locale.getDefault()).format(
-                                it.value.timestamp
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                        if(it.value.uid != "BROADCAST") {
+                            val messageDate = LocalDateTime.ofInstant(
+                                Instant.ofEpochMilli(it.value.timestamp as Long),
+                                ZoneId.systemDefault()
+                            ).toLocalDate()
+                            val today = LocalDate.now()
+                            Text(
+                                modifier = Modifier.align(Alignment.TopEnd),
+                                text = if (messageDate.isEqual(today)) SimpleDateFormat(
+                                    "a hh:mm",
+                                    Locale.getDefault()
+                                ).format(it.value.timestamp)
+                                else SimpleDateFormat("yyyy/MM/d a hh:mm", Locale.getDefault()).format(
+                                    it.value.timestamp
+                                ),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             }
