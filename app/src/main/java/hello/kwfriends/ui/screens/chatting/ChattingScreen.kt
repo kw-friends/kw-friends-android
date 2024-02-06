@@ -62,7 +62,7 @@ fun ChattingScreen(
         navigation.navigate(Routes.HOME_SCREEN)
         Log.w("Chattings screen", "오류 발생, 메인 스크린으로 이동. error: $e")
     }
-    var targetUid: String = ""
+    var targetUid = ""
     if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.DIRECT) {
         val temp = Chattings.chattingRoomList?.get(roomID)?.members?.toMutableMap()
         temp?.remove(Firebase.auth.currentUser!!.uid)
@@ -142,35 +142,17 @@ fun ChattingScreen(
                         modifier = Modifier.align(Alignment.TopStart),
                         verticalAlignment = Alignment.Top
                     ) {
-                        AsyncImage(
-                            model = ProfileImage.usersUriMap[it.value.uid]
-                                ?: R.drawable.profile_default_image,
-                            placeholder = painterResource(id = R.drawable.profile_default_image),
-                            contentDescription = "chatter's profile image",
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .border(0.5.dp, Color.Gray, CircleShape),
-                            contentScale = ContentScale.Crop,
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Column {
-                            Text(
-                                text = UserData.usersDataMap[it.value.uid]?.get("name")
-                                    ?.toString() ?: "unknown"
-                            )
-                            Row(
-                                verticalAlignment = Alignment.Bottom
+                        if(it.value.uid == "BROADCAST") {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 55.dp)
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Box(
                                     Modifier
-                                        .clip(
-                                            RoundedCornerShape(
-                                                topEnd = 15.dp,
-                                                bottomStart = 15.dp,
-                                                bottomEnd = 15.dp
-                                            )
-                                        )
+                                        .clip(RoundedCornerShape(15.dp))
                                         .background(Color(0xFFE7E4E4))
                                 ) {
                                     Text(
@@ -180,12 +162,55 @@ fun ChattingScreen(
                                         text = it.value.content
                                     )
                                 }
-                                Spacer(modifier = Modifier.width(5.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+                        }
+                        else {
+                            AsyncImage(
+                                model = ProfileImage.usersUriMap[it.value.uid]
+                                    ?: R.drawable.profile_default_image,
+                                placeholder = painterResource(id = R.drawable.profile_default_image),
+                                contentDescription = "chatter's profile image",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .border(0.5.dp, Color.Gray, CircleShape),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Column {
                                 Text(
-                                    text = "${it.value.read.size}명 읽음",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.Gray
+                                    text = UserData.usersDataMap[it.value.uid]?.get("name")
+                                        ?.toString() ?: "unknown"
                                 )
+                                Row(
+                                    verticalAlignment = Alignment.Bottom
+                                ) {
+                                    Box(
+                                        Modifier
+                                            .clip(
+                                                RoundedCornerShape(
+                                                    topEnd = 15.dp,
+                                                    bottomStart = 15.dp,
+                                                    bottomEnd = 15.dp
+                                                )
+                                            )
+                                            .background(Color(0xFFE7E4E4))
+                                    ) {
+                                        Text(
+                                            modifier = Modifier
+                                                .align(Alignment.Center)
+                                                .padding(10.dp),
+                                            text = it.value.content
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(
+                                        text = "${it.value.read.size}명 읽음",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                    )
+                                }
                             }
                         }
                     }
