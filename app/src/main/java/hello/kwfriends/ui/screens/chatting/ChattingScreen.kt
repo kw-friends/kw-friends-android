@@ -56,6 +56,10 @@ import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.component.ChattingTextField
 import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -252,11 +256,12 @@ fun ChattingScreen(
                             }
                         }
                     }
+                    val messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.value.timestamp as Long), ZoneId.systemDefault()).toLocalDate()
+                    val today = LocalDate.now()
                     Text(
                         modifier = Modifier.align(Alignment.TopEnd),
-                        text = SimpleDateFormat("a hh:mm", Locale.getDefault()).format(
-                            it.value.timestamp
-                        ),
+                        text = if(messageDate.isEqual(today)) SimpleDateFormat("a hh:mm", Locale.getDefault()).format(it.value.timestamp)
+                                else SimpleDateFormat("yyyy/MM/d a hh:mm", Locale.getDefault()).format(it.value.timestamp),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
@@ -272,15 +277,6 @@ fun ChattingScreen(
                 onValueChange = { chattingViewModel.setInputChattingText(it) },
                 chattingSend = { chattingViewModel.sendMessage(roomID) }
             )
-//            TextField(
-//                value = chattingViewModel.inputChatting,
-//                onValueChange = { chattingViewModel.setInputChattingText(it) }
-//            )
-//            Button(onClick = {
-//                chattingViewModel.sendMessage(roomID)
-//            }) {
-//                Text(text = "전송")
-//            }
         }
 
     }

@@ -44,6 +44,10 @@ import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Locale
 
 @Composable
@@ -145,16 +149,14 @@ fun ChattingListScreen(
                         )
                     }
                 }
+                val messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(roomInfo.recentMessage.timestamp as Long), ZoneId.systemDefault()).toLocalDate()
+                val today = LocalDate.now()
                 Text(
                     modifier = Modifier.align(Alignment.TopEnd),
                     text =
                         if(roomInfo.recentMessage.timestamp.toString() == "") ""
-                        else SimpleDateFormat(
-                            "yyyy/MM/dd hh:mm a",
-                            Locale.getDefault()
-                        ).format(
-                            roomInfo.recentMessage.timestamp
-                        ),
+                        else if(messageDate.isEqual(today)) SimpleDateFormat("a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp)
+                        else SimpleDateFormat("yyyy/MM/dd a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
