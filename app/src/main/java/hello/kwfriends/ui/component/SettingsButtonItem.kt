@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,9 +33,9 @@ fun SettingsButtonItem(
     isUpperLine: Boolean = true
 ) {
     if (isUpperLine) {
-        Divider(
-            color = Color.LightGray,
+        HorizontalDivider(
             thickness = 0.5.dp,
+            color = Color.LightGray
         )
     }
     Row(

@@ -20,9 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiPeople
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -91,7 +91,10 @@ fun GatheringItem(
                             )
                         },
                         enabled = !postDetail.reporters.containsKey(uid) && postDetail.gatheringPromoterUID != uid,
-                        onClick = { onReport() },
+                        onClick = {
+                            onReport()
+                            reportMenuExpended = false
+                        },
                         trailingIcon = {
                             if (postDetail.reporters.containsKey(uid)) {
                                 Icon(
@@ -112,10 +115,11 @@ fun GatheringItem(
                         enabled = !viewModel.isProcessing,
                         onClick = {
                             viewModel.updateParticipationStatus(postID = postDetail.postID)
+                            reportMenuExpended = false
                         }
                     )
                 }
-                if (participationStatus == ParticipationStatus.PARTICIPATED){
+                if (participationStatus == ParticipationStatus.PARTICIPATED) {
                     DropdownMenuItem(
                         text = {
                             Text(
@@ -126,6 +130,7 @@ fun GatheringItem(
                         enabled = !viewModel.isProcessing,
                         onClick = {
                             viewModel.updateParticipationStatus(postID = postDetail.postID)
+                            reportMenuExpended = false
                         }
                     )
                 }
@@ -169,13 +174,13 @@ fun GatheringItem(
                             color = Color.Gray,
                         )
                         if (postDetail.gatheringTags.isNotEmpty()) {
-                            Divider(
-                                color = Color.LightGray,
+                            HorizontalDivider(
                                 modifier = Modifier
                                     .padding(horizontal = 4.dp)
                                     .height(16.dp)
                                     .width(1.dp)
-                                    .align(Alignment.CenterVertically)
+                                    .align(Alignment.CenterVertically),
+                                color = Color.LightGray
                             )
                         }
                         postDetail.gatheringTags.forEach {

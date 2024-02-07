@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +31,8 @@ fun DatePickerPopup(
             initialDisplayedMonthMillis = null,
             yearRange = (2023..2040), // KW Friends 서비스 종료 시점으로 설정
             initialDisplayMode = DisplayMode.Picker,
-            initialSelectedDateMillis = setPostDataViewModel.gatheringDate
+            initialSelectedDateMillis = setPostDataViewModel.gatheringDate,
+            locale = Locale.getDefault()
         )
     }
 
@@ -65,11 +64,7 @@ fun DatePickerPopup(
                         )
                     )
                 },
-                state = datePickerState,
-                dateValidator = { timestamp ->
-                    timestamp > Instant.now().toEpochMilli()
-                },
-                dateFormatter = DatePickerFormatter(yearSelectionSkeleton = "yyyy/MM/dd"),
+                state = datePickerState, // TODO: DateFormatter 구현
                 modifier = Modifier
             )
         }

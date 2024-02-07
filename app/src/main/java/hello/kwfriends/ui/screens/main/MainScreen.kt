@@ -92,7 +92,11 @@ fun MainScreen(
 
     LaunchedEffect(key1 = Unit) {
         launch {
-            Events.initEventCards()
+            if (!mainViewModel.eventLoaded) {
+                if (Events.initEventCards()) {
+                    mainViewModel.eventLoaded = true
+                }
+            }
         }
     }
 

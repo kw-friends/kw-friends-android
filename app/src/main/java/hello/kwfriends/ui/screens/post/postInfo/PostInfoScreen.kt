@@ -27,10 +27,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,6 +59,7 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.ui.component.AnnotatedClickableText
 import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -222,9 +223,8 @@ fun PostInfoScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight(600)
                 )
-                Text(
-                    text = postDetail.gatheringDescription,
-                    style = MaterialTheme.typography.bodyMedium,
+                AnnotatedClickableText(
+                    text = postDetail.gatheringDescription
                 )
             }
             Column(
@@ -271,10 +271,10 @@ fun PostInfoScreen(
                     )
                 }
 
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 10.dp),
-                    color = Color.Gray,
                     thickness = 0.5.dp,
+                    color = Color.Gray
                 )
 
                 Text(

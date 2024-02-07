@@ -20,7 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -92,12 +92,12 @@ fun UserInfoCard(
                 .height(IntrinsicSize.Min)
         ) {
             Text(text = major, style = MaterialTheme.typography.labelMedium)
-            Divider(
-                color = Color.LightGray,
+            HorizontalDivider(
                 modifier = Modifier
                     .padding(horizontal = 6.dp)
                     .width(1.dp)
-                    .height(16.dp)
+                    .height(16.dp),
+                color = Color.LightGray
             )
             Text(text = "${admissionYear}학번", style = MaterialTheme.typography.labelMedium)
             Box(modifier = Modifier.fillMaxSize()) {

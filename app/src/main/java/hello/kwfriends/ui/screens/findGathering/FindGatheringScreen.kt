@@ -15,7 +15,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,11 +63,11 @@ fun FindGatheringScreen(
                         !mainViewModel.onlyParticipatedGathering
                 }
             )
-            Divider(
-                color = Color.Gray,
+            HorizontalDivider(
                 modifier = Modifier
                     .width(1.4f.dp)
-                    .height(30.dp)
+                    .height(30.dp),
+                color = Color.Gray
             )
             Spacer(Modifier.width(4.dp))
             mainViewModel.filterTagMap.forEach {

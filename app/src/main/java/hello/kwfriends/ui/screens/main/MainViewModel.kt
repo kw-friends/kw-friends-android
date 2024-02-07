@@ -71,6 +71,9 @@ class MainViewModel : ViewModel() {
     var finalCheckBody by mutableStateOf("")
     var onContinueAction by mutableStateOf({}) // 제거
 
+    // 이벤트 로딩 성공 여부
+    var eventLoaded by mutableStateOf(false)
+
     //포스트 신고 텍스트 리스트
     val postReportTextList by mutableStateOf(
         listOf(
