@@ -126,28 +126,36 @@ object Chattings {
             var roomDetail: RoomDetail? = null
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                if(roomDetail != null) update(roomDetail!!)
-                Log.w("roomListener.onChildAdded", "onChildAdded: $roomDetail")
+                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                    if(roomDetail != null) update(roomDetail!!)
+                    Log.w("roomListener.onChildAdded", "onChildAdded: $roomDetail")
+                }
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                Log.w("roomListener.onChildChanged", "onChildChanged: $roomDetail")
-                if(roomDetail != null) update(roomDetail!!)
+                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                    Log.w("roomListener.onChildChanged", "onChildChanged: $roomDetail")
+                    if(roomDetail != null) update(roomDetail!!)
+                }
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                Log.w("roomListener.onChildRemoved", "onChildRemoved: $roomDetail")
-                chattingRoomList = chattingRoomList?.toMutableMap().apply {
-                    this?.remove(roomDetail?.roomID)
+                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                    Log.w("roomListener.onChildRemoved", "onChildRemoved: $roomDetail")
+                    chattingRoomList = chattingRoomList?.toMutableMap().apply {
+                        this?.remove(roomDetail?.roomID)
+                    }
                 }
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                Log.w("roomListener.onChildMoved", "onChildMoved: $roomDetail")
-                if(roomDetail != null) update(roomDetail!!)
+                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                    Log.w("roomListener.onChildMoved", "onChildMoved: $roomDetail")
+                    if(roomDetail != null) update(roomDetail!!)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
