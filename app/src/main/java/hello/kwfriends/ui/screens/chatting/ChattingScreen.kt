@@ -1,6 +1,10 @@
 package hello.kwfriends.ui.screens.chatting
 
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,8 +26,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -52,6 +59,7 @@ import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ChattingImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.ChattingTextField
@@ -83,6 +91,15 @@ fun ChattingScreen(
         temp?.remove(Firebase.auth.currentUser!!.uid)
         targetUid = temp?.keys.toString()
         targetUid = targetUid.slice(IntRange(1, targetUid.length - 2))
+    }
+    //이미지 선택
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            Log.w("Lim", "이미지 선택 완료")
+            chattingViewModel.chattingImageUri = uri
+        }
     }
     val scrollState = rememberScrollState()
     LaunchedEffect(chattingViewModel.messageData) {
@@ -225,7 +242,7 @@ fun ChattingScreen(
                                                                 style = MaterialTheme.typography.bodyMedium
                                                             )
                                                         },
-                                                        enabled = true,
+                                                        enabled = it.value.type != MessageType.LOADING && it.value.type != MessageType.DELETED,
                                                         onClick = {
                                                             menuExpanded = false
                                                             chattingViewModel.removeMessage(
@@ -236,19 +253,60 @@ fun ChattingScreen(
                                                     )
                                                 }
                                             }
-
-                                            Text(
-                                                modifier = Modifier
-                                                    .combinedClickable(
-                                                        onClick = { },
-                                                        onLongClick = { menuExpanded = true }
-                                                    )
-                                                    .align(Alignment.Center)
-                                                    .padding(10.dp),
-                                                text = it.value.content,
-                                                color = if (it.value.type == MessageType.DELETED) Color.Gray
-                                                else Color.Black
-                                            )
+                                            if(it.value.type == MessageType.IMAGE) {
+                                                AsyncImage(
+                                                    model = ChattingImage.chattingUriMap[it.value.content],
+                                                    placeholder = painterResource(id = R.drawable.test_image),
+                                                    contentDescription = "chatting room image",
+                                                    modifier = Modifier
+                                                        .combinedClickable(
+                                                            onClick = { },
+                                                            onLongClick = { menuExpanded = true }
+                                                        )
+                                                        .size(150.dp)
+                                                        .clip(RoundedCornerShape(10.dp))
+                                                        .shadow(500.dp, RoundedCornerShape(10.dp)),
+                                                    contentScale = ContentScale.Crop,
+                                                )
+                                            }
+                                            else if(it.value.type == MessageType.TEXT) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .combinedClickable(
+                                                            onClick = { },
+                                                            onLongClick = { menuExpanded = true }
+                                                        )
+                                                        .align(Alignment.Center)
+                                                        .padding(10.dp),
+                                                    text = it.value.content,
+                                                )
+                                            }
+                                            else if(it.value.type == MessageType.DELETED) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .combinedClickable(
+                                                            onClick = { },
+                                                            onLongClick = { menuExpanded = true }
+                                                        )
+                                                        .align(Alignment.Center)
+                                                        .padding(10.dp),
+                                                    text = it.value.content,
+                                                    color = Color.Gray
+                                                )
+                                            }
+                                            else if(it.value.type == MessageType.LOADING) {
+                                                Text(
+                                                    modifier = Modifier
+                                                        .combinedClickable(
+                                                            onClick = { },
+                                                            onLongClick = { menuExpanded = true }
+                                                        )
+                                                        .align(Alignment.Center)
+                                                        .padding(10.dp),
+                                                    text = "로딩중...",
+                                                    color = Color.Gray
+                                                )
+                                            }
                                         }
                                         Spacer(modifier = Modifier.width(5.dp))
                                         Text(
@@ -284,13 +342,55 @@ fun ChattingScreen(
             }
             Spacer(modifier = Modifier.height(60.dp))
         }
+        if(chattingViewModel.chattingImageUri != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 70.dp),
+            ) {
+                Surface(
+                    modifier = Modifier.padding(end = 20.dp, top = 20.dp),
+                    elevation = 15.dp,
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    AsyncImage(
+                        model = chattingViewModel.chattingImageUri,
+                        placeholder = painterResource(id = R.drawable.test_image),
+                        contentDescription = "chatting room image",
+                        modifier = Modifier
+                            .size(250.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .shadow(500.dp, RoundedCornerShape(10.dp)),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+                IconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    onClick = {
+                        chattingViewModel.chattingImageUri = null
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.shadow(8.dp, CircleShape),
+                        imageVector = Icons.Default.Cancel,
+                        contentDescription = "image cancel",
+                        tint = Color.Red
+                    )
+                }
+            }
+        }
         Row(
             modifier = Modifier.align(Alignment.BottomCenter),
         ) {
             ChattingTextField(
                 value = chattingViewModel.inputChatting,
                 onValueChange = { chattingViewModel.setInputChattingText(it) },
-                chattingSend = { chattingViewModel.sendMessage(roomID) }
+                chattingSend = { chattingViewModel.sendMessage(roomID) },
+                imageSelect = {
+                    launcher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
             )
         }
 

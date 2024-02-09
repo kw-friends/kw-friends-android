@@ -54,6 +54,7 @@ fun ChattingTextField(
     imeAction: ImeAction = ImeAction.Done,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
     bottomPadding: Dp = 0.dp,
+    imageSelect: () -> Unit,
     chattingSend: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -109,7 +110,7 @@ fun ChattingTextField(
             ) {
                 Icon(
                     modifier = Modifier
-                        .clickable { /*TODO 이미지 업로드*/ }
+                        .clickable { imageSelect() }
                         .fillMaxHeight()
                         .padding(10.dp)
                         .size(25.dp),

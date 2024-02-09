@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.chatting
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import hello.kwfriends.firebase.realtimeDatabase.MessageDetail
 import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import hello.kwfriends.firebase.realtimeDatabase.RoomDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.ChattingImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import kotlinx.coroutines.launch
 
@@ -22,9 +24,21 @@ class ChattingViewModel : ViewModel() {
 
     var inputChatting by mutableStateOf<String>("")
 
+    var chattingImageUri by mutableStateOf<Uri?>(null)
+
     fun setInputChattingText(text: String) { inputChatting = text }
 
     fun sendMessage(roomID: String) {
+        if(chattingImageUri != null ) {
+            val uri = chattingImageUri
+            chattingImageUri = null
+            viewModelScope.launch {
+                Chattings.sendImageMessage(
+                    roomID = roomID,
+                    uri = uri!!
+                )
+            }
+        }
         if(inputChatting != "") {
             viewModelScope.launch {
                 Chattings.sendMessage(
@@ -56,6 +70,11 @@ class ChattingViewModel : ViewModel() {
         Chattings.addMessageListener(roomID) {
             messageData = messageData?.toMutableMap().apply {
                 this?.set(it.messageID, it)
+                viewModelScope.launch {
+                    if(it.type == MessageType.IMAGE) {
+                        ChattingImage.updateChattingUriMap(it.content, ChattingImage.getDownloadUrl(it.content))
+                    }
+                }
             }
         }
     }

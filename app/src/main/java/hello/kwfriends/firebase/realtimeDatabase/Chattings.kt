@@ -1,5 +1,6 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +13,8 @@ import com.google.firebase.database.ServerValue
 import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.storage.ChattingImage
+import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -45,7 +48,8 @@ enum class MessageType {
     IMAGE,
     AUDIO,
     VIDEO,
-    DELETED
+    DELETED,
+    LOADING
 }
 
 enum class ChattingRoomType {
@@ -327,7 +331,7 @@ object Chattings {
         uid: String,
         content: String,
         type: MessageType
-    ): Boolean {
+    ): String? {
         val info = getRoomInfo(roomID)
         val members = info?.members
         if (info?.state != ChattingRoomState.AVAILABLE) {
@@ -335,10 +339,10 @@ object Chattings {
                 "Chattings.sendMessage()",
                 "채팅방 상태가 available이 아니라 채팅방 전송에 실패했습니다. 상태: ${info?.state}"
             )
-            return false
+            return null
         } else if (members?.contains(Firebase.auth.currentUser!!.uid) != true) {
             Log.w("Chattings.sendMessage()", "채팅방에 참여중이 아니라 채팅 전송에 실패했습니다.")
-            return false
+            return null
         }
         val messageID = database.child("chattings").child("messages").push().key
         val chattingRoomMap = mutableMapOf<String, Any>(
@@ -362,20 +366,90 @@ object Chattings {
                 "(영상)"
             else -> {}
         }
-        val result = suspendCoroutine<Boolean> { continuation ->
+        val result = suspendCoroutine<String?> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {
                     Log.w("Chattings.sendMessage()", "메세지 전송 성공")
-                    continuation.resume(true)
+                    continuation.resume(messageID)
                 }
                 .addOnFailureListener {
                     Log.w("Chattings.sendMessage()", "메세지 전송 실패(fail): $it")
-                    continuation.resume(false)
+                    continuation.resume(null)
                 }
                 .addOnCanceledListener {
                     Log.w("Chattings.sendMessage()", "메세지 전송 실패(cancel)")
-                    continuation.resume(false)
+                    continuation.resume(null)
                 }
+        }
+        return result
+    }
+
+    suspend fun sendImageMessage(
+        roomID: String,
+        uri: Uri
+    ): Boolean {
+        val info = getRoomInfo(roomID)
+        val members = info?.members
+        if (info?.state != ChattingRoomState.AVAILABLE) {
+            Log.w(
+                "Chattings.sendImageMessage()",
+                "채팅방 상태가 available이 아니라 이미지 채팅 전송에 실패했습니다. 상태: ${info?.state}"
+            )
+            return false
+        } else if (members?.contains(Firebase.auth.currentUser!!.uid) != true) {
+            Log.w("Chattings.sendImageMessage()", "채팅방에 참여중이 아니라 이미지 채팅 전송에 실패했습니다.")
+            return false
+        }
+        val imageID = UUID.randomUUID().toString()
+        val messageID = sendMessage(
+            roomID = roomID,
+            uid = Firebase.auth.currentUser!!.uid,
+            content = imageID,
+            type = MessageType.LOADING
+        )
+        var result = false
+        var chattingRoomMap: MutableMap<String, Any?>? = null
+        if(ChattingImage.upload(imageID, uri)) {
+            val chattingRoomMap = mutableMapOf<String, Any?>(
+                "chattings/messages/$roomID/$messageID/type" to MessageType.IMAGE,
+            )
+            Log.w("Chattings.removeMessage()", "이미지 채팅 전송 성공")
+            result = suspendCoroutine<Boolean> { continuation ->
+                database.updateChildren(chattingRoomMap)
+                    .addOnSuccessListener {
+                        Log.w("Chattings.removeMessage()", "이미지 채팅 전송 성공 반영 성공")
+                        continuation.resume(true)
+                    }
+                    .addOnFailureListener {
+                        Log.w("Chattings.removeMessage()", "이미지 채팅 전송 성공 반영 실패(fail): $it")
+                        continuation.resume(false)
+                    }
+                    .addOnCanceledListener {
+                        Log.w("Chattings.removeMessage()", "이미지 채팅 전송 성공 반영 실패(cancel)")
+                        continuation.resume(false)
+                    }
+            }
+        }
+        else {
+            val chattingRoomMap = mutableMapOf<String, Any?>(
+                "chattings/messages/$roomID/$messageID" to null,
+            )
+            Log.w("Chattings.removeMessage()", "이미지 채팅 전송 실패")
+            result = suspendCoroutine<Boolean> { continuation ->
+                database.updateChildren(chattingRoomMap)
+                    .addOnSuccessListener {
+                        Log.w("Chattings.removeMessage()", "이미지 채팅 전송 실패 반영 성공")
+                        continuation.resume(true)
+                    }
+                    .addOnFailureListener {
+                        Log.w("Chattings.removeMessage()", "이미지 채팅 전송 실패 반영 실패(fail): $it")
+                        continuation.resume(false)
+                    }
+                    .addOnCanceledListener {
+                        Log.w("Chattings.removeMessage()", "이미지 채팅 전송 실패 반영 실패(cancel)")
+                        continuation.resume(false)
+                    }
+            }
         }
         return result
     }
