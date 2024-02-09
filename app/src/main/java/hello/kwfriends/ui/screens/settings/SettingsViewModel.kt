@@ -12,6 +12,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.realtimeDatabase.Notice
+import hello.kwfriends.firebase.realtimeDatabase.NoticeDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.preferenceDatastore.UserDataStore
@@ -36,6 +38,18 @@ class SettingsViewModel: ViewModel() {
 
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    // 커뮤니티 가이드라인 팝업 여부
+    var communityGuidelinePopupState by mutableStateOf(false)
+
+    // 공지사항 로딩 완료 여부
+    var noticeLoadedState by mutableStateOf(false)
+
+    // 공지사항 팝업 여부
+    var noticePopupState by mutableStateOf(false)
+
+    // 공지사항 목록
+    var noticeLists by mutableStateOf<List<NoticeDetail>>(listOf())
 
     //유저 신고 텍스트 리스트
     val userReportTextList by mutableStateOf(
@@ -89,6 +103,20 @@ class SettingsViewModel: ViewModel() {
     fun switchQuietMode(){
         viewModelScope.launch {
             UserDataStore.setBooleanData("SETTINGS_QUIET_MODE", !(UserDataStore.isQuietMode ?: false))
+        }
+    }
+
+    // 공지사항 fetch 함수
+    fun initNoitces() {
+        viewModelScope.launch {
+            if (noticeLists.isNotEmpty()) {
+                noticeLists = emptyList()
+            }
+            noticeLists = Notice.initNotices()
+
+            if (noticeLists.isNotEmpty()) {
+                noticeLoadedState = true
+            }
         }
     }
 

@@ -1,8 +1,12 @@
 package hello.kwfriends.ui.screens.settings
 
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -16,11 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,9 +32,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import hello.kwfriends.BuildConfig
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.UserData
@@ -38,11 +45,44 @@ import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.SettingsButtonItem
 import hello.kwfriends.ui.component.SettingsSwitchItem
-import hello.kwfriends.ui.screens.userIgnoreList.UserIgnoreListPopup
 import hello.kwfriends.ui.component.UserInfoCard
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
+import hello.kwfriends.ui.component.dateTimePicker.CommunityGuidelinePopup
 import hello.kwfriends.ui.screens.main.Routes
+import hello.kwfriends.ui.screens.settings.notice.NoticePopup
+import hello.kwfriends.ui.screens.userIgnoreList.UserIgnoreListPopup
+
+private val mailContext = """
+
+********** 사용자 정보 **********
+UID = ${Firebase.auth.currentUser!!.uid}
+
+"""
+
+fun Context.sendMail(to: String, subject: String, context: Context) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, mailContext)
+        }
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(
+            context,
+            "오류가 발생했습니다. sksmstmdrud@gmail.com 으로 메일을 보내주세요.",
+            Toast.LENGTH_LONG
+        ).show()
+    } catch (t: Throwable) {
+        Toast.makeText(
+            context,
+            "오류가 발생했습니다. sksmstmdrud@gmail.com 으로 메일을 보내주세요.",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +91,7 @@ fun SettingsScreen(
     mainNavigation: NavController
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
     //이미지 선택
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -134,6 +175,20 @@ fun SettingsScreen(
                 removeUserIgnore = { settingsViewModel.removeUserIgnore(it) },
                 onUserInfoPopup = { settingsViewModel.userInfoPopupState = true to it }
             )
+
+            // 커뮤니티 가이드라인 팝업
+            CommunityGuidelinePopup(
+                state = settingsViewModel.communityGuidelinePopupState,
+                onDismiss = { settingsViewModel.communityGuidelinePopupState = false }
+            )
+
+            // 공지사항 팝업
+            NoticePopup(
+                state = settingsViewModel.noticePopupState,
+                onDismiss = { settingsViewModel.noticePopupState = false },
+                settingsViewModel = settingsViewModel
+            )
+
             Column(
                 modifier = Modifier
                     .padding(horizontal = 14.dp)
@@ -177,15 +232,21 @@ fun SettingsScreen(
                     )
                     SettingsButtonItem(
                         title = "공지사항",
-                        onClick = { }
+                        onClick = { settingsViewModel.noticePopupState = true }
                     )
                     SettingsButtonItem(
                         title = "문의하기",
-                        onClick = { }
+                        onClick = {
+                            context.sendMail(
+                                to = "sksmstmdrud@gmail.com",
+                                subject = "KW Friends 관련 문의",
+                                context = context
+                            )
+                        }
                     )
                     SettingsButtonItem(
                         title = "이용규칙",
-                        onClick = { }
+                        onClick = { settingsViewModel.communityGuidelinePopupState = true }
                     )
                     SettingsButtonItem(
                         title = "비밀번호 재설정",
