@@ -98,8 +98,8 @@ fun ChattingScreen(
     }
     val interactionSource = remember { MutableInteractionSource() }
     var targetUid = ""
-    if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.DIRECT) {
-        val temp = Chattings.chattingRoomList?.get(roomID)?.members?.toMutableMap()
+    if(chattingViewModel.roomInfo?.type == ChattingRoomType.DIRECT) {
+        val temp = chattingViewModel.roomInfo?.members?.toMutableMap()
         temp?.remove(Firebase.auth.currentUser!!.uid)
         targetUid = temp?.keys.toString()
         targetUid = targetUid.slice(IntRange(1, targetUid.length - 2))
@@ -182,8 +182,8 @@ fun ChattingScreen(
             }
             Text(
                 modifier = Modifier.widthIn(max = 200.dp),
-                text = if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.GROUP) {
-                        Chattings.chattingRoomList?.get(roomID)?.title ?: ""
+                text = if(chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP) {
+                            chattingViewModel.roomInfo?.title ?: "unknwon"
                         }
                         else (UserData.usersDataMap[targetUid]?.get("name") ?: "unknown").toString(),
                 style = MaterialTheme.typography.titleMedium,
@@ -192,7 +192,7 @@ fun ChattingScreen(
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = (Chattings.chattingRoomList?.get(roomID)?.members?.size).toString(),
+                text = (chattingViewModel.roomInfo?.members?.size).toString(),
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.Gray,
             )
