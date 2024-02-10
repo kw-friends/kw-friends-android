@@ -1,6 +1,7 @@
 package hello.kwfriends.ui.component
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import hello.kwfriends.R
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 
 @Composable
@@ -49,6 +52,9 @@ fun UserInfoCard(
     navigation: NavController,
     settingsViewModel: SettingsViewModel
 ) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoaderFactory.getInstance(context)
+
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
@@ -66,6 +72,8 @@ fun UserInfoCard(
             AsyncImage(
                 model = profileImageUri ?: R.drawable.profile_default_image,
                 placeholder = painterResource(id = R.drawable.profile_default_image),
+                imageLoader = imageLoader,
+                onLoading = { Log.d("AsyncImage", "Loading: $profileImageUri") },
                 contentDescription = "My profile image",
                 modifier = Modifier
                     .size(72.dp)

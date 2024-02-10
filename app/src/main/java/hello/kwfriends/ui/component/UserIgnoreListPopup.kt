@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +39,7 @@ import coil.compose.AsyncImage
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.preferenceDatastore.UserDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +52,9 @@ fun UserIgnoreListPopup(
     removeUserIgnore: (String) -> Unit,
     onUserInfoPopup: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoaderFactory.getInstance(context)
+
     if (state) {
         LaunchedEffect(true) {
             UserDataStore.userIgnoreList.forEach {
@@ -108,6 +113,7 @@ fun UserIgnoreListPopup(
                                     model = ProfileImage.usersUriMap[uid]
                                         ?: R.drawable.profile_default_image,
                                     placeholder = painterResource(id = R.drawable.profile_default_image),
+                                    imageLoader = imageLoader,
                                     contentDescription = "gathering promoter's profile image",
                                     modifier = Modifier
                                         .size(50.dp)

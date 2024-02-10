@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,7 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.preferenceDatastore.UserDataStore
 
 @Composable
@@ -57,6 +59,8 @@ fun UserInfoPopup(
     onDismiss: () -> Unit,
     onUserReport: () -> Unit
 ) {
+    val imageLoader = ImageLoaderFactory.getInstance(LocalContext.current)
+
     if (state) {
         var menuExpanded by remember { mutableStateOf(false) }
         var position by remember { mutableStateOf(Offset.Zero) }
@@ -137,6 +141,7 @@ fun UserInfoPopup(
                     AsyncImage(
                         model = ProfileImage.usersUriMap[uid]
                             ?: R.drawable.profile_default_image,
+                        imageLoader = imageLoader,
                         placeholder = painterResource(id = R.drawable.profile_default_image),
                         contentDescription = "gathering participant's profile image",
                         modifier = Modifier
