@@ -482,7 +482,7 @@ fun ChattingScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .width(330.dp)
+                        .width(290.dp) //side sheet 너비
                         .background(Color.White)
                         .padding(10.dp)
                 ) {
