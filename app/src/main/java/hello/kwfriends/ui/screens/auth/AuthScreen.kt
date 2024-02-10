@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
@@ -31,6 +29,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -105,7 +105,7 @@ fun AuthScreen(mainNavigation: NavController) {
             startMain.addCategory(Intent.CATEGORY_HOME)
             startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             BackHandler {
-                if(System.currentTimeMillis() - backPressedTime <= 2000L) {
+                if (System.currentTimeMillis() - backPressedTime <= 2000L) {
                     context.startActivity(startMain) // 앱 종료
                 } else {
                     Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
@@ -164,7 +164,9 @@ fun AuthScreen(mainNavigation: NavController) {
                             onCheckedChange = {
                                 AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked
                             },
-                            onTextClicked = { AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked }
+                            onTextClicked = {
+                                AuthViewModel.idSaveChecked = !AuthViewModel.idSaveChecked
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(33.dp))
@@ -373,7 +375,7 @@ fun AuthScreen(mainNavigation: NavController) {
                         modifier = Modifier.size(102.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    androidx.compose.material3.Text(
+                    Text(
                         text = "인증 메일이 발송되었습니다!",
                         style = TextStyle(
                             fontSize = 14.sp,
@@ -395,7 +397,7 @@ fun AuthScreen(mainNavigation: NavController) {
                     ) {
                         Row {
                             Spacer(modifier = Modifier.width(7.dp))
-                            androidx.compose.material3.Text(
+                            Text(
                                 text = "웹메일 확인하러 가기",
                                 style = TextStyle(
                                     fontSize = 15.sp,
@@ -409,7 +411,7 @@ fun AuthScreen(mainNavigation: NavController) {
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End
                         ) {
-                            androidx.compose.material3.Text(
+                            Text(
                                 text = "이메일 재전송",
                                 style = TextStyle(
                                     fontSize = 15.sp,
@@ -429,7 +431,7 @@ fun AuthScreen(mainNavigation: NavController) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(Modifier.fillMaxWidth()) {
                         Spacer(modifier = Modifier.width(7.dp))
-                        androidx.compose.material3.Text(
+                        Text(
                             text = "로그아웃",
                             color = Color(0xFFF1F1F1),
                             modifier = Modifier.clickable { AuthViewModel.trySignOut() }
@@ -546,7 +548,7 @@ fun AuthScreen(mainNavigation: NavController) {
             }
         }
 
-        is AuthUiState.SignInSuccess -> { }
+        is AuthUiState.SignInSuccess -> {}
 
         is AuthUiState.DeleteUser -> {
             BackHandler {

@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ import androidx.compose.ui.util.lerp
 import coil.compose.AsyncImage
 import com.valentinilk.shimmer.shimmer
 import hello.kwfriends.firebase.realtimeDatabase.Events
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.screens.main.MainViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -50,6 +52,10 @@ fun EventCard(
     mainViewModel: MainViewModel
 ) {
     val pagerState = rememberPagerState(pageCount = { if (pageCount == 0) 1 else pageCount })
+
+    val context = LocalContext.current
+    val imageLoader = ImageLoaderFactory.getInstance(context)
+
 
     val threePagesPerViewport = object : PageSize {
         override fun Density.calculateMainAxisPageSize(
@@ -126,6 +132,7 @@ fun EventCard(
                     AsyncImage(
                         model = Events.eventDetails[page].eventImageUrl,
                         placeholder = null,
+                        imageLoader = imageLoader,
                         contentDescription = "Event Image",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,

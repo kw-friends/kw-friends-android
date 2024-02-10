@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.post.postInfo
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Check
@@ -32,6 +32,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,18 +48,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.component.AnnotatedClickableText
 import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
@@ -81,12 +85,22 @@ fun PostInfoScreen(
 
     val previousParticipants = remember { mutableStateOf<MutableList<String>>(mutableListOf()) }
 
+    val context = LocalContext.current
+    val imageLoader = ImageLoaderFactory.getInstance(context)
+
     //모임 참가한 유저들 이미지 및 데이터 가져오기
     LaunchedEffect(postDetail.participants) {
         val newParticipations = postDetail.participants.keys - previousParticipants.value.toSet()
         newParticipations.forEach {
             mainViewModel.downlodUri(it)
             mainViewModel.downlodData(it)
+
+            val request = ImageRequest.Builder(context)
+                .data(ProfileImage.usersUriMap[it])
+                .build()
+
+            imageLoader.enqueue(request)
+            Log.d("imageLoader.enqueue", "Queued $it")
         }
         previousParticipants.value.addAll(postDetail.participants.keys)
     }
@@ -193,8 +207,15 @@ fun PostInfoScreen(
                         AsyncImage(
                             model = ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]
                                 ?: R.drawable.profile_default_image,
+                            imageLoader = imageLoader,
                             placeholder = painterResource(id = R.drawable.profile_default_image),
                             contentDescription = "gathering promoter's profile image",
+                            onLoading = {
+                                Log.d(
+                                    "AsyncImage",
+                                    "Loading: ${ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]}"
+                                )
+                            },
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
@@ -224,7 +245,8 @@ fun PostInfoScreen(
                     fontWeight = FontWeight(600)
                 )
                 AnnotatedClickableText(
-                    text = postDetail.gatheringDescription
+                    text = postDetail.gatheringDescription,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
             Column(
@@ -308,7 +330,14 @@ fun PostInfoScreen(
                                     AsyncImage(
                                         model = ProfileImage.usersUriMap[it.key]
                                             ?: R.drawable.profile_default_image,
+                                        imageLoader = imageLoader,
                                         placeholder = painterResource(id = R.drawable.profile_default_image),
+                                        onLoading = {
+                                            Log.d(
+                                                "AsyncImage",
+                                                "Loading: ${ProfileImage.usersUriMap[postDetail.gatheringPromoterUID]}"
+                                            )
+                                        },
                                         contentDescription = "gathering participant's profile image",
                                         modifier = Modifier
                                             .size(50.dp)

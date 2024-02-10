@@ -146,13 +146,7 @@ fun GatheringItem(
                 Text(
                     postDetail.gatheringDescription.replace("\n", " "),
                     maxLines = 2,
-                    style = MaterialTheme.typography.bodySmall.merge(
-                        TextStyle(
-                            platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
-                            )
-                        )
-                    ),
+                    style = MaterialTheme.typography.bodySmall,
                     color = Color.DarkGray,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -165,11 +159,8 @@ fun GatheringItem(
                     ) {
                         Text(
                             text = SimpleDateFormat(
-                                "yyyy/MM/dd HH:mm",
-                                Locale.getDefault()
-                            ).format(
-                                postDetail.timestamp
-                            ),
+                                "yyyy/MM/dd HH:mm", Locale.getDefault()
+                            ).format(postDetail.timestamp),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.Gray,
                         )
@@ -246,7 +237,6 @@ fun GatheringList(
     LazyColumn(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
-
     ) {
         // TODO 일정 모임 개수만 가져오기 구현.
         // 근데 어차피 한번에 모든 모임을 가져오는데 필요한가?? 나중에 이미지 가져오는것도 생기면 필요할수도 ㅇㅇ

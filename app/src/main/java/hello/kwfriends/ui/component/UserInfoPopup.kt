@@ -12,17 +12,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +47,7 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.preferenceDatastore.UserDataStore
 
 @Composable
@@ -59,7 +60,9 @@ fun UserInfoPopup(
     onUserReport: () -> Unit,
     makeDirectChatting: () -> Unit
 ) {
-    if(state) {
+    val imageLoader = ImageLoaderFactory.getInstance(LocalContext.current)
+
+    if (state) {
         var menuExpanded by remember { mutableStateOf(false) }
         var position by remember { mutableStateOf(Offset.Zero) }
         val myUid = Firebase.auth.currentUser!!.uid
@@ -150,6 +153,7 @@ fun UserInfoPopup(
                     AsyncImage(
                         model = ProfileImage.usersUriMap[uid]
                             ?: R.drawable.profile_default_image,
+                        imageLoader = imageLoader,
                         placeholder = painterResource(id = R.drawable.profile_default_image),
                         contentDescription = "gathering participant's profile image",
                         modifier = Modifier

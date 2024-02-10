@@ -82,7 +82,6 @@ dependencies {// mode
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeUiVersion")
     implementation("androidx.compose.ui:ui-util:$composeUiVersion")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0") //preference datastore
     // Import the BoM for the Firebase platform

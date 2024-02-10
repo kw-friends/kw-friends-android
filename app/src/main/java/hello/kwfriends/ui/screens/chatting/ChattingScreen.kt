@@ -33,9 +33,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Cancel
@@ -403,7 +403,7 @@ fun ChattingScreen(
             ) {
                 Surface(
                     modifier = Modifier.padding(end = 20.dp, top = 20.dp),
-                    elevation = 15.dp,
+                    shadowElevation = 15.dp,
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     AsyncImage(

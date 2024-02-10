@@ -8,15 +8,12 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.chatting.ChattingScreen
@@ -39,17 +36,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             KWFriendsTheme {
-                val systemUiController = rememberSystemUiController()
-                val useDarkIcons = MaterialTheme.colors.isLight
+//                val useDarkIcons = MaterialTheme.colors.isLight
                 val statusBarColor = remember { mutableStateOf(Color(0xFFFFFBFF)) }
-
-                //상태바 색상 설정
-                LaunchedEffect(statusBarColor.value) {
-                    systemUiController.setStatusBarColor(
-                        color = statusBarColor.value,
-                        darkIcons = useDarkIcons
-                    )
-                }
 
                 val navController = rememberNavController()
                 val startPoint = intent.getStringExtra("startPoint")
