@@ -25,6 +25,7 @@ class ChattingViewModel : ViewModel() {
     var inputChatting by mutableStateOf<String>("")
 
     var chattingImageUri by mutableStateOf<Uri?>(null)
+    var imagePopupUri by mutableStateOf<String?>(null)
 
     fun setInputChattingText(text: String) { inputChatting = text }
 

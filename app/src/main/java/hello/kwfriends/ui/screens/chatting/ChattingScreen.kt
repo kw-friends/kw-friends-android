@@ -2,13 +2,16 @@ package hello.kwfriends.ui.screens.chatting
 
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,6 +53,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.auth.ktx.auth
@@ -114,6 +118,38 @@ fun ChattingScreen(
         chattingViewModel.addListener(roomID)
         onDispose {
             Chattings.removeMessageListener()
+        }
+    }
+    if (chattingViewModel.imagePopupUri != null) {
+        Popup(
+            onDismissRequest = { chattingViewModel.imagePopupUri = null }
+        ) {
+            BackHandler {
+                chattingViewModel.imagePopupUri = null
+            }
+            val interactionSource = remember { MutableInteractionSource() }
+            Box(
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) {
+                        chattingViewModel.imagePopupUri = null
+                    }
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+            ) {
+                AsyncImage(
+                    model = ChattingImage.chattingUriMap[chattingViewModel.imagePopupUri],
+                    placeholder = painterResource(id = R.drawable.test_image),
+                    contentDescription = "chatting room image",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .padding(30.dp)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp))
+                )
+            }
         }
     }
     Box(
@@ -260,7 +296,7 @@ fun ChattingScreen(
                                                     contentDescription = "chatting room image",
                                                     modifier = Modifier
                                                         .combinedClickable(
-                                                            onClick = { },
+                                                            onClick = { chattingViewModel.imagePopupUri = it.value.content },
                                                             onLongClick = { menuExpanded = true }
                                                         )
                                                         .size(150.dp)
