@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import hello.kwfriends.Tags.Tags
+import hello.kwfriends.firebase.realtimeDatabase.Events
 import hello.kwfriends.ui.component.EventCard
 import hello.kwfriends.ui.component.ParticipatedGatheringListCard
 import hello.kwfriends.ui.screens.main.MainDestination
@@ -24,7 +24,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
     ) {
-        EventCard(5)
+        EventCard(pageCount = Events.eventCount, mainViewModel = mainViewModel)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -34,13 +34,14 @@ fun HomeScreen(
             ParticipatedGatheringListCard(
                 participatedGatherings = mainViewModel.participatedGatherings,
                 mainViewModel = mainViewModel,
-                openParticipatedGatheringList = {
+                // 참여중인 모임 필터 설정
+                gotoFindGatheringScreen = { participatedGathering ->
                     homeNavigation.navigateTo(MainDestination.FindGatheringScreen)
                     mainViewModel.filterTagMap.apply {
                         Tags.list.forEach { tag ->
                             this[tag] = false
                         }
-                        mainViewModel.onlyParticipatedGathering = true
+                        mainViewModel.onlyParticipatedGathering = participatedGathering
                     }
                 }
             )

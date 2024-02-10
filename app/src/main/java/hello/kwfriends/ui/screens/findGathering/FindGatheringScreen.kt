@@ -15,8 +15,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,11 +63,11 @@ fun FindGatheringScreen(
                         !mainViewModel.onlyParticipatedGathering
                 }
             )
-            Divider(
-                color = Color.Gray,
+            HorizontalDivider(
                 modifier = Modifier
                     .width(1.4f.dp)
-                    .height(30.dp)
+                    .height(30.dp),
+                color = Color.Gray
             )
             Spacer(Modifier.width(4.dp))
             mainViewModel.filterTagMap.forEach {
@@ -98,7 +97,8 @@ fun FindGatheringScreen(
                             mainViewModel.filter(mainViewModel.searchingPosts),
                             mainViewModel = mainViewModel,
                             maximumItems = null,
-                            showParticipationStatus = true
+                            showParticipationStatus = true,
+                            showNoSearchResultMessage = true
                         )
                     }
                 } else { // 검색중 아닐때는 모든 모임 목록 표시
@@ -107,7 +107,8 @@ fun FindGatheringScreen(
                         mainViewModel = mainViewModel,
                         maximumItems = null,
                         logo = true,
-                        showParticipationStatus = true
+                        showParticipationStatus = true,
+                        showNoSearchResultMessage = true
                     )
                 }
             }

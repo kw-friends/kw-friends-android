@@ -73,7 +73,7 @@ val KwFriendsLightColors = lightColorScheme(
 @Composable
 fun KWFriendsTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (!useDarkTheme) {
         KwFriendsLightColors

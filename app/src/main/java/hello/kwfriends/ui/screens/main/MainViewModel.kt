@@ -36,6 +36,9 @@ class MainViewModel : ViewModel() {
     //검색 상태 저장 변수
     var isSearching by mutableStateOf(false)
 
+    // 참여 상태 업데이트 중 변수
+    var isProcessing by mutableStateOf(false)
+
     //검색 텍스트 저장 변수
     var searchText by mutableStateOf("")
 
@@ -69,6 +72,9 @@ class MainViewModel : ViewModel() {
     var finalCheckTitle by mutableStateOf("")
     var finalCheckBody by mutableStateOf("")
     var onContinueAction by mutableStateOf({}) // 제거
+
+    // 이벤트 로딩 성공 여부
+    var eventLoaded by mutableStateOf(false)
 
     //포스트 신고 텍스트 리스트
     val postReportTextList by mutableStateOf(
@@ -254,7 +260,7 @@ class MainViewModel : ViewModel() {
 
     fun postRemoved(postID: String) {
         posts = posts.filter { it.postID != postID }
-        Log.d("postRemoved", "postID: ${postID}")
+        Log.d("postRemoved", "postID: $postID")
 
         updateParticipatedGatherings()
     }
@@ -273,7 +279,7 @@ class MainViewModel : ViewModel() {
         }
         posts = posts.map { if (it.postID == postID) postData else it }
         Log.d("postChanged", "postID: ${postData.postID}")
-        Log.d("postChanged", "posts: ${posts}")
+        Log.d("postChanged", "posts: $posts")
 
         updateParticipatedGatherings()
     }
@@ -281,7 +287,7 @@ class MainViewModel : ViewModel() {
     fun initPostMap() {
         viewModelScope.launch {
             posts = Post.initPostData()
-            Log.d("initPostMap", "post set to ${posts}")
+            Log.d("initPostMap", "post set to $posts")
 
             for (post in posts) {
                 if (uid in post.participants.keys) {
@@ -304,6 +310,8 @@ class MainViewModel : ViewModel() {
             "updateParticipationStatus",
             "myParticipantStatus of $postID is ${postDetail?.myParticipantStatus}"
         )
+        isProcessing = true
+
         viewModelScope.launch {
             // 참여 신청
             if (postDetail?.myParticipantStatus == ParticipationStatus.NOT_PARTICIPATED) {
@@ -335,6 +343,8 @@ class MainViewModel : ViewModel() {
         }
 
         updateParticipatedGatherings()
+
+        isProcessing = false
     }
 
     fun refreshPost() {

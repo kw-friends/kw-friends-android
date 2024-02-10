@@ -2,7 +2,6 @@ package hello.kwfriends.ui.screens.post.setPostData
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -32,7 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,19 +50,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
+import hello.kwfriends.ui.component.dateTimePicker.DatePickerPopup
+import hello.kwfriends.ui.component.dateTimePicker.TimePickerStyle
 import hello.kwfriends.ui.screens.main.MainViewModel
-import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.DatePickerPopup
-import hello.kwfriends.ui.screens.post.setPostData.dateTimePicker.TimePickerStyle
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SetPostDataScreen(
     setPostDataViewModel: SetPostDataViewModel,
@@ -175,6 +175,7 @@ fun SetPostDataScreen(
             SingleTextField(
                 value = setPostDataViewModel.maximumParticipants,
                 onValueChange = { setPostDataViewModel.maximumParticipantsChange(max = it) },
+                keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             )
             Column(
@@ -276,7 +277,7 @@ fun SetPostDataScreen(
                     }
                 }
 
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)

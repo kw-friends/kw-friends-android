@@ -1,7 +1,7 @@
 package hello.kwfriends.ui.screens.main
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.People
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -12,19 +12,19 @@ enum class MainDestination(
     val icon: ImageVector,
     val labelResId: Int
 ) {
-    HomeScreen(
-        route = ROUTE_HOME,
-        icon = Icons.Default.Home,
-        labelResId = R.string.navigation_home
-    ),
     FindGatheringScreen(
         route = ROUTE_FIND_GATHERING,
         icon = Icons.Default.People,
         labelResId = R.string.navigation_findGathering
     ),
+    HomeScreen(
+        route = ROUTE_HOME,
+        icon = Icons.Default.Home,
+        labelResId = R.string.navigation_home
+    ),
     ChatScreen(
         route = ROUTE_CHAT,
-        icon = Icons.Default.Chat,
+        icon = Icons.AutoMirrored.Filled.Chat,
         labelResId = R.string.navigation_chat
     )
 }

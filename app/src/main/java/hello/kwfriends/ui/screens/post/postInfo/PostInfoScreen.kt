@@ -27,10 +27,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -59,9 +59,12 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.ui.component.AnnotatedClickableText
 import hello.kwfriends.ui.screens.main.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
+
+private val uid = Firebase.auth.currentUser!!.uid
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +83,7 @@ fun PostInfoScreen(
 
     //모임 참가한 유저들 이미지 및 데이터 가져오기
     LaunchedEffect(postDetail.participants) {
-        val newParticipations = postDetail.participants.keys - previousParticipants.value
+        val newParticipations = postDetail.participants.keys - previousParticipants.value.toSet()
         newParticipations.forEach {
             mainViewModel.downlodUri(it)
             mainViewModel.downlodData(it)
@@ -133,13 +136,13 @@ fun PostInfoScreen(
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             },
-                            enabled = !postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid) && postDetail.gatheringPromoterUID != Firebase.auth.currentUser!!.uid,
+                            enabled = !postDetail.reporters.containsKey(uid) && postDetail.gatheringPromoterUID != uid,
                             onClick = {
                                 menuExpanded = false
                                 onPostReport()
                             },
                             trailingIcon = {
-                                if (postDetail.reporters.containsKey(Firebase.auth.currentUser!!.uid)) {
+                                if (postDetail.reporters.containsKey(uid)) {
                                     Icon(
                                         Icons.Default.Check,
                                         tint = Color.Gray,
@@ -220,9 +223,8 @@ fun PostInfoScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight(600)
                 )
-                Text(
-                    text = postDetail.gatheringDescription,
-                    style = MaterialTheme.typography.bodyMedium,
+                AnnotatedClickableText(
+                    text = postDetail.gatheringDescription
                 )
             }
             Column(
@@ -269,10 +271,10 @@ fun PostInfoScreen(
                     )
                 }
 
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 10.dp),
-                    color = Color.Gray,
                     thickness = 0.5.dp,
+                    color = Color.Gray
                 )
 
                 Text(

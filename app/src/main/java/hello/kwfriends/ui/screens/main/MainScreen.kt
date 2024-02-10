@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -36,13 +37,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.firebase.realtimeDatabase.Action
+import hello.kwfriends.firebase.realtimeDatabase.Events
 import hello.kwfriends.ui.component.EnjoyButton
 import hello.kwfriends.ui.component.HomeBottomBar
 import hello.kwfriends.ui.component.MainTopAppBar
 import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
-import hello.kwfriends.ui.component.finalCheckPopup
+import hello.kwfriends.ui.component.FinalCheckPopup
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
@@ -52,6 +54,8 @@ import hello.kwfriends.ui.screens.post.setPostData.SetPostDataPopup
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
 import hello.kwfriends.ui.theme.KWFriendsTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -70,10 +74,31 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    var fabOpened by remember {
-        mutableStateOf(true)
+    var fabOpened by remember { mutableStateOf(true) }
+    var fabTextVisibility by remember { mutableStateOf(true) }
+
+    LaunchedEffect(key1 = fabOpened) {
+        launch {
+            fabTextVisibility = fabOpened
+        }
     }
 
+    LaunchedEffect(key1 = fabTextVisibility) {
+        launch {
+            delay(2500)
+            fabTextVisibility = false
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        launch {
+            if (!mainViewModel.eventLoaded) {
+                if (Events.initEventCards()) {
+                    mainViewModel.eventLoaded = true
+                }
+            }
+        }
+    }
 
     //유저 개인 설정 세팅값 받아오기
     if (!settingsViewModel.userSettingValuesLoaded) {
@@ -193,7 +218,7 @@ fun MainScreen(
     )
 
     // 사용자 조작 확인 팝업
-    finalCheckPopup(
+    FinalCheckPopup(
         state = mainViewModel.finalCheckState,
         title = mainViewModel.finalCheckTitle,
         body = mainViewModel.finalCheckBody,
@@ -206,6 +231,87 @@ fun MainScreen(
         }
     )
 
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Scaffold(
+            //앱 바
+            topBar = {
+                MainTopAppBar(
+                    mainViewModel = mainViewModel,
+                    navigation = mainNavigation,
+                    isSearching = mainViewModel.isSearching,
+                    searchText = mainViewModel.searchText,
+                    setSearchText = { mainViewModel.setSearchContentText(it) },
+                    clickSearchButton = { mainViewModel.onclickSearchButton() },
+                    clickBackButton = { mainViewModel.isSearching = false },
+                    focusRequester = focusRequester,
+                    currentDestination = currentDestination?.route
+                )
+            },
+            //플로팅 버튼
+            floatingActionButton = {
+                AnimatedVisibility(
+                    visible = fabOpened,
+                    enter = slideInHorizontally(animationSpec = tween(durationMillis = 500))
+                    { fullWidth -> fullWidth } + fadeIn(animationSpec = tween(durationMillis = 500)),
+                    exit = slideOutHorizontally(animationSpec = tween(durationMillis = 500))
+                    { fullWidth -> fullWidth } + fadeOut(animationSpec = tween(durationMillis = 500))
+                ) {
+                    ExtendedFloatingActionButton(
+                        text = {
+                            Text(text = "모임 생성", style = MaterialTheme.typography.bodyMedium)
+                        },
+                        icon = { Icon(Icons.Default.Add, "모임 생성") },
+                        onClick = {
+                            mainViewModel.setPostDataState = Action.ADD to ""
+                        },
+                        modifier = Modifier
+                            .padding(bottom = 8.dp),
+                        expanded = fabTextVisibility
+                    )
+                }
+            },
+            //네비게이션 바
+            bottomBar = { // later: HorizontalPager 사용할것
+                HomeBottomBar(
+                    currentDestination = currentDestination,
+                    onNavigate = { homeNavigation.navigateTo(it) })
+            }
+        ) { paddingValues ->
+            NavHost(
+                navController = navController,
+                startDestination = MainDestination.HomeScreen.route,
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                enterTransition = { fadeIn(animationSpec = tween(300)) },
+                exitTransition = { fadeOut(animationSpec = tween(300)) }
+            ) {
+                composable(route = MainDestination.FindGatheringScreen.route) {
+                    fabOpened = true
+                    FindGatheringScreen(
+                        mainViewModel = mainViewModel,
+                        setPostDataViewModel = setPostDataViewModel,
+                        posts = mainViewModel.posts
+                    )
+                }
+                composable(route = MainDestination.HomeScreen.route) {
+                    fabOpened = true
+                    mainViewModel.isSearching = false
+                    HomeScreen(
+                        mainViewModel = mainViewModel,
+                        homeNavigation = homeNavigation
+                    )
+                }
+                composable(route = MainDestination.ChatScreen.route) {
+                    fabOpened = false
+                    mainViewModel.isSearching = false
+                    ChattingListScreen(
+                        chattingsListViewModel = chattingsLIstViewModel,
+                        navigation = mainNavigation
+                    )
+                }
     Scaffold(
         //앱 바
         topBar = {
@@ -277,6 +383,7 @@ fun MainScreen(
                 )
             }
 
+            }
         }
     }
 }

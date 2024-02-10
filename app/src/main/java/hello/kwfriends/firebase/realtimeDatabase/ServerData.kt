@@ -16,7 +16,7 @@ object ServerData {
     val serverDataListener = object: ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             data = dataSnapshot.getValue<Map<String, Any>>()
-            Log.w("serverDataListener", "서버 정보 변경 감지됨 ${data}")
+            Log.w("serverDataListener", "서버 정보 변경 감지됨 $data")
         }
 
         override fun onCancelled(databaseError: DatabaseError) {

@@ -44,7 +44,7 @@ object AuthViewModel : ViewModel() {
     )
 
     //학번에 들어가는 최소 입학년도
-    private val minAdmissionYear = 1934
+    private const val minAdmissionYear = 1934
 
     //학번에 들어가는 최대 입학년도
     private var maxAdmissionYear = 2023
@@ -166,8 +166,8 @@ object AuthViewModel : ViewModel() {
 
     //입력한 이메일 형식 확인 함수
     fun emailRuleCheck(email: String): Boolean { //광운대학교 웹메일 주소 형식인지 확인
-        val email_start_point = email.indexOf('@')
-        if (email_start_point != -1 && email.slice(IntRange(email_start_point, email.length - 1))
+        val emailStartPoint = email.indexOf('@')
+        if (emailStartPoint != -1 && email.slice(IntRange(emailStartPoint, email.length - 1))
                 .lowercase() == "@kw.ac.kr"
         ) {
             Log.w("Lim", "이메일 형식 검사 통과")

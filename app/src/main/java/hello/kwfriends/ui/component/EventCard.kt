@@ -1,12 +1,15 @@
 package hello.kwfriends.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
@@ -21,10 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import coil.compose.AsyncImage
+import com.valentinilk.shimmer.shimmer
+import hello.kwfriends.firebase.realtimeDatabase.Events
+import hello.kwfriends.ui.screens.main.MainViewModel
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,9 +46,10 @@ const val AUTO_PAGE_CHANGE_DELAY = 3500L
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventCard(
-    pageCount: Int
+    pageCount: Int,
+    mainViewModel: MainViewModel
 ) {
-    val pagerState = rememberPagerState(pageCount = { Int.MAX_VALUE })
+    val pagerState = rememberPagerState(pageCount = { if (pageCount == 0) 1 else pageCount })
 
     val threePagesPerViewport = object : PageSize {
         override fun Density.calculateMainAxisPageSize(
@@ -52,12 +61,7 @@ fun EventCard(
     }
 
     LaunchedEffect(key1 = true) {
-        var initialPage = Int.MAX_VALUE / 2
-
-        // 시작 페이지를 0번째 페이지로 설정
-        while (initialPage % pageCount != 0) {
-            initialPage++
-        }
+        val initialPage = 0
 
         pagerState.scrollToPage(initialPage)
     }
@@ -65,11 +69,13 @@ fun EventCard(
     // 일정 시간마다 다음 이미지로 변경
     LaunchedEffect(key1 = pagerState.currentPage) {
         launch {
-            while (true) {
+            while (!Events.isEventLoading && Events.eventCount != 0) {
                 delay(AUTO_PAGE_CHANGE_DELAY)
                 withContext(NonCancellable) {
-                    if (pagerState.currentPage + 1 in 0..Int.MAX_VALUE) {
+                    if (pagerState.currentPage + 1 in 0..<pageCount) {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    } else {
+                        pagerState.animateScrollToPage(0)
                     }
                 }
             }
@@ -88,10 +94,13 @@ fun EventCard(
         HorizontalPager(
             state = pagerState,
             pageSize = threePagesPerViewport,
-            contentPadding = PaddingValues(horizontal = 10.dp)
+            contentPadding = PaddingValues(horizontal = 10.dp),
+            modifier = if (Events.isEventLoading) Modifier.shimmer() else Modifier
         ) { page ->
             Box(
                 Modifier
+                    .height(120.dp)
+                    .heightIn(min = 120.dp)
                     .fillMaxWidth()
                     .graphicsLayer {
                         // Calculate the absolute offset for the current page from the
@@ -111,14 +120,38 @@ fun EventCard(
                     }
                     .padding(horizontal = 2.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .height(120.dp)
                     .background(Color(0xFFE7E4E4))
             ) {
-                Text(
-                    text = "page = ${page % pageCount}",
-                    modifier = Modifier.align(Alignment.Center),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                if (Events.eventDetails.isNotEmpty()) {
+                    AsyncImage(
+                        model = Events.eventDetails[page].eventImageUrl,
+                        placeholder = null,
+                        contentDescription = "Event Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
+                        onSuccess = {
+                            Log.d("AsyncImage.onSuccess", "이미지 로드 완료")
+                            Events.eventDetails[page].loaded = true
+                            Events.ckeckEventsLoadStatus()
+                        }
+                    )
+                }
+                if (!Events.isEventLoading && pageCount == 0) {
+                    Text(
+                        text = "진행 중인 이벤트가 없습니다.",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                if (Events.isEventLoading) {
+                    Text(
+                        text = "이벤트 로드 중..",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
             }
         }
     }

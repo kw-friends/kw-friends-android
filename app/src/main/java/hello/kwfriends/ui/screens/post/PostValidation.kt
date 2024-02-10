@@ -2,7 +2,7 @@ package hello.kwfriends.ui.screens.post
 
 import android.util.Log
 
-object postValidation {
+object PostValidation {
     fun isStrHasData(text: String?): Boolean {
         Log.d("isStrHasData()", (text == null || text == "").toString())
         return !(text == null || text == "")
