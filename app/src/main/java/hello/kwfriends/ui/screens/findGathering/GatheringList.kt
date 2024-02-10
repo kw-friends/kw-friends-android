@@ -22,12 +22,12 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiPeople
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -165,7 +165,7 @@ fun GatheringItem(
                             color = Color.Gray,
                         )
                         if (postDetail.gatheringTags.isNotEmpty()) {
-                            HorizontalDivider(
+                            VerticalDivider(
                                 modifier = Modifier
                                     .padding(horizontal = 4.dp)
                                     .height(16.dp)

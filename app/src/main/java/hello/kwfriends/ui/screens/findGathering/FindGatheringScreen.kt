@@ -15,7 +15,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +63,7 @@ fun FindGatheringScreen(
                         !mainViewModel.onlyParticipatedGathering
                 }
             )
-            HorizontalDivider(
+            VerticalDivider(
                 modifier = Modifier
                     .width(1.4f.dp)
                     .height(30.dp),
