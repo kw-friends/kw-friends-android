@@ -201,7 +201,7 @@ object Chattings {
             "chattings/rooms/$roomID/type" to type
         )
         owners.forEach {
-            chattingRoomMap["chattings/rooms/$roomID/owner/$it"] = true
+            chattingRoomMap["chattings/rooms/$roomID/owners/$it"] = true
         }
         members.forEach {
             chattingRoomMap["chattings/rooms/$roomID/members/$it"] = true
