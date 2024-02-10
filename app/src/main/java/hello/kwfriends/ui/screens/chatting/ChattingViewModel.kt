@@ -26,6 +26,7 @@ class ChattingViewModel : ViewModel() {
 
     var chattingImageUri by mutableStateOf<Uri?>(null)
     var imagePopupUri by mutableStateOf<String?>(null)
+    var showSideSheet by mutableStateOf<Boolean>(false)
 
     fun setInputChattingText(text: String) { inputChatting = text }
 

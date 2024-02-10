@@ -6,6 +6,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +39,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -89,6 +96,7 @@ fun ChattingScreen(
         navigation.navigate(Routes.HOME_SCREEN)
         Log.w("Chattings screen", "오류 발생, 메인 스크린으로 이동. error: $e")
     }
+    val interactionSource = remember { MutableInteractionSource() }
     var targetUid = ""
     if(Chattings.chattingRoomList?.get(roomID)?.type == ChattingRoomType.DIRECT) {
         val temp = Chattings.chattingRoomList?.get(roomID)?.members?.toMutableMap()
@@ -127,7 +135,6 @@ fun ChattingScreen(
             BackHandler {
                 chattingViewModel.imagePopupUri = null
             }
-            val interactionSource = remember { MutableInteractionSource() }
             Box(
                 modifier = Modifier
                     .clickable(
@@ -152,6 +159,7 @@ fun ChattingScreen(
             }
         }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -188,6 +196,12 @@ fun ChattingScreen(
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.Gray,
             )
+        }
+        IconButton(
+            modifier = Modifier.align(Alignment.TopEnd),
+            onClick = { chattingViewModel.showSideSheet = true }
+        ) {
+            Icon(imageVector = Icons.Default.Dehaze, contentDescription = "chatting room menu button")
         }
         Column(
             modifier = Modifier
@@ -296,7 +310,10 @@ fun ChattingScreen(
                                                     contentDescription = "chatting room image",
                                                     modifier = Modifier
                                                         .combinedClickable(
-                                                            onClick = { chattingViewModel.imagePopupUri = it.value.content },
+                                                            onClick = {
+                                                                chattingViewModel.imagePopupUri =
+                                                                    it.value.content
+                                                            },
                                                             onLongClick = { menuExpanded = true }
                                                         )
                                                         .size(150.dp)
@@ -429,6 +446,77 @@ fun ChattingScreen(
                 }
             )
         }
-
+        val backgroundColor by animateColorAsState(
+            targetValue = if (chattingViewModel.showSideSheet) Color.Black.copy(alpha = 0.7f) else Color.Transparent,
+            animationSpec = tween(durationMillis = 300), label = "" // 1초 동안 색상 전환
+        )
+        // 오른쪽에서 슬라이드하여 나타나는 Side Sheet
+        AnimatedVisibility(
+            visible = chattingViewModel.showSideSheet,
+            enter = slideInHorizontally(
+                // 오른쪽에서 시작
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(durationMillis = 300)
+            ),
+            exit = slideOutHorizontally(
+                // 오른쪽으로 사라짐
+                targetOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(durationMillis = 300)
+            ),
+            modifier = Modifier
+                .background(backgroundColor)
+                .fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) { chattingViewModel.showSideSheet = false }
+                        .fillMaxHeight()
+                        .weight(1f)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(330.dp)
+                        .background(Color.White)
+                        .padding(10.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = "대화 상대",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(15.dp))
+                        chattingViewModel.roomInfo?.members?.forEach {
+                            Row(
+                                modifier = Modifier.padding(5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AsyncImage(
+                                    model = ProfileImage.usersUriMap[it.key] ?: R.drawable.profile_default_image,
+                                    placeholder = painterResource(id = R.drawable.profile_default_image),
+                                    contentDescription = "chatter's profile image",
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .border(0.5.dp, Color.Gray, CircleShape),
+                                    contentScale = ContentScale.Crop,
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = UserData.usersDataMap[it.key]?.get("name")?.toString() ?: "unknown",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
