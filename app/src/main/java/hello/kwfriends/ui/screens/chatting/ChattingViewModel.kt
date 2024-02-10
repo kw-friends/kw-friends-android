@@ -69,6 +69,7 @@ class ChattingViewModel : ViewModel() {
         }
     }
     fun addListener(roomID: String) {
+        messageData = emptyMap()
         Chattings.addMessageListener(roomID) {
             messageData = messageData?.toMutableMap().apply {
                 this?.set(it.messageID, it)
