@@ -481,6 +481,11 @@ fun ChattingScreen(
                 )
                 Box(
                     modifier = Modifier
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null,
+                            onClick = {}
+                        )
                         .fillMaxHeight()
                         .width(290.dp) //side sheet 너비
                         .background(Color.White)
