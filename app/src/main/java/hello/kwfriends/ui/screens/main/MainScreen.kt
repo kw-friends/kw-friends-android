@@ -46,7 +46,7 @@ import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
 import hello.kwfriends.ui.component.FinalCheckPopup
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
-import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen
 import hello.kwfriends.ui.screens.home.HomeScreen
 import hello.kwfriends.ui.screens.post.postInfo.PostInfoPopup
@@ -63,7 +63,7 @@ fun MainScreen(
     mainViewModel: MainViewModel,
     setPostDataViewModel: SetPostDataViewModel,
     settingsViewModel: SettingsViewModel,
-    chattingsLIstViewModel: ChattingsListVIewModel,
+    chattingsLIstViewModel: ChattingsListViewModel,
     mainNavigation: NavController
 ) {
     val postID = mainViewModel.postInfoPopupState.second
@@ -208,6 +208,12 @@ fun MainScreen(
         onUserReport = {
             mainViewModel.userReportDialogState =
                 true to mainViewModel.userInfoPopupState.second
+        },
+        makeDirectChatting = {
+            mainViewModel.makeDirectChatting(
+                targetUid = mainViewModel.userInfoPopupState.second,
+                mainNavigation = mainNavigation
+            )
         }
     )
 
@@ -302,10 +308,80 @@ fun MainScreen(
                     fabOpened = false
                     mainViewModel.isSearching = false
                     ChattingListScreen(
-                        chattingsLIstViewModel = chattingsLIstViewModel,
+                        chattingsListViewModel = chattingsLIstViewModel,
                         navigation = mainNavigation
                     )
                 }
+    Scaffold(
+        //앱 바
+        topBar = {
+            MainTopAppBar(
+                navigation = mainNavigation,
+                isSearching = mainViewModel.isSearching,
+                searchText = mainViewModel.searchText,
+                setSearchText = { mainViewModel.setSearchContentText(it) },
+                clickSearchButton = { mainViewModel.onclickSearchButton() },
+                clickBackButton = { mainViewModel.isSearching = false },
+                focusRequester = focusRequester,
+                currentDestination = currentDestination?.route
+            )
+        },
+        //플로팅 버튼
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = fabOpened,
+                enter = slideInHorizontally(animationSpec = tween(durationMillis = 500))
+                { fullWidth -> fullWidth } + fadeIn(animationSpec = tween(durationMillis = 500)),
+                exit = slideOutHorizontally(animationSpec = tween(durationMillis = 500))
+                { fullWidth -> fullWidth } + fadeOut(animationSpec = tween(durationMillis = 500))
+            ) {
+                ExtendedFloatingActionButton(
+                    text = { Text(text = "모임 생성", style = MaterialTheme.typography.bodyMedium) },
+                    icon = { Icon(Icons.Default.Add, "모임 생성") },
+                    onClick = {
+                        mainViewModel.setPostDataState = Action.ADD to ""
+                    },
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                )
+            }
+        },
+        //네비게이션 바
+        bottomBar = { // later: HorizontalPager 사용할것
+            HomeBottomBar(
+                currentDestination = currentDestination,
+                onNavigate = { homeNavigation.navigateTo(it) })
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = MainDestination.HomeScreen.route,
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            composable(MainDestination.FindGatheringScreen.route) {
+                fabOpened = true
+                FindGatheringScreen(
+                    mainViewModel = mainViewModel,
+                    setPostDataViewModel = setPostDataViewModel,
+                    posts = mainViewModel.posts
+                )
+            }
+            composable(MainDestination.HomeScreen.route) {
+                fabOpened = true
+                HomeScreen(
+                    mainViewModel = mainViewModel,
+                    homeNavigation = homeNavigation
+                )
+            }
+            composable(MainDestination.ChatScreen.route) {
+                fabOpened = false
+                ChattingListScreen(
+                    chattingsListViewModel = chattingsLIstViewModel,
+                    navigation = mainNavigation
+                )
+            }
 
             }
         }
@@ -321,7 +397,7 @@ fun HomeScreenPreview() {
             mainViewModel = MainViewModel(),
             settingsViewModel = SettingsViewModel(),
             setPostDataViewModel = SetPostDataViewModel(),
-            chattingsLIstViewModel = ChattingsListVIewModel(),
+            chattingsLIstViewModel = ChattingsListViewModel(),
             mainNavigation = navController
         )
     }

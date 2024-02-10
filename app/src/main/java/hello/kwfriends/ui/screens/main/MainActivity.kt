@@ -21,8 +21,8 @@ import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.chatting.ChattingScreen
 import hello.kwfriends.ui.screens.chatting.ChattingViewModel
+import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
-import hello.kwfriends.ui.screens.chattingList.ChattingsListVIewModel
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
@@ -32,7 +32,7 @@ class MainActivity : BaseActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val setPostDataViewModel: SetPostDataViewModel by viewModels()
-    private val chattingsLIstViewModel: ChattingsListVIewModel by viewModels()
+    private val chattingsLIstViewModel: ChattingsListViewModel by viewModels()
     private val chattingViewModel: ChattingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,7 +118,7 @@ class MainActivity : BaseActivity() {
                     ) {
                         statusBarColor.value = Color(0xFFFFFBFF)
                         ChattingListScreen(
-                            chattingsLIstViewModel = chattingsLIstViewModel,
+                            chattingsListViewModel = chattingsLIstViewModel,
                             navigation = navController
                         )
                     }

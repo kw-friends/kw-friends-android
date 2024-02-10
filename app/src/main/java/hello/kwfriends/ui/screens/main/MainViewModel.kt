@@ -7,11 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import hello.kwfriends.Tags.Tags
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.Action
+import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.ParticipationStatus
 import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
@@ -365,6 +367,14 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             val data = UserData.get(uid)
             UserData.updateUsersDataMap(uid, data)
+        }
+    }
+
+    fun makeDirectChatting(targetUid: String, mainNavigation: NavController) {
+        viewModelScope.launch {
+            val roomID = Chattings.makeDirectChatting(targetUid)
+            Chattings.getRoomList()
+            if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }
 }

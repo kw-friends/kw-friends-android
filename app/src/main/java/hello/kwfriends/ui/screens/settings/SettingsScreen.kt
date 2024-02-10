@@ -123,6 +123,12 @@ fun SettingsScreen(
                 onUserReport = {
                     settingsViewModel.userReportDialogState =
                         true to settingsViewModel.userInfoPopupState.second
+                },
+                makeDirectChatting = {
+                    settingsViewModel.makeDirectChatting(
+                        targetUid = settingsViewModel.userInfoPopupState.second,
+                        mainNavigation = mainNavigation
+                    )
                 }
             )
             //유저 차단 목록 팝업
