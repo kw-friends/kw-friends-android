@@ -91,4 +91,9 @@ class ChattingViewModel : ViewModel() {
         }
     }
 
+    fun leaveCattingRoom(roomID: String) {
+        viewModelScope.launch {
+            Chattings.leave(roomID)
+        }
+    }
 }

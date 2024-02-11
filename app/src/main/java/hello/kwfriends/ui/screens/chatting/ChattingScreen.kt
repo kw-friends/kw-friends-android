@@ -494,7 +494,11 @@ fun ChattingScreen(
                         .background(Color.White)
                         .padding(10.dp)
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .fillMaxWidth()
+                    ) {
                         Text(
                             text = "대화 상대",
                             style = MaterialTheme.typography.titleMedium
@@ -522,6 +526,23 @@ fun ChattingScreen(
                                 )
                             }
                         }
+                    }
+                    if(
+                        chattingViewModel.roomInfo?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true
+                        && chattingViewModel.roomInfo?.owners?.containsKey(Firebase.auth.currentUser!!.uid) != true
+                        && chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .clickable {
+                                    navigation.navigate(Routes.HOME_SCREEN)
+                                    chattingViewModel.leaveCattingRoom(chattingViewModel.roomInfo!!.roomID)
+                                }
+                                .padding(10.dp),
+                            text = "채팅방 나가기",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
             }
