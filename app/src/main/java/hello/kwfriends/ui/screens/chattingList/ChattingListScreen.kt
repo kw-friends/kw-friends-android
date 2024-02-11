@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -166,20 +165,6 @@ fun ChattingListScreen(
                 thickness = 0.5.dp,
                 color = Color.LightGray
             )
-        }
-        Button(
-            onClick = {
-                chattingsListViewModel.temp_addRoom()
-            }
-        ) {
-            Text("채팅방 생성하기")
-        }
-        Button(
-            onClick = {
-                chattingsListViewModel.temp_sendMessage()
-            }
-        ) {
-            Text("메세지 전송하기")
         }
     }
 }
