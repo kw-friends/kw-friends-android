@@ -195,6 +195,15 @@ object Chattings {
         preRoomID: String? = null
     ): String? {
         val roomID = preRoomID ?: database.child("chattings").child("rooms").push().key
+        var already = false
+        getRoomList()
+        chattingRoomList?.forEach {
+            if(it.value.roomID == roomID) already = true
+        }
+        if(already) {
+            Log.w("Chattings.makeRoom()", "이미 $roomID 채팅방이 존재합니다")
+            return roomID
+        }
         val chattingRoomMap = mutableMapOf<String, Any>(
             "chattings/rooms/$roomID/roomID" to roomID.toString(),
             "chattings/rooms/$roomID/title" to title,
@@ -235,8 +244,12 @@ object Chattings {
             )
             return false
         }
+        if(info.members.containsKey(Firebase.auth.currentUser!!.uid)) {
+            Log.w("Chattings.join()", "이미 채팅방에 참가중입니다.")
+            return true
+        }
         val chattingRoomMap = mapOf(
-            "chattings/rooms/$roomID/members/${Firebase.auth.currentUser?.uid}" to true,
+            "chattings/rooms/$roomID/members/${Firebase.auth.currentUser!!.uid}" to true,
         )
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(chattingRoomMap)

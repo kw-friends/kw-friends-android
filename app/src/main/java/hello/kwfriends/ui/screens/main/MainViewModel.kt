@@ -377,4 +377,16 @@ class MainViewModel : ViewModel() {
             if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }
+
+    fun joinGroupChatting(
+        postDetail: PostDetail,
+        gotoChattingRoom: () -> Unit
+    ) {
+        viewModelScope.launch {
+            Chattings.getRoomList()
+            if(Chattings.join(postDetail.chattingRoomID)) {
+                gotoChattingRoom()
+            }
+        }
+    }
 }

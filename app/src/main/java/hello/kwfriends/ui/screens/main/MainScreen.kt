@@ -154,6 +154,7 @@ fun MainScreen(
             )
         },
         mainViewModel = mainViewModel,
+        mainNavigation = mainNavigation,
         enjoyButton = {
             EnjoyButton(
                 postDetail = mainViewModel.posts.find { it.postID == postID },

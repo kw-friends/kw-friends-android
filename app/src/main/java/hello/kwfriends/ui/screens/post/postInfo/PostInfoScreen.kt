@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.ktx.auth
@@ -65,6 +67,7 @@ import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.component.AnnotatedClickableText
 import hello.kwfriends.ui.screens.main.MainViewModel
+import hello.kwfriends.ui.screens.main.Routes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -78,6 +81,7 @@ fun PostInfoScreen(
     onPostReport: () -> Unit,
     onPostDelete: () -> Unit,
     mainViewModel: MainViewModel,
+    mainNavigation: NavController,
     enjoyButton: @Composable () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
@@ -129,6 +133,23 @@ fun PostInfoScreen(
                     )
                 },
                 actions = {
+                    if(postDetail.participants.containsKey(Firebase.auth.currentUser!!.uid)) {
+                        IconButton(
+                            onClick = {
+                                mainViewModel.joinGroupChatting(
+                                    postDetail = postDetail,
+                                    gotoChattingRoom = { mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${postDetail.chattingRoomID}") }
+                                )
+                            },
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.Chat,
+                                contentDescription = "go chatting",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                     IconButton(
                         onClick = { menuExpanded = true },
                         modifier = Modifier.size(48.dp)
