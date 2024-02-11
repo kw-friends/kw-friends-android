@@ -467,6 +467,9 @@ fun ChattingScreen(
                 .background(backgroundColor)
                 .fillMaxSize()
         ) {
+            BackHandler {
+                chattingViewModel.showSideSheet = false
+            }
             Row(
                 modifier = Modifier.fillMaxSize()
             ) {
