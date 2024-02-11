@@ -395,6 +395,7 @@ fun ChattingScreen(
             }
             Spacer(modifier = Modifier.height(60.dp))
         }
+        //이미지 선택해서 전송 대기 상태
         if(chattingViewModel.chattingImageUri != null) {
             Box(
                 modifier = Modifier
@@ -413,7 +414,7 @@ fun ChattingScreen(
                         modifier = Modifier
                             .size(250.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .shadow(500.dp, RoundedCornerShape(10.dp)),
+                            .shadow(10.dp, RoundedCornerShape(10.dp)),
                         contentScale = ContentScale.Crop,
                     )
                 }
@@ -424,7 +425,7 @@ fun ChattingScreen(
                     }
                 ) {
                     Icon(
-                        modifier = Modifier.shadow(8.dp, CircleShape),
+                        modifier = Modifier.shadow(3.dp, CircleShape),
                         imageVector = Icons.Default.Cancel,
                         contentDescription = "image cancel",
                         tint = Color.Red
@@ -446,6 +447,7 @@ fun ChattingScreen(
                 }
             )
         }
+        //Side Sheet 외부 배경 어둡게 변환
         val backgroundColor by animateColorAsState(
             targetValue = if (chattingViewModel.showSideSheet) Color.Black.copy(alpha = 0.7f) else Color.Transparent,
             animationSpec = tween(durationMillis = 300), label = "" // 1초 동안 색상 전환
