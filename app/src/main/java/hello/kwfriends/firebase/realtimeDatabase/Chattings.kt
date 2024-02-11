@@ -191,9 +191,10 @@ object Chattings {
         title: String,
         type: ChattingRoomType,
         owners: List<String>,
-        members: List<String>
+        members: List<String>,
+        preRoomID: String? = null
     ): String? {
-        val roomID = database.child("chattings").child("rooms").push().key
+        val roomID = preRoomID ?: database.child("chattings").child("rooms").push().key
         val chattingRoomMap = mutableMapOf<String, Any>(
             "chattings/rooms/$roomID/roomID" to roomID.toString(),
             "chattings/rooms/$roomID/title" to title,
@@ -263,11 +264,8 @@ object Chattings {
             Log.w("Chattings.leave()", "채팅방에 참여중이 아니라 채팅방 나가기에 실패했습니다.")
             return false
         }
-        val chattingRoomMap = mapOf(
-            "chattings/chats/$roomID/members/${Firebase.auth.currentUser?.uid}" to false,
-        )
         val result = suspendCoroutine<Boolean> { continuation ->
-            database.updateChildren(chattingRoomMap)
+            database.child("chattings/rooms/$roomID/members/${Firebase.auth.currentUser?.uid}").removeValue()
                 .addOnSuccessListener {
                     Log.w("Chattings.leaveRoom()", "채팅방 나가기 성공")
                     continuation.resume(true)

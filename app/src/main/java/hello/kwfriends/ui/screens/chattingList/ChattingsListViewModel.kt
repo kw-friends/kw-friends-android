@@ -74,6 +74,7 @@ class ChattingsListViewModel : ViewModel() {
     fun addListener() {
         userList = mutableListOf<String>()
         viewModelScope.launch {
+            Chattings.chattingRoomList = mutableMapOf()
             Chattings.addRoomListListener() {
                 Chattings.chattingRoomList = Chattings.chattingRoomList?.toMutableMap().apply {
                     this?.set(it.roomID, it)

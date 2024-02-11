@@ -352,7 +352,7 @@ class SetPostDataViewModel : ViewModel() {
                         myParticipantStatus = ParticipationStatus.PARTICIPATED,
                         timestamp = ServerValue.TIMESTAMP,
                         gatheringTags = tagMap.filter { it.value }.map { it.key },
-                    ).toMap()
+                    )
                 )
                 end()
                 isUploading = false

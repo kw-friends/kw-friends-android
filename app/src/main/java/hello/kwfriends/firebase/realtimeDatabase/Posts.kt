@@ -26,6 +26,7 @@ data class PostDetail(
     val gatheringTags: List<String> = emptyList(),
     var reporters: Map<String, Any> = emptyMap(),
     var participants: Map<String, Any> = emptyMap(),
+    var chattingRoomID: String = ""
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(
@@ -37,7 +38,8 @@ data class PostDetail(
             "maximumParticipants" to maximumParticipants,
             "gatheringDescription" to gatheringDescription,
             "gatheringTags" to gatheringTags,
-            "timestamp" to timestamp
+            "timestamp" to timestamp,
+            "chattingRoomID" to chattingRoomID
         )
     }
 }
@@ -164,10 +166,12 @@ object Post {
     }
 
 
-    suspend fun upload(postData: Map<String, Any>) {
+    suspend fun upload(postData: PostDetail) {
         val key = database.reference.child("posts").push().key
+        val chattingRoomID = Chattings.database.child("chattings").child("rooms").push().key!!
+        postData.chattingRoomID = chattingRoomID
         val postHashMap = hashMapOf<String, Any>(
-            "/posts/$key" to postData,
+            "/posts/$key" to postData.toMap(),
         )
 
         val result = suspendCoroutine<Boolean> { continuation ->
@@ -190,6 +194,13 @@ object Post {
                 }.addOnFailureListener { e ->
                     Log.d("uploadPost", "참여 목록 생성 성공: $e")
                 }
+            Chattings.make(
+                preRoomID = chattingRoomID,
+                title = postData.gatheringTitle,
+                members = listOf(postData.gatheringPromoterUID),
+                owners = listOf(postData.gatheringPromoterUID),
+                type = ChattingRoomType.GROUP
+            )
         }
     }
 
@@ -201,10 +212,10 @@ object Post {
         val updateResult = suspendCoroutine<Boolean> { continuation ->
             database.reference.updateChildren(postHashMap)
                 .addOnSuccessListener {
-                    Log.d("uploadPost", "모임 생성 성공")
+                    Log.d("updatePost", "모임 업데이트 성공")
                     continuation.resume(true)
                 }.addOnFailureListener { e ->
-                    Log.d("uploadPost", "모임 생성 실패: $e")
+                    Log.d("updatePost", "모임 업데이트 실패: $e")
                     continuation.resume(false)
                 }
         }
@@ -226,6 +237,7 @@ object Post {
 
     suspend fun updateParticipationStatus(
         postID: String,
+        chattingRoomID: String,
         action: Action
     ): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
@@ -256,6 +268,8 @@ object Post {
         }
         return if (result) {
             Log.d("updateParticipationStatus", "$postID 참여 상태 업데이트 성공: $action")
+            if(action == Action.ADD) Chattings.join(chattingRoomID)
+            else if(action == Action.DELETE) Chattings.leave(chattingRoomID)
             true
         } else {
             Log.d("updateParticipationStatus", "$postID 참여 상태 업데이트 실패: $action")

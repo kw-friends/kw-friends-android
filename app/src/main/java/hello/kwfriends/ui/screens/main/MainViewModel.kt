@@ -318,7 +318,7 @@ class MainViewModel : ViewModel() {
                 postDetail.myParticipantStatus = ParticipationStatus.GETTING_IN
 
                 val result =
-                    Post.updateParticipationStatus(postID = postID, action = Action.ADD)
+                    Post.updateParticipationStatus(postID = postID, chattingRoomID = postDetail.chattingRoomID, action = Action.ADD)
                 if (result) {
                     postDetail.myParticipantStatus = ParticipationStatus.PARTICIPATED
                 } else {
@@ -332,7 +332,7 @@ class MainViewModel : ViewModel() {
                 postDetail.myParticipantStatus = ParticipationStatus.GETTING_OUT
 
                 val result =
-                    Post.updateParticipationStatus(postID = postID, action = Action.DELETE)
+                    Post.updateParticipationStatus(postID = postID, chattingRoomID = postDetail.chattingRoomID,  action = Action.DELETE)
                 if (result) {
                     postDetail.myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED
                 } else {

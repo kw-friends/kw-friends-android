@@ -148,17 +148,18 @@ fun ChattingListScreen(
                         )
                     }
                 }
-                val messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(roomInfo.recentMessage.timestamp as Long), ZoneId.systemDefault()).toLocalDate()
-                val today = LocalDate.now()
-                Text(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    text =
-                        if(roomInfo.recentMessage.timestamp.toString() == "") ""
-                        else if(messageDate.isEqual(today)) SimpleDateFormat("a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp)
+                if(roomInfo.recentMessage.timestamp.toString() != "") {
+                    val messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(roomInfo.recentMessage.timestamp as Long), ZoneId.systemDefault()).toLocalDate()
+                    val today = LocalDate.now()
+                    Text(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        text =
+                        if(messageDate.isEqual(today)) SimpleDateFormat("a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp)
                         else SimpleDateFormat("yyyy/MM/dd a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
             }
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 5.dp),
