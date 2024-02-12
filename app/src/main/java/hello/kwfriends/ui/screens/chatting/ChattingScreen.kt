@@ -6,11 +6,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +63,7 @@ import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.ChattingBroadcast
 import hello.kwfriends.ui.component.ChattingMessage
 import hello.kwfriends.ui.component.ChattingTextField
+import hello.kwfriends.ui.component.SideSheet
 import hello.kwfriends.ui.screens.main.Routes
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -86,7 +80,6 @@ fun ChattingScreen(
         navigation.navigate(Routes.HOME_SCREEN)
         Log.w("Chattings screen", "오류 발생, 메인 스크린으로 이동. error: $e")
     }
-    val interactionSource = remember { MutableInteractionSource() }
     var targetUid = ""
     if(chattingViewModel.roomInfo?.type == ChattingRoomType.DIRECT) {
         val temp = chattingViewModel.roomInfo?.members?.toMutableMap()
@@ -118,6 +111,7 @@ fun ChattingScreen(
             Chattings.removeMessageListener()
         }
     }
+    val interactionSource = remember { MutableInteractionSource() }
     if (chattingViewModel.imagePopupUri != null) {
         Popup(
             onDismissRequest = { chattingViewModel.imagePopupUri = null }
@@ -274,106 +268,59 @@ fun ChattingScreen(
                 )
             }
         )
-        //Side Sheet 외부 배경 어둡게 변환
-        val backgroundColor by animateColorAsState(
-            targetValue = if (chattingViewModel.showSideSheet) Color.Black.copy(alpha = 0.7f) else Color.Transparent,
-            animationSpec = tween(durationMillis = 300), label = "" // 1초 동안 색상 전환
-        )
-        // 오른쪽에서 슬라이드하여 나타나는 Side Sheet
-        AnimatedVisibility(
-            visible = chattingViewModel.showSideSheet,
-            enter = slideInHorizontally(
-                // 오른쪽에서 시작
-                initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(durationMillis = 300)
-            ),
-            exit = slideOutHorizontally(
-                // 오른쪽으로 사라짐
-                targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(durationMillis = 300)
-            ),
-            modifier = Modifier
-                .background(backgroundColor)
-                .fillMaxSize()
+        SideSheet(
+            isShow = chattingViewModel.showSideSheet,
+            onDissmiss = { chattingViewModel.showSideSheet = false }
         ) {
-            BackHandler {
-                chattingViewModel.showSideSheet = false
-            }
-            Row(
-                modifier = Modifier.fillMaxSize()
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .fillMaxWidth()
             ) {
-                Spacer(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null
-                        ) { chattingViewModel.showSideSheet = false }
-                        .fillMaxHeight()
-                        .weight(1f)
+                Text(
+                    text = "대화 상대",
+                    style = MaterialTheme.typography.titleMedium
                 )
-                Box(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = {}
-                        )
-                        .fillMaxHeight()
-                        .width(290.dp) //side sheet 너비
-                        .background(Color.White)
-                        .padding(10.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .fillMaxWidth()
+                Spacer(modifier = Modifier.height(15.dp))
+                chattingViewModel.roomInfo?.members?.forEach {
+                    Row(
+                        modifier = Modifier.padding(5.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "대화 상대",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(15.dp))
-                        chattingViewModel.roomInfo?.members?.forEach {
-                            Row(
-                                modifier = Modifier.padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AsyncImage(
-                                    model = ProfileImage.usersUriMap[it.key] ?: R.drawable.profile_default_image,
-                                    placeholder = painterResource(id = R.drawable.profile_default_image),
-                                    contentDescription = "chatter's profile image",
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .border(0.5.dp, Color.Gray, CircleShape),
-                                    contentScale = ContentScale.Crop,
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = UserData.usersDataMap[it.key]?.get("name")?.toString() ?: "unknown",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
-                    if(
-                        chattingViewModel.roomInfo?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true
-                        && chattingViewModel.roomInfo?.owners?.containsKey(Firebase.auth.currentUser!!.uid) != true
-                        && chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP
-                    ) {
-                        Text(
+                        AsyncImage(
+                            model = ProfileImage.usersUriMap[it.key] ?: R.drawable.profile_default_image,
+                            placeholder = painterResource(id = R.drawable.profile_default_image),
+                            contentDescription = "chatter's profile image",
                             modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .clickable {
-                                    navigation.navigate(Routes.HOME_SCREEN)
-                                    chattingViewModel.leaveCattingRoom(chattingViewModel.roomInfo!!.roomID)
-                                }
-                                .padding(10.dp),
-                            text = "채팅방 나가기",
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .border(0.5.dp, Color.Gray, CircleShape),
+                            contentScale = ContentScale.Crop,
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = UserData.usersDataMap[it.key]?.get("name")?.toString() ?: "unknown",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
+            }
+            if(
+                chattingViewModel.roomInfo?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true
+                && chattingViewModel.roomInfo?.owners?.containsKey(Firebase.auth.currentUser!!.uid) != true
+                && chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP
+            ) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .clickable {
+                            navigation.navigate(Routes.HOME_SCREEN)
+                            chattingViewModel.leaveCattingRoom(chattingViewModel.roomInfo!!.roomID)
+                        }
+                        .padding(10.dp),
+                    text = "채팅방 나가기",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }
