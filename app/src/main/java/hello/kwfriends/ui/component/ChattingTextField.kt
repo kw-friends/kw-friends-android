@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ChattingTextField(
+    modifier: Modifier = Modifier,
     placeholder: String = "",
     canValueChange: Boolean = true,
     value: String,
@@ -65,10 +66,11 @@ fun ChattingTextField(
     var textColor by remember { mutableStateOf(Color(0xFF000000)) }
     var placeholderColor by remember { mutableStateOf(Color(0xFFF1F1F1)) }
 
-    BasicTextField(value = value,
+    BasicTextField(
+        value = value,
         onValueChange = if (canValueChange) onValueChange else { _ -> Unit },
         enabled = canValueChange,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .then(

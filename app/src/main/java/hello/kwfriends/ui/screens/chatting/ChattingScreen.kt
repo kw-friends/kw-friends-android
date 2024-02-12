@@ -15,7 +15,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,14 +32,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Dehaze
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,9 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,19 +63,14 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
-import hello.kwfriends.firebase.realtimeDatabase.MessageType
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ChattingImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
+import hello.kwfriends.ui.component.ChattingBroadcast
+import hello.kwfriends.ui.component.ChattingMessage
 import hello.kwfriends.ui.component.ChattingTextField
 import hello.kwfriends.ui.screens.main.Routes
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -215,181 +205,21 @@ fun ChattingScreen(
                 else it.value.timestamp as Long
             }
             sortedData?.forEach {
-                if(!UserDataStore.userIgnoreList.contains(it.value.uid)) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp, vertical = 5.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.align(Alignment.TopStart),
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            if (it.value.uid == "BROADCAST") {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(horizontal = 55.dp)
-                                        .fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Spacer(modifier = Modifier.height(10.dp))
-                                    Box(
-                                        Modifier
-                                            .clip(RoundedCornerShape(15.dp))
-                                            .background(Color(0xFFE7E4E4))
-                                    ) {
-                                        Text(
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .padding(10.dp),
-                                            text = it.value.content
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.height(10.dp))
-                                }
-                            } else {
-                                AsyncImage(
-                                    model = ProfileImage.usersUriMap[it.value.uid]
-                                        ?: R.drawable.profile_default_image,
-                                    placeholder = painterResource(id = R.drawable.profile_default_image),
-                                    contentDescription = "chatter's profile image",
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .clip(CircleShape)
-                                        .border(0.5.dp, Color.Gray, CircleShape),
-                                    contentScale = ContentScale.Crop,
+                if(it.value.uid == "BROADCAST") {
+                    ChattingBroadcast(it.value.content)
+                }
+                else {
+                    if(!UserDataStore.userIgnoreList.contains(it.value.uid)) {
+                        ChattingMessage(
+                            messageDetail = it.value,
+                            onMessageRemove = {
+                                chattingViewModel.removeMessage(
+                                    roomID,
+                                    it.value.messageID
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Column {
-                                    var menuExpanded by remember { mutableStateOf(false) }
-                                    Text(
-                                        text = UserData.usersDataMap[it.value.uid]?.get("name")
-                                            ?.toString() ?: "unknown"
-                                    )
-                                    Row(
-                                        verticalAlignment = Alignment.Bottom
-                                    ) {
-                                        Box(
-                                            Modifier
-                                                .clip(
-                                                    RoundedCornerShape(
-                                                        topEnd = 15.dp,
-                                                        bottomStart = 15.dp,
-                                                        bottomEnd = 15.dp
-                                                    )
-                                                )
-                                                .background(Color(0xFFE7E4E4))
-                                        ) {
-                                            if (it.value.uid == Firebase.auth.currentUser!!.uid && it.value.type != MessageType.DELETED) {
-                                                DropdownMenu(
-                                                    expanded = menuExpanded,
-                                                    onDismissRequest = { menuExpanded = false }
-                                                ) {
-                                                    DropdownMenuItem(
-                                                        text = {
-                                                            Text(
-                                                                text = "삭제",
-                                                                style = MaterialTheme.typography.bodyMedium
-                                                            )
-                                                        },
-                                                        enabled = it.value.type != MessageType.LOADING && it.value.type != MessageType.DELETED,
-                                                        onClick = {
-                                                            menuExpanded = false
-                                                            chattingViewModel.removeMessage(
-                                                                roomID,
-                                                                it.value.messageID
-                                                            )
-                                                        },
-                                                    )
-                                                }
-                                            }
-                                            if(it.value.type == MessageType.IMAGE) {
-                                                AsyncImage(
-                                                    model = ChattingImage.chattingUriMap[it.value.content],
-                                                    placeholder = painterResource(id = R.drawable.test_image),
-                                                    contentDescription = "chatting room image",
-                                                    modifier = Modifier
-                                                        .combinedClickable(
-                                                            onClick = {
-                                                                chattingViewModel.imagePopupUri =
-                                                                    it.value.content
-                                                            },
-                                                            onLongClick = { menuExpanded = true }
-                                                        )
-                                                        .size(150.dp)
-                                                        .clip(RoundedCornerShape(10.dp))
-                                                        .shadow(500.dp, RoundedCornerShape(10.dp)),
-                                                    contentScale = ContentScale.Crop,
-                                                )
-                                            }
-                                            else if(it.value.type == MessageType.TEXT) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .combinedClickable(
-                                                            onClick = { },
-                                                            onLongClick = { menuExpanded = true }
-                                                        )
-                                                        .align(Alignment.Center)
-                                                        .padding(10.dp),
-                                                    text = it.value.content,
-                                                )
-                                            }
-                                            else if(it.value.type == MessageType.DELETED) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .combinedClickable(
-                                                            onClick = { },
-                                                            onLongClick = { menuExpanded = true }
-                                                        )
-                                                        .align(Alignment.Center)
-                                                        .padding(10.dp),
-                                                    text = it.value.content,
-                                                    color = Color.Gray
-                                                )
-                                            }
-                                            else if(it.value.type == MessageType.LOADING) {
-                                                Text(
-                                                    modifier = Modifier
-                                                        .combinedClickable(
-                                                            onClick = { },
-                                                            onLongClick = { menuExpanded = true }
-                                                        )
-                                                        .align(Alignment.Center)
-                                                        .padding(10.dp),
-                                                    text = "로딩중...",
-                                                    color = Color.Gray
-                                                )
-                                            }
-                                        }
-                                        Spacer(modifier = Modifier.width(5.dp))
-                                        Text(
-                                            text = "${it.value.read.size}명 읽음",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = Color.Gray
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        if(it.value.uid != "BROADCAST") {
-                            val messageDate = LocalDateTime.ofInstant(
-                                Instant.ofEpochMilli(it.value.timestamp as Long),
-                                ZoneId.systemDefault()
-                            ).toLocalDate()
-                            val today = LocalDate.now()
-                            Text(
-                                modifier = Modifier.align(Alignment.TopEnd),
-                                text = if (messageDate.isEqual(today)) SimpleDateFormat(
-                                    "a hh:mm",
-                                    Locale.getDefault()
-                                ).format(it.value.timestamp)
-                                else SimpleDateFormat("yyyy/MM/d a hh:mm", Locale.getDefault()).format(
-                                    it.value.timestamp
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
-                            )
-                        }
+                            },
+                            onImageClick = { chattingViewModel.imagePopupUri = it.value.content },
+                        )
                     }
                 }
             }
@@ -433,20 +263,17 @@ fun ChattingScreen(
                 }
             }
         }
-        Row(
+        ChattingTextField(
             modifier = Modifier.align(Alignment.BottomCenter),
-        ) {
-            ChattingTextField(
-                value = chattingViewModel.inputChatting,
-                onValueChange = { chattingViewModel.setInputChattingText(it) },
-                chattingSend = { chattingViewModel.sendMessage(roomID) },
-                imageSelect = {
-                    launcher.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                }
-            )
-        }
+            value = chattingViewModel.inputChatting,
+            onValueChange = { chattingViewModel.setInputChattingText(it) },
+            chattingSend = { chattingViewModel.sendMessage(roomID) },
+            imageSelect = {
+                launcher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }
+        )
         //Side Sheet 외부 배경 어둡게 변환
         val backgroundColor by animateColorAsState(
             targetValue = if (chattingViewModel.showSideSheet) Color.Black.copy(alpha = 0.7f) else Color.Transparent,
