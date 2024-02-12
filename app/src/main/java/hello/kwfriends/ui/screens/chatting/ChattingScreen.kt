@@ -2,15 +2,12 @@ package hello.kwfriends.ui.screens.chatting
 
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,7 +44,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.auth.ktx.auth
@@ -57,29 +52,21 @@ import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
 import hello.kwfriends.firebase.realtimeDatabase.UserData
-import hello.kwfriends.firebase.storage.ChattingImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.component.ChattingBroadcast
 import hello.kwfriends.ui.component.ChattingMessage
 import hello.kwfriends.ui.component.ChattingTextField
+import hello.kwfriends.ui.component.ImagePopup
 import hello.kwfriends.ui.component.SideSheet
 import hello.kwfriends.ui.screens.main.Routes
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChattingScreen(
     chattingViewModel: ChattingViewModel,
     navigation: NavController,
     roomID: String
 ) {
-    try {
-        Firebase.auth.currentUser!!.uid
-    }
-    catch (e: Exception) {
-        navigation.navigate(Routes.HOME_SCREEN)
-        Log.w("Chattings screen", "오류 발생, 메인 스크린으로 이동. error: $e")
-    }
     var targetUid = ""
     if(chattingViewModel.roomInfo?.type == ChattingRoomType.DIRECT) {
         val temp = chattingViewModel.roomInfo?.members?.toMutableMap()
@@ -104,45 +91,18 @@ fun ChattingScreen(
     LaunchedEffect(true) {
         chattingViewModel.getRoomInfoAndUserProfile(roomID)
     }
-    //리스너 생명주기 컴포즈에 맞추기
+    //리스너 생명주기 컴포즈에 연동
     DisposableEffect(true) {
         chattingViewModel.addListener(roomID)
         onDispose {
             Chattings.removeMessageListener()
         }
     }
-    val interactionSource = remember { MutableInteractionSource() }
-    if (chattingViewModel.imagePopupUri != null) {
-        Popup(
-            onDismissRequest = { chattingViewModel.imagePopupUri = null }
-        ) {
-            BackHandler {
-                chattingViewModel.imagePopupUri = null
-            }
-            Box(
-                modifier = Modifier
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) {
-                        chattingViewModel.imagePopupUri = null
-                    }
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-            ) {
-                AsyncImage(
-                    model = ChattingImage.chattingUriMap[chattingViewModel.imagePopupUri],
-                    placeholder = painterResource(id = R.drawable.test_image),
-                    contentDescription = "chatting room image",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .padding(30.dp)
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(10.dp))
-                )
-            }
-        }
-    }
+    ImagePopup(
+        isShow = chattingViewModel.chattingImageUri != null,
+        onDismiss = { chattingViewModel.chattingImageUri = null },
+        imageUri = chattingViewModel.chattingImageUri.toString()
+    )
 
     Box(
         modifier = Modifier
