@@ -21,6 +21,7 @@ import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -29,6 +30,7 @@ class MainViewModel : ViewModel() {
     var posts by mutableStateOf<List<PostDetail>>(listOf())
     var searchingPosts by mutableStateOf<List<PostDetail>>(listOf())
     var participatedGatherings by mutableStateOf<List<Pair<PostDetail, ParticipationStatus>>>(listOf())
+    private var isJoiningGroupChat = false
 
     //모임 새로고침 상태 저장 변수
     var isRefreshing by mutableStateOf(false)
@@ -390,11 +392,15 @@ class MainViewModel : ViewModel() {
         postDetail: PostDetail,
         gotoChattingRoom: () -> Unit
     ) {
+        if (isJoiningGroupChat) return
+        isJoiningGroupChat = true
         viewModelScope.launch {
             Chattings.getRoomList()
             if (Chattings.join(postDetail.chattingRoomID)) {
                 gotoChattingRoom()
             }
+            delay(1000)
+            isJoiningGroupChat = false
         }
     }
 }
