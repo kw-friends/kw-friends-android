@@ -85,7 +85,7 @@ fun ChattingListScreen(
         sortedData?.forEach {
             val roomInfo = it.value
             var targetUid = ""
-            if(it.value.type == ChattingRoomType.DIRECT) {
+            if (it.value.type == ChattingRoomType.DIRECT) {
                 val temp = roomInfo.members.toMutableMap()
                 temp.remove(Firebase.auth.currentUser!!.uid)
                 targetUid = temp.keys.toString()
@@ -102,10 +102,9 @@ fun ChattingListScreen(
                     modifier = Modifier.align(Alignment.TopStart)
                 ) {
                     AsyncImage(
-                        model = if(roomInfo.type == ChattingRoomType.DIRECT) {
-                                    ProfileImage.usersUriMap[targetUid] ?: R.drawable.profile_default_image
-                                }
-                                else R.drawable.test_image,
+                        model = if (roomInfo.type == ChattingRoomType.DIRECT) {
+                            ProfileImage.usersUriMap[targetUid] ?: R.drawable.profile_default_image
+                        } else R.drawable.test_image,
                         placeholder = painterResource(id = R.drawable.test_image),
                         contentDescription = "chatting room's example image",
                         modifier = Modifier
@@ -121,10 +120,10 @@ fun ChattingListScreen(
 
                             Text(
                                 modifier = Modifier.widthIn(max = 180.dp),
-                                text = if(roomInfo.type == ChattingRoomType.DIRECT) {
-                                    (UserData.usersDataMap[targetUid]?.get("name") ?: "unknown").toString()
-                                    }
-                                    else roomInfo.title,
+                                text = if (roomInfo.type == ChattingRoomType.DIRECT) {
+                                    (UserData.usersDataMap[targetUid]?.get("name")
+                                        ?: "unknown").toString()
+                                } else roomInfo.title,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.Black,
                                 fontWeight = FontWeight(400),
@@ -148,14 +147,22 @@ fun ChattingListScreen(
                         )
                     }
                 }
-                if(roomInfo.recentMessage.timestamp.toString() != "") {
-                    val messageDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(roomInfo.recentMessage.timestamp as Long), ZoneId.systemDefault()).toLocalDate()
+                if (roomInfo.recentMessage.timestamp.toString() != "") {
+                    val messageDate = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(roomInfo.recentMessage.timestamp as Long),
+                        ZoneId.systemDefault()
+                    ).toLocalDate()
                     val today = LocalDate.now()
                     Text(
                         modifier = Modifier.align(Alignment.TopEnd),
                         text =
-                        if(messageDate.isEqual(today)) SimpleDateFormat("a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp)
-                        else SimpleDateFormat("yyyy/MM/dd a hh:mm", Locale.getDefault()).format(roomInfo.recentMessage.timestamp),
+                        if (messageDate.isEqual(today)) SimpleDateFormat(
+                            "a hh:mm",
+                            Locale.getDefault()
+                        ).format(roomInfo.recentMessage.timestamp)
+                        else SimpleDateFormat("yyyy/MM/dd a hh:mm", Locale.getDefault()).format(
+                            roomInfo.recentMessage.timestamp
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )

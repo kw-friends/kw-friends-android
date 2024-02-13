@@ -37,7 +37,12 @@ object Report {
         return result
     }
 
-    suspend fun postReport(postID: String, postProviderID: String, reporterID: String, reason: List<String>): Boolean {
+    suspend fun postReport(
+        postID: String,
+        postProviderID: String,
+        reporterID: String,
+        reason: List<String>
+    ): Boolean {
         val key = database.child("postReports").push().key
         val reportMap = mapOf(
             "reports/post/$key/postID" to postID,

@@ -23,7 +23,7 @@ object ProfileImage {
 
     //특정 uid의 프로필 이미지를 업로드
     suspend fun upload(uid: String, imageUri: Uri?): Boolean {
-        if(imageUri == null){
+        if (imageUri == null) {
             Log.w("Lim", "이미지 uri가 null이라 업로드에 실패했습니다.")
             return false
         }

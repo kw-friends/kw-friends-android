@@ -2,9 +2,9 @@ package hello.kwfriends.ui.screens.post.postInfo
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
+import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.ui.screens.main.MainViewModel
 
 @Composable

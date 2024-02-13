@@ -31,6 +31,6 @@ fun TagChip(
 
 @Preview
 @Composable
-fun TagChipPreview(){
+fun TagChipPreview() {
     TagChip(text = "프리뷰", selected = false, onClick = {})
 }

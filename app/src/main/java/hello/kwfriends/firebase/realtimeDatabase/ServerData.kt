@@ -13,7 +13,7 @@ object ServerData {
     var data: Map<String, Any>? = null
     var dataListenerAdded = false
 
-    val serverDataListener = object: ValueEventListener {
+    val serverDataListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             data = dataSnapshot.getValue<Map<String, Any>>()
             Log.w("serverDataListener", "서버 정보 변경 감지됨 $data")
@@ -25,7 +25,7 @@ object ServerData {
     }
 
     //서버 정보 리스너 추가 함수
-    fun addListener(){
+    fun addListener() {
         dataListenerAdded = true
         Log.w("UserData", "서버 정보 리스너 추가")
         database.child("server").addValueEventListener(serverDataListener)
@@ -37,8 +37,7 @@ object ServerData {
         Log.w("UserData", "서버 정보 리스너 제거")
         try {
             database.child("server").removeEventListener(serverDataListener)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.w("UserData", "서버 정보 리스너 제거 실패:", e)
         }
     }

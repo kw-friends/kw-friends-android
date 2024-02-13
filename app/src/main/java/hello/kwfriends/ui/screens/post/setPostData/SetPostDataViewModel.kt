@@ -123,9 +123,15 @@ class SetPostDataViewModel : ViewModel() {
             Log.d("PostDetail_MODIFY", "gatheringTime: $gatheringTime")
             Log.d("PostDetail_MODIFY", "gatheringLocation: $gatheringLocation")
             Log.d("PostDetail_MODIFY", "gatheringDescription: $gatheringDescription")
-            Log.d("PostDetail_MODIFY", "gatheringDescriptionValidation: $gatheringDescriptionValidation")
+            Log.d(
+                "PostDetail_MODIFY",
+                "gatheringDescriptionValidation: $gatheringDescriptionValidation"
+            )
             Log.d("PostDetail_MODIFY", "maximumParticipants: $maximumParticipants")
-            Log.d("PostDetail_MODIFY", "maximumParticipantsValidation: $maximumParticipantsValidation")
+            Log.d(
+                "PostDetail_MODIFY",
+                "maximumParticipantsValidation: $maximumParticipantsValidation"
+            )
             Log.d("PostDetail_MODIFY", "tagMap: $tagMap")
             Log.d("PostDetail_MODIFY", "participants: $participants")
             Log.d("PostDetail_MODIFY", "gatheringDate: $gatheringDate")
@@ -173,7 +179,10 @@ class SetPostDataViewModel : ViewModel() {
             Log.d("PostDetail_ADD", "gatheringLocationValidation: $gatheringLocationValidation")
             Log.d("PostDetail_ADD", "gatheringLocation: $gatheringLocation")
             Log.d("PostDetail_ADD", "gatheringDescription: $gatheringDescription")
-            Log.d("PostDetail_ADD", "gatheringDescriptionValidation: $gatheringDescriptionValidation")
+            Log.d(
+                "PostDetail_ADD",
+                "gatheringDescriptionValidation: $gatheringDescriptionValidation"
+            )
             Log.d("PostDetail_ADD", "maximumParticipants: $maximumParticipants")
             Log.d("PostDetail_ADD", "maximumParticipantsValidation: $maximumParticipantsValidation")
             Log.d("PostDetail_ADD", "gatheringHour: $gatheringHour")

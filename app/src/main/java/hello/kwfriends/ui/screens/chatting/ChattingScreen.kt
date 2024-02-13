@@ -23,14 +23,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Dehaze
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -68,7 +68,7 @@ fun ChattingScreen(
     roomID: String
 ) {
     var targetUid = ""
-    if(chattingViewModel.roomInfo?.type == ChattingRoomType.DIRECT) {
+    if (chattingViewModel.roomInfo?.type == ChattingRoomType.DIRECT) {
         val temp = chattingViewModel.roomInfo?.members?.toMutableMap()
         temp?.remove(Firebase.auth.currentUser!!.uid)
         targetUid = temp?.keys.toString()
@@ -86,7 +86,10 @@ fun ChattingScreen(
     val scrollState = rememberScrollState()
     LaunchedEffect(chattingViewModel.messageData) {
         scrollState.scrollTo(scrollState.maxValue)
-        Chattings.messageRead(roomID, chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf())
+        Chattings.messageRead(
+            roomID,
+            chattingViewModel.messageData?.toMutableMap() ?: mutableMapOf()
+        )
     }
     LaunchedEffect(true) {
         chattingViewModel.getRoomInfoAndUserProfile(roomID)
@@ -126,10 +129,9 @@ fun ChattingScreen(
             }
             Text(
                 modifier = Modifier.widthIn(max = 200.dp),
-                text = if(chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP) {
-                            chattingViewModel.roomInfo?.title ?: "unknwon"
-                        }
-                        else (UserData.usersDataMap[targetUid]?.get("name") ?: "unknown").toString(),
+                text = if (chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP) {
+                    chattingViewModel.roomInfo?.title ?: "unknwon"
+                } else (UserData.usersDataMap[targetUid]?.get("name") ?: "unknown").toString(),
                 style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
@@ -145,7 +147,10 @@ fun ChattingScreen(
             modifier = Modifier.align(Alignment.TopEnd),
             onClick = { chattingViewModel.showSideSheet = true }
         ) {
-            Icon(imageVector = Icons.Default.Dehaze, contentDescription = "chatting room menu button")
+            Icon(
+                imageVector = Icons.Default.Dehaze,
+                contentDescription = "chatting room menu button"
+            )
         }
         Column(
             modifier = Modifier
@@ -155,15 +160,14 @@ fun ChattingScreen(
         ) {
             //top
             val sortedData = chattingViewModel.messageData?.entries?.sortedBy {
-                if(it.value.timestamp.toString() == "") Long.MIN_VALUE
+                if (it.value.timestamp.toString() == "") Long.MIN_VALUE
                 else it.value.timestamp as Long
             }
             sortedData?.forEach {
-                if(it.value.uid == "BROADCAST") {
+                if (it.value.uid == "BROADCAST") {
                     ChattingBroadcast(it.value.content)
-                }
-                else {
-                    if(!UserDataStore.userIgnoreList.contains(it.value.uid)) {
+                } else {
+                    if (!UserDataStore.userIgnoreList.contains(it.value.uid)) {
                         ChattingMessage(
                             messageDetail = it.value,
                             onMessageRemove = {
@@ -180,7 +184,7 @@ fun ChattingScreen(
             Spacer(modifier = Modifier.height(60.dp))
         }
         //이미지 선택해서 전송 대기 상태
-        if(chattingViewModel.chattingImageUri != null) {
+        if (chattingViewModel.chattingImageUri != null) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -248,7 +252,8 @@ fun ChattingScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         AsyncImage(
-                            model = ProfileImage.usersUriMap[it.key] ?: R.drawable.profile_default_image,
+                            model = ProfileImage.usersUriMap[it.key]
+                                ?: R.drawable.profile_default_image,
                             placeholder = painterResource(id = R.drawable.profile_default_image),
                             contentDescription = "chatter's profile image",
                             modifier = Modifier
@@ -259,13 +264,14 @@ fun ChattingScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = UserData.usersDataMap[it.key]?.get("name")?.toString() ?: "unknown",
+                            text = UserData.usersDataMap[it.key]?.get("name")?.toString()
+                                ?: "unknown",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
             }
-            if(
+            if (
                 chattingViewModel.roomInfo?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true
                 && chattingViewModel.roomInfo?.owners?.containsKey(Firebase.auth.currentUser!!.uid) != true
                 && chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP

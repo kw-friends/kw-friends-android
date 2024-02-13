@@ -17,14 +17,14 @@ import hello.kwfriends.firebase.realtimeDatabase.Notice
 import hello.kwfriends.firebase.realtimeDatabase.NoticeDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
-import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.firebase.storage.ProfileImage
+import hello.kwfriends.preferenceDatastore.UserDataStore
 import hello.kwfriends.ui.screens.auth.AuthUiState
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.Routes
 import kotlinx.coroutines.launch
 
-class SettingsViewModel: ViewModel() {
+class SettingsViewModel : ViewModel() {
     //유저 설정 불러왔는지 여부
     var userSettingValuesLoaded by mutableStateOf<Boolean>(false)
 
@@ -71,7 +71,7 @@ class SettingsViewModel: ViewModel() {
             userReportDialogState = false to userReportDialogState.second
             Report.userReport(
                 uid = userReportDialogState.second,
-                reporterID = Firebase.auth.currentUser?.uid?:"unknown",
+                reporterID = Firebase.auth.currentUser?.uid ?: "unknown",
                 reason = reason,
             )
             downlodData(userReportDialogState.second)
@@ -80,30 +80,35 @@ class SettingsViewModel: ViewModel() {
     }
 
     //유저 설정 세팅값들 불러오는 함수
-    fun userSettingValuesLoad(){
+    fun userSettingValuesLoad() {
         viewModelScope.launch {
             UserDataStore.getDataFlow().collect {
                 UserDataStore.isDarkMode = it[booleanPreferencesKey("SETTINGS_DARK_MODE")]
                 UserDataStore.isQuietMode = it[booleanPreferencesKey("SETTINGS_QUIET_MODE")]
-                UserDataStore.userIgnoreList = it[stringSetPreferencesKey("USER_IGNORE_LIST")]?.toMutableSet() ?: mutableSetOf()
+                UserDataStore.userIgnoreList =
+                    it[stringSetPreferencesKey("USER_IGNORE_LIST")]?.toMutableSet()
+                        ?: mutableSetOf()
                 //유저 설정 기본값
-                if(UserDataStore.isDarkMode == null) UserDataStore.isDarkMode = false
-                if(UserDataStore.isQuietMode == null) UserDataStore.isQuietMode = false
+                if (UserDataStore.isDarkMode == null) UserDataStore.isDarkMode = false
+                if (UserDataStore.isQuietMode == null) UserDataStore.isQuietMode = false
             }
         }
     }
 
     //다크모드 스위치 변경 함수
-    fun switchDarkMode(){
+    fun switchDarkMode() {
         viewModelScope.launch {
             UserDataStore.setBooleanData("SETTINGS_DARK_MODE", !(UserDataStore.isDarkMode ?: false))
         }
     }
 
     //조용모드 스위치 변경 함수
-    fun switchQuietMode(){
+    fun switchQuietMode() {
         viewModelScope.launch {
-            UserDataStore.setBooleanData("SETTINGS_QUIET_MODE", !(UserDataStore.isQuietMode ?: false))
+            UserDataStore.setBooleanData(
+                "SETTINGS_QUIET_MODE",
+                !(UserDataStore.isQuietMode ?: false)
+            )
         }
     }
 
@@ -123,7 +128,7 @@ class SettingsViewModel: ViewModel() {
 
 
     //자신의 프로필 이미지를 업로드함
-    fun myProfileImageUpload(uri: Uri){
+    fun myProfileImageUpload(uri: Uri) {
         viewModelScope.launch {
             Log.w("Lim", "이미지 업로드 시작")
             ProfileImage.upload(Firebase.auth.currentUser!!.uid, uri)
@@ -137,36 +142,37 @@ class SettingsViewModel: ViewModel() {
             Log.w("Lim", "유저 프로필 이미지 불러오는 중")
             val uri = ProfileImage.getDownloadUrl(Firebase.auth.currentUser!!.uid)
             ProfileImage.updateUsersUriMap(Firebase.auth.currentUser!!.uid, uri)
-            if(ProfileImage.usersUriMap[Firebase.auth.currentUser!!.uid] == null) {
+            if (ProfileImage.usersUriMap[Firebase.auth.currentUser!!.uid] == null) {
                 Log.w("Lim", "유저 프로필 이미지 불러오기 실패")
+            } else {
+                Log.w("Lim", "유저 프로필 이미지 불러오기 성공")
             }
-            else{ Log.w("Lim", "유저 프로필 이미지 불러오기 성공") }
         }
     }
 
     //비밀번호 재설정
-    fun mainFindPassword(navigation: NavController){
+    fun mainFindPassword(navigation: NavController) {
         Log.w("Lin", "SettingsScreen: 비밀번호 재설정")
         AuthViewModel.uiState = AuthUiState.FindPassword
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 
     //로그아웃
-    fun mainSignOut(navigation: NavController){
+    fun mainSignOut(navigation: NavController) {
         Log.w("Lim", "SettingsScreen: 로그아웃")
         AuthViewModel.trySignOut()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 
     //회원탈퇴
-    fun mainDeleteUser(navigation: NavController){
+    fun mainDeleteUser(navigation: NavController) {
         Log.w("Lim", "SettingsScreen: 회원탈퇴 화면으로 이동")
         AuthViewModel.changeDeleteUserView()
         navigation.navigate(Routes.AUTH_SCREEN)
     }
 
     //정보수정
-    fun editUserInfo(navigation: NavController){
+    fun editUserInfo(navigation: NavController) {
         Log.w("Lim", "SettingsScreen: 정보 수정")
         AuthViewModel.userInputChecked = false
         AuthViewModel.uiState = AuthUiState.InputUserInfo
@@ -214,7 +220,7 @@ class SettingsViewModel: ViewModel() {
         viewModelScope.launch {
             val roomID = Chattings.makeDirectChatting(targetUid)
             Chattings.getRoomList()
-            if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
+            if (roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }
 }

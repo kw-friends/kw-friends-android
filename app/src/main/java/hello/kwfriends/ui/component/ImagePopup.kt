@@ -24,7 +24,7 @@ import hello.kwfriends.firebase.storage.ChattingImage
 @Composable
 fun ImagePopup(
     isShow: Boolean,
-    onDismiss: () -> Unit, 
+    onDismiss: () -> Unit,
     imageUri: String
 ) {
     val interactionSource = remember { MutableInteractionSource() }

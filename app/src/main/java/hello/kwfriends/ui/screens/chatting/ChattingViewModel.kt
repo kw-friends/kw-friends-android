@@ -28,10 +28,12 @@ class ChattingViewModel : ViewModel() {
     var imagePopupUri by mutableStateOf<String?>(null)
     var showSideSheet by mutableStateOf<Boolean>(false)
 
-    fun setInputChattingText(text: String) { inputChatting = text }
+    fun setInputChattingText(text: String) {
+        inputChatting = text
+    }
 
     fun sendMessage(roomID: String) {
-        if(chattingImageUri != null ) {
+        if (chattingImageUri != null) {
             val uri = chattingImageUri
             chattingImageUri = null
             viewModelScope.launch {
@@ -41,7 +43,7 @@ class ChattingViewModel : ViewModel() {
                 )
             }
         }
-        if(inputChatting != "") {
+        if (inputChatting != "") {
             viewModelScope.launch {
                 Chattings.sendMessage(
                     roomID = roomID,
@@ -68,14 +70,18 @@ class ChattingViewModel : ViewModel() {
             UserData.updateUsersDataMap(it, UserData.get(it))
         }
     }
+
     fun addListener(roomID: String) {
         messageData = emptyMap()
         Chattings.addMessageListener(roomID) {
             messageData = messageData?.toMutableMap().apply {
                 this?.set(it.messageID, it)
                 viewModelScope.launch {
-                    if(it.type == MessageType.IMAGE) {
-                        ChattingImage.updateChattingUriMap(it.content, ChattingImage.getDownloadUrl(it.content))
+                    if (it.type == MessageType.IMAGE) {
+                        ChattingImage.updateChattingUriMap(
+                            it.content,
+                            ChattingImage.getDownloadUrl(it.content)
+                        )
                     }
                 }
             }

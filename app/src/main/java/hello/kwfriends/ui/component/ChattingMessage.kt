@@ -135,6 +135,7 @@ fun ChattingMessage(
                                     contentScale = ContentScale.Crop,
                                 )
                             }
+
                             MessageType.TEXT -> {
                                 Text(
                                     modifier = Modifier
@@ -147,6 +148,7 @@ fun ChattingMessage(
                                     text = messageDetail.content,
                                 )
                             }
+
                             MessageType.DELETED -> {
                                 Text(
                                     modifier = Modifier
@@ -160,6 +162,7 @@ fun ChattingMessage(
                                     color = Color.Gray
                                 )
                             }
+
                             MessageType.LOADING -> {
                                 Text(
                                     modifier = Modifier

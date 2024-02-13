@@ -133,7 +133,7 @@ fun PostInfoScreen(
                     )
                 },
                 actions = {
-                    if(postDetail.participants.containsKey(Firebase.auth.currentUser!!.uid)) {
+                    if (postDetail.participants.containsKey(Firebase.auth.currentUser!!.uid)) {
                         IconButton(
                             onClick = {
                                 mainViewModel.joinGroupChatting(

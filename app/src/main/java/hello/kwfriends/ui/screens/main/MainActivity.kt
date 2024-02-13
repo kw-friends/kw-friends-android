@@ -18,8 +18,8 @@ import hello.kwfriends.ui.base.BaseActivity
 import hello.kwfriends.ui.screens.auth.AuthScreen
 import hello.kwfriends.ui.screens.chatting.ChattingScreen
 import hello.kwfriends.ui.screens.chatting.ChattingViewModel
-import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
+import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.post.setPostData.SetPostDataViewModel
 import hello.kwfriends.ui.screens.settings.SettingsScreen
 import hello.kwfriends.ui.screens.settings.SettingsViewModel
