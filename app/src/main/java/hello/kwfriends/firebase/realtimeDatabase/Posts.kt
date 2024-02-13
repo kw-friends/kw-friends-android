@@ -194,13 +194,21 @@ object Post {
                 }.addOnFailureListener { e ->
                     Log.d("uploadPost", "참여 목록 생성 성공: $e")
                 }
-            Chattings.make(
+            val roomID = Chattings.make(
                 preRoomID = chattingRoomID,
                 title = postData.gatheringTitle,
                 members = listOf(postData.gatheringPromoterUID),
                 owners = listOf(postData.gatheringPromoterUID),
                 type = ChattingRoomType.GROUP
             )
+            if(roomID != null) {
+                Chattings.sendMessage(
+                    roomID = roomID,
+                    uid = "BROADCAST",
+                    content = "모임 채팅방이 생성되었습니다",
+                    type = MessageType.TEXT
+                )
+            }
         }
     }
 
