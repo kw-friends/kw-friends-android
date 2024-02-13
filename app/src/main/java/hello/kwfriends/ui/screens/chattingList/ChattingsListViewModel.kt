@@ -24,14 +24,15 @@ class ChattingsListViewModel : ViewModel() {
         viewModelScope.launch {
             Chattings.getRoomList()
             sortedData = Chattings.chattingRoomList?.entries?.sortedByDescending {
-                if(it.value.recentMessage.timestamp.toString() == "") Long.MIN_VALUE
+                if (it.value.recentMessage.timestamp.toString() == "") Long.MIN_VALUE
                 else it.value.recentMessage.timestamp as Long
             }?.toMutableList()
             sortedData?.forEach {
-                if(it.value.type == ChattingRoomType.DIRECT) {
+                if (it.value.type == ChattingRoomType.DIRECT) {
                     val temp = it.value.members.toMutableMap()
                     temp.remove(Firebase.auth.currentUser!!.uid)
-                    val uid = temp.keys.toString().slice(IntRange(1, temp.keys.toString().length - 2))
+                    val uid =
+                        temp.keys.toString().slice(IntRange(1, temp.keys.toString().length - 2))
                     UserData.updateUsersDataMap(uid, UserData.get(uid))
                     ProfileImage.updateUsersUriMap(uid, ProfileImage.getDownloadUrl(uid))
                 }
@@ -78,10 +79,11 @@ class ChattingsListViewModel : ViewModel() {
             Chattings.addRoomListListener() {
                 Chattings.chattingRoomList = Chattings.chattingRoomList?.toMutableMap().apply {
                     this?.set(it.roomID, it)
-                    if(it.type == ChattingRoomType.DIRECT) {
+                    if (it.type == ChattingRoomType.DIRECT) {
                         val temp = it.members.toMutableMap()
                         temp.remove(Firebase.auth.currentUser!!.uid)
-                        val uid = temp.keys.toString().slice(IntRange(1, temp.keys.toString().length - 2))
+                        val uid =
+                            temp.keys.toString().slice(IntRange(1, temp.keys.toString().length - 2))
                         userList = userList.toMutableList().apply {
                             this.add(uid)
                         }

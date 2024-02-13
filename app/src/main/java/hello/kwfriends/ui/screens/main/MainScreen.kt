@@ -39,12 +39,12 @@ import androidx.navigation.compose.rememberNavController
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.Events
 import hello.kwfriends.ui.component.EnjoyButton
+import hello.kwfriends.ui.component.FinalCheckPopup
 import hello.kwfriends.ui.component.HomeBottomBar
 import hello.kwfriends.ui.component.MainTopAppBar
 import hello.kwfriends.ui.component.PostReportDialog
 import hello.kwfriends.ui.component.UserInfoPopup
 import hello.kwfriends.ui.component.UserReportDialog
-import hello.kwfriends.ui.component.FinalCheckPopup
 import hello.kwfriends.ui.screens.chattingList.ChattingListScreen
 import hello.kwfriends.ui.screens.chattingList.ChattingsListViewModel
 import hello.kwfriends.ui.screens.findGathering.FindGatheringScreen

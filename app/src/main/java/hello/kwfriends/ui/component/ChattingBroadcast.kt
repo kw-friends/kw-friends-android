@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ChattingBroadcast (
+fun ChattingBroadcast(
     content: String
 ) {
     Box(

@@ -17,10 +17,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class UserDataStore(context: Context) {
-    init { pref = context.dataStore }
+    init {
+        pref = context.dataStore
+    }
 
-    companion object{
-        val Context.dataStore : DataStore<Preferences> by preferencesDataStore("USER_DATA")
+    companion object {
+        val Context.dataStore: DataStore<Preferences> by preferencesDataStore("USER_DATA")
         lateinit var pref: DataStore<Preferences>
 
         //다크모드 여부 저장
@@ -33,16 +35,15 @@ class UserDataStore(context: Context) {
         var userIgnoreList by mutableStateOf<MutableSet<String>>(mutableSetOf())
 
         fun userIgnoreListUpdate(mode: String, uid: String) {
-            if(mode == "ADD") {
+            if (mode == "ADD") {
                 userIgnoreList = (userIgnoreList + uid).toMutableSet()
-            }
-            else if(mode == "REMOVE") {
+            } else if (mode == "REMOVE") {
                 userIgnoreList = (userIgnoreList - uid).toMutableSet()
             }
         }
 
         //String 데이터 저장
-        suspend fun setStringData(key: String, value: String){
+        suspend fun setStringData(key: String, value: String) {
             Log.w("Lim", "[pref] 데이터를 저장합니다. $key : $value")
             pref.edit {
                 val prefKey = stringPreferencesKey(key)
@@ -51,7 +52,7 @@ class UserDataStore(context: Context) {
         }
 
         //Boolean 데이터 저장
-        suspend fun setBooleanData(key: String, value: Boolean){
+        suspend fun setBooleanData(key: String, value: Boolean) {
             Log.w("Lim", "[pref] 데이터를 저장합니다. $key : $value")
             pref.edit {
                 val prefKey = booleanPreferencesKey(key)
@@ -60,7 +61,7 @@ class UserDataStore(context: Context) {
         }
 
         //Boolean 데이터 저장
-        suspend fun setStringSetData(key: String, value: Set<String>){
+        suspend fun setStringSetData(key: String, value: Set<String>) {
             Log.w("Lim", "[pref] 데이터를 저장합니다. $key : $value")
             pref.edit {
                 val prefKey = stringSetPreferencesKey(key)
@@ -91,8 +92,8 @@ class UserDataStore(context: Context) {
             Log.w("Lim", "[pref] 데이터를 불러옵니다. key = $key")
             val prefKey = stringPreferencesKey(key)
             return pref.data
-                .map{
-                    it[prefKey]?:""
+                .map {
+                    it[prefKey] ?: ""
                 }
         }
 

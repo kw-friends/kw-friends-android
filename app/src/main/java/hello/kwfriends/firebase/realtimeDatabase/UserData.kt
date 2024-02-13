@@ -27,7 +27,7 @@ object UserData {
     }
 
 
-    val userInfoListener = object: ValueEventListener {
+    val userInfoListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             myInfo = dataSnapshot.getValue<Map<String, Any>>()
             Log.w("userInfoListener", "유저 정보 변경 감지됨 $myInfo")
@@ -39,10 +39,11 @@ object UserData {
     }
 
     //유저 정보 리스너 추가 함수
-    fun addListener(){
+    fun addListener() {
         dataListenerAdded = true
         Log.w("UserData", "유저 정보 리스너 추가")
-        database.child("users").child(UserAuth.fa.currentUser!!.uid).addValueEventListener(userInfoListener)
+        database.child("users").child(UserAuth.fa.currentUser!!.uid)
+            .addValueEventListener(userInfoListener)
     }
 
     //유저 정보 리스너 제거 함수
@@ -50,22 +51,22 @@ object UserData {
         dataListenerAdded = false
         Log.w("UserData", "유저 정보 리스너 제거")
         try {
-            database.child("users").child(UserAuth.fa.currentUser!!.uid).removeEventListener(userInfoListener)
-        }
-        catch (e: Exception) {
+            database.child("users").child(UserAuth.fa.currentUser!!.uid)
+                .removeEventListener(userInfoListener)
+        } catch (e: Exception) {
             Log.w("UserData", "유저 정보 리스너 제거 실패:", e)
         }
     }
 
     //맵을 updateChildren에 이용하기 위해 key에 경로를 추가해주는 함수
-    fun toPath(userInfo: Map<String, Any>, uid: String): Map<String, Any>{
+    fun toPath(userInfo: Map<String, Any>, uid: String): Map<String, Any> {
         val result = mutableMapOf<String, Any>()
-        userInfo.forEach{ (k, v) -> result["users/$uid/$k"] = v }
+        userInfo.forEach { (k, v) -> result["users/$uid/$k"] = v }
         return result
     }
 
     //realtime datastore 유저 정보 업데이트 함수
-    suspend fun update(userInfo: Map<String, Any>): Boolean{
+    suspend fun update(userInfo: Map<String, Any>): Boolean {
         val info = toPath(userInfo, UserAuth.fa.currentUser!!.uid)
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(info)
@@ -82,7 +83,7 @@ object UserData {
     }
 
     //내 정보 한번만 가져와서 userInfo에 저장하는 함수
-    suspend fun getMyData(): Boolean{
+    suspend fun getMyData(): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
             database.child("users").child(UserAuth.fa.currentUser!!.uid).get()
                 .addOnSuccessListener { dataSnapshot ->
@@ -103,7 +104,7 @@ object UserData {
     }
 
     //유저 정보 한번만 가져와서 반환하는 함수
-    suspend fun get(uid: String): Map<String, Any>?{
+    suspend fun get(uid: String): Map<String, Any>? {
         val result = suspendCoroutine<Map<String, Any>?> { continuation ->
             database.child("users").child(uid).get()
                 .addOnSuccessListener { dataSnapshot ->

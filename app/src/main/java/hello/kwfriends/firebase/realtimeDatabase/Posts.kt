@@ -268,8 +268,8 @@ object Post {
         }
         return if (result) {
             Log.d("updateParticipationStatus", "$postID 참여 상태 업데이트 성공: $action")
-            if(action == Action.ADD) Chattings.join(chattingRoomID)
-            else if(action == Action.DELETE) Chattings.leave(chattingRoomID)
+            if (action == Action.ADD) Chattings.join(chattingRoomID)
+            else if (action == Action.DELETE) Chattings.leave(chattingRoomID)
             true
         } else {
             Log.d("updateParticipationStatus", "$postID 참여 상태 업데이트 실패: $action")

@@ -103,10 +103,9 @@ fun SettingsScreen(
         }
     }
     BackHandler {
-        if(settingsViewModel.noticePopupState) {
+        if (settingsViewModel.noticePopupState) {
             settingsViewModel.noticePopupState = false
-        }
-        else if (settingsViewModel.userInfoPopupState.first) {
+        } else if (settingsViewModel.userInfoPopupState.first) {
             settingsViewModel.userInfoPopupState = false to ""
         } else if (settingsViewModel.userIgnoreListPopup) {
             settingsViewModel.userIgnoreListPopup = false

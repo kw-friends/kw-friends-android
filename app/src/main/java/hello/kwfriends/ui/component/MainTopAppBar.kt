@@ -142,7 +142,7 @@ fun MainTopAppBar(
                         exit = if (currentDestination != "findGathering") {
                             fadeOut(tween(300))
                         } else {
-                            slideOutHorizontally(animationSpec = tween(durationMillis = 300)) { 48} + fadeOut(
+                            slideOutHorizontally(animationSpec = tween(durationMillis = 300)) { 48 } + fadeOut(
                                 animationSpec = tween(durationMillis = 300)
                             )
                         },

@@ -318,7 +318,11 @@ class MainViewModel : ViewModel() {
                 postDetail.myParticipantStatus = ParticipationStatus.GETTING_IN
 
                 val result =
-                    Post.updateParticipationStatus(postID = postID, chattingRoomID = postDetail.chattingRoomID, action = Action.ADD)
+                    Post.updateParticipationStatus(
+                        postID = postID,
+                        chattingRoomID = postDetail.chattingRoomID,
+                        action = Action.ADD
+                    )
                 if (result) {
                     postDetail.myParticipantStatus = ParticipationStatus.PARTICIPATED
                 } else {
@@ -332,7 +336,11 @@ class MainViewModel : ViewModel() {
                 postDetail.myParticipantStatus = ParticipationStatus.GETTING_OUT
 
                 val result =
-                    Post.updateParticipationStatus(postID = postID, chattingRoomID = postDetail.chattingRoomID,  action = Action.DELETE)
+                    Post.updateParticipationStatus(
+                        postID = postID,
+                        chattingRoomID = postDetail.chattingRoomID,
+                        action = Action.DELETE
+                    )
                 if (result) {
                     postDetail.myParticipantStatus = ParticipationStatus.NOT_PARTICIPATED
                 } else {
@@ -374,7 +382,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             val roomID = Chattings.makeDirectChatting(targetUid)
             Chattings.getRoomList()
-            if(roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
+            if (roomID != "") mainNavigation.navigate(Routes.CHATTING_SCREEN + "/${roomID}")
         }
     }
 
@@ -384,7 +392,7 @@ class MainViewModel : ViewModel() {
     ) {
         viewModelScope.launch {
             Chattings.getRoomList()
-            if(Chattings.join(postDetail.chattingRoomID)) {
+            if (Chattings.join(postDetail.chattingRoomID)) {
                 gotoChattingRoom()
             }
         }

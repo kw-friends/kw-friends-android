@@ -71,7 +71,7 @@ object UserAuth {
     }
 
     //회원탈퇴
-    suspend fun deleteUser(): Boolean{
+    suspend fun deleteUser(): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
             Firebase.auth.currentUser?.delete()
                 ?.addOnSuccessListener {
@@ -87,7 +87,7 @@ object UserAuth {
     }
 
     //이메일 전송
-    suspend fun sendAuthEmail(): Boolean{
+    suspend fun sendAuthEmail(): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
             fa.currentUser?.sendEmailVerification()
                 ?.addOnSuccessListener {
@@ -103,12 +103,11 @@ object UserAuth {
     }
 
     //유저 인증 정보 리로드 (firebase auth reload)
-    suspend fun reload(): Boolean{
+    suspend fun reload(): Boolean {
         val result = suspendCoroutine<Boolean> { continuation ->
-            if(fa.currentUser == null){
+            if (fa.currentUser == null) {
                 continuation.resume(false)
-            }
-            else{
+            } else {
                 fa.currentUser!!.reload()
                     .addOnSuccessListener {
                         Log.w("Lim", "유저 인증 상태 리로드 성공")

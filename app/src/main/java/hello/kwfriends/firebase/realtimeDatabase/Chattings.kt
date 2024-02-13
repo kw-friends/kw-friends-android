@@ -67,7 +67,9 @@ object Chattings {
 
     var chattingRoomList by mutableStateOf<MutableMap<String, RoomDetail>?>(mutableMapOf())
 
-    var messageListenerCount: MutableList<Pair<String, ChildEventListener>> by mutableStateOf(mutableListOf())
+    var messageListenerCount: MutableList<Pair<String, ChildEventListener>> by mutableStateOf(
+        mutableListOf()
+    )
     var roomListListenerCount: MutableList<ChildEventListener> by mutableStateOf(mutableListOf())
 
     //채팅방 들어갔을 때 메세지 리스너
@@ -77,26 +79,26 @@ object Chattings {
             var messageDetail: MessageDetail? = null
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
-                if(messageDetail != null) update(messageDetail!!)
+                if (messageDetail != null) update(messageDetail!!)
                 Log.w("messageListener.onChildAdded", "onChildAdded: $messageDetail")
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
                 Log.w("messageListener.onChildChanged", "onChildChanged: $messageDetail")
-                if(messageDetail != null) update(messageDetail!!)
+                if (messageDetail != null) update(messageDetail!!)
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
                 Log.w("messageListener.onChildRemoved", "onChildRemoved: $messageDetail")
-                if(messageDetail != null) update(messageDetail!!)
+                if (messageDetail != null) update(messageDetail!!)
             }
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 messageDetail = dataSnapshot.getValue<MessageDetail>() ?: return
                 Log.w("messageListener.onChildMoved", "onChildMoved: $messageDetail")
-                if(messageDetail != null) update(messageDetail!!)
+                if (messageDetail != null) update(messageDetail!!)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -130,23 +132,23 @@ object Chattings {
             var roomDetail: RoomDetail? = null
             override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
-                    if(roomDetail != null) update(roomDetail!!)
+                if (roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                    if (roomDetail != null) update(roomDetail!!)
                     Log.w("roomListener.onChildAdded", "onChildAdded: $roomDetail")
                 }
             }
 
             override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                if (roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
                     Log.w("roomListener.onChildChanged", "onChildChanged: $roomDetail")
-                    if(roomDetail != null) update(roomDetail!!)
+                    if (roomDetail != null) update(roomDetail!!)
                 }
             }
 
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                if (roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
                     Log.w("roomListener.onChildRemoved", "onChildRemoved: $roomDetail")
                     chattingRoomList = chattingRoomList?.toMutableMap().apply {
                         this?.remove(roomDetail?.roomID)
@@ -156,9 +158,9 @@ object Chattings {
 
             override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 roomDetail = dataSnapshot.getValue<RoomDetail>() ?: return
-                if(roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
+                if (roomDetail?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true) {
                     Log.w("roomListener.onChildMoved", "onChildMoved: $roomDetail")
-                    if(roomDetail != null) update(roomDetail!!)
+                    if (roomDetail != null) update(roomDetail!!)
                 }
             }
 
@@ -198,9 +200,9 @@ object Chattings {
         var already = false
         getRoomList()
         chattingRoomList?.forEach {
-            if(it.value.roomID == roomID) already = true
+            if (it.value.roomID == roomID) already = true
         }
-        if(already) {
+        if (already) {
             Log.w("Chattings.makeRoom()", "이미 $roomID 채팅방이 존재합니다")
             return roomID
         }
@@ -244,7 +246,7 @@ object Chattings {
             )
             return false
         }
-        if(info.members.containsKey(Firebase.auth.currentUser!!.uid)) {
+        if (info.members.containsKey(Firebase.auth.currentUser!!.uid)) {
             Log.w("Chattings.join()", "이미 채팅방에 참가중입니다.")
             return true
         }
@@ -278,7 +280,8 @@ object Chattings {
             return false
         }
         val result = suspendCoroutine<Boolean> { continuation ->
-            database.child("chattings/rooms/$roomID/members/${Firebase.auth.currentUser?.uid}").removeValue()
+            database.child("chattings/rooms/$roomID/members/${Firebase.auth.currentUser?.uid}")
+                .removeValue()
                 .addOnSuccessListener {
                     Log.w("Chattings.leaveRoom()", "채팅방 나가기 성공")
                     continuation.resume(true)
@@ -315,7 +318,7 @@ object Chattings {
             "chattings/messages/$roomID/$messageID/type" to MessageType.DELETED,
             "chattings/messages/$roomID/$messageID/content" to "(메세지 삭제됨)",
         )
-        if(info.recentMessage.messageID == messageID) {
+        if (info.recentMessage.messageID == messageID) {
             chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(메세지 삭제됨)"
         }
         val result = suspendCoroutine<Boolean> { continuation ->
@@ -369,12 +372,16 @@ object Chattings {
         when (type) {
             MessageType.TEXT -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
                 content
+
             MessageType.IMAGE -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
                 "(사진)"
+
             MessageType.AUDIO -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
                 "(음성녹음)"
+
             MessageType.VIDEO -> chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] =
                 "(영상)"
+
             else -> {}
         }
         val result = suspendCoroutine<String?> { continuation ->
@@ -420,7 +427,7 @@ object Chattings {
         )
         var result = false
         var chattingRoomMap: MutableMap<String, Any?>? = null
-        if(ChattingImage.upload(imageID, uri)) {
+        if (ChattingImage.upload(imageID, uri)) {
             val chattingRoomMap = mutableMapOf<String, Any?>(
                 "chattings/messages/$roomID/$messageID/type" to MessageType.IMAGE,
             )
@@ -440,8 +447,7 @@ object Chattings {
                         continuation.resume(false)
                     }
             }
-        }
-        else {
+        } else {
             val chattingRoomMap = mutableMapOf<String, Any?>(
                 "chattings/messages/$roomID/$messageID" to null,
             )
@@ -584,11 +590,14 @@ object Chattings {
     }
 
     //메세지 읽음처리
-    suspend fun messageRead(roomID: String, messageData: MutableMap<String, MessageDetail>): Boolean {
+    suspend fun messageRead(
+        roomID: String,
+        messageData: MutableMap<String, MessageDetail>
+    ): Boolean {
         val uid = Firebase.auth.currentUser!!.uid
         val readMap = mutableMapOf<String, Any>()
         messageData.forEach {
-            if(it.value.read[uid] == null) {
+            if (it.value.read[uid] == null) {
                 readMap["chattings/messages/$roomID/${it.key}/read/$uid"] = ServerValue.TIMESTAMP
             }
         }
@@ -616,20 +625,20 @@ object Chattings {
         var already = false
         val uid = Firebase.auth.currentUser!!.uid
         chattingRoomList?.forEach {
-            if(it.value.type == ChattingRoomType.DIRECT) {
-                if((targetUid in it.value.members) && (uid in it.value.members)) {
+            if (it.value.type == ChattingRoomType.DIRECT) {
+                if ((targetUid in it.value.members) && (uid in it.value.members)) {
                     roomID = it.key
                     already = true
                 }
             }
         }
-        if(!already) {
+        if (!already) {
             roomID = make(
                 title = "개인 채팅",
                 type = ChattingRoomType.DIRECT,
                 owners = listOf(uid, targetUid),
                 members = listOf(uid, targetUid),
-            )?:""
+            ) ?: ""
             if (roomID != null) {
                 sendMessage(
                     roomID = roomID,

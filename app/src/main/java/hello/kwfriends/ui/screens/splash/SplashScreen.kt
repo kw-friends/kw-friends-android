@@ -8,8 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -31,8 +31,11 @@ fun SplashScreen(viewModel: SplashViewModel) {
         Animatable(0f)
     }
     //UserDataStore 객체 생성
-    try { UserDataStore.pref }
-    catch(e: Exception) { UserDataStore(context = LocalContext.current) }
+    try {
+        UserDataStore.pref
+    } catch (e: Exception) {
+        UserDataStore(context = LocalContext.current)
+    }
 
     LaunchedEffect(key1 = true, block = {
         Log.w("Lim", "Splash 시작")

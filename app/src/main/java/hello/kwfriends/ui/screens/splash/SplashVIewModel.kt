@@ -21,22 +21,24 @@ class SplashViewModel : ViewModel() {
         val intent = Intent(context, MainActivity::class.java)
         var startPoint = "auth"
         processingState = SplashProcessingState.auth
-        if(AuthViewModel.userAuthAvailableCheck()){
+        if (AuthViewModel.userAuthAvailableCheck()) {
             Log.w("Lim", "유저 인증 유효성 검사 성공")
             ServerData.addListener()
             UserData.addListener()
             processingState = SplashProcessingState.infoCheck
-            if(UserData.getMyData()) {
-                if(AuthViewModel.userInfoCheck()) {
+            if (UserData.getMyData()) {
+                if (AuthViewModel.userInfoCheck()) {
                     Log.w("Lim", "정보 입력 검사 성공")
                     startPoint = "home"
+                } else {
+                    Log.w("Lim", "정보 입력 검사 실패")
                 }
-                else{ Log.w("Lim", "정보 입력 검사 실패") }
             }
+        } else {
+            Log.w("Lim", "유저 인증 유효성 검사 실패")
         }
-        else{ Log.w("Lim", "유저 인증 유효성 검사 실패") }
 
-        if(startPoint == "auth") Log.w("Lim", "인증 화면으로 이동")
+        if (startPoint == "auth") Log.w("Lim", "인증 화면으로 이동")
         else Log.w("Lim", "홈 화면으로 이동")
 
         processingState = SplashProcessingState.hello
