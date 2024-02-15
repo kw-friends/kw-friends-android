@@ -273,7 +273,6 @@ fun ChattingScreen(
             }
             if (
                 chattingViewModel.roomInfo?.members?.containsKey(Firebase.auth.currentUser!!.uid) == true
-                && chattingViewModel.roomInfo?.owners?.containsKey(Firebase.auth.currentUser!!.uid) != true
                 && chattingViewModel.roomInfo?.type == ChattingRoomType.GROUP
             ) {
                 Text(
