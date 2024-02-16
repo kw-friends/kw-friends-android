@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.main
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -67,6 +68,9 @@ class MainViewModel : ViewModel() {
 
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    // 모임 이미지 Uri 맵
+    var postUriMap by mutableStateOf(mutableMapOf<String, MutableMap<String, Uri>>()) // [PostID, [ImageID, Uri]]
 
     // 사용자 조작 확인 다이얼로그
     var finalCheckState by mutableStateOf(false)
@@ -378,6 +382,22 @@ class MainViewModel : ViewModel() {
             UserData.updateUsersDataMap(uid, data)
         }
     }
+
+    fun setPostImageMap(postID: String, postImages: Map<String, Any>) {
+        viewModelScope.launch {
+            val tempMap = mutableMapOf<String, Uri>()
+            postImages.keys.forEach { imageID ->
+                val uri = PostImage.getPostImageUri(postID = postID, imageID = imageID)
+                uri?.let { tempMap[imageID] = it }
+            }
+            if (tempMap.isNotEmpty()) {
+                val updatedMap = postUriMap.toMutableMap()
+                updatedMap[postID] = tempMap
+                postUriMap = updatedMap // 상태 업데이트 유발
+            }
+        }
+    }
+
 
     fun makeDirectChatting(targetUid: String, mainNavigation: NavController) {
         viewModelScope.launch {
