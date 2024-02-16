@@ -31,13 +31,13 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,6 +63,7 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.PostImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.component.AnnotatedClickableText
@@ -96,8 +97,8 @@ fun PostInfoScreen(
     LaunchedEffect(postDetail.participants) {
         val newParticipations = postDetail.participants.keys - previousParticipants.value.toSet()
         newParticipations.forEach {
-            mainViewModel.downlodUri(it)
-            mainViewModel.downlodData(it)
+            mainViewModel.downlodUserProfileUri(it)
+            mainViewModel.downlodUserProfileData(it)
 
             val request = ImageRequest.Builder(context)
                 .data(ProfileImage.usersUriMap[it])
@@ -107,6 +108,16 @@ fun PostInfoScreen(
             Log.d("imageLoader.enqueue", "Queued $it")
         }
         previousParticipants.value.addAll(postDetail.participants.keys)
+    }
+
+    LaunchedEffect(Unit) {
+        postDetail.postImages.forEach {
+            PostImage.getPostImageUri(postID = postDetail.postID, imageID = it.key)
+        }
+    }
+
+    LaunchedEffect(key1 = PostImage.postUriMap){
+        Log.d(":asdsadsqad", "${PostImage.postUriMap}")
     }
 
     Scaffold(
@@ -260,21 +271,55 @@ fun PostInfoScreen(
                         color = Color.Gray,
                     )
                 }
+
+                // 모임 제목
                 Text(
                     text = postDetail.gatheringTitle,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight(600)
                 )
+
+                // 모임 내용
                 AnnotatedClickableText(
                     text = postDetail.gatheringDescription,
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                // 모임 이미지
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .fillMaxWidth()
+                ) {
+                    PostImage.postUriMap[postDetail.postID]?.forEach{ image ->
+                        AsyncImage(
+                            model = image.value,
+                            imageLoader = imageLoader,
+                            placeholder = painterResource(id = R.drawable.profile_default_image),
+                            contentDescription = "gathering promoter's profile image",
+                            onLoading = {
+                                Log.d(
+                                    "AsyncImage",
+                                    "Loading: $image"
+                                )
+                            },
+                            onError = {e ->
+                                      Log.w("AsyncImage", "failed to get image: $e on $image")
+                            },
+                            modifier = Modifier
+                                .height(160.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            contentScale = ContentScale.Fit,
+                        )
+                    }
+                }
             }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 14.dp)
             ) {
+                // 모임 태그
                 FlowRow(modifier = Modifier.padding(top = 20.dp)) {
                     postDetail.gatheringTags.forEach {
                         Text(
@@ -286,6 +331,7 @@ fun PostInfoScreen(
                     }
                 }
 
+                // 마감 기한
                 if (postDetail.gatheringTime != 0L) {
                     Text(
                         text = "마감 기한:  ${mainViewModel.dateTimeFormat(postDetail.gatheringTime)}",
@@ -300,6 +346,7 @@ fun PostInfoScreen(
                     )
                 }
 
+                // 모임 장소
                 if (postDetail.gatheringLocation != "") {
                     Text(
                         text = "모임 장소:  ${postDetail.gatheringLocation}",
@@ -314,7 +361,7 @@ fun PostInfoScreen(
                     )
                 }
 
-                VerticalDivider(
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 10.dp),
                     thickness = 0.5.dp,
                     color = Color.Gray

@@ -1,5 +1,8 @@
 package hello.kwfriends.ui.screens.post.setPostData
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
@@ -10,6 +13,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +29,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -47,13 +53,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import coil.compose.AsyncImage
 import hello.kwfriends.firebase.realtimeDatabase.Action
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
+import hello.kwfriends.firebase.storage.PostImage
+import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.component.FullTextField
 import hello.kwfriends.ui.component.SingleTextField
 import hello.kwfriends.ui.component.TagChip
@@ -76,6 +89,12 @@ fun SetPostDataScreen(
     val scrollState = rememberScrollState()
     var timeInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringTimeUse) }
     var locationInfoVisibility by remember { mutableStateOf(setPostDataViewModel.gatheringLocationUse) }
+    val imageLoader = ImageLoaderFactory.getInstance(LocalContext.current)
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) {
+        setPostDataViewModel.updateSelectedImageList(imageList = it)
+    }
 
     DatePickerPopup(
         state = setPostDataViewModel.datePickerPopupState,
@@ -105,8 +124,7 @@ fun SetPostDataScreen(
                 onClick = onDismiss
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "back button"
+                    imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "back button"
                 )
             }
             Text(
@@ -122,9 +140,10 @@ fun SetPostDataScreen(
                 .verticalScroll(scrollState)
         ) {
             Text(
-                text = "기본 정보 설정",
-                style = MaterialTheme.typography.titleSmall
+                text = "기본 정보 설정", style = MaterialTheme.typography.titleSmall
             )
+
+            // 모임 주최자
             FullTextField(
                 placeholder = "",
                 value = setPostDataViewModel.gatheringPromoter,
@@ -132,6 +151,8 @@ fun SetPostDataScreen(
                 onValueChange = {},
                 externalTitle = "모임 주최자"
             )
+
+            // 모임 제목
             FullTextField(
                 placeholder = "",
                 value = setPostDataViewModel.gatheringTitle,
@@ -141,6 +162,8 @@ fun SetPostDataScreen(
                 externalTitle = "모임 제목",
                 errorMessage = "필수 항목",
             )
+
+            // 모임 설명
             FullTextField(
                 placeholder = "",
                 value = setPostDataViewModel.gatheringDescription,
@@ -152,6 +175,8 @@ fun SetPostDataScreen(
                 externalTitle = "모임 설명",
                 errorMessage = "필수 항목",
             )
+
+            // 최대 인원
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom,
@@ -178,25 +203,99 @@ fun SetPostDataScreen(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
             )
+
+            Text(
+                text = "추가 정보 설정", style = MaterialTheme.typography.titleSmall
+            )
+
+            // 모임 이미지 업로드
+            Text(
+                text = "이미지 첨부",
+                color = Color(0xFF636363),
+                style = MaterialTheme.typography.labelMedium,
+            )
+
+            Button(onClick = { launcher.launch("image/*") }) {
+                Text(
+                    text =
+                    if (setPostDataViewModel.selectedImages.isEmpty())
+                        "이미지 선택"
+                    else
+                        "${setPostDataViewModel.selectedImages.size}개 선택됨",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            AnimatedVisibility(visible = setPostDataViewModel.selectedImages.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .height(128.dp)
+                ) {
+                    setPostDataViewModel.selectedImages.forEachIndexed() { index, image ->
+                        Box(
+                            modifier = Modifier
+                                .size(120.dp)
+                                .padding(4.dp)
+                        ) {
+
+                            IconButton(
+                                onClick = { setPostDataViewModel.onImageRemoved(index) },
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0x40000000))
+                                    .align(Alignment.TopEnd)
+                                    .zIndex(10F)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "remove image",
+                                    tint = Color(0xFFFFFFFF),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+
+                            AsyncImage(
+                                model = image,
+                                imageLoader = imageLoader,
+                                contentDescription = "selected image from Gallery",
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .clip(RectangleShape)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                onLoading = { Log.d("AsyncImage", "Image is loading") },
+                                onSuccess = { Log.d("AsyncImage", "Image loaded successfully") },
+                                onError = {
+                                    Log.d(
+                                        "AsyncImage", "Error occurred while loading image"
+                                    )
+                                },
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                }
+            }
+
+            // 시간 정보 입력
             Column(
                 modifier = Modifier
                     .padding(top = 14.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(Color(0xFFFCEEEE))
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .clickable {
-                            timeInfoVisibility = !timeInfoVisibility
-                            setPostDataViewModel.gatheringTimeUse =
-                                !setPostDataViewModel.gatheringTimeUse
-                        }
-                ) {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable {
+                        timeInfoVisibility = !timeInfoVisibility
+                        setPostDataViewModel.gatheringTimeUse =
+                            !setPostDataViewModel.gatheringTimeUse
+                    }) {
                     AnimatedContent(
-                        targetState = timeInfoVisibility,
-                        transitionSpec = {
+                        targetState = timeInfoVisibility, transitionSpec = {
                             if (timeInfoVisibility) {
                                 (slideInHorizontally { height -> height } + fadeIn()).togetherWith(
                                     slideOutHorizontally { height -> -height } + fadeOut())
@@ -259,19 +358,16 @@ fun SetPostDataScreen(
                                 }) {
                                     Text(
                                         text = SimpleDateFormat(
-                                            "yyyy/MM/dd",
-                                            Locale.getDefault()
+                                            "yyyy/MM/dd", Locale.getDefault()
                                         ).format(
                                             setPostDataViewModel.gatheringDate
                                         ),
                                     )
                                 }
-                                TimePickerStyle(
-                                    hourValue = setPostDataViewModel.gatheringHour,
+                                TimePickerStyle(hourValue = setPostDataViewModel.gatheringHour,
                                     minuteValue = setPostDataViewModel.gatheringMinute,
                                     onHourValueChange = { setPostDataViewModel.onHourChanged(it) },
-                                    onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) }
-                                )
+                                    onMinuteValueChange = { setPostDataViewModel.onMinuteChanged(it) })
                             }
                         }
                     }
@@ -285,19 +381,16 @@ fun SetPostDataScreen(
                 )
 
                 // 모임 위치 입력
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .clickable {
-                            locationInfoVisibility = !locationInfoVisibility
-                            setPostDataViewModel.gatheringLocationUse =
-                                !setPostDataViewModel.gatheringLocationUse
-                        }
-                ) {
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable {
+                        locationInfoVisibility = !locationInfoVisibility
+                        setPostDataViewModel.gatheringLocationUse =
+                            !setPostDataViewModel.gatheringLocationUse
+                    }) {
                     AnimatedContent(
-                        targetState = locationInfoVisibility,
-                        transitionSpec = {
+                        targetState = locationInfoVisibility, transitionSpec = {
                             if (locationInfoVisibility) {
                                 (slideInHorizontally { height -> height } + fadeIn()).togetherWith(
                                     slideOutHorizontally { height -> -height } + fadeOut())
@@ -345,6 +438,8 @@ fun SetPostDataScreen(
                     }
                 }
             }
+
+            // 모임 태그
             Text(
                 text = "모임 태그",
                 color = Color(0xFF636363),
@@ -352,17 +447,16 @@ fun SetPostDataScreen(
             )
             FlowRow {
                 setPostDataViewModel.tagMap.forEach {
-                    TagChip(
-                        modifier = Modifier.padding(end = 4.dp),
+                    TagChip(modifier = Modifier.padding(end = 4.dp),
                         text = it.key,
                         selected = it.value,
-                        onClick = { setPostDataViewModel.updateTagMap(it.key) }
-                    )
+                        onClick = { setPostDataViewModel.updateTagMap(it.key) })
                 }
             }
+
+
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = "커뮤니티 가이드라인을 준수하여 모임을 생성해 주세요!",

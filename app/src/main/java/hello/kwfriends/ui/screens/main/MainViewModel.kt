@@ -19,6 +19,7 @@ import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.PostImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import kotlinx.coroutines.launch
@@ -166,7 +167,7 @@ class MainViewModel : ViewModel() {
                 reporterID = Firebase.auth.currentUser?.uid ?: "unknown",
                 reason = reason,
             )
-            downlodData(userReportDialogState.second)
+            downlodUserProfileData(userReportDialogState.second)
             userReportDialogState = false to ""
         }
     }
@@ -364,14 +365,14 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun downlodUri(uid: String) {
+    fun downlodUserProfileUri(uid: String) {
         viewModelScope.launch {
             val uri = ProfileImage.getDownloadUrl(uid)
             ProfileImage.updateUsersUriMap(uid, uri)
         }
     }
 
-    fun downlodData(uid: String) {
+    fun downlodUserProfileData(uid: String) {
         viewModelScope.launch {
             val data = UserData.get(uid)
             UserData.updateUsersDataMap(uid, data)

@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.post.setPostData
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -35,6 +36,8 @@ class SetPostDataViewModel : ViewModel() {
 
     var gatheringPromoterUID by mutableStateOf("")
     var gatheringPromoter by mutableStateOf("")
+
+    var selectedImages by mutableStateOf<List<Uri>>(emptyList())
 
     var gatheringTimeUse by mutableStateOf(false)
 
@@ -149,6 +152,7 @@ class SetPostDataViewModel : ViewModel() {
             gatheringPromoter = UserData.myInfo!!["name"].toString()
             gatheringTitle = ""
             gatheringTitleValidation = false
+            selectedImages = emptyList()
             gatheringTime = 0L
             gatheringTimeMessage = "입력칸이 비어있습니다."
             gatheringTimeValidation = false
@@ -201,6 +205,22 @@ class SetPostDataViewModel : ViewModel() {
     fun gatheringDescriptionChange(text: String) {
         gatheringDescription = text
         gatheringDescriptionValidation = PostValidation.isStrHasData(text)
+    }
+
+    fun updateSelectedImageList(imageList: List<Uri>) {
+        viewModelScope.launch {
+            selectedImages += imageList
+            selectedImages = selectedImages.distinct()
+            Log.d("updateSelectedImageList", "$selectedImages")
+        }
+    }
+
+    fun onImageRemoved(index: Int) {
+        val updatedImageList = selectedImages.toMutableList()
+        viewModelScope.launch {
+            updatedImageList.removeAt(index)
+            selectedImages = updatedImageList.distinct()
+        }
     }
 
     fun onHourChanged(hour: String) {
@@ -350,7 +370,7 @@ class SetPostDataViewModel : ViewModel() {
             viewModelScope.launch {
                 isUploading = true
                 val result = Post.upload(
-                    PostDetail(
+                    postData = PostDetail(
                         gatheringTitle = gatheringTitle,
                         gatheringPromoter = gatheringPromoter,
                         gatheringPromoterUID = UserAuth.fa.uid.toString(),
@@ -361,7 +381,7 @@ class SetPostDataViewModel : ViewModel() {
                         myParticipantStatus = ParticipationStatus.PARTICIPATED,
                         timestamp = ServerValue.TIMESTAMP,
                         gatheringTags = tagMap.filter { it.value }.map { it.key },
-                    )
+                    ), images = selectedImages
                 )
                 end()
                 isUploading = false
