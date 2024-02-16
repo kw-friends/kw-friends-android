@@ -285,7 +285,9 @@ fun MainScreen(
                 startDestination = MainDestination.HomeScreen.route,
                 modifier = Modifier
                     .padding(paddingValues)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                enterTransition = { fadeIn(animationSpec = tween(10)) },
+                exitTransition = { fadeOut(animationSpec = tween(10)) }
             ) {
                 composable(route = MainDestination.FindGatheringScreen.route) {
                     fabOpened = true
