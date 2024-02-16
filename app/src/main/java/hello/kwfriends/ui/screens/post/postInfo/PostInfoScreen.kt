@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -63,7 +64,6 @@ import com.google.firebase.ktx.Firebase
 import hello.kwfriends.R
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.UserData
-import hello.kwfriends.firebase.storage.PostImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.image.ImageLoaderFactory
 import hello.kwfriends.ui.component.AnnotatedClickableText
@@ -111,14 +111,16 @@ fun PostInfoScreen(
     }
 
     LaunchedEffect(Unit) {
-        postDetail.postImages.forEach {
-            PostImage.getPostImageUri(postID = postDetail.postID, imageID = it.key)
-        }
+        Log.d(
+            "setPostImageMap Queue",
+            "postID: ${postDetail.postID}, postImages: ${postDetail.postImages} Queued.."
+        )
+        mainViewModel.setPostImageMap(
+            postID = postDetail.postID,
+            postImages = postDetail.postImages
+        )
     }
 
-    LaunchedEffect(key1 = PostImage.postUriMap){
-        Log.d(":asdsadsqad", "${PostImage.postUriMap}")
-    }
 
     Scaffold(
         modifier = Modifier
@@ -286,34 +288,52 @@ fun PostInfoScreen(
                 )
 
                 // 모임 이미지
-                Row(
-                    modifier = Modifier
-                        .horizontalScroll(rememberScrollState())
-                        .fillMaxWidth()
-                ) {
-                    PostImage.postUriMap[postDetail.postID]?.forEach{ image ->
-                        AsyncImage(
-                            model = image.value,
-                            imageLoader = imageLoader,
-                            placeholder = painterResource(id = R.drawable.profile_default_image),
-                            contentDescription = "gathering promoter's profile image",
-                            onLoading = {
-                                Log.d(
-                                    "AsyncImage",
-                                    "Loading: $image"
-                                )
-                            },
-                            onError = {e ->
-                                      Log.w("AsyncImage", "failed to get image: $e on $image")
-                            },
-                            modifier = Modifier
-                                .height(160.dp)
-                                .clip(RoundedCornerShape(4.dp)),
-                            contentScale = ContentScale.Fit,
-                        )
+                if (postDetail.postImages.isNotEmpty()) {
+                    Text(
+                        text = "모임 이미지 (${postDetail.postImages.size}개)",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(top = 14.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .fillMaxWidth()
+                            .padding(top = 2.dp, bottom = 8.dp)
+                    ) {
+                        mainViewModel.postUriMap[postDetail.postID]?.forEach { image ->
+                            AsyncImage(
+                                model = image.value,
+                                imageLoader = imageLoader,
+                                placeholder = painterResource(id = R.drawable.profile_default_image),
+                                contentDescription = "gathering promoter's profile image",
+                                onLoading = {
+                                    Log.d(
+                                        "AsyncImage",
+                                        "Loading: $image"
+                                    )
+                                },
+                                onError = { e ->
+                                    Log.w("AsyncImage", "failed to get image: $e on $image")
+                                },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .heightIn(max = 200.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 12.dp,
+                                            topEnd = 12.dp,
+                                            bottomStart = 12.dp,
+                                            bottomEnd = 12.dp
+                                        )
+                                    ),
+                                contentScale = ContentScale.Fit,
+                            )
+                        }
                     }
                 }
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()

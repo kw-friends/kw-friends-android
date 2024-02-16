@@ -14,16 +14,10 @@ import kotlin.coroutines.suspendCoroutine
 object PostImage {
     val storage = Firebase.storage
     val postImageRef = storage.reference.child("postImage")
-    var postUploadState: MutableMap<Uri?, Double> = mutableMapOf()
     val database = Firebase.database.reference
-    var postUriMap by mutableStateOf(mutableMapOf<String, MutableMap<String, Uri>>()) // [PostID, [ImageID, Uri]]
 
     suspend fun uploadImage(postID: String, uriMap: List<Uri?>): MutableList<String> {
         val imageList: MutableList<String> = mutableListOf()
-
-        for (uri in uriMap) {
-            postUploadState[uri] = 0.0
-        }
 
         val result = suspendCoroutine<Boolean> { continuation ->
             for (uri in uriMap) {
@@ -37,7 +31,6 @@ object PostImage {
                     postImageRef.child("${postID}/${key}").putFile(it)
                         .addOnProgressListener { send ->
                             val progress = (100.0 * send.bytesTransferred) / send.totalByteCount
-                            postUploadState[uri] = progress
                             Log.d("PostImage.upload()", "Upload is $progress% done")
                         }.addOnPausedListener {
                             Log.d("PostImage.upload()", "Upload is paused")
@@ -60,7 +53,7 @@ object PostImage {
         return imageList
     }
 
-    suspend fun getPostImageUri(postID: String, imageID: String) {
+    suspend fun getPostImageUri(postID: String, imageID: String): Uri? {
         Log.d("PostImage.getPostImageUri", "$imageID 이미지 요청")
         val postImageIDRef = postImageRef.child("$postID/$imageID")
         val uri = suspendCoroutine<Uri?> { continuation ->
@@ -68,16 +61,11 @@ object PostImage {
                 .addOnSuccessListener { uri ->
                     continuation.resume(uri)
                     Log.d("PostImage.getPostImageUri", "$imageID Uri 가져옴: $uri")
-
-                    val updatedMap = postUriMap.toMutableMap()
-                    val imagesMap = updatedMap.getOrPut(postID) { mutableMapOf() }
-                    imagesMap[imageID] = uri
-                    postUriMap =
-                        updatedMap.toMap() as MutableMap<String, MutableMap<String, Uri>> // 상태 업데이트를 트리거
                 }.addOnFailureListener {
                     continuation.resume(null)
                     Log.d("PostImage.getPostImageUri", "$imageID Uri 오류")
                 }
         }
+        return uri
     }
 }
