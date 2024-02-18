@@ -1,5 +1,6 @@
 package hello.kwfriends.ui.screens.main
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -19,6 +20,7 @@ import hello.kwfriends.firebase.realtimeDatabase.Post
 import hello.kwfriends.firebase.realtimeDatabase.PostDetail
 import hello.kwfriends.firebase.realtimeDatabase.Report
 import hello.kwfriends.firebase.realtimeDatabase.UserData
+import hello.kwfriends.firebase.storage.PostImage
 import hello.kwfriends.firebase.storage.ProfileImage
 import hello.kwfriends.preferenceDatastore.UserDataStore
 import kotlinx.coroutines.delay
@@ -68,6 +70,9 @@ class MainViewModel : ViewModel() {
 
     //유저 신고 팝업 보이기 여부 및 신고 대상 uid
     var userReportDialogState by mutableStateOf<Pair<Boolean, String>>(false to "")
+
+    // 모임 이미지 Uri 맵
+    var postUriMap by mutableStateOf(mutableMapOf<String, MutableMap<String, Uri>>()) // [PostID, [ImageID, Uri]]
 
     // 사용자 조작 확인 다이얼로그
     var finalCheckState by mutableStateOf(false)
@@ -138,6 +143,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    private fun finalCheckPopupReset() {
+        finalCheckPopupSet(title = "", body = "", onContinueAction = {})
+    }
+
     fun postReport(reason: List<String>) {
         viewModelScope.launch {
             postReportDialogState = false to postReportDialogState.second
@@ -155,7 +164,7 @@ class MainViewModel : ViewModel() {
     fun postDelete(postID: String) {
         viewModelScope.launch {
             Post.deletePost(postID)
-            finalCheckPopupSet(title = "", body = "", onContinueAction = {})
+            finalCheckPopupReset()
             postInfoPopupState = false to ""
         }
     }
@@ -168,7 +177,7 @@ class MainViewModel : ViewModel() {
                 reporterID = Firebase.auth.currentUser?.uid ?: "unknown",
                 reason = reason,
             )
-            downlodData(userReportDialogState.second)
+            downlodUserProfileData(userReportDialogState.second)
             userReportDialogState = false to ""
         }
     }
@@ -366,19 +375,35 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun downlodUri(uid: String) {
+    fun downlodUserProfileUri(uid: String) {
         viewModelScope.launch {
             val uri = ProfileImage.getDownloadUrl(uid)
             ProfileImage.updateUsersUriMap(uid, uri)
         }
     }
 
-    fun downlodData(uid: String) {
+    fun downlodUserProfileData(uid: String) {
         viewModelScope.launch {
             val data = UserData.get(uid)
             UserData.updateUsersDataMap(uid, data)
         }
     }
+
+    fun setPostImageMap(postID: String, postImages: Map<String, Any>) {
+        viewModelScope.launch {
+            val tempMap = mutableMapOf<String, Uri>()
+            postImages.keys.forEach { imageID ->
+                val uri = PostImage.getPostImageUri(postID = postID, imageID = imageID)
+                uri?.let { tempMap[imageID] = it }
+            }
+            if (tempMap.isNotEmpty()) {
+                val updatedMap = postUriMap.toMutableMap()
+                updatedMap[postID] = tempMap
+                postUriMap = updatedMap // 상태 업데이트 유발
+            }
+        }
+    }
+
 
     fun makeDirectChatting(targetUid: String, mainNavigation: NavController) {
         viewModelScope.launch {

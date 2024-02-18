@@ -46,8 +46,8 @@ android {
     }
 }
 
-val composeUiVersion = "1.6.0"
-val navVersion = "2.7.6"
+val composeUiVersion = "1.6.1"
+val navVersion = "2.7.7"
 
 dependencies {// mode
     implementation("androidx.core:core-ktx:1.12.0")
@@ -57,21 +57,21 @@ dependencies {// mode
 //  disabled for: https://issuetracker.google.com/issues/322214617
 //  implementation("androidx.compose.material3:material3:1.1.2")
 
-    implementation("androidx.compose.material3:material3:1.2.0-rc01")
+    implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.ui:ui:$composeUiVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeUiVersion")
-    implementation("androidx.compose.material:material:1.6.0")
+    implementation("androidx.compose.material:material:1.6.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.compose.ui:ui-graphics")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeUiVersion")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.01.00"))
-    implementation(platform("androidx.compose:compose-bom:2024.01.00"))
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    implementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     debugImplementation("androidx.compose.ui:ui-tooling:$composeUiVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeUiVersion")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
@@ -85,7 +85,7 @@ dependencies {// mode
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0") //preference datastore
     // Import the BoM for the Firebase platform
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     // Add the dependency for the Cloud Storage library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-storage")

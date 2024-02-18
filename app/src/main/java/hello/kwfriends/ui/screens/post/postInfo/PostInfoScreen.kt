@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,13 +32,13 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -96,8 +97,8 @@ fun PostInfoScreen(
     LaunchedEffect(postDetail.participants) {
         val newParticipations = postDetail.participants.keys - previousParticipants.value.toSet()
         newParticipations.forEach {
-            mainViewModel.downlodUri(it)
-            mainViewModel.downlodData(it)
+            mainViewModel.downlodUserProfileUri(it)
+            mainViewModel.downlodUserProfileData(it)
 
             val request = ImageRequest.Builder(context)
                 .data(ProfileImage.usersUriMap[it])
@@ -108,6 +109,18 @@ fun PostInfoScreen(
         }
         previousParticipants.value.addAll(postDetail.participants.keys)
     }
+
+    LaunchedEffect(Unit) {
+        Log.d(
+            "setPostImageMap Queue",
+            "postID: ${postDetail.postID}, postImages: ${postDetail.postImages} Queued.."
+        )
+        mainViewModel.setPostImageMap(
+            postID = postDetail.postID,
+            postImages = postDetail.postImages
+        )
+    }
+
 
     Scaffold(
         modifier = Modifier
@@ -260,21 +273,73 @@ fun PostInfoScreen(
                         color = Color.Gray,
                     )
                 }
+
+                // 모임 제목
                 Text(
                     text = postDetail.gatheringTitle,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight(600)
                 )
+
+                // 모임 내용
                 AnnotatedClickableText(
                     text = postDetail.gatheringDescription,
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                // 모임 이미지
+                if (postDetail.postImages.isNotEmpty()) {
+                    Text(
+                        text = "모임 이미지 (${postDetail.postImages.size}개)",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(top = 14.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .fillMaxWidth()
+                            .padding(top = 2.dp, bottom = 8.dp)
+                    ) {
+                        mainViewModel.postUriMap[postDetail.postID]?.forEach { image ->
+                            AsyncImage(
+                                model = image.value,
+                                imageLoader = imageLoader,
+                                placeholder = painterResource(id = R.drawable.profile_default_image),
+                                contentDescription = "gathering promoter's profile image",
+                                onLoading = {
+                                    Log.d(
+                                        "AsyncImage",
+                                        "Loading: $image"
+                                    )
+                                },
+                                onError = { e ->
+                                    Log.w("AsyncImage", "failed to get image: $e on $image")
+                                },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .heightIn(max = 200.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 12.dp,
+                                            topEnd = 12.dp,
+                                            bottomStart = 12.dp,
+                                            bottomEnd = 12.dp
+                                        )
+                                    ),
+                                contentScale = ContentScale.Fit,
+                            )
+                        }
+                    }
+                }
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 14.dp)
             ) {
+                // 모임 태그
                 FlowRow(modifier = Modifier.padding(top = 20.dp)) {
                     postDetail.gatheringTags.forEach {
                         Text(
@@ -286,6 +351,7 @@ fun PostInfoScreen(
                     }
                 }
 
+                // 마감 기한
                 if (postDetail.gatheringTime != 0L) {
                     Text(
                         text = "마감 기한:  ${mainViewModel.dateTimeFormat(postDetail.gatheringTime)}",
@@ -300,6 +366,7 @@ fun PostInfoScreen(
                     )
                 }
 
+                // 모임 장소
                 if (postDetail.gatheringLocation != "") {
                     Text(
                         text = "모임 장소:  ${postDetail.gatheringLocation}",
@@ -314,7 +381,7 @@ fun PostInfoScreen(
                     )
                 }
 
-                VerticalDivider(
+                HorizontalDivider(
                     modifier = Modifier.padding(vertical = 10.dp),
                     thickness = 0.5.dp,
                     color = Color.Gray

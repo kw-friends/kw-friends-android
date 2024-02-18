@@ -1,5 +1,6 @@
 package hello.kwfriends.firebase.realtimeDatabase
 
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
@@ -7,6 +8,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import hello.kwfriends.firebase.storage.PostImage
 import hello.kwfriends.ui.screens.main.MainViewModel
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
@@ -26,7 +28,8 @@ data class PostDetail(
     val gatheringTags: List<String> = emptyList(),
     var reporters: Map<String, Any> = emptyMap(),
     var participants: Map<String, Any> = emptyMap(),
-    var chattingRoomID: String = ""
+    var chattingRoomID: String = "",
+    var postImages: Map<String, Any> = emptyMap(),
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(
@@ -39,7 +42,8 @@ data class PostDetail(
             "gatheringDescription" to gatheringDescription,
             "gatheringTags" to gatheringTags,
             "timestamp" to timestamp,
-            "chattingRoomID" to chattingRoomID
+            "chattingRoomID" to chattingRoomID,
+            "postImages" to postImages
         )
     }
 }
@@ -166,7 +170,7 @@ object Post {
     }
 
 
-    suspend fun upload(postData: PostDetail) {
+    suspend fun upload(postData: PostDetail, images: List<Uri>) {
         val key = database.reference.child("posts").push().key
         val chattingRoomID = Chattings.database.child("chattings").child("rooms").push().key!!
         postData.chattingRoomID = chattingRoomID
@@ -184,15 +188,17 @@ object Post {
                     continuation.resume(false)
                 }
         }
+
         if (result) {
             val participantsListMap = hashMapOf<String, Any>(
                 "/posts/$key/participants/${uid}" to true,
             )
+
             database.reference.updateChildren(participantsListMap)
                 .addOnSuccessListener {
                     Log.d("uploadPost", "참여 목록 생성 성공")
                 }.addOnFailureListener { e ->
-                    Log.d("uploadPost", "참여 목록 생성 성공: $e")
+                    Log.d("uploadPost", "참여 목록 생성 실패: $e")
                 }
             val roomID = Chattings.make(
                 preRoomID = chattingRoomID,
@@ -209,6 +215,22 @@ object Post {
                     type = MessageType.TEXT
                 )
             }
+
+            val imageList =
+                PostImage.uploadImage(postID = key!!, uriMap = images) // MutableList<String>
+            Log.d("imageList", imageList.toString())
+
+            val imageListMap = hashMapOf<String, Any>()
+            imageList.forEach {
+                imageListMap["/posts/$key/postImages/$it"] = true
+            }
+
+            database.reference.updateChildren(imageListMap)
+                .addOnSuccessListener {
+                    Log.d("uploadPost", "이미지 목록 생성 성공")
+                }.addOnFailureListener { e ->
+                    Log.d("uploadPost", "이미지 목록 생성 실패: $e")
+                }
         }
     }
 
