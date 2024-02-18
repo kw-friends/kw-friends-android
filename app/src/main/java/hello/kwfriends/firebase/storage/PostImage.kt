@@ -5,6 +5,10 @@ import android.util.Log
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -14,40 +18,40 @@ object PostImage {
     val database = Firebase.database.reference
 
     suspend fun uploadImage(postID: String, uriMap: List<Uri?>): MutableList<String> {
-        val imageList: MutableList<String> = mutableListOf()
+        val imageKeys = mutableListOf<String>()
 
-        val result = suspendCoroutine<Boolean> { continuation ->
-            for (uri in uriMap) {
-                uri?.let {
-                    val key = database.child("posts/${postID}/images").push().key
+        val uploadJobs = uriMap.mapNotNull { uri ->
+            uri?.let {
+                coroutineScope {
+                    async {
+                        val key =
+                            database.child("posts/$postID/images").push().key ?: return@async null
+                        imageKeys.add(key)
 
-                    if (key != null) {
-                        imageList += key
+                        try {
+                            postImageRef.child("$postID/$key").putFile(uri)
+                                .addOnSuccessListener { send ->
+                                    val progress =
+                                        (100.0 * send.bytesTransferred) / send.totalByteCount
+                                    Log.d("PostImage.upload()", "Upload is $progress% done")
+                                }
+                                .addOnFailureListener{e ->
+                                    Log.d("PostImage.upload()", "Upload is failed: $e")
+                                }.await()
+                            Log.d("UploadImage", "Upload for $key succeeded")
+                            key // 성공시 키 반환
+                        } catch (e: Exception) {
+                            Log.e("UploadImage", "Upload for $key failed", e)
+                            null // 실패시 null 반환
+                        }
                     }
-
-                    postImageRef.child("${postID}/${key}").putFile(it)
-                        .addOnProgressListener { send ->
-                            val progress = (100.0 * send.bytesTransferred) / send.totalByteCount
-                            Log.d("PostImage.upload()", "Upload is $progress% done")
-                        }.addOnPausedListener {
-                            Log.d("PostImage.upload()", "Upload is paused")
-                        }
-                        .addOnFailureListener {
-                            Log.d("PostImage.upload()", "Upload is failed")
-                            continuation.resume(false)
-                        }.addOnSuccessListener {
-                            Log.d("PostImage.upload()", "Upload is succeed")
-                            if (uri == uriMap.last()) {
-                                continuation.resume(true)
-                            }
-                        }
-                } ?: run {
-                    Log.w("PostImage.uploadImage", "Uri is null")
                 }
             }
         }
 
-        return imageList
+        uploadJobs.awaitAll()
+
+        return imageKeys
     }
 
     suspend fun getPostImageUri(postID: String, imageID: String): Uri? {

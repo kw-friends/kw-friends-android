@@ -141,6 +141,10 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    private fun finalCheckPopupReset() {
+        finalCheckPopupSet(title = "", body = "", onContinueAction = {})
+    }
+
     fun postReport(reason: List<String>) {
         viewModelScope.launch {
             postReportDialogState = false to postReportDialogState.second
@@ -158,7 +162,7 @@ class MainViewModel : ViewModel() {
     fun postDelete(postID: String) {
         viewModelScope.launch {
             Post.deletePost(postID)
-            finalCheckPopupSet(title = "", body = "", onContinueAction = {})
+            finalCheckPopupReset()
             postInfoPopupState = false to ""
         }
     }
