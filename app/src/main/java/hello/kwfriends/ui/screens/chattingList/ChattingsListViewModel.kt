@@ -1,18 +1,17 @@
 package hello.kwfriends.ui.screens.chattingList
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import hello.kwfriends.R
+import com.google.firebase.messaging.FirebaseMessaging
 import hello.kwfriends.firebase.realtimeDatabase.ChattingRoomType
 import hello.kwfriends.firebase.realtimeDatabase.Chattings
+import hello.kwfriends.firebase.realtimeDatabase.UserData
 import kotlinx.coroutines.launch
 
 class ChattingsListViewModel : ViewModel() {
@@ -20,6 +19,7 @@ class ChattingsListViewModel : ViewModel() {
 
     var userList: MutableList<String> = mutableStateListOf()
 
+    //채팅방 목록 리스너 추가
     fun addListener() {
         userList = mutableListOf<String>()
         viewModelScope.launch {
@@ -41,7 +41,7 @@ class ChattingsListViewModel : ViewModel() {
         }
     }
 
-    fun notificationTest(context: Context) {
+    /*fun notificationTest(context: Context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -66,6 +66,23 @@ class ChattingsListViewModel : ViewModel() {
 
             notificationManager.notify(1, builder.build())
         }
+    }*/
+
+    fun notificationTest() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            viewModelScope.launch {
+                UserData.update(mapOf("fcm-token" to token))
+            }
+            // Log and toast
+            Log.d(TAG, "FCM 토큰: $token")
+        })
     }
 
 

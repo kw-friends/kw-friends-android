@@ -179,7 +179,7 @@ fun ChattingListScreen(
 
         val context = LocalContext.current
         Button(onClick = {
-            chattingsListViewModel.notificationTest(context)
+            chattingsListViewModel.notificationTest()
         }) {
             Text(text = "알림 테스트")
         }

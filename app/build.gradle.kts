@@ -65,6 +65,7 @@ dependencies {// mode
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.compose.ui:ui-graphics")
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeUiVersion")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.01.00"))
     implementation(platform("androidx.compose:compose-bom:2024.01.00"))
@@ -91,8 +92,11 @@ dependencies {// mode
     implementation("com.google.firebase:firebase-storage")
     implementation("io.coil-kt:coil-compose:2.5.0") //for Coil
     implementation("androidx.core:core-splashscreen:1.0.1") //for splash screen
-    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-database") //firebase database
 
     // shimmer effect
     implementation("com.valentinilk.shimmer:compose-shimmer:1.2.0")
+
+    implementation ("com.google.firebase:firebase-messaging-ktx") //firebase messaging
+    implementation ("com.google.firebase:firebase-analytics-ktx") //firebase analytics
 }
