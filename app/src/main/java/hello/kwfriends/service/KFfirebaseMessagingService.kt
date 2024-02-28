@@ -1,4 +1,4 @@
-package hello.kwfriends.firebase.cloudMessaging
+package hello.kwfriends.service
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
