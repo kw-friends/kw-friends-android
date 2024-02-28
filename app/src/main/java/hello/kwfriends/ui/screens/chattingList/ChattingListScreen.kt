@@ -174,6 +174,7 @@ fun ChattingListScreen(
                 color = Color.LightGray
             )
         }
+
     }
 }
 

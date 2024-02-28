@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="ExtraText">
 
-    //갤러리 권한 요청
+    // 갤러리 권한 요청
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/> // android 13이상
+    // 알림 권한 요청
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
@@ -37,7 +39,24 @@
             <data android:scheme="mailto" />
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>-->
-    </activity>
+        </activity>
+        <service
+            android:name=".service.KFfirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/logo" />
+            <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+                 notification message. See README(https://goo.gl/6BKBk7) for more. -->
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/white" />
+        </service>
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more. -->
     </application>
 
 </manifest>

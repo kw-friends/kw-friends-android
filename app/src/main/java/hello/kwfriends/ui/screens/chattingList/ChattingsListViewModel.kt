@@ -14,6 +14,7 @@ class ChattingsListViewModel : ViewModel() {
 
     var userList: MutableList<String> = mutableStateListOf()
 
+    //채팅방 목록 리스너 추가
     fun addListener() {
         userList = mutableListOf<String>()
         viewModelScope.launch {
@@ -34,4 +35,6 @@ class ChattingsListViewModel : ViewModel() {
             }
         }
     }
+
+
 }
