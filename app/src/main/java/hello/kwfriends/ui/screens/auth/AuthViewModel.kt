@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ServerValue
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import hello.kwfriends.firebase.authentication.UserAuth
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
@@ -317,6 +318,9 @@ object AuthViewModel : ViewModel() {
     //로그아웃 함수
     fun trySignOut() {
         uiState = AuthUiState.Loading
+        viewModelScope.launch {//fcm인증토큰 제거
+            UserData.update(mapOf("fcm-token" to null))
+        }
         UserAuth.signOut()
         inputEmail = ""
         inputPassword = ""
@@ -645,6 +649,14 @@ object AuthViewModel : ViewModel() {
                 inputPassword = ""
                 if (!UserData.dataListenerAdded) UserData.addListener()
                 if (!ServerData.dataListenerAdded) ServerData.addListener()
+                //fcm인증토큰 저장
+                FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        viewModelScope.launch {
+                            UserData.update(mapOf("fcm-token" to it.result))
+                        }
+                    }
+                }
                 navigation.navigate(Routes.HOME_SCREEN)
             }
         }

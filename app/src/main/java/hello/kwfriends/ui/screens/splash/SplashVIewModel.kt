@@ -7,10 +7,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
 import hello.kwfriends.firebase.realtimeDatabase.ServerData
 import hello.kwfriends.firebase.realtimeDatabase.UserData
 import hello.kwfriends.ui.screens.auth.AuthViewModel
 import hello.kwfriends.ui.screens.main.MainActivity
+import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
 
@@ -39,7 +42,17 @@ class SplashViewModel : ViewModel() {
         }
 
         if (startPoint == "auth") Log.w("Lim", "인증 화면으로 이동")
-        else Log.w("Lim", "홈 화면으로 이동")
+        else {
+            //fcm인증토큰 저장
+            FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                if(it.isSuccessful) {
+                    viewModelScope.launch {
+                        UserData.update(mapOf("fcm-token" to it.result))
+                    }
+                }
+            }
+            Log.w("Lim", "홈 화면으로 이동")
+        }
 
         processingState = SplashProcessingState.hello
         intent.putExtra("startPoint", startPoint)

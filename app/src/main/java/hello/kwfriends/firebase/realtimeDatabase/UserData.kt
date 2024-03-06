@@ -59,14 +59,14 @@ object UserData {
     }
 
     //맵을 updateChildren에 이용하기 위해 key에 경로를 추가해주는 함수
-    fun toPath(userInfo: Map<String, Any>, uid: String): Map<String, Any> {
-        val result = mutableMapOf<String, Any>()
+    fun toPath(userInfo: Map<String, Any?>, uid: String): Map<String, Any?> {
+        val result = mutableMapOf<String, Any?>()
         userInfo.forEach { (k, v) -> result["users/$uid/$k"] = v }
         return result
     }
 
     //realtime datastore 유저 정보 업데이트 함수
-    suspend fun update(userInfo: Map<String, Any>): Boolean {
+    suspend fun update(userInfo: Map<String, Any?>): Boolean {
         val info = toPath(userInfo, UserAuth.fa.currentUser!!.uid)
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(info)
