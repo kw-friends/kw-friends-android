@@ -72,7 +72,7 @@ object Chattings {
     )
     var roomListListenerCount: MutableList<ChildEventListener> by mutableStateOf(mutableListOf())
 
-    //채팅방 들어갔을 때 메세지 리스너
+    //채팅방 들어갔을 때 메시지 리스너
     fun addMessageListener(roomID: String, update: (MessageDetail) -> Unit) {
         val reference = database.child("chattings").child("messages").child(roomID)
         val chattingListener = object : ChildEventListener {
@@ -115,7 +115,7 @@ object Chattings {
         Log.d("addMessageListener", "${roomID}에 messageListener 추가")
     }
 
-    //채팅방 나갈 때 메세지 리스너 제거
+    //채팅방 나갈 때 메시지 리스너 제거
     fun removeMessageListener() {
         messageListenerCount.forEach {
             val reference = database.child("chattings").child("messages").child(it.first)
@@ -316,23 +316,23 @@ object Chattings {
         }
         val chattingRoomMap = mutableMapOf<String, Any?>(
             "chattings/messages/$roomID/$messageID/type" to MessageType.DELETED,
-            "chattings/messages/$roomID/$messageID/content" to "(메세지 삭제됨)",
+            "chattings/messages/$roomID/$messageID/content" to "(메시지 삭제됨)",
         )
         if (info.recentMessage.messageID == messageID) {
-            chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(메세지 삭제됨)"
+            chattingRoomMap["chattings/rooms/$roomID/recentMessage/content"] = "(메시지 삭제됨)"
         }
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {
-                    Log.w("Chattings.removeMessage()", "메세지 삭제 성공")
+                    Log.w("Chattings.removeMessage()", "메시지 삭제 성공")
                     continuation.resume(true)
                 }
                 .addOnFailureListener {
-                    Log.w("Chattings.removeMessage()", "메세지 삭제 실패(fail): $it")
+                    Log.w("Chattings.removeMessage()", "메시지 삭제 실패(fail): $it")
                     continuation.resume(false)
                 }
                 .addOnCanceledListener {
-                    Log.w("Chattings.removeMessage()", "메세지 삭제 실패(cancel)")
+                    Log.w("Chattings.removeMessage()", "메시지 삭제 실패(cancel)")
                     continuation.resume(false)
                 }
         }
@@ -387,15 +387,15 @@ object Chattings {
         val result = suspendCoroutine<String?> { continuation ->
             database.updateChildren(chattingRoomMap)
                 .addOnSuccessListener {
-                    Log.w("Chattings.sendMessage()", "메세지 전송 성공")
+                    Log.w("Chattings.sendMessage()", "메시지 전송 성공")
                     continuation.resume(messageID)
                 }
                 .addOnFailureListener {
-                    Log.w("Chattings.sendMessage()", "메세지 전송 실패(fail): $it")
+                    Log.w("Chattings.sendMessage()", "메시지 전송 실패(fail): $it")
                     continuation.resume(null)
                 }
                 .addOnCanceledListener {
-                    Log.w("Chattings.sendMessage()", "메세지 전송 실패(cancel)")
+                    Log.w("Chattings.sendMessage()", "메시지 전송 실패(cancel)")
                     continuation.resume(null)
                 }
         }
@@ -559,7 +559,7 @@ object Chattings {
         return result
     }
 
-    //채팅방 메세지 한번만 가져와서 반환하는 함수
+    //채팅방 메시지 한번만 가져와서 반환하는 함수
     suspend fun getRoomMessages(roomID: String): MutableMap<String, MessageDetail>? {
         val result = suspendCoroutine<MutableMap<String, MessageDetail>?> { continuation ->
             database.child("chattings").child("messages").child(roomID).orderByChild("timestamp")
@@ -589,7 +589,7 @@ object Chattings {
 
     }
 
-    //메세지 읽음처리
+    //메시지 읽음처리
     suspend fun messageRead(
         roomID: String,
         messageData: MutableMap<String, MessageDetail>
@@ -604,15 +604,15 @@ object Chattings {
         val result = suspendCoroutine<Boolean> { continuation ->
             database.updateChildren(readMap)
                 .addOnSuccessListener {
-                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메세지 읽음처리 성공")
+                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메시지 읽음처리 성공")
                     continuation.resume(true)
                 }
                 .addOnFailureListener {
-                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메세지 읽음처리 실패(fail): $it")
+                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메시지 읽음처리 실패(fail): $it")
                     continuation.resume(false)
                 }
                 .addOnCanceledListener {
-                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메세지 읽음처리 실패(cancel)")
+                    Log.w("Chattings.messageRead()", "$roomID 채팅방 메시지 읽음처리 실패(cancel)")
                     continuation.resume(false)
                 }
         }

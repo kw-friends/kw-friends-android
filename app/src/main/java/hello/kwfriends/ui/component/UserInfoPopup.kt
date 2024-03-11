@@ -103,7 +103,7 @@ fun UserInfoPopup(
                 ) {
                     DropdownMenuItem(
                         text = {
-                            Text("개인 메세지 보내기")
+                            Text("개인 메시지 보내기")
                         },
                         enabled = uid != myUid,
                         onClick = {
